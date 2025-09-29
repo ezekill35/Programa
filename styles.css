@@ -1,4 +1,4 @@
-/* ======= BODY ======= */
+/* ====== BODY ====== */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -9,13 +9,12 @@ body {
   background: linear-gradient(135deg, #ffecb3, #ffe0b2);
 }
 
-/* ======= TARJETA LOGIN ======= */
+/* ====== TARJETA ====== */
 .login-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-card {
@@ -31,33 +30,26 @@ body {
 }
 
 .login-card:hover {
-  transform: rotateY(5deg) rotateX(5deg);
+  transform: rotateY(3deg) rotateX(3deg);
   box-shadow: 0 25px 50px rgba(0,0,0,0.35);
 }
 
-/* ======= TITULOS ======= */
+/* ====== TITULO ====== */
 .login-title {
   font-size: 2rem;
-  margin-bottom: 10px;
   color: #ff914d;
+  margin-bottom: 10px;
 }
 
 .login-subtitle {
   font-size: 1rem;
-  margin-bottom: 25px;
   color: #333;
+  margin-bottom: 25px;
 }
 
-/* ======= FORM ======= */
+/* ====== FORM ====== */
 .form-group {
   margin-bottom: 15px;
-  text-align: left;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
 }
 
 .form-group input {
@@ -76,7 +68,7 @@ body {
   transform: translateZ(2px);
 }
 
-/* ======= ICONO PASSWORD ======= */
+/* ====== PASSWORD ICON ====== */
 .password-container {
   position: relative;
 }
@@ -90,7 +82,7 @@ body {
   color: #888;
 }
 
-/* ======= BOTON ======= */
+/* ====== BOTON ====== */
 .primary-btn {
   width: 100%;
   padding: 12px;
@@ -109,14 +101,38 @@ body {
   transform: translateY(-2px);
 }
 
-/* ======= MENSAJES ======= */
+/* ====== DIVIDER ====== */
+.divider {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+/* ====== REGISTRO ====== */
+.register-text {
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.register-link {
+  color: #ff914d;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ====== MENSAJES ====== */
 .error-message {
   color: #e74c3c;
   font-size: 0.9rem;
-  margin: 5px 0;
+  margin-bottom: 5px;
   text-align: left;
 }
 
-
+.success-message {
+  color: #27ae60;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  text-align: left;
+}
 
 
