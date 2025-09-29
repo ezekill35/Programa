@@ -1,7 +1,5 @@
-// ==============================================
-// Configuración de Firebase para Discovery Pets
-// ==============================================
-
+// firebase.js
+// Configuración Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -14,11 +12,6 @@ const firebaseConfig = {
 
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
-
-// Servicios principales
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-
-
 
