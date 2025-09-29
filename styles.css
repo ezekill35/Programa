@@ -1,116 +1,139 @@
-/* ====== BODY ====== */
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
-  background: linear-gradient(135deg, #ff914d, #ffcc70);
-  color: #333;
+  background: linear-gradient(135deg,#ff914d,#ffcc70);
+  color:#333;
 }
 
-/* ====== HEADER ====== */
+/* HEADER */
 header {
-  background: #ff914d;
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  background:#ff914d;
+  color:#fff;
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* NAV DASHBOARD */
+/* NAV */
 .dashboard-nav {
-  display: flex;
-  gap: 10px;
-  padding: 10px 20px;
-  background: #fff3e0;
+  display:flex;
+  gap:10px;
+  padding:10px 20px;
+  background:#fff3e0;
 }
-.dashboard-nav button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #ffb266;
-  font-weight: bold;
-  transition: 0.3s;
+.dashboard-nav button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#ffb266;
+  font-weight:bold;
+  transition:.3s;
 }
-.dashboard-nav button:hover { background: #ffa64d; color: #fff; }
-
-/* ====== SECCIONES ====== */
-.content-section {
-  display: none;
-  padding: 20px;
-  margin: 20px;
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  transform: translateZ(0);
-}
-.content-section.active { display: block; }
-
-/* ====== TARJETAS ====== */
-.card-item {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  background: #ffefdc;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+.dashboard-nav button:hover{
+  background:#ffa64d;
+  color:#fff;
 }
 
-/* ====== INPUTS ====== */
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+/* SECCIONES */
+.content-section{
+  display:none;
+  padding:20px;
+  margin:20px;
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+.content-section.active{
+  display:block;
 }
 
-/* ====== BOTONES ====== */
-.primary-btn {
-  background: #ff914d;
-  border: none;
-  color: #fff;
-  padding: 10px;
-  margin-top: 10px;
-  width: 100%;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
+/* TARJETAS / LISTAS */
+.card-item{
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:10px;
+  background:#ffefdc;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-.primary-btn:hover { background: #e67e22; }
-.secondary-btn {
-  background: #eee;
-  border: none;
-  color: #333;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.secondary-btn:hover { background: #ddd; }
-.link-btn { color: #ff914d; cursor: pointer; text-decoration: underline; }
 
-/* ====== LOGIN 3D ====== */
-.auth-wrapper { perspective: 1000px; display: flex; justify-content: center; align-items: center; height: 100vh; }
-.auth-card { width: 350px; height: 420px; }
-.card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s; }
-.card-inner.is-flipped { transform: rotateY(180deg); }
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  background: #fff;
-  border-radius: 15px;
-  padding: 30px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  text-align: center;
+/* INPUTS */
+input, select{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
-.card-back { transform: rotateY(180deg); }
 
-.error-message { color: red; margin-top: 10px; }
-.success-message { color: green; margin-top: 10px; }
+/* BOTONES */
+.primary-btn{
+  background:#ff914d;
+  border:none;
+  color:#fff;
+  padding:10px;
+  margin-top:10px;
+  width:100%;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:.3s;
+}
+.primary-btn:hover{
+  background:#e67e22;
+}
+.secondary-btn{
+  background:#eee;
+  border:none;
+  color:#333;
+  padding:8px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:.3s;
+}
+.secondary-btn:hover{
+  background:#ddd;
+}
+
+/* LOGIN 3D */
+.auth-wrapper{
+  perspective:1000px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.auth-card{
+  width:350px;
+  height:420px;
+}
+.card-inner{
+  position:relative;
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform .8s;
+}
+.card-inner.is-flipped{
+  transform:rotateY(180deg);
+}
+.card-face{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  background:#fff;
+  border-radius:15px;
+  padding:30px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+  text-align:center;
+}
+.card-back{
+  transform:rotateY(180deg);
+}
+
 
 
 
