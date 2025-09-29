@@ -1,80 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Discovery Pets</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-<body>
-  <div id="main-app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h1>Discovery Pets</h1>
-      <p>Bienvenido, <span id="welcome-username"></span></p>
-      <ul class="nav-list">
-        <li onclick="showSection('overview')">Dashboard</li>
-        <li onclick="showSection('products')">Inventario</li>
-        <li onclick="showSection('providers')">Proveedores</li>
-        <li onclick="logout()">Cerrar Sesión</li>
-      </ul>
-    </aside>
+<section class="features">
+  <h1 class="features-title">🐾 Funcionalidades de Discovery Pets</h1>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <header>
-        <h2 id="dashboard-title">Dashboard</h2>
-        <div class="user-controls">
-          <button onclick="logout()">Cerrar Sesión</button>
-        </div>
-      </header>
-
-      <!-- Secciones -->
-      <section id="overview-section" class="content-section active">
-        <h3>Resumen Rápido</h3>
-        <p>Aquí se mostrarán estadísticas del negocio en tiempo real.</p>
-      </section>
-
-      <section id="products-section" class="content-section">
-        <h3>Gestión de Productos</h3>
-        <form onsubmit="addProduct(event)">
-          <input type="text" id="product-name" placeholder="Nombre del producto" required>
-          <input type="number" id="product-price" placeholder="Precio" required>
-          <input type="number" id="product-stock" placeholder="Stock" required>
-          <button type="submit" class="primary-btn">Agregar Producto</button>
-        </form>
-        <div id="products-list"></div>
-      </section>
-
-      <section id="providers-section" class="content-section">
-        <h3>Gestión de Proveedores</h3>
-        <p>Aquí podrás registrar y listar proveedores.</p>
-      </section>
-    </main>
+  <div class="feature-card">
+    <h2>1. Gestión de Compras y Ventas</h2>
+    <ul>
+      <li><b>Facturas de Compra:</b> Registro de RUC, número de factura y fecha. Cálculo automático de base imponible, IGV/IVA y total.</li>
+      <li><b>Registro de Ventas:</b> Documentación de cada transacción con clientes, seguimiento del dinero ingresado.</li>
+      <li><b>Dashboard en Tiempo Real:</b> Resumen de ventas del mes con cambio de moneda entre Soles (PEN) y Dólares (USD).</li>
+    </ul>
   </div>
 
-  <!-- ===============================
-       Firebase SDKs (CDN compat v12.3.0)
-       =============================== -->
-  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
+  <div class="feature-card">
+    <h2>2. Control de Gastos y Proveedores</h2>
+    <ul>
+      <li><b>Gastos Operativos:</b> Registro y clasificación de egresos (alquiler, sueldos, servicios).</li>
+      <li><b>Gestión de Proveedores:</b> Base de datos de contactos (teléfono, fax, dirección) y simulación de envío de correos.</li>
+    </ul>
+  </div>
 
-  <!-- Archivos propios -->
-  <script src="firebase.js"></script>
-  <script src="script.js"></script>
+  <div class="feature-card">
+    <h2>3. Gestión de Productos e Inventario</h2>
+    <ul>
+      <li><b>Registro de Productos:</b> SKU, descripción, marca, categoría y precio de venta.</li>
+      <li><b>Alertas de Stock Bajo:</b> Notificación de productos con menos de 10 unidades.</li>
+      <li><b>Actualización Automática:</b> Incremento de stock al registrar compras y reducción al registrar ventas.</li>
+    </ul>
+  </div>
+</section>
 
-  <script>
-    // Proteger la página: solo accesible si hay sesión activa
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "index.html";
-      } else {
-        document.getElementById("welcome-username").textContent = user.email;
-        loadProducts(); // cargar productos desde Firestore
-      }
-    });
-  </script>
-</body>
-</html>
