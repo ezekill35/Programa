@@ -22,190 +22,43 @@
     <button onclick="showSection('expenses')">Gastos</button>
   </nav>
 
-  <main class="dashboard-content">
+  <div class="dashboard-content">
+
     <!-- Resumen rápido -->
     <div class="summary-cards">
-      <div class="summary-card"><h3>Total Productos</h3><p id="total-products">0</p></div>
-      <div class="summary-card"><h3>Stock Bajo</h3><p id="low-stock">0</p></div>
-      <div class="summary-card"><h3>Total Proveedores</h3><p id="total-providers">0</p></div>
-      <div class="summary-card"><h3>Ventas del Mes</h3><p id="sales-month">S/ 0.00</p></div>
+      <div class="summary-card">
+        <h3>Total de Productos</h3>
+        <p id="total-products">0</p>
+      </div>
+      <div class="summary-card">
+        <h3>Stock Bajo (&lt; 10 unid.)</h3>
+        <p id="low-stock">0</p>
+      </div>
+      <div class="summary-card">
+        <h3>Total de Proveedores</h3>
+        <p id="total-providers">0</p>
+      </div>
+      <div class="summary-card">
+        <h3>Ventas del Mes</h3>
+        <p id="monthly-sales">S/ 0.00</p>
+      </div>
     </div>
 
     <!-- Secciones -->
-    <section id="products-section" class="content-section active">
-      <div class="form-area">
-        <h3>➕ Agregar Nuevo Producto</h3>
-        <form id="add-product-form" onsubmit="event.preventDefault(); addProduct();">
-          <input type="text" id="product-sku" placeholder="Código / SKU" required>
-          <input type="text" id="product-name" placeholder="Descripción">
-          <input type="text" id="product-brand" placeholder="Marca">
-          <input type="number" id="product-price" placeholder="Precio Venta S/ (*)" required>
-          <input type="number" id="product-stock" placeholder="Stock Inicial" required>
-          <input type="text" id="product-unit" placeholder="Unidad de Medida" value="unidades">
-          <input type="text" id="product-category" placeholder="Categoría (*)" required>
-          <button type="submit" class="primary-btn">Agregar Producto</button>
-          <button type="button" class="secondary-btn" onclick="clearProductForm()">Limpiar</button>
-        </form>
-      </div>
-      <div class="form-area" id="product-list"></div>
-    </section>
+    <section id="products-section" class="content-section active"></section>
+    <section id="providers-section" class="content-section"></section>
+    <section id="invoices-section" class="content-section"></section>
+    <section id="sales-section" class="content-section"></section>
+    <section id="expenses-section" class="content-section"></section>
 
-    <section id="providers-section" class="content-section">
-      <div class="form-area">
-        <h3>➕ Agregar Nuevo Proveedor</h3>
-        <form id="add-provider-form" onsubmit="event.preventDefault(); addProvider();">
-          <input type="text" id="provider-contact" placeholder="Nombre del Contacto (*)" required>
-          <input type="text" id="provider-company" placeholder="Nombre Comercial (*)" required>
-          <input type="text" id="provider-phone" placeholder="Teléfono (*)" required>
-          <input type="text" id="provider-fax" placeholder="Fax (Opcional)">
-          <input type="text" id="provider-address" placeholder="Dirección">
-          <input type="text" id="provider-product-type" placeholder="Tipo de Producto">
-          <button type="submit" class="primary-btn">Agregar Proveedor</button>
-          <button type="button" class="secondary-btn" onclick="clearProviderForm()">Limpiar</button>
-        </form>
-      </div>
-      <div class="form-area" id="provider-list"></div>
-    </section>
+  </div>
 
-    <section id="invoices-section" class="content-section">
-      <div class="form-area">
-        <h3>➕ Registrar Factura de Compra</h3>
-        <form id="add-invoice-form" onsubmit="event.preventDefault(); addInvoice();">
-          <input type="text" id="invoice-ruc" placeholder="RUC Factura (*)" required>
-          <input type="text" id="invoice-number" placeholder="Número de Factura (*)" required>
-          <input type="text" id="invoice-provider" placeholder="Proveedor (*)" required>
-          <input type="text" id="invoice-product" placeholder="Producto (*)" required>
-          <input type="number" id="invoice-quantity" placeholder="Cantidad (*)" required>
-          <input type="number" id="invoice-unit-price" placeholder="Valor Unitario S/ (*)" required>
-          <input type="number" id="invoice-total" placeholder="Monto Total S/" readonly>
-          <input type="date" id="invoice-date" required>
-          <button type="submit" class="primary-btn">Registrar Factura</button>
-          <button type="button" class="secondary-btn" onclick="clearInvoiceForm()">Limpiar</button>
-        </form>
-      </div>
-      <div class="form-area" id="invoice-list"></div>
-    </section>
-
-    <section id="sales-section" class="content-section">
-      <div class="form-area">
-        <h3>💰 Registrar Venta</h3>
-        <input type="text" id="sale-client" placeholder="Cliente">
-        <input type="number" id="sale-total" placeholder="Total Venta">
-        <button class="primary-btn" onclick="addSale()">Registrar Venta</button>
-      </div>
-    </section>
-
-    <section id="expenses-section" class="content-section">
-      <div class="form-area">
-        <h3>➕ Registrar Gasto Operativo</h3>
-        <input type="text" id="expense-description" placeholder="Descripción (*)" required>
-        <input type="text" id="expense-type" placeholder="Tipo de Gasto (*)" required>
-        <input type="number" id="expense-quantity" placeholder="Cantidad (*)" required>
-        <input type="number" id="expense-unit-price" placeholder="Valor Unitario S/ (*)" required>
-        <input type="date" id="expense-date" required>
-        <button class="primary-btn" onclick="addExpense()">Registrar Gasto</button>
-        <button class="secondary-btn" onclick="clearExpenseForm()">Limpiar</button>
-      </div>
-      <div class="form-area" id="expense-list"></div>
-    </section>
-
-  </main>
-
-  <script type="module">
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-      authDomain: "discovery-pets.firebaseapp.com",
-      projectId: "discovery-pets",
-      storageBucket: "discovery-pets.appspot.com",
-      messagingSenderId: "481355972999",
-      appId: "1:481355972999:web:a073cc5af230b32f4c5322",
-      measurementId: "G-W5RGYVTW3V"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    window.logout = function() {
-      signOut(auth).then(() => window.location.href = "index.html");
-    }
-
-    window.showSection = function(section) {
+  <script src="firebase.js"></script>
+  <script src="script.js"></script>
+  <script>
+    function showSection(section) {
       document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
       document.getElementById(section + "-section").classList.add("active");
-    }
-
-    // --- Funciones de agregar (productos, proveedores, facturas, etc.) ---
-    window.addProduct = async function() {
-      const product = {
-        sku: document.getElementById("product-sku").value,
-        name: document.getElementById("product-name").value,
-        brand: document.getElementById("product-brand").value,
-        price: Number(document.getElementById("product-price").value),
-        stock: Number(document.getElementById("product-stock").value),
-        unit: document.getElementById("product-unit").value,
-        category: document.getElementById("product-category").value
-      };
-      await addDoc(collection(db, "products"), product);
-      alert("Producto agregado");
-      document.getElementById("add-product-form").reset();
-    }
-
-    window.addProvider = async function() {
-      const provider = {
-        contact: document.getElementById("provider-contact").value,
-        company: document.getElementById("provider-company").value,
-        phone: document.getElementById("provider-phone").value,
-        fax: document.getElementById("provider-fax").value,
-        address: document.getElementById("provider-address").value,
-        productType: document.getElementById("provider-product-type").value
-      };
-      await addDoc(collection(db, "providers"), provider);
-      alert("Proveedor agregado");
-      document.getElementById("add-provider-form").reset();
-    }
-
-    window.addInvoice = async function() {
-      const invoice = {
-        ruc: document.getElementById("invoice-ruc").value,
-        number: document.getElementById("invoice-number").value,
-        provider: document.getElementById("invoice-provider").value,
-        product: document.getElementById("invoice-product").value,
-        quantity: Number(document.getElementById("invoice-quantity").value),
-        unitPrice: Number(document.getElementById("invoice-unit-price").value),
-        total: Number(document.getElementById("invoice-quantity").value) * Number(document.getElementById("invoice-unit-price").value),
-        date: document.getElementById("invoice-date").value
-      };
-      await addDoc(collection(db, "invoices"), invoice);
-      alert("Factura agregada");
-      document.getElementById("add-invoice-form").reset();
-    }
-
-    window.addSale = async function() {
-      const sale = {
-        client: document.getElementById("sale-client").value,
-        total: Number(document.getElementById("sale-total").value),
-        date: new Date()
-      };
-      await addDoc(collection(db, "sales"), sale);
-      alert("Venta registrada");
-    }
-
-    window.addExpense = async function() {
-      const expense = {
-        description: document.getElementById("expense-description").value,
-        type: document.getElementById("expense-type").value,
-        quantity: Number(document.getElementById("expense-quantity").value),
-        unitPrice: Number(document.getElementById("expense-unit-price").value),
-        date: document.getElementById("expense-date").value,
-        total: Number(document.getElementById("expense-quantity").value) * Number(document.getElementById("expense-unit-price").value)
-      };
-      await addDoc(collection(db, "expenses"), expense);
-      alert("Gasto registrado");
     }
   </script>
 </body>
