@@ -1,57 +1,42 @@
-// -------- Registro --------
-function register() {
+import { auth, db } from "./firebase.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+export function register() {
   const email = document.getElementById("reg-username").value;
   const password = document.getElementById("reg-password").value;
   const errorMessage = document.getElementById("register-error");
   const successMessage = document.getElementById("register-success");
+  errorMessage.textContent = ""; successMessage.textContent = "";
 
-  errorMessage.textContent = "";
-  successMessage.textContent = "";
-
-  auth.createUserWithEmailAndPassword(email, password)
+  createUserWithEmailAndPassword(auth, email, password)
     .then(userCredential => {
       successMessage.textContent = "✅ Usuario registrado correctamente";
-      db.collection("usuarios").doc(userCredential.user.uid).set({
-        email: email,
-        creado: new Date()
-      });
-      setTimeout(() => flipCard(), 2000);
+      setDoc(doc(db, "usuarios", userCredential.user.uid), { email, creado: new Date() });
+      setTimeout(()=> window.location.href="dashboard.html", 1500);
     })
     .catch(err => errorMessage.textContent = err.message);
 }
 
-// -------- Login --------
-function login() {
+export function login() {
   const email = document.getElementById("login-username").value;
   const password = document.getElementById("login-password").value;
   const errorMessage = document.getElementById("login-error");
+  errorMessage.textContent = "";
 
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => window.location.href = "dashboard.html")
+  signInWithEmailAndPassword(auth, email, password)
+    .then(()=> window.location.href="dashboard.html")
     .catch(err => errorMessage.textContent = err.message);
 }
 
-// -------- Logout --------
-function logout() {
-  auth.signOut().then(() => window.location.href = "index.html");
+export function logout() {
+  signOut(auth).then(()=> window.location.href="index.html");
 }
 
-// -------- UI --------
-function togglePasswordVisibility(fieldId, iconElement) {
+export function togglePasswordVisibility(fieldId, iconElement) {
   const input = document.getElementById(fieldId);
-  if (input.type === "password") {
-    input.type = "text";
-    iconElement.classList.replace("fa-eye-slash", "fa-eye");
-  } else {
-    input.type = "password";
-    iconElement.classList.replace("fa-eye", "fa-eye-slash");
-  }
-}
-
-// -------- Dashboard Secciones --------
-function showSection(section) {
-  document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
-  document.getElementById(section + "-section").classList.add("active");
+  if(input.type==="password"){input.type="text"; iconElement.classList.replace("fa-eye-slash","fa-eye");}
+  else {input.type="password"; iconElement.classList.replace("fa-eye","fa-eye-slash");}
 }
 
 
