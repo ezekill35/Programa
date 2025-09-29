@@ -1,15 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐶 Discovery Pets - Login</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
 <body class="login-body">
+
 <div class="auth-wrapper">
   <div class="auth-card">
-    <div class="card-inner">
+    <div class="card-inner" id="card-inner">
       <!-- Login -->
       <div class="card-face card-front">
         <h1>🐶 Discovery Pets</h1>
+        <p>Bienvenido al sistema de gestión 🐾</p>
         <input type="email" id="login-email" placeholder="Correo electrónico">
         <input type="password" id="login-password" placeholder="Contraseña">
         <button class="primary-btn" onclick="login()">Entrar</button>
         <p>¿No tienes cuenta? <span class="link-btn" onclick="showRegister()">Crear una Cuenta</span></p>
+        <div id="login-error" class="error-message"></div>
       </div>
+
       <!-- Registro -->
       <div class="card-face card-back">
         <h1>Registro</h1>
@@ -17,11 +32,19 @@
         <input type="password" id="reg-password" placeholder="Contraseña">
         <button class="primary-btn" onclick="register()">Registrar</button>
         <p>¿Ya tienes cuenta? <span class="link-btn" onclick="showLogin()">Entrar</span></p>
+        <div id="register-error" class="error-message"></div>
+        <div id="register-success" class="success-message"></div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="firebase.js"></script>
 <script src="script.js"></script>
+</body>
+</html>
+
+
 
 
 
