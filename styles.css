@@ -1,35 +1,66 @@
+/* ====== Reset básico ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ====== Header ====== */
+.header {
+  background: linear-gradient(135deg, #16a085, #1abc9c);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
 /* ====== Funcionalidades ====== */
 .features {
-  max-width: 1000px;
-  margin: 40px auto;
+  max-width: 1200px;
+  margin: 60px auto;
   padding: 20px;
   text-align: center;
 }
 
 .features-title {
-  font-size: 2rem;
+  font-size: 2.4rem;
   color: #2c3e50;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
 }
 
 .feature-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 20px;
-  margin-bottom: 20px;
+  background: linear-gradient(135deg, #fdfdfd, #f8f9fa);
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  padding: 25px;
   text-align: left;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+  font-size: 2.2rem;
+  margin-bottom: 15px;
 }
 
 .feature-card h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   color: #16a085;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .feature-card ul {
@@ -38,11 +69,22 @@
 }
 
 .feature-card li {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  color: #444;
 }
 
 .feature-card b {
-  color: #34495e;
+  color: #2c3e50;
+}
+
+/* ====== Footer ====== */
+.footer {
+  background: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+  font-size: 0.9rem;
 }
