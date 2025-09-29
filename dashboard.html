@@ -19,7 +19,7 @@
 <nav class="dashboard-nav">
   <button id="btn-productos" onclick="showSection('productos')">📦 Productos</button>
   <button id="btn-proveedores" onclick="showSection('proveedores')">👥 Proveedores</button>
-  <button id="btn-facturas" onclick="showSection('compras')">🛒 Facturas</button>
+  <button id="btn-compras" onclick="showSection('compras')">🛒 Facturas</button>
   <button id="btn-ventas" onclick="showSection('ventas')">💰 Ventas</button>
   <button id="btn-gastos" onclick="showSection('gastos')">📄 Gastos</button>
 </nav>
@@ -73,7 +73,7 @@
     </div>
   </section>
 
-  <!-- Facturas -->
+  <!-- Compras / Facturas -->
   <section id="compras-section" class="content-section">
     <h2>🛒 Facturas</h2>
     <div class="dashboard-grid">
@@ -81,18 +81,16 @@
         <h3>➕ Registrar Factura</h3>
         <form id="form-factura" onsubmit="event.preventDefault(); agregarFactura();">
           <div class="form-group"><label>RUC (*)</label><input type="text" id="factura-ruc" required></div>
-          <div class="form-group"><label>Proveedor</label>
-            <select id="factura-proveedor" required>
-              <option value="">Seleccione un proveedor</option>
-            </select>
+          <div class="form-group"><label>Proveedor (*)</label>
+            <select id="factura-proveedor" required></select>
           </div>
-          <div class="form-group"><label>¿Desea registrarlo?</label>
-            <select id="factura-desea-registrar">
+          <div class="form-group"><label>Producto (*)</label><input type="text" id="factura-producto" required></div>
+          <div class="form-group"><label>Desea registrarlo</label>
+            <select id="factura-registrar">
               <option value="si">Sí</option>
               <option value="no">No</option>
             </select>
           </div>
-          <div class="form-group"><label>Producto (*)</label><input type="text" id="factura-producto" required></div>
           <div class="form-group"><label>Cantidad (*)</label><input type="number" id="factura-cantidad" required></div>
           <div class="form-group"><label>Precio S/ (*)</label><input type="number" id="factura-precio" step="0.01" required></div>
           <div class="form-group"><label>Fecha (*)</label><input type="date" id="factura-fecha" required></div>
@@ -127,27 +125,24 @@
 <script src="firebase.js"></script>
 <script src="dashboard.js"></script>
 <script>
-  // Resaltar opción activa
-  function highlightNav(activeId) {
-    document.querySelectorAll('.dashboard-nav button').forEach(btn => btn.style.background = '');
-    const btn = document.getElementById(activeId);
-    if(activeId === 'btn-productos') btn.style.background = 'fuchsia';
-    else if(activeId) btn.style.background = '#4CAF50';
-  }
+function showSection(section) {
+  const sections = document.querySelectorAll('.content-section');
+  sections.forEach(sec => sec.classList.remove('active'));
+  document.getElementById(section + '-section').classList.add('active');
 
-  function showSection(section) {
-    document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
-    document.getElementById(section + "-section").classList.add("active");
-
-    if(section === 'productos') highlightNav('btn-productos');
-    else if(section === 'proveedores') highlightNav('btn-proveedores');
-    else if(section === 'compras') highlightNav('btn-facturas');
-    else if(section === 'ventas') highlightNav('btn-ventas');
-    else if(section === 'gastos') highlightNav('btn-gastos');
-  }
+  // Cambiar colores de navegación según selección
+  document.querySelectorAll('.dashboard-nav button').forEach(btn => btn.style.background = '');
+  const btn = document.getElementById('btn-' + section);
+  if(section === 'productos') btn.style.background = '#ff00ff'; // fucsia
+  else if(section === 'proveedores') btn.style.background = '#00bfff'; // azul
+  else if(section === 'compras') btn.style.background = '#ffa500'; // naranja
+  else if(section === 'ventas') btn.style.background = '#32cd32'; // verde
+  else if(section === 'gastos') btn.style.background = '#ff4500'; // rojo
+}
 </script>
 </body>
 </html>
+
 
 
 
