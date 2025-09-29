@@ -12,7 +12,6 @@
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="card-inner" id="auth-card-inner">
-
         <!-- LOGIN -->
         <div class="card-face card-front">
           <h1>🐶 Discovery Pets</h1>
@@ -41,79 +40,27 @@
           <button class="primary-btn" onclick="register()">Registrar</button>
           <button class="secondary-btn" onclick="flipCard()">Ya tengo cuenta</button>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-      authDomain: "discovery-pets.firebaseapp.com",
-      projectId: "discovery-pets",
-      storageBucket: "discovery-pets.appspot.com",
-      messagingSenderId: "481355972999",
-      appId: "1:481355972999:web:a073cc5af230b32f4c5322",
-      measurementId: "G-W5RGYVTW3V"
-    };
+  <!-- Scripts propios -->
+  <script src="firebase.js"></script>
+  <script src="script.js"></script>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // -------- UI --------
-    window.flipCard = function() {
+  <script>
+    function flipCard() {
       document.getElementById("auth-card-inner").classList.toggle("is-flipped");
-    }
-
-    window.togglePasswordVisibility = function(fieldId, iconElement) {
-      const input = document.getElementById(fieldId);
-      if (input.type === "password") {
-        input.type = "text";
-        iconElement.classList.replace("fa-eye-slash", "fa-eye");
-      } else {
-        input.type = "password";
-        iconElement.classList.replace("fa-eye", "fa-eye-slash");
-      }
-    }
-
-    // -------- Registro --------
-    window.register = function() {
-      const email = document.getElementById("reg-username").value;
-      const password = document.getElementById("reg-password").value;
-      const errorMessage = document.getElementById("register-error");
-      const successMessage = document.getElementById("register-success");
-      errorMessage.textContent = "";
-      successMessage.textContent = "";
-
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(async (userCredential) => {
-          successMessage.textContent = "✅ Usuario registrado correctamente";
-          await setDoc(doc(db, "usuarios", userCredential.user.uid), { email, creado: new Date() });
-          setTimeout(() => flipCard(), 2000);
-        })
-        .catch(err => errorMessage.textContent = err.message);
-    }
-
-    // -------- Login --------
-    window.login = function() {
-      const email = document.getElementById("login-username").value;
-      const password = document.getElementById("login-password").value;
-      const errorMessage = document.getElementById("login-error");
-      errorMessage.textContent = "";
-
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => window.location.href = "dashboard.html")
-        .catch(err => errorMessage.textContent = err.message);
     }
   </script>
 </body>
 </html>
+
 
 
 
