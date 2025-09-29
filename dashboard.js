@@ -1,228 +1,168 @@
-// -------- Logout --------
-function logout() {
-  auth.signOut().then(() => window.location.href = "index.html");
-}
+// dashboard.js
 
-// -------- Mostrar Secciones --------
+// Mostrar secciones
 function showSection(section) {
-  document.querySelectorAll(".content-section").forEach(sec => sec.style.display = "none");
-  const target = document.getElementById(section + "-section");
-  if(target) target.style.display = "block";
-  document.getElementById("dashboard-title").textContent =
-    section.charAt(0).toUpperCase() + section.slice(1);
+  document.querySelectorAll(".content-section").forEach(sec => sec.classList.remove("active"));
+  document.getElementById(section + "-section").classList.add("active");
 }
 
-// -------- PRODUCTOS --------
+// Productos
 function addProduct() {
-  const sku = document.getElementById("product-sku").value;
-  const name = document.getElementById("product-name").value;
-  const brand = document.getElementById("product-brand").value;
-  const price = parseFloat(document.getElementById("product-price").value);
-  const stock = parseInt(document.getElementById("product-stock").value);
-  const unit = document.getElementById("product-unit").value;
-  const category = document.getElementById("product-category").value;
+  const prod = {
+    sku: document.getElementById("prod-sku").value,
+    nombre: document.getElementById("prod-nombre").value,
+    marca: document.getElementById("prod-marca").value,
+    precio: parseFloat(document.getElementById("prod-precio").value),
+    stock: parseInt(document.getElementById("prod-stock").value),
+    unidad: document.getElementById("prod-unidad").value,
+    categoria: document.getElementById("prod-categoria").value
+  };
 
-  db.collection("productos").add({ sku, name, brand, price, stock, unit, category })
-    .then(() => {
-      alert("✅ Producto agregado");
-      document.getElementById("add-product-form").reset();
-      loadProducts();
-    })
-    .catch(err => console.error(err));
+  db.collection("productos").add(prod).then(() => {
+    alert("Producto agregado ✅");
+    document.getElementById("add-product-form").reset();
+    loadProductos();
+  });
 }
 
-function loadProducts() {
-  const list = document.getElementById("products-list");
-  list.innerHTML = "";
+function loadProductos() {
+  const container = document.getElementById("productos-list");
+  container.innerHTML = "";
   db.collection("productos").get().then(snapshot => {
     snapshot.forEach(doc => {
-      const data = doc.data();
-      list.innerHTML += `
-        <div class="item-card">
-          <strong>${data.name}</strong> - ${data.sku} <br>
-          S/ ${data.price} | Stock: ${data.stock} | ${data.category}
-          <button onclick="deleteProduct('${doc.id}')">Eliminar</button>
-        </div>
-      `;
+      const p = doc.data();
+      container.innerHTML += `
+        <div class="card p-2 mb-2 shadow-sm">
+          <strong>${p.nombre}</strong> | SKU: ${p.sku} | Stock: ${p.stock} | Precio: S/ ${p.precio}
+        </div>`;
     });
   });
 }
 
-function deleteProduct(id) {
-  if(confirm("¿Eliminar este producto?")) {
-    db.collection("productos").doc(id).delete().then(() => loadProducts());
-  }
+// Proveedores
+function addProveedor() {
+  const prov = {
+    contacto: document.getElementById("prov-contacto").value,
+    nombre: document.getElementById("prov-nombre").value,
+    telefono: document.getElementById("prov-telefono").value,
+    fax: document.getElementById("prov-fax").value,
+    direccion: document.getElementById("prov-direccion").value,
+    productos: document.getElementById("prov-productos").value
+  };
+  db.collection("proveedores").add(prov).then(() => {
+    alert("Proveedor agregado ✅");
+    document.getElementById("add-proveedor-form").reset();
+    loadProveedores();
+  });
 }
 
-// -------- PROVEEDORES --------
-function addProvider() {
-  const name = document.getElementById("provider-name").value;
-  const business = document.getElementById("provider-business").value;
-  const phone = document.getElementById("provider-phone").value;
-  const fax = document.getElementById("provider-fax").value;
-  const address = document.getElementById("provider-address").value;
-  const productType = document.getElementById("provider-product-type").value;
-
-  db.collection("proveedores").add({ name, business, phone, fax, address, productType })
-    .then(() => {
-      alert("✅ Proveedor agregado");
-      document.getElementById("add-provider-form").reset();
-      loadProviders();
-    })
-    .catch(err => console.error(err));
-}
-
-function loadProviders() {
-  const list = document.getElementById("providers-list");
-  list.innerHTML = "";
+function loadProveedores() {
+  const container = document.getElementById("proveedores-list");
+  container.innerHTML = "";
   db.collection("proveedores").get().then(snapshot => {
     snapshot.forEach(doc => {
-      const data = doc.data();
-      list.innerHTML += `
-        <div class="item-card">
-          <strong>${data.business}</strong> - Contacto: ${data.name} <br>
-          Tel: ${data.phone} | Fax: ${data.fax || "-"} <br>
-          Productos: ${data.productType || "No especificado"}
-          <button onclick="deleteProvider('${doc.id}')">Eliminar</button>
-        </div>
-      `;
+      const p = doc.data();
+      container.innerHTML += `
+        <div class="card p-2 mb-2 shadow-sm">
+          <strong>${p.nombre}</strong> | Contacto: ${p.contacto} | Tel: ${p.telefono}
+        </div>`;
     });
   });
 }
 
-function deleteProvider(id) {
-  if(confirm("¿Eliminar este proveedor?")) {
-    db.collection("proveedores").doc(id).delete().then(() => loadProviders());
-  }
+// Compras
+function addCompra() {
+  const compra = {
+    ruc: document.getElementById("comp-ruc").value,
+    factura: document.getElementById("comp-factura").value,
+    fecha: document.getElementById("comp-fecha").value,
+    total: parseFloat(document.getElementById("comp-total").value)
+  };
+  db.collection("compras").add(compra).then(() => {
+    alert("Compra registrada ✅");
+    document.getElementById("add-compra-form").reset();
+    loadCompras();
+  });
 }
 
-// -------- COMPRAS --------
-function addPurchase() {
-  const provider = document.getElementById("purchase-provider").value;
-  const invoiceNumber = document.getElementById("purchase-invoice-number").value;
-  const total = parseFloat(document.getElementById("purchase-total").value);
-  const date = document.getElementById("purchase-date").value;
-
-  db.collection("compras").add({ provider, invoiceNumber, total, date })
-    .then(() => {
-      alert("✅ Compra registrada");
-      document.getElementById("add-purchase-form").reset();
-      loadPurchases();
-    })
-    .catch(err => console.error(err));
-}
-
-function loadPurchases() {
-  const list = document.getElementById("purchases-list");
-  list.innerHTML = "";
+function loadCompras() {
+  const container = document.getElementById("compras-list");
+  container.innerHTML = "";
   db.collection("compras").get().then(snapshot => {
     snapshot.forEach(doc => {
-      const data = doc.data();
-      list.innerHTML += `
-        <div class="item-card">
-          ${data.provider} | Factura: ${data.invoiceNumber} | Total: S/ ${data.total} | ${data.date}
-          <button onclick="deletePurchase('${doc.id}')">Eliminar</button>
-        </div>
-      `;
+      const c = doc.data();
+      container.innerHTML += `
+        <div class="card p-2 mb-2 shadow-sm">
+          Factura: ${c.factura} | RUC: ${c.ruc} | Total: S/ ${c.total}
+        </div>`;
     });
   });
 }
 
-function deletePurchase(id) {
-  if(confirm("¿Eliminar esta compra?")) {
-    db.collection("compras").doc(id).delete().then(() => loadPurchases());
-  }
+// Ventas
+function addVenta() {
+  const venta = {
+    cliente: document.getElementById("venta-cliente").value,
+    total: parseFloat(document.getElementById("venta-total").value)
+  };
+  db.collection("ventas").add(venta).then(() => {
+    alert("Venta registrada ✅");
+    document.getElementById("add-venta-form").reset();
+    loadVentas();
+  });
 }
 
-// -------- VENTAS --------
-function addSale() {
-  const client = document.getElementById("sale-client").value;
-  const total = parseFloat(document.getElementById("sale-total").value);
-  const date = document.getElementById("sale-date").value;
-
-  db.collection("ventas").add({ client, total, date })
-    .then(() => {
-      alert("✅ Venta registrada");
-      document.getElementById("add-sale-form").reset();
-      loadSales();
-    })
-    .catch(err => console.error(err));
-}
-
-function loadSales() {
-  const list = document.getElementById("sales-list");
-  list.innerHTML = "";
+function loadVentas() {
+  const container = document.getElementById("ventas-list");
+  container.innerHTML = "";
   db.collection("ventas").get().then(snapshot => {
     snapshot.forEach(doc => {
-      const data = doc.data();
-      list.innerHTML += `
-        <div class="item-card">
-          Cliente: ${data.client} | Total: S/ ${data.total} | ${data.date}
-          <button onclick="deleteSale('${doc.id}')">Eliminar</button>
-        </div>
-      `;
+      const v = doc.data();
+      container.innerHTML += `
+        <div class="card p-2 mb-2 shadow-sm">
+          Cliente: ${v.cliente} | Total: S/ ${v.total}
+        </div>`;
     });
   });
 }
 
-function deleteSale(id) {
-  if(confirm("¿Eliminar esta venta?")) {
-    db.collection("ventas").doc(id).delete().then(() => loadSales());
-  }
+// Gastos
+function addGasto() {
+  const gasto = {
+    descripcion: document.getElementById("gasto-desc").value,
+    tipo: document.getElementById("gasto-tipo").value,
+    cantidad: parseInt(document.getElementById("gasto-cantidad").value),
+    valor: parseFloat(document.getElementById("gasto-valor").value),
+    fecha: document.getElementById("gasto-fecha").value
+  };
+  db.collection("gastos").add(gasto).then(() => {
+    alert("Gasto registrado ✅");
+    document.getElementById("add-gasto-form").reset();
+    loadGastos();
+  });
 }
 
-// -------- GASTOS --------
-function addExpense() {
-  const description = document.getElementById("expense-description").value;
-  const type = document.getElementById("expense-type").value;
-  const quantity = parseInt(document.getElementById("expense-quantity").value);
-  const unitPrice = parseFloat(document.getElementById("expense-unit-price").value);
-  const date = document.getElementById("expense-date").value;
-  const total = quantity * unitPrice;
-
-  db.collection("gastos").add({ description, type, quantity, unitPrice, date, total })
-    .then(() => {
-      alert("✅ Gasto registrado");
-      document.getElementById("add-expense-form").reset();
-      loadExpenses();
-    })
-    .catch(err => console.error(err));
-}
-
-function loadExpenses() {
-  const list = document.getElementById("expenses-list");
-  list.innerHTML = "";
+function loadGastos() {
+  const container = document.getElementById("gastos-list");
+  container.innerHTML = "";
   db.collection("gastos").get().then(snapshot => {
     snapshot.forEach(doc => {
-      const data = doc.data();
-      list.innerHTML += `
-        <div class="item-card">
-          ${data.description} | Tipo: ${data.type} | Cant: ${data.quantity} | Total: S/ ${data.total} | ${data.date}
-          <button onclick="deleteExpense('${doc.id}')">Eliminar</button>
-        </div>
-      `;
+      const g = doc.data();
+      container.innerHTML += `
+        <div class="card p-2 mb-2 shadow-sm">
+          ${g.descripcion} | Tipo: ${g.tipo} | Total: S/ ${g.valor * g.cantidad}
+        </div>`;
     });
   });
 }
 
-// -------- Inicializar Dashboard --------
-function initializeDashboard() {
-  loadProducts();
-  loadProviders();
-  loadPurchases();
-  loadSales();
-  loadExpenses();
-  showSection("products");
-}
+// Cargar todo al inicio
+window.addEventListener("DOMContentLoaded", () => {
+  loadProductos();
+  loadProveedores();
+  loadCompras();
+  loadVentas();
+  loadGastos();
+});
 
-// Cargar dashboard al abrir
-window.onload = () => {
-  auth.onAuthStateChanged(user => {
-    if(user) {
-      initializeDashboard();
-    } else {
-      window.location.href = "index.html";
-    }
-  });
-};
 
