@@ -11,15 +11,15 @@
 
   <header class="dashboard-header">
     <h1>🐶 Discovery Pets</h1>
-    <button onclick="logout()">Cerrar Sesión</button>
+    <button type="button" onclick="logout()">Cerrar Sesión</button>
   </header>
 
   <nav class="dashboard-nav">
-    <button onclick="showSection('products')">Productos</button>
-    <button onclick="showSection('providers')">Proveedores</button>
-    <button onclick="showSection('invoices')">Compras</button>
-    <button onclick="showSection('sales')">Ventas</button>
-    <button onclick="showSection('expenses')">Gastos</button>
+    <button type="button" onclick="showSection('products')">Productos</button>
+    <button type="button" onclick="showSection('providers')">Proveedores</button>
+    <button type="button" onclick="showSection('invoices')">Compras</button>
+    <button type="button" onclick="showSection('sales')">Ventas</button>
+    <button type="button" onclick="showSection('expenses')">Gastos</button>
   </nav>
 
   <div class="dashboard-content">
@@ -45,21 +45,34 @@
     </div>
 
     <!-- Secciones -->
-    <section id="products-section" class="content-section active"></section>
-    <section id="providers-section" class="content-section"></section>
-    <section id="invoices-section" class="content-section"></section>
-    <section id="sales-section" class="content-section"></section>
-    <section id="expenses-section" class="content-section"></section>
+    <section id="products-section" class="content-section active">
+      <h2>Productos</h2>
+      <p>Aquí irán los formularios y tablas de productos.</p>
+    </section>
+
+    <section id="providers-section" class="content-section">
+      <h2>Proveedores</h2>
+      <p>Aquí irán los formularios y tablas de proveedores.</p>
+    </section>
+
+    <section id="invoices-section" class="content-section">
+      <h2>Compras / Facturas</h2>
+      <p>Aquí irán los formularios de facturas.</p>
+    </section>
+
+    <section id="sales-section" class="content-section">
+      <h2>Ventas</h2>
+      <p>Aquí irán los formularios de ventas.</p>
+    </section>
+
+    <section id="expenses-section" class="content-section">
+      <h2>Gastos</h2>
+      <p>Aquí irán los formularios de gastos.</p>
+    </section>
 
   </div>
 
   <script src="firebase.js"></script>
   <script src="script.js"></script>
-  <script>
-    function showSection(section) {
-      document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
-      document.getElementById(section + "-section").classList.add("active");
-    }
-  </script>
 </body>
 </html>
