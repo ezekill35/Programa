@@ -9,6 +9,7 @@
 </head>
 <body>
   <div id="main-app">
+    <!-- Sidebar -->
     <aside class="sidebar">
       <h1>Discovery Pets</h1>
       <p>Bienvenido, <span id="welcome-username"></span></p>
@@ -20,6 +21,7 @@
       </ul>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
       <header>
         <h2 id="dashboard-title">Dashboard</h2>
@@ -28,38 +30,51 @@
         </div>
       </header>
 
+      <!-- Secciones -->
       <section id="overview-section" class="content-section active">
         <h3>Resumen Rápido</h3>
+        <p>Aquí se mostrarán estadísticas del negocio en tiempo real.</p>
       </section>
+
       <section id="products-section" class="content-section">
         <h3>Gestión de Productos</h3>
+        <form onsubmit="addProduct(event)">
+          <input type="text" id="product-name" placeholder="Nombre del producto" required>
+          <input type="number" id="product-price" placeholder="Precio" required>
+          <input type="number" id="product-stock" placeholder="Stock" required>
+          <button type="submit" class="primary-btn">Agregar Producto</button>
+        </form>
+        <div id="products-list"></div>
       </section>
+
       <section id="providers-section" class="content-section">
         <h3>Gestión de Proveedores</h3>
+        <p>Aquí podrás registrar y listar proveedores.</p>
       </section>
     </main>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <!-- ===============================
+       Firebase SDKs (CDN compat v12.3.0)
+       =============================== -->
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
 
   <!-- Archivos propios -->
   <script src="firebase.js"></script>
   <script src="script.js"></script>
 
   <script>
-    // Protege la página: solo accesible si hay sesión activa
+    // Proteger la página: solo accesible si hay sesión activa
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = "index.html";
       } else {
         document.getElementById("welcome-username").textContent = user.email;
-        initializeDashboard();
+        loadProducts(); // cargar productos desde Firestore
       }
     });
   </script>
 </body>
 </html>
-
