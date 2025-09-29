@@ -176,4 +176,7 @@ function loadExpenses() {
     snapshot.forEach(doc => {
       const e = doc.data();
       const total = e.quantity * e.unitValue;
-      list.innerHTML += `<div class="card mb-2 p-2 shadow-sm">${
+      list.innerHTML += `<div class="card mb-2 p-2 shadow-sm">${e.desc} | ${e.type} | ${e.quantity} x S/ ${e.unitValue} = S/ ${total}</div>`;
+    });
+  });
+}
