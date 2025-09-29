@@ -1,105 +1,38 @@
-/* ====== Fondo ====== */
-.login-body {
+body.login-body {
   background: linear-gradient(135deg, #ff914d, #ffcc70);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
   font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
-/* ====== Contenedor principal ====== */
-.auth-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.login-card {
   width: 100%;
-}
-
-.auth-card {
-  perspective: 1000px; /* Para el efecto 3D */
-  max-width: 420px;
-  width: 100%;
-}
-
-/* ====== Inner card (flippable) ====== */
-.card-inner {
-  position: relative;
-  width: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.8s ease;
-}
-
-.card-inner.is-flipped {
-  transform: rotateY(180deg);
-}
-
-/* ====== Faces ====== */
-.card-face {
-  background: #fff;
+  max-width: 400px;
   border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  text-align: center;
-  backface-visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  background: #fff;
+  transform-style: preserve-3d;
+  transition: transform 0.8s;
 }
 
-.card-front { transform: rotateY(0deg); }
-.card-back { transform: rotateY(180deg); }
+.login-card:hover {
+  transform: rotateY(10deg) rotateX(5deg);
+}
 
-/* Inputs */
-.card-face input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
+input.form-control {
+  border-radius: 12px;
   border: 2px solid #f6c667;
-  border-radius: 10px;
-  font-size: 1rem;
+  padding: 12px;
 }
 
-.password-container { position: relative; }
-.password-container .toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
+button.btn-warning {
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+button.btn-outline-secondary {
+  border-radius: 12px;
+}
+
+.toggle-password {
   color: #888;
 }
 
-/* Botones */
-.primary-btn {
-  width: 100%;
-  background: #ff914d;
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-}
-.primary-btn:hover { background: #e67e22; }
 
-.secondary-btn {
-  width: 100%;
-  background: #f1f1f1;
-  border: none;
-  color: #333;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-}
-.secondary-btn:hover { background: #ddd; }
-
-/* Mensajes */
-.error-message { color: #e74c3c; font-size: 0.9rem; margin: 5px 0; }
-.success-message { color: #27ae60; font-size: 0.9rem; margin: 5px 0; }
