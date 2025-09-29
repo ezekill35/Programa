@@ -1,60 +1,98 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Discovery Pets</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body>
+<body class="dashboard-body">
+
   <header class="header">
-    <h1>🐶 Discovery Pets - Dashboard</h1>
-    <p class="subtitle">Gestión integral de tu tienda de mascotas</p>
+    <div class="header-left">
+      <h1>🐾 Discovery Pets</h1>
+      <p>Gestión integral de tu tienda de mascotas</p>
+    </div>
+    <button class="secondary-btn logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+    </button>
   </header>
 
-  <!-- Sección de funcionalidades -->
-  <section class="features">
-    <h1 class="features-title">🐾 Funcionalidades Clave</h1>
+  <nav class="dashboard-nav">
+    <button onclick="showSection('productos')"><i class="fas fa-dog"></i> Productos</button>
+    <button onclick="showSection('proveedores')"><i class="fas fa-truck"></i> Proveedores</button>
+    <button onclick="showSection('compras')"><i class="fas fa-shopping-cart"></i> Compras</button>
+    <button onclick="showSection('ventas')"><i class="fas fa-cash-register"></i> Ventas</button>
+    <button onclick="showSection('gastos')"><i class="fas fa-file-invoice-dollar"></i> Gastos</button>
+  </nav>
 
-    <div class="features-grid">
-      <!-- Card 1 -->
-      <div class="feature-card">
-        <div class="feature-icon">🧾</div>
-        <h2>Gestión de Compras y Ventas</h2>
-        <ul>
-          <li><b>Facturas de Compra:</b> Registro de RUC, número de factura y fecha, con cálculo de IGV/IVA y total.</li>
-          <li><b>Registro de Ventas:</b> Documenta cada transacción con clientes y seguimiento de ingresos.</li>
-          <li><b>Dashboard en Tiempo Real:</b> Ventas del mes en Soles (PEN) y Dólares (USD).</li>
-        </ul>
+  <main class="dashboard-content">
+
+    <!-- Productos -->
+    <section id="productos-section" class="content-section active">
+      <h2>📦 Registro de Productos</h2>
+      <div class="form-card">
+        <input type="text" id="prod-sku" placeholder="SKU">
+        <input type="text" id="prod-nombre" placeholder="Nombre">
+        <input type="text" id="prod-marca" placeholder="Marca">
+        <input type="number" id="prod-precio" placeholder="Precio">
+        <input type="text" id="prod-categoria" placeholder="Categoría">
+        <button class="primary-btn" onclick="agregarProducto()">Agregar Producto</button>
       </div>
+      <div id="productos-list" class="data-table"></div>
+    </section>
 
-      <!-- Card 2 -->
-      <div class="feature-card">
-        <div class="feature-icon">💼</div>
-        <h2>Control de Gastos y Proveedores</h2>
-        <ul>
-          <li><b>Gastos Operativos:</b> Clasificación de egresos (alquiler, sueldos, servicios).</li>
-          <li><b>Gestión de Proveedores:</b> Contactos completos (teléfono, dirección) y simulación de envío de correos.</li>
-        </ul>
+    <!-- Proveedores -->
+    <section id="proveedores-section" class="content-section">
+      <h2>📇 Registro de Proveedores</h2>
+      <div class="form-card">
+        <input type="text" id="prov-nombre" placeholder="Nombre">
+        <input type="text" id="prov-telefono" placeholder="Teléfono">
+        <input type="text" id="prov-direccion" placeholder="Dirección">
+        <button class="primary-btn" onclick="agregarProveedor()">Agregar Proveedor</button>
       </div>
+      <div id="proveedores-list" class="data-table"></div>
+    </section>
 
-      <!-- Card 3 -->
-      <div class="feature-card">
-        <div class="feature-icon">📦</div>
-        <h2>Gestión de Productos e Inventario</h2>
-        <ul>
-          <li><b>Registro de Productos:</b> SKU, descripción, marca, categoría y precio.</li>
-          <li><b>Alertas de Stock Bajo:</b> Aviso cuando un producto tiene menos de 10 unidades.</li>
-          <li><b>Actualización Automática:</b> Stock sube con compras y baja con ventas.</li>
-        </ul>
+    <!-- Compras -->
+    <section id="compras-section" class="content-section">
+      <h2>🛒 Registrar Compra</h2>
+      <div class="form-card">
+        <input type="text" id="comp-prov" placeholder="Proveedor">
+        <input type="text" id="comp-factura" placeholder="N° Factura">
+        <input type="date" id="comp-fecha">
+        <input type="number" id="comp-total" placeholder="Total">
+        <button class="primary-btn" onclick="registrarCompra()">Registrar Compra</button>
       </div>
-    </div>
-  </section>
+      <div id="compras-list" class="data-table"></div>
+    </section>
 
-  <footer class="footer">
-    <p>© 2025 Discovery Pets 🐾 - Todos los derechos reservados.</p>
-  </footer>
+    <!-- Ventas -->
+    <section id="ventas-section" class="content-section">
+      <h2>💰 Registrar Venta</h2>
+      <div class="form-card">
+        <input type="text" id="vent-cliente" placeholder="Cliente">
+        <input type="number" id="vent-total" placeholder="Total Venta">
+        <button class="primary-btn" onclick="registrarVenta()">Registrar Venta</button>
+      </div>
+      <div id="ventas-list" class="data-table"></div>
+    </section>
+
+    <!-- Gastos -->
+    <section id="gastos-section" class="content-section">
+      <h2>📄 Registrar Gasto</h2>
+      <div class="form-card">
+        <input type="text" id="gast-concepto" placeholder="Concepto">
+        <input type="number" id="gast-monto" placeholder="Monto">
+        <button class="primary-btn" onclick="registrarGasto()">Registrar Gasto</button>
+      </div>
+      <div id="gastos-list" class="data-table"></div>
+    </section>
+
+  </main>
+
+  <script src="firebase.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
-
-
