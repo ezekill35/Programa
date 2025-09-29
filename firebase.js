@@ -1,5 +1,5 @@
 // Firebase Config
-const firebaseConfig = {
+var firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
   projectId: "discovery-pets",
@@ -11,8 +11,5 @@ const firebaseConfig = {
 
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-
-
+var auth = firebase.auth();
+var db = firebase.firestore();
