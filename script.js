@@ -1,4 +1,4 @@
-// -------- Registro -------- 
+// -------- Registro --------
 function register() {
   const email = document.getElementById("reg-username").value;
   const password = document.getElementById("reg-password").value;
@@ -11,13 +11,11 @@ function register() {
   auth.createUserWithEmailAndPassword(email, password)
     .then(userCredential => {
       successMessage.textContent = "✅ Usuario registrado correctamente";
-      setTimeout(() => flipCard(), 2000);
-
-      // Guardar datos en Firestore
       db.collection("usuarios").doc(userCredential.user.uid).set({
         email: email,
         creado: new Date()
       });
+      setTimeout(() => flipCard(), 2000);
     })
     .catch(err => errorMessage.textContent = err.message);
 }
@@ -49,6 +47,7 @@ function togglePasswordVisibility(fieldId, iconElement) {
     iconElement.classList.replace("fa-eye", "fa-eye-slash");
   }
 }
+
 
 
 
