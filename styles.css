@@ -1,113 +1,192 @@
-/* Body y fondo */
-body.login-body {
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* ===== RESET ===== */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Card wrapper */
-.auth-wrapper {
-    perspective: 1000px;
+/* ===== BODY ===== */
+body {
+    background-color: #f0f2f5;
+    color: #333;
+    min-height: 100vh;
 }
 
-/* Card */
-.auth-card {
-    width: 350px;
-    height: 400px;
-    position: relative;
+/* ===== HEADER ===== */
+.dashboard-header {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
+.dashboard-header h1 {
+    font-size: 1.8rem;
+    color: #ff69b4;
 }
 
-.card-inner.flip {
-    transform: rotateY(180deg);
+.dashboard-header p {
+    font-size: 1rem;
+    color: #555;
 }
 
-.card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    padding: 30px 20px;
-    backface-visibility: hidden;
+.logout-btn {
+    background-color: #ff4500;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #e03e00;
+}
+
+/* ===== NAV ===== */
+.dashboard-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: #fff;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-nav button {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dashboard-nav button:hover {
+    background-color: #dcdcdc;
+}
+
+/* ===== MAIN CONTENT ===== */
+.dashboard-main {
+    padding: 20px;
+}
+
+/* ===== SECTIONS ===== */
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* ===== GRID ===== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* ===== FORMS ===== */
+.form-card h3 {
+    margin-bottom: 15px;
+    color: #ff69b4;
+}
+
+.form-group {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    margin-bottom: 10px;
 }
 
-.card-front {
-    z-index: 2;
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
 }
 
-.card-back {
-    transform: rotateY(180deg);
+.form-group input,
+.form-group select {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: 0.3s;
 }
 
-/* Inputs */
-.card-face input {
-    width: 100%;
-    padding: 12px 10px;
-    margin: 8px 0;
-    border-radius: 6px;
-    border: 1px solid #ccd0d5;
-    box-sizing: border-box;
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #ff69b4;
+    outline: none;
 }
 
-/* Botones */
 .primary-btn {
-    width: 100%;
-    background-color: #1877f2;
-    color: white;
+    background-color: #ff69b4;
+    color: #fff;
     border: none;
-    padding: 12px;
-    margin-top: 10px;
-    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
 .primary-btn:hover {
-    background-color: #165db6;
+    background-color: #ff1493;
 }
 
-/* Links */
-.link-btn {
-    color: #1877f2;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.link-btn:hover {
-    text-decoration: underline;
-}
-
-/* Mensajes de error/éxito */
-.error-message { color: red; margin-top: 5px; font-size: 14px; }
-.success-message { color: green; margin-top: 5px; font-size: 14px; }
-
-/* Títulos */
-.card-face h1 {
+/* ===== LISTS ===== */
+.list-card h3 {
     margin-bottom: 10px;
-    font-size: 26px;
-    text-align: center;
+    color: #ff69b4;
 }
 
-.card-face p {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 20px;
+.list-items {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.list-items div {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+.list-items div:last-child {
+    border-bottom: none;
+}
+
+/* ===== SELECTION COLORS NAV ===== */
+#btn-productos.active { background-color: #ff00ff; color: #fff; }
+#btn-proveedores.active { background-color: #00bfff; color: #fff; }
+#btn-compras.active { background-color: #ffa500; color: #fff; }
+#btn-ventas.active { background-color: #32cd32; color: #fff; }
+#btn-gastos.active { background-color: #ff4500; color: #fff; }
+
+/* ===== SCROLLBAR ESTILO ===== */
+.list-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.list-items::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+.list-items::-webkit-scrollbar-thumb {
+    background-color: #ff69b4;
+    border-radius: 3px;
 }
 
 
