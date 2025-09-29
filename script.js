@@ -1,39 +1,16 @@
-// -------- Registro --------
-function register() {
-  const email = document.getElementById("reg-username").value;
-  const password = document.getElementById("reg-password").value;
-  const errorMessage = document.getElementById("register-error");
-  const successMessage = document.getElementById("register-success");
+// Inicializar Firebase (usa tu configuración)
+const firebaseConfig = {
+  apiKey: "TU_API_KEY",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "TU_MESSAGING_ID",
+  appId: "TU_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-  errorMessage.textContent = "";
-  successMessage.textContent = "";
-
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      successMessage.textContent = "✅ Usuario registrado correctamente";
-      setTimeout(() => flipCard(), 2000);
-
-      // Guardar datos en Firestore
-      db.collection("usuarios").doc(userCredential.user.uid).set({
-        email: email,
-        creado: new Date()
-      });
-    })
-    .catch(err => errorMessage.textContent = err.message);
-}
-
-// -------- Login --------
-function login() {
-  const email = document.getElementById("login-username").value;
-  const password = document.getElementById("login-password").value;
-  const errorMessage = document.getElementById("login-error");
-
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => window.location.href = "dashboard.html")
-    .catch(err => errorMessage.textContent = err.message);
-}
-
-// -------- UI --------
+// Mostrar/ocultar contraseña
 function togglePasswordVisibility(fieldId, iconElement) {
   const input = document.getElementById(fieldId);
   if (input.type === "password") {
@@ -44,6 +21,18 @@ function togglePasswordVisibility(fieldId, iconElement) {
     iconElement.classList.replace("fa-eye", "fa-eye-slash");
   }
 }
+
+// Login
+function login() {
+  const email = document.getElementById("login-username").value;
+  const password = document.getElementById("login-password").value;
+  const errorMessage = document.getElementById("login-error");
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => window.location.href = "dashboard.html")
+    .catch(err => errorMessage.textContent = err.message);
+}
+
 
 
 
