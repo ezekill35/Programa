@@ -6,11 +6,11 @@
   <title>Discovery Pets - Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <div class="d-flex" id="dashboard-wrapper">
+
   <!-- Sidebar -->
   <nav class="sidebar bg-dark text-white p-3">
     <h3 class="text-warning text-center mb-4">🐶 Discovery Pets</h3>
@@ -27,34 +27,15 @@
 
   <!-- Main Content -->
   <div class="main-content flex-fill p-4">
+
     <!-- Resumen -->
     <section id="resumen-section" class="content-section active">
-      <h2 class="mb-4">📊 Resumen Rápido</h2>
-      <div class="row g-3">
-        <div class="col-md-3">
-          <div class="card p-3 text-center shadow-sm">
-            <h5>Total de Productos</h5>
-            <p id="total-productos">0</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card p-3 text-center shadow-sm">
-            <h5>Stock Bajo (&lt;10)</h5>
-            <p id="stock-bajo">0</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card p-3 text-center shadow-sm">
-            <h5>Total de Proveedores</h5>
-            <p id="total-proveedores">0</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card p-3 text-center shadow-sm">
-            <h5>Ventas del Mes</h5>
-            <p id="ventas-mes">S/ 0.00</p>
-          </div>
-        </div>
+      <h2>📊 Resumen Rápido</h2>
+      <div class="row g-3 mt-3">
+        <div class="col-md-3"><div class="card p-3 text-center shadow-sm"><h5>Total Productos</h5><p id="total-productos">0</p></div></div>
+        <div class="col-md-3"><div class="card p-3 text-center shadow-sm"><h5>Stock Bajo (&lt;10)</h5><p id="stock-bajo">0</p></div></div>
+        <div class="col-md-3"><div class="card p-3 text-center shadow-sm"><h5>Total Proveedores</h5><p id="total-proveedores">0</p></div></div>
+        <div class="col-md-3"><div class="card p-3 text-center shadow-sm"><h5>Ventas del Mes</h5><p id="ventas-mes">S/ 0.00</p></div></div>
       </div>
       <div class="mt-4">
         <h4>Últimas Facturas de Compra</h4>
@@ -66,22 +47,18 @@
     <section id="productos-section" class="content-section">
       <h2>📦 Registro de Productos</h2>
       <form id="add-product-form" class="row g-3 mb-3" onsubmit="event.preventDefault(); addProduct();">
-        <div class="col-md-4"><input type="text" id="product-sku" class="form-control" placeholder="Código / SKU (*)" required></div>
-        <div class="col-md-4"><input type="text" id="product-name" class="form-control" placeholder="Descripción" required></div>
-        <div class="col-md-2"><input type="text" id="product-brand" class="form-control" placeholder="Marca"></div>
-        <div class="col-md-2"><input type="number" id="product-price" class="form-control" placeholder="Precio Venta S/ (*)" required></div>
-        <div class="col-md-2"><input type="number" id="product-stock" class="form-control" placeholder="Stock Inicial (*)" required></div>
-        <div class="col-md-2"><input type="text" id="product-unit" class="form-control" placeholder="Unidad de Medida" value="unidades"></div>
-        <div class="col-md-2">
-          <select id="product-category" class="form-select" required>
-            <option value="">Categoría (*)</option>
-            <option value="Perros">Perros</option>
-            <option value="Gatos">Gatos</option>
-          </select>
-        </div>
-        <div class="col-md-4">
-          <button type="submit" class="btn btn-warning w-100">Agregar Producto</button>
-        </div>
+        <input type="text" id="product-sku" class="form-control col-md-3" placeholder="Código / SKU (*)" required>
+        <input type="text" id="product-name" class="form-control col-md-3" placeholder="Descripción" required>
+        <input type="text" id="product-brand" class="form-control col-md-2" placeholder="Marca">
+        <input type="number" id="product-price" class="form-control col-md-2" placeholder="Precio Venta S/ (*)" required>
+        <input type="number" id="product-stock" class="form-control col-md-2" placeholder="Stock Inicial (*)" required>
+        <input type="text" id="product-unit" class="form-control col-md-2" placeholder="Unidad de Medida" value="unidades">
+        <select id="product-category" class="form-select col-md-2" required>
+          <option value="">Categoría (*)</option>
+          <option value="Perros">Perros</option>
+          <option value="Gatos">Gatos</option>
+        </select>
+        <button type="submit" class="btn btn-warning col-md-2">Agregar Producto</button>
       </form>
       <div id="productos-list"></div>
     </section>
@@ -90,13 +67,13 @@
     <section id="proveedores-section" class="content-section">
       <h2>👥 Registro de Proveedores</h2>
       <form id="add-provider-form" class="row g-3 mb-3" onsubmit="event.preventDefault(); addProvider();">
-        <div class="col-md-4"><input type="text" id="provider-contact" class="form-control" placeholder="Nombre del Contacto (*)" required></div>
-        <div class="col-md-4"><input type="text" id="provider-company" class="form-control" placeholder="Nombre Comercial (*)" required></div>
-        <div class="col-md-2"><input type="text" id="provider-phone" class="form-control" placeholder="Teléfono (*)" required></div>
-        <div class="col-md-2"><input type="text" id="provider-fax" class="form-control" placeholder="Fax (Opcional)"></div>
-        <div class="col-md-6"><input type="text" id="provider-address" class="form-control" placeholder="Dirección"></div>
-        <div class="col-md-6"><input type="text" id="provider-products" class="form-control" placeholder="Tipo de Producto"></div>
-        <div class="col-md-4"><button type="submit" class="btn btn-warning w-100">Agregar Proveedor</button></div>
+        <input type="text" id="provider-contact" class="form-control col-md-3" placeholder="Nombre del Contacto (*)" required>
+        <input type="text" id="provider-name" class="form-control col-md-3" placeholder="Nombre Comercial (*)" required>
+        <input type="text" id="provider-phone" class="form-control col-md-2" placeholder="Teléfono (*)" required>
+        <input type="text" id="provider-fax" class="form-control col-md-2" placeholder="Fax (Opcional)">
+        <input type="text" id="provider-address" class="form-control col-md-2" placeholder="Dirección">
+        <input type="text" id="provider-products" class="form-control col-md-3" placeholder="Tipo de Producto Ej: Alimento Seco">
+        <button type="submit" class="btn btn-warning col-md-2">Agregar Proveedor</button>
       </form>
       <div id="providers-list"></div>
     </section>
@@ -104,32 +81,54 @@
     <!-- Compras / Facturas -->
     <section id="compras-section" class="content-section">
       <h2>🛒 Registrar Factura de Compra</h2>
-      <div id="invoices-section"></div>
+      <form id="add-invoice-form" onsubmit="event.preventDefault(); addInvoice();">
+        <div class="row g-3">
+          <input type="text" id="invoice-ruc" class="form-control col-md-3" placeholder="RUC Factura (*)" required>
+          <input type="text" id="invoice-number" class="form-control col-md-3" placeholder="Número Factura (*)" required>
+          <input type="text" id="invoice-description" class="form-control col-md-3" placeholder="Descripción (*)" required>
+          <input type="number" id="invoice-quantity" class="form-control col-md-2" placeholder="Cantidad (*)" required>
+          <input type="number" id="invoice-unit-price" class="form-control col-md-2" placeholder="Valor Unitario (S/) (*)" required>
+          <input type="date" id="invoice-date" class="form-control col-md-3" required>
+          <button type="submit" class="btn btn-warning col-md-2">Registrar Compra</button>
+        </div>
+      </form>
+      <div id="invoices-list"></div>
     </section>
 
     <!-- Ventas -->
     <section id="ventas-section" class="content-section">
       <h2>💰 Registrar Venta</h2>
-      <div id="sales-section"></div>
+      <form id="add-sale-form" class="row g-3 mb-3" onsubmit="event.preventDefault(); addSale();">
+        <input type="text" id="sale-client" class="form-control col-md-3" placeholder="Cliente (*)" required>
+        <input type="number" id="sale-total" class="form-control col-md-3" placeholder="Total Venta S/ (*)" required>
+        <button type="submit" class="btn btn-warning col-md-2">Registrar Venta</button>
+      </form>
+      <div id="sales-list"></div>
     </section>
 
     <!-- Gastos -->
     <section id="gastos-section" class="content-section">
-      <h2>📄 Registrar Gasto Operativo</h2>
-      <div id="expenses-section"></div>
+      <h2>➕ Registrar Gasto Operativo</h2>
+      <form id="add-expense-form" class="row g-3 mb-3" onsubmit="event.preventDefault(); addExpense();">
+        <input type="text" id="expense-desc" class="form-control col-md-3" placeholder="Descripción (*)" required>
+        <input type="text" id="expense-type" class="form-control col-md-3" placeholder="Tipo de Gasto (*)" required>
+        <input type="number" id="expense-quantity" class="form-control col-md-2" placeholder="Cantidad (*)" required>
+        <input type="number" id="expense-unit" class="form-control col-md-2" placeholder="Valor Unitario S/ (*)" required>
+        <input type="date" id="expense-date" class="form-control col-md-3" required>
+        <button type="submit" class="btn btn-warning col-md-2">Registrar Gasto</button>
+      </form>
+      <div id="expenses-list"></div>
     </section>
 
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
 <script src="dashboard.js"></script>
-
 </body>
 </html>
+
+
 
 
