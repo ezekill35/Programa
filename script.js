@@ -1,48 +1,39 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐶 Discovery Pets - Login</title>
-<link rel="stylesheet" href="styles.css">
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-</head>
-<body class="login-body">
+const cardInner = document.getElementById('card-inner');
 
-<div class="auth-wrapper">
-  <div class="auth-card">
-    <div class="card-inner" id="card-inner">
-      <!-- Login -->
-      <div class="card-face card-front">
-        <h1>🐶 Discovery Pets</h1>
-        <p>Bienvenido al sistema de gestión 🐾</p>
-        <input type="email" id="login-email" placeholder="Correo electrónico">
-        <input type="password" id="login-password" placeholder="Contraseña">
-        <button class="primary-btn" onclick="login()">Entrar</button>
-        <p>¿No tienes cuenta? <span class="link-btn" onclick="showRegister()">Crear una Cuenta</span></p>
-        <div id="login-error" class="error-message"></div>
-      </div>
+function showRegister() {
+  cardInner.classList.add('is-flipped');
+}
+function showLogin() {
+  cardInner.classList.remove('is-flipped');
+}
 
-      <!-- Registro -->
-      <div class="card-face card-back">
-        <h1>Registro</h1>
-        <input type="email" id="reg-email" placeholder="Correo electrónico">
-        <input type="password" id="reg-password" placeholder="Contraseña">
-        <button class="primary-btn" onclick="register()">Registrar</button>
-        <p>¿Ya tienes cuenta? <span class="link-btn" onclick="showLogin()">Entrar</span></p>
-        <div id="register-error" class="error-message"></div>
-        <div id="register-success" class="success-message"></div>
-      </div>
-    </div>
-  </div>
-</div>
+// LOGIN
+function login() {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => window.location.href = "dashboard.html")
+    .catch(err => {
+      document.getElementById("login-error").innerText = err.message;
+    });
+}
 
-<script src="firebase.js"></script>
-<script src="script.js"></script>
-</body>
-</html>
+// REGISTRO
+function register() {
+  const email = document.getElementById("reg-email").value;
+  const password = document.getElementById("reg-password").value;
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById("register-success").innerText = "Usuario registrado correctamente";
+      document.getElementById("register-error").innerText = "";
+    })
+    .catch(err => {
+      document.getElementById("register-error").innerText = err.message;
+      document.getElementById("register-success").innerText = "";
+    });
+}
+
+
 
 
 
