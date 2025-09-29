@@ -3,7 +3,7 @@ function flipCard() {
   document.getElementById("card").classList.toggle("is-flipped");
 }
 
-// ====== Toggle contraseña ======
+// ====== Mostrar/Ocultar contraseña ======
 function togglePasswordVisibility(fieldId, iconElement) {
   const input = document.getElementById(fieldId);
   if (input.type === "password") {
@@ -15,7 +15,7 @@ function togglePasswordVisibility(fieldId, iconElement) {
   }
 }
 
-// ====== Registro (Firebase) ======
+// ====== Registro Firebase ======
 function register() {
   const email = document.getElementById("reg-username").value;
   const password = document.getElementById("reg-password").value;
@@ -30,7 +30,6 @@ function register() {
       successMessage.textContent = "✅ Usuario registrado correctamente";
       setTimeout(() => flipCard(), 2000);
 
-      // Guardar en Firestore
       db.collection("usuarios").doc(userCredential.user.uid).set({
         email: email,
         creado: new Date()
@@ -39,7 +38,7 @@ function register() {
     .catch(err => errorMessage.textContent = err.message);
 }
 
-// ====== Login (Firebase) ======
+// ====== Login Firebase ======
 function login() {
   const email = document.getElementById("login-username").value;
   const password = document.getElementById("login-password").value;
@@ -49,6 +48,7 @@ function login() {
     .then(() => window.location.href = "dashboard.html")
     .catch(err => errorMessage.textContent = err.message);
 }
+
 
 
 
