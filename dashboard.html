@@ -17,11 +17,11 @@
 </header>
 
 <nav class="dashboard-nav">
-  <button onclick="showSection('productos')">📦 Productos</button>
-  <button onclick="showSection('proveedores')">👥 Proveedores</button>
-  <button onclick="showSection('compras')">🛒 Compras</button>
-  <button onclick="showSection('ventas')">💰 Ventas</button>
-  <button onclick="showSection('gastos')">📄 Gastos</button>
+  <button id="btn-productos" onclick="showSection('productos')">📦 Productos</button>
+  <button id="btn-proveedores" onclick="showSection('proveedores')">👥 Proveedores</button>
+  <button id="btn-facturas" onclick="showSection('compras')">🛒 Facturas</button>
+  <button id="btn-ventas" onclick="showSection('ventas')">💰 Ventas</button>
+  <button id="btn-gastos" onclick="showSection('gastos')">📄 Gastos</button>
 </nav>
 
 <main class="dashboard-main">
@@ -56,6 +56,7 @@
       <div class="card form-card">
         <h3>➕ Agregar Nuevo Proveedor</h3>
         <form id="form-proveedor" onsubmit="event.preventDefault(); agregarProveedor();">
+          <div class="form-group"><label>RUC (*)</label><input type="text" id="proveedor-ruc" required></div>
           <div class="form-group"><label>Nombre Comercial (*)</label><input type="text" id="proveedor-nombre" required></div>
           <div class="form-group"><label>Contacto (*)</label><input type="text" id="proveedor-contacto" required></div>
           <div class="form-group"><label>Teléfono (*)</label><input type="text" id="proveedor-telefono" required></div>
@@ -72,17 +73,24 @@
     </div>
   </section>
 
-  <!-- Compras / Facturas -->
+  <!-- Facturas -->
   <section id="compras-section" class="content-section">
-    <h2>🛒 Compras / Facturas</h2>
+    <h2>🛒 Facturas</h2>
     <div class="dashboard-grid">
       <div class="card form-card">
-        <h3>➕ Registrar Factura de Compra</h3>
+        <h3>➕ Registrar Factura</h3>
         <form id="form-factura" onsubmit="event.preventDefault(); agregarFactura();">
           <div class="form-group"><label>RUC (*)</label><input type="text" id="factura-ruc" required></div>
-          <div class="form-group"><label>Número Factura (*)</label><input type="text" id="factura-numero" required></div>
-          <div class="form-group"><label>Proveedor (*)</label>
-            <select id="factura-proveedor" required></select>
+          <div class="form-group"><label>Proveedor</label>
+            <select id="factura-proveedor" required>
+              <option value="">Seleccione un proveedor</option>
+            </select>
+          </div>
+          <div class="form-group"><label>¿Desea registrarlo?</label>
+            <select id="factura-desea-registrar">
+              <option value="si">Sí</option>
+              <option value="no">No</option>
+            </select>
           </div>
           <div class="form-group"><label>Producto (*)</label><input type="text" id="factura-producto" required></div>
           <div class="form-group"><label>Cantidad (*)</label><input type="number" id="factura-cantidad" required></div>
@@ -101,52 +109,16 @@
   <!-- Ventas -->
   <section id="ventas-section" class="content-section">
     <h2>💰 Ventas</h2>
-    <div class="dashboard-grid">
-      <div class="card form-card">
-        <h3>➕ Registrar Venta</h3>
-        <form id="form-venta" onsubmit="event.preventDefault(); agregarVenta();">
-          <div class="form-group"><label>Cliente (*)</label><input type="text" id="venta-cliente" required></div>
-          <div class="form-group"><label>Producto (*)</label><input type="text" id="venta-producto" required></div>
-          <div class="form-group"><label>Cantidad (*)</label><input type="number" id="venta-cantidad" required></div>
-          <div class="form-group"><label>Total S/ (*)</label><input type="number" id="venta-total" step="0.01" required></div>
-          <div class="form-group"><label>Fecha (*)</label><input type="date" id="venta-fecha" required></div>
-          <button type="submit" class="primary-btn">Registrar Venta</button>
-        </form>
-      </div>
-      <div class="card list-card">
-        <h3>💰 Ventas Registradas</h3>
-        <div id="lista-ventas" class="list-items"></div>
-      </div>
+    <div class="list-card">
+      <div id="lista-ventas" class="list-items"></div>
     </div>
   </section>
 
   <!-- Gastos -->
   <section id="gastos-section" class="content-section">
     <h2>📄 Gastos</h2>
-    <div class="dashboard-grid">
-      <div class="card form-card">
-        <h3>➕ Registrar Gasto</h3>
-        <form id="form-gasto" onsubmit="event.preventDefault(); agregarGasto();">
-          <div class="form-group"><label>Concepto (*)</label><input type="text" id="gasto-concepto" required></div>
-          <div class="form-group"><label>Tipo (*)</label>
-            <select id="gasto-tipo" required>
-              <option value="Alquiler">Alquiler</option>
-              <option value="Servicios">Servicios</option>
-              <option value="Insumos">Insumos</option>
-              <option value="Otros">Otros</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Cantidad (*)</label><input type="number" id="gasto-cantidad" required></div>
-          <div class="form-group"><label>Valor Unitario S/ (*)</label><input type="number" id="gasto-valor" step="0.01" required></div>
-          <div class="form-group"><label>Total S/</label><input type="number" id="gasto-total" step="0.01" readonly></div>
-          <div class="form-group"><label>Fecha (*)</label><input type="date" id="gasto-fecha" required></div>
-          <button type="submit" class="primary-btn">Registrar Gasto</button>
-        </form>
-      </div>
-      <div class="card list-card">
-        <h3>📄 Gastos Registrados</h3>
-        <div id="lista-gastos" class="list-items"></div>
-      </div>
+    <div class="list-card">
+      <div id="lista-gastos" class="list-items"></div>
     </div>
   </section>
 
@@ -154,7 +126,29 @@
 
 <script src="firebase.js"></script>
 <script src="dashboard.js"></script>
-</body
+<script>
+  // Resaltar opción activa
+  function highlightNav(activeId) {
+    document.querySelectorAll('.dashboard-nav button').forEach(btn => btn.style.background = '');
+    const btn = document.getElementById(activeId);
+    if(activeId === 'btn-productos') btn.style.background = 'fuchsia';
+    else if(activeId) btn.style.background = '#4CAF50';
+  }
+
+  function showSection(section) {
+    document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
+    document.getElementById(section + "-section").classList.add("active");
+
+    if(section === 'productos') highlightNav('btn-productos');
+    else if(section === 'proveedores') highlightNav('btn-proveedores');
+    else if(section === 'compras') highlightNav('btn-facturas');
+    else if(section === 'ventas') highlightNav('btn-ventas');
+    else if(section === 'gastos') highlightNav('btn-gastos');
+  }
+</script>
+</body>
+</html>
+
 
 
 
