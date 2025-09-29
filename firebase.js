@@ -1,14 +1,20 @@
-// ⚠️ Reemplaza con los datos de tu proyecto Firebase
+// ==============================================
+// Configuración de Firebase para Discovery Pets
+// ==============================================
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TUPROYECTO.firebaseapp.com",
-  projectId: "TUPROYECTO",
-  storageBucket: "TUPROYECTO.appspot.com",
-  messagingSenderId: "XXXXXX",
-  appId: "1:XXXXXX:web:XXXXXX"
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com", // corregido
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:a073cc5af230b32f4c5322",
+  measurementId: "G-W5RGYVTW3V"
 };
 
+// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Servicios principales
+const auth = firebase.auth();      // para login/registro
+const db = firebase.firestore();   // para datos del negocio
+
