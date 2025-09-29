@@ -1,136 +1,41 @@
-/* ====== Fondo ====== */
-.login-body {
-  background: linear-gradient(135deg, #ff914d, #ffcc70);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  font-family: "Poppins", "Segoe UI", sans-serif;
-}
+/* ====== General ====== */
+body { font-family:"Poppins", sans-serif; margin:0; background:#fefaf2; color:#333; }
+button { cursor:pointer; border:none; border-radius:8px; transition:0.3s; }
 
-/* ====== Contenedor principal ====== */
-.auth-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
+/* ====== Login ====== */
+.login-body { display:flex; justify-content:center; align-items:center; min-height:100vh; background: linear-gradient(135deg, #ff914d, #ffcc70); }
+.auth-wrapper { display:flex; justify-content:center; align-items:center; width:100%; }
+.auth-card { perspective:1000px; max-width:420px; width:100%; }
+.auth-header { text-align:center; margin-bottom:10px; }
+.auth-header h1 { font-size:2rem; color:#ff914d; }
+.card-inner { position:relative; width:100%; transform-style: preserve-3d; transition: transform 0.8s ease; }
+.card-inner.is-flipped { transform: rotateY(180deg); }
+.card-face { background:white; border-radius:20px; padding:30px; box-shadow:0 8px 25px rgba(0,0,0,0.15); text-align:center; backface-visibility:hidden; position:absolute; top:0; left:0; width:100%; }
+.card-front { transform: rotateY(0deg); }
+.card-back { transform: rotateY(180deg); }
+.card-face input { width:100%; padding:12px; margin:10px 0; border:2px solid #f6c667; border-radius:10px; font-size:1rem; }
+.password-container { position:relative; }
+.password-container .toggle-password { position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:#888; }
+.primary-btn { width:100%; background:#ff914d; border:none; color:white; padding:12px; border-radius:10px; font-size:1rem; cursor:pointer; margin-top:10px; transition: background 0.3s ease; }
+.primary-btn:hover { background:#e67e22; }
+.secondary-btn { width:100%; background:#f1f1f1; border:none; color:#333; padding:12px; border-radius:10px; font-size:0.95rem; cursor:pointer; margin-top:10px; transition: background 0.3s ease; }
+.secondary-btn:hover { background:#ddd; }
+.error-message { color:#e74c3c; font-size:0.9rem; margin:5px 0; }
+.success-message { color:#27ae60; font-size:0.9rem; margin:5px 0; }
 
-.auth-card {
-  perspective: 1000px; /* Para el efecto 3D */
-  max-width: 420px;
-  width: 100%;
-}
+/* ====== Dashboard ====== */
+.dashboard-body { display:flex; flex-direction:column; min-height:100vh; }
+.header { display:flex; justify-content:space-between; align-items:center; padding:20px; background:#ff914d; color:white; }
+.header h1 { margin:0; font-size:1.8rem; }
+.header p { margin:0; font-size:0.9rem; }
+.dashboard-nav { display:flex; justify-content:center; background:#ffcc70; padding:10px; flex-wrap:wrap; }
+.dashboard-nav button { margin:5px; padding:10px 15px; background:white; font-weight:bold; border-radius:10px; display:flex; align-items:center; gap:5px; }
+.dashboard-nav button:hover { background:#ffe2a1; }
+.logout-btn { display:flex; align-items:center; gap:5px; }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.auth-header h1 {
-  font-size: 2rem;
-  color: #ff914d;
-}
-
-/* ====== Inner card (flippable) ====== */
-.card-inner {
-  position: relative;
-  width: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.8s ease;
-}
-
-.card-inner.is-flipped {
-  transform: rotateY(180deg);
-}
-
-/* ====== Faces ====== */
-.card-face {
-  background: #fff;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  text-align: center;
-  backface-visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-.card-front {
-  transform: rotateY(0deg);
-}
-
-.card-back {
-  transform: rotateY(180deg);
-}
-
-/* Inputs */
-.card-face input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 2px solid #f6c667;
-  border-radius: 10px;
-  font-size: 1rem;
-}
-
-.password-container {
-  position: relative;
-}
-
-.password-container .toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #888;
-}
-
-/* Botones */
-.primary-btn {
-  width: 100%;
-  background: #ff914d;
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-}
-.primary-btn:hover {
-  background: #e67e22;
-}
-
-.secondary-btn {
-  width: 100%;
-  background: #f1f1f1;
-  border: none;
-  color: #333;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-}
-.secondary-btn:hover {
-  background: #ddd;
-}
-
-/* Mensajes */
-.error-message {
-  color: #e74c3c;
-  font-size: 0.9rem;
-  margin: 5px 0;
-}
-.success-message {
-  color: #27ae60;
-  font-size: 0.9rem;
-  margin: 5px 0;
-}
+/* ====== Sections ====== */
+.content-section { display:none; padding:20px; }
+.content-section.active { display:block; }
+.form-card { background:white; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1); margin-bottom:20px; display:grid; gap:10px; }
+input { padding:10px; border:2px solid #ffcc70; border-radius:8px; font-size:0.95rem; }
+.data-table { background:white; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.1); padding:15px; }
