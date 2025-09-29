@@ -1,15 +1,15 @@
 /* ====== Fondo Login ====== */
 .login-body {
-  background: linear-gradient(135deg, #ff914d, #ffcc70);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
   margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #ff914d, #ffcc70);
   font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
-/* ====== Wrapper centrado verticalmente perfecto ====== */
+/* ====== Wrapper ====== */
 .auth-wrapper {
   display: flex;
   justify-content: center;
@@ -18,22 +18,23 @@
   height: 100%;
 }
 
-/* ====== Tarjeta login ====== */
+/* ====== Tarjeta login centrada ====== */
 .auth-card {
   perspective: 1000px;
-  max-width: 400px;
   width: 100%;
-  min-height: 420px;
+  max-width: 400px;
   display: flex;
-  align-items: center;
+  align-items: center;       /* CENTRA verticalmente contenido de la tarjeta */
+  justify-content: center;   /* CENTRA horizontalmente contenido */
+  min-height: 400px;
 }
 
-/* ====== Animación Flip ====== */
+/* ====== Flip 3D ====== */
 .card-inner {
-  position: relative;
   width: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.8s ease;
+  transition: transform 0.8s;
+  position: relative;
 }
 
 .card-inner.is-flipped {
@@ -41,35 +42,60 @@
 }
 
 .card-face {
+  position: absolute;
+  width: 100%;
+  backface-visibility: hidden;
   background: #fff;
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  text-align: center;
-  backface-visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 420px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: center; /* CENTRA contenido verticalmente */
+  align-items: center;     /* CENTRA contenido horizontalmente */
+  min-height: 400px;
 }
+
 .card-front { transform: rotateY(0deg); }
 .card-back { transform: rotateY(180deg); }
+
+/* ====== Encabezado ====== */
+.auth-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.auth-header h1 {
+  color: #ff914d;
+  margin-bottom: 5px;
+}
+
+.auth-header p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.auth-header h2 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+}
 
 /* ====== Inputs ====== */
 .card-face input {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
-  border: 2px solid #f6c667;
   border-radius: 10px;
+  border: 2px solid #f6c667;
   font-size: 1rem;
 }
 
-.password-container { position: relative; }
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
 .password-container .toggle-password {
   position: absolute;
   right: 12px;
@@ -82,33 +108,37 @@
 /* ====== Botones ====== */
 .primary-btn {
   width: 100%;
-  background: #ff914d;
-  border: none;
-  color: white;
   padding: 12px;
+  border: none;
   border-radius: 10px;
+  background: #ff914d;
+  color: #fff;
   font-size: 1rem;
   margin-top: 10px;
+  cursor: pointer;
   transition: 0.3s;
 }
-.primary-btn:hover { background:#e67e22; }
+.primary-btn:hover { background: #e67e22; }
 
 .secondary-btn {
   width: 100%;
-  background: #f1f1f1;
-  border: none;
-  color: #333;
   padding: 12px;
+  border: none;
   border-radius: 10px;
+  background: #f1f1f1;
+  color: #333;
   font-size: 0.95rem;
   margin-top: 10px;
+  cursor: pointer;
   transition: 0.3s;
 }
-.secondary-btn:hover { background:#ddd; }
+.secondary-btn:hover { background: #ddd; }
 
 /* ====== Mensajes ====== */
 .error-message { color: #e74c3c; font-size: 0.9rem; margin: 5px 0; }
 .success-message { color: #27ae60; font-size: 0.9rem; margin: 5px 0; }
+
+
 
 
 
