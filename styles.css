@@ -1,15 +1,35 @@
-body, html { margin:0; padding:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
-#sidebar { position: fixed; left:0; top:0; width:220px; height:100%; background:#ff914d; color:#fff; display:flex; flex-direction:column; padding-top:20px; }
-#sidebar h2 { text-align:center; margin-bottom:30px; }
-.nav-link { display:block; padding:12px 20px; margin:5px 0; background:none; border:none; text-align:left; color:#fff; cursor:pointer; border-radius:8px; font-size:1rem; }
-.nav-link.active, .nav-link:hover { background:#e67e22; }
-.logout-btn { margin-top:auto; background:#c0392b; }
-#main-content { margin-left:240px; padding:20px; }
-.content-section { display:none; }
-.content-section.active { display:block; }
-.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; }
-.cards-grid .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; }
-.primary-btn { padding:10px 15px; background:#ff914d; color:#fff; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }
-.primary-btn:hover { background:#e67e22; }
-input, select { width:100%; padding:10px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
+/* Fondo degradado */
+.login-body {
+  background: linear-gradient(135deg, #ff914d, #ffcc70);
+  font-family: "Poppins", sans-serif;
+}
 
+/* Tarjeta login */
+.login-card {
+  background: #fff;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3); /* efecto 3D */
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.login-card:hover {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+}
+
+/* Inputs con icono de ojo */
+.position-relative .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  cursor: pointer;
+  color: #888;
+}
+
+/* Mensajes de error */
+.error-message {
+  font-size: 0.9rem;
+}
