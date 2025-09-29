@@ -5,74 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Discovery Pets</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
-  <header class="dashboard-header">
-    <h1>🐶 Discovery Pets</h1>
-    <button type="button" onclick="logout()">Cerrar Sesión</button>
-  </header>
-
-  <nav class="dashboard-nav">
-    <button type="button" onclick="showSection('products')">Productos</button>
-    <button type="button" onclick="showSection('providers')">Proveedores</button>
-    <button type="button" onclick="showSection('invoices')">Compras</button>
-    <button type="button" onclick="showSection('sales')">Ventas</button>
-    <button type="button" onclick="showSection('expenses')">Gastos</button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">🐶 Discovery Pets</a>
+      <button class="btn btn-outline-light" onclick="logout()">Cerrar Sesión</button>
+    </div>
   </nav>
 
-  <div class="dashboard-content">
-
+  <div class="container my-4">
     <!-- Resumen rápido -->
-    <div class="summary-cards">
-      <div class="summary-card">
-        <h3>Total de Productos</h3>
-        <p id="total-products">0</p>
-      </div>
-      <div class="summary-card">
-        <h3>Stock Bajo (&lt; 10 unid.)</h3>
-        <p id="low-stock">0</p>
-      </div>
-      <div class="summary-card">
-        <h3>Total de Proveedores</h3>
-        <p id="total-providers">0</p>
-      </div>
-      <div class="summary-card">
-        <h3>Ventas del Mes</h3>
-        <p id="monthly-sales">S/ 0.00</p>
-      </div>
+    <div class="row text-center mb-4" id="summary-cards">
+      <div class="col-md-3 mb-3"><div class="card p-3">Total Productos<br><span id="total-products">0</span></div></div>
+      <div class="col-md-3 mb-3"><div class="card p-3">Stock Bajo<br><span id="low-stock">0</span></div></div>
+      <div class="col-md-3 mb-3"><div class="card p-3">Total Proveedores<br><span id="total-providers">0</span></div></div>
+      <div class="col-md-3 mb-3"><div class="card p-3">Ventas del Mes<br>S/ <span id="sales-month">0.00</span></div></div>
     </div>
 
-    <!-- Secciones -->
-    <section id="products-section" class="content-section active">
-      <h2>Productos</h2>
-      <p>Aquí irán los formularios y tablas de productos.</p>
-    </section>
+    <!-- Menú -->
+    <ul class="nav nav-tabs mb-4" id="dashboard-menu">
+      <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('products')">Productos</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('providers')">Proveedores</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('purchases')">Compras</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('sales')">Ventas</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('expenses')">Gastos</a></li>
+    </ul>
 
-    <section id="providers-section" class="content-section">
-      <h2>Proveedores</h2>
-      <p>Aquí irán los formularios y tablas de proveedores.</p>
-    </section>
-
-    <section id="invoices-section" class="content-section">
-      <h2>Compras / Facturas</h2>
-      <p>Aquí irán los formularios de facturas.</p>
-    </section>
-
-    <section id="sales-section" class="content-section">
-      <h2>Ventas</h2>
-      <p>Aquí irán los formularios de ventas.</p>
-    </section>
-
-    <section id="expenses-section" class="content-section">
-      <h2>Gastos</h2>
-      <p>Aquí irán los formularios de gastos.</p>
-    </section>
-
+    <!-- Contenido -->
+    <div id="dashboard-content">
+      <div id="products-section" class="content-section active"></div>
+      <div id="providers-section" class="content-section"></div>
+      <div id="purchases-section" class="content-section"></div>
+      <div id="sales-section" class="content-section"></div>
+      <div id="expenses-section" class="content-section"></div>
+    </div>
   </div>
 
-  <script src="firebase.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="dashboard.js"></script>
+  <script type="module" src="firebase.js"></script>
 </body>
 </html>
+
+
