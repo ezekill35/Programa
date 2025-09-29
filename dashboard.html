@@ -10,7 +10,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
 <body>
-
 <header class="dashboard-header">
   <h1>🐶 Discovery Pets</h1>
   <p>Gestión integral de tu tienda de mascotas 🐾</p>
@@ -34,11 +33,11 @@
       <div class="card form-card">
         <h3>➕ Agregar Nuevo Producto</h3>
         <form id="form-producto" onsubmit="event.preventDefault(); agregarProducto();">
-          <input type="text" id="producto-sku" placeholder="Código / SKU (*)" required>
-          <input type="text" id="producto-nombre" placeholder="Nombre (*)" required>
+          <input type="text" id="producto-sku" placeholder="Código / SKU" required>
+          <input type="text" id="producto-nombre" placeholder="Nombre" required>
           <input type="text" id="producto-marca" placeholder="Marca">
-          <input type="number" step="0.01" id="producto-precio" placeholder="Precio S/ (*)" required>
-          <input type="number" id="producto-stock" placeholder="Stock Inicial (*)" required>
+          <input type="number" id="producto-precio" placeholder="Precio S/" step="0.01" required>
+          <input type="number" id="producto-stock" placeholder="Stock Inicial" required>
           <input type="text" id="producto-categoria" placeholder="Categoría">
           <button type="submit" class="primary-btn">Agregar Producto</button>
         </form>
@@ -57,9 +56,9 @@
       <div class="card form-card">
         <h3>➕ Agregar Nuevo Proveedor</h3>
         <form id="form-proveedor" onsubmit="event.preventDefault(); agregarProveedor();">
-          <input type="text" id="proveedor-nombre" placeholder="Nombre Comercial (*)" required>
-          <input type="text" id="proveedor-contacto" placeholder="Contacto (*)" required>
-          <input type="text" id="proveedor-telefono" placeholder="Teléfono (*)" required>
+          <input type="text" id="proveedor-nombre" placeholder="Nombre Comercial" required>
+          <input type="text" id="proveedor-contacto" placeholder="Contacto" required>
+          <input type="text" id="proveedor-telefono" placeholder="Teléfono" required>
           <input type="text" id="proveedor-fax" placeholder="Fax">
           <input type="text" id="proveedor-direccion" placeholder="Dirección">
           <input type="text" id="proveedor-productos" placeholder="Tipo de Producto">
@@ -80,13 +79,13 @@
       <div class="card form-card">
         <h3>➕ Registrar Factura</h3>
         <form id="form-factura" onsubmit="event.preventDefault(); agregarFactura();">
-          <input type="text" id="factura-ruc" placeholder="RUC (*)" required>
-          <input type="text" id="factura-numero" placeholder="Número Factura (*)" required>
+          <input type="text" id="factura-ruc" placeholder="RUC" required>
+          <input type="text" id="factura-numero" placeholder="Número Factura" required>
           <select id="factura-proveedor" required></select>
-          <input type="text" id="factura-producto" placeholder="Producto (*)" required>
-          <input type="number" id="factura-cantidad" placeholder="Cantidad (*)" required>
-          <input type="number" step="0.01" id="factura-precio" placeholder="Precio S/ (*)" required>
-          <input type="date" id="factura-fecha" placeholder="Fecha (*)" required>
+          <input type="text" id="factura-producto" placeholder="Producto" required>
+          <input type="number" id="factura-cantidad" placeholder="Cantidad" required>
+          <input type="number" id="factura-precio" placeholder="Precio S/" step="0.01" required>
+          <input type="date" id="factura-fecha" required>
           <button type="submit" class="primary-btn">Registrar Factura</button>
         </form>
       </div>
@@ -119,7 +118,6 @@
 <script src="dashboard.js"></script>
 </body>
 </html>
-
 
 
 
