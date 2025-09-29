@@ -1,169 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Discovery Pets</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐶 Discovery Pets - Dashboard</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="header p-3 bg-warning text-dark text-center shadow-sm">
-    <h1>🐶 Discovery Pets - Dashboard</h1>
-    <p class="mb-0">Gestión integral de tu tienda de mascotas 🐾</p>
-    <button class="btn btn-danger btn-sm mt-2" onclick="logout()">Cerrar Sesión</button>
-  </header>
 
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <!-- Sidebar -->
-      <div class="col-md-2 mb-3">
-        <div class="list-group" id="sidebar">
-          <button class="list-group-item list-group-item-action active" onclick="showSection('productos')">📦 Productos</button>
-          <button class="list-group-item list-group-item-action" onclick="showSection('proveedores')">👥 Proveedores</button>
-          <button class="list-group-item list-group-item-action" onclick="showSection('invoices')">🛒 Compras</button>
-          <button class="list-group-item list-group-item-action" onclick="showSection('ventas')">💰 Ventas</button>
-          <button class="list-group-item list-group-item-action" onclick="showSection('gastos')">📄 Gastos</button>
-        </div>
-      </div>
+<header>
+  <h1>🐶 Discovery Pets - Dashboard</h1>
+  <p>Gestión integral de tu tienda de mascotas 🐾</p>
+  <button class="secondary-btn" onclick="logout()">Cerrar Sesión</button>
+</header>
 
-      <!-- Main content -->
-      <div class="col-md-10">
-        <!-- Resumen rápido -->
-        <div class="row mb-3">
-          <div class="col-md-3"><div class="card shadow-sm p-3 text-center">Total de Productos<br><span id="total-productos">0</span></div></div>
-          <div class="col-md-3"><div class="card shadow-sm p-3 text-center">Stock Bajo (< 10)<br><span id="stock-bajo">0</span></div></div>
-          <div class="col-md-3"><div class="card shadow-sm p-3 text-center">Total de Proveedores<br><span id="total-proveedores">0</span></div></div>
-          <div class="col-md-3"><div class="card shadow-sm p-3 text-center">Ventas del Mes<br>S/ <span id="ventas-mes">0.00</span></div></div>
-        </div>
+<nav class="dashboard-nav">
+  <button onclick="showSection('productos')">📦 Productos</button>
+  <button onclick="showSection('proveedores')">👥 Proveedores</button>
+  <button onclick="showSection('compras')">🛒 Compras</button>
+  <button onclick="showSection('ventas')">💰 Ventas</button>
+  <button onclick="showSection('gastos')">📄 Gastos</button>
+</nav>
 
-        <!-- Secciones -->
-        <!-- Productos -->
-        <section id="productos-section" class="content-section active">
-          <h3>➕ Agregar Nuevo Producto</h3>
-          <form id="add-producto-form" onsubmit="event.preventDefault(); addProducto();">
-            <div class="row g-2 mb-2">
-              <div class="col-md-3"><input type="text" id="producto-sku" class="form-control" placeholder="Código / SKU" required></div>
-              <div class="col-md-3"><input type="text" id="producto-nombre" class="form-control" placeholder="Descripción"></div>
-              <div class="col-md-2"><input type="text" id="producto-marca" class="form-control" placeholder="Marca"></div>
-              <div class="col-md-2"><input type="number" id="producto-precio" class="form-control" placeholder="Precio Venta S/" required></div>
-              <div class="col-md-2"><input type="number" id="producto-stock" class="form-control" placeholder="Stock Inicial" required></div>
-            </div>
-            <div class="row g-2 mb-2">
-              <div class="col-md-3">
-                <select id="producto-categoria" class="form-control" required>
-                  <option value="">Categoría</option>
-                  <option value="Perros">Perros</option>
-                  <option value="Gatos">Gatos</option>
-                  <option value="Otros">Otros</option>
-                </select>
-              </div>
-              <div class="col-md-3"><input type="text" id="producto-unidad" class="form-control" placeholder="Unidad de Medida" value="unidades"></div>
-              <div class="col-md-6 text-end">
-                <button class="btn btn-primary">Agregar Producto</button>
-                <button type="button" class="btn btn-secondary" onclick="clearProductoForm()">Limpiar</button>
-              </div>
-            </div>
-          </form>
-          <hr>
-          <div id="productos-list"></div>
-        </section>
+<main>
+  <!-- Productos -->
+  <section id="productos-section" class="content-section active">
+    <h3>➕ Agregar Nuevo Producto</h3>
+    <input type="text" id="producto-sku" placeholder="Código / SKU">
+    <input type="text" id="producto-nombre" placeholder="Descripción">
+    <input type="text" id="producto-marca" placeholder="Marca">
+    <input type="number" id="producto-precio" placeholder="Precio Venta S/">
+    <input type="number" id="producto-stock" placeholder="Stock Inicial">
+    <input type="text" id="producto-categoria" placeholder="Categoría">
+    <button class="primary-btn" onclick="agregarProducto()">Agregar Producto</button>
+    <div id="lista-productos"></div>
+  </section>
 
-        <!-- Proveedores -->
-        <section id="proveedores-section" class="content-section">
-          <h3>➕ Agregar Nuevo Proveedor</h3>
-          <form id="add-proveedor-form" onsubmit="event.preventDefault(); addProveedor();">
-            <div class="row g-2 mb-2">
-              <div class="col-md-3"><input type="text" id="proveedor-contacto" class="form-control" placeholder="Nombre del Contacto" required></div>
-              <div class="col-md-3"><input type="text" id="proveedor-nombre" class="form-control" placeholder="Nombre Comercial" required></div>
-              <div class="col-md-2"><input type="text" id="proveedor-telefono" class="form-control" placeholder="Teléfono" required></div>
-              <div class="col-md-2"><input type="text" id="proveedor-fax" class="form-control" placeholder="Fax (Opcional)"></div>
-              <div class="col-md-2"><input type="text" id="proveedor-producto" class="form-control" placeholder="Tipo de Producto"></div>
-            </div>
-            <div class="text-end mb-3">
-              <button class="btn btn-primary">Agregar Proveedor</button>
-              <button type="button" class="btn btn-secondary" onclick="clearProveedorForm()">Limpiar</button>
-            </div>
-          </form>
-          <hr>
-          <div id="proveedores-list"></div>
-        </section>
+  <!-- Proveedores -->
+  <section id="proveedores-section" class="content-section">
+    <h3>➕ Agregar Nuevo Proveedor</h3>
+    <input type="text" id="proveedor-nombre" placeholder="Nombre Comercial">
+    <input type="text" id="proveedor-contacto" placeholder="Nombre del Contacto">
+    <input type="text" id="proveedor-telefono" placeholder="Teléfono">
+    <input type="text" id="proveedor-fax" placeholder="Fax (Opcional)">
+    <input type="text" id="proveedor-direccion" placeholder="Dirección">
+    <input type="text" id="proveedor-productos" placeholder="Tipo de Producto">
+    <button class="primary-btn" onclick="agregarProveedor()">Agregar Proveedor</button>
+    <div id="lista-proveedores"></div>
+  </section>
 
-        <!-- Compras / Facturas -->
-        <section id="invoices-section" class="content-section">
-          <h3>➕ Registrar Factura de Compra</h3>
-          <form id="add-invoice-form" onsubmit="event.preventDefault(); addInvoice();">
-            <div class="row g-2 mb-2">
-              <div class="col-md-3"><input type="text" id="invoice-ruc" class="form-control" placeholder="RUC Factura" required></div>
-              <div class="col-md-3"><input type="text" id="invoice-number" class="form-control" placeholder="Número de Factura" required></div>
-              <div class="col-md-3"><select id="invoice-provider" class="form-control" required></select></div>
-              <div class="col-md-3"><input type="date" id="invoice-date" class="form-control" required></div>
-            </div>
-            <div class="text-end mb-3">
-              <button class="btn btn-primary">Registrar Factura</button>
-              <button type="button" class="btn btn-secondary" onclick="clearInvoiceForm()">Limpiar</button>
-            </div>
-          </form>
-          <hr>
-          <div id="invoices-list"></div>
-        </section>
+  <!-- Compras -->
+  <section id="compras-section" class="content-section">
+    <h3>➕ Registrar Factura de Compra</h3>
+    <input type="text" id="factura-ruc" placeholder="RUC">
+    <input type="text" id="factura-numero" placeholder="Número de Factura">
+    <select id="factura-proveedor"></select>
+    <input type="text" id="factura-producto" placeholder="Producto">
+    <input type="number" id="factura-cantidad" placeholder="Cantidad">
+    <input type="number" id="factura-precio" placeholder="Precio Unitario">
+    <input type="date" id="factura-fecha">
+    <button class="primary-btn" onclick="agregarFactura()">Registrar Factura</button>
+    <div id="lista-facturas"></div>
+  </section>
 
-        <!-- Ventas -->
-        <section id="ventas-section" class="content-section">
-          <h3>➕ Registrar Venta</h3>
-          <form id="add-venta-form" onsubmit="event.preventDefault(); addVenta();">
-            <input type="text" id="venta-cliente" class="form-control mb-2" placeholder="Nombre del Cliente" required>
-            <select id="venta-producto" class="form-control mb-2" required></select>
-            <input type="number" id="venta-cantidad" class="form-control mb-2" placeholder="Cantidad" required>
-            <input type="number" id="venta-precio" class="form-control mb-2" placeholder="Precio Venta S/" required>
-            <input type="date" id="venta-fecha" class="form-control mb-2" required>
-            <button class="btn btn-success">Registrar Venta</button>
-          </form>
-          <hr>
-          <div id="ventas-list"></div>
-        </section>
+  <!-- Ventas -->
+  <section id="ventas-section" class="content-section">
+    <h3>💰 Registrar Venta</h3>
+    <input type="text" id="venta-cliente" placeholder="Cliente">
+    <select id="venta-producto"></select>
+    <input type="number" id="venta-cantidad" placeholder="Cantidad">
+    <input type="number" id="venta-total" placeholder="Total">
+    <button class="primary-btn" onclick="agregarVenta()">Registrar Venta</button>
+    <div id="lista-ventas"></div>
+  </section>
 
-        <!-- Gastos -->
-        <section id="gastos-section" class="content-section">
-          <h3>➕ Registrar Gasto Operativo</h3>
-          <form id="add-gasto-form" onsubmit="event.preventDefault(); addGasto();">
-            <input type="text" id="gasto-descripcion" class="form-control mb-2" placeholder="Descripción" required>
-            <select id="gasto-tipo" class="form-control mb-2" required>
-              <option value="">Tipo de Gasto</option>
-              <option value="Alquiler">Alquiler</option>
-              <option value="Sueldos">Sueldos</option>
-              <option value="Servicios">Servicios</option>
-              <option value="Otros">Otros</option>
-            </select>
-            <input type="number" id="gasto-cantidad" class="form-control mb-2" placeholder="Cantidad" value="1" required>
-            <input type="number" id="gasto-valor-unitario" class="form-control mb-2" placeholder="Valor Unitario S/" required>
-            <input type="date" id="gasto-fecha" class="form-control mb-2" required>
-            <button class="btn btn-success">Registrar Gasto</button>
-          </form>
-          <hr>
-          <div id="gastos-list"></div>
-        </section>
+  <!-- Gastos -->
+  <section id="gastos-section" class="content-section">
+    <h3>📄 Registrar Gasto Operativo</h3>
+    <input type="text" id="gasto-concepto" placeholder="Concepto">
+    <select id="gasto-tipo">
+      <option value="alquiler">Alquiler</option>
+      <option value="servicios">Servicios</option>
+      <option value="sueldos">Sueldos</option>
+      <option value="otros">Otros</option>
+    </select>
+    <input type="number" id="gasto-cantidad" value="1">
+    <input type="number" id="gasto-valor" placeholder="Valor Unitario S/">
+    <input type="number" id="gasto-total" placeholder="Total" readonly>
+    <input type="date" id="gasto-fecha">
+    <button class="primary-btn" onclick="agregarGasto()">Registrar Gasto</button>
+    <div id="lista-gastos"></div>
+  </section>
 
-      </div>
-    </div>
-  </div>
+</main>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
-
-  <!-- Scripts propios -->
-  <script src="firebase.js"></script>
-  <script src="dashboard.js"></script>
-
-  <style>
-    .content-section { display: none; }
-    .content-section.active { display: block; }
-  </style>
+<script src="firebase.js"></script>
+<script src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
