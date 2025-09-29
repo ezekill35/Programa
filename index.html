@@ -13,46 +13,36 @@
 
 <div class="auth-wrapper">
   <div class="auth-card">
-    <h1>🐶 Discovery Pets</h1>
-    <p>Bienvenido al sistema de gestión 🐾</p>
+    <div class="card-inner" id="card-inner">
+      <!-- Login -->
+      <div class="card-face card-front">
+        <h1>🐶 Discovery Pets</h1>
+        <p>Bienvenido al sistema de gestión 🐾</p>
+        <input type="email" id="login-email" placeholder="Correo electrónico">
+        <input type="password" id="login-password" placeholder="Contraseña">
+        <button class="primary-btn" onclick="login()">Entrar</button>
+        <p>¿No tienes cuenta? <span class="link-btn" onclick="showRegister()">Crear una Cuenta</span></p>
+        <div id="login-error" class="error-message"></div>
+      </div>
 
-    <!-- Login -->
-    <div id="login-form">
-      <input type="email" id="login-email" placeholder="Correo electrónico">
-      <input type="password" id="login-password" placeholder="Contraseña">
-      <button class="primary-btn" onclick="login()">Entrar</button>
-      <p>¿No tienes cuenta? <span class="link-btn" onclick="showRegister()">Crear una Cuenta</span></p>
-      <div id="login-error" class="error-message"></div>
-    </div>
-
-    <!-- Registro -->
-    <div id="register-form" class="hidden">
-      <input type="email" id="reg-email" placeholder="Correo electrónico">
-      <input type="password" id="reg-password" placeholder="Contraseña">
-      <button class="primary-btn" onclick="register()">Registrar</button>
-      <p>¿Ya tienes cuenta? <span class="link-btn" onclick="showLogin()">Entrar</span></p>
-      <div id="register-error" class="error-message"></div>
-      <div id="register-success" class="success-message"></div>
+      <!-- Registro -->
+      <div class="card-face card-back">
+        <h1>Registro</h1>
+        <input type="email" id="reg-email" placeholder="Correo electrónico">
+        <input type="password" id="reg-password" placeholder="Contraseña">
+        <button class="primary-btn" onclick="register()">Registrar</button>
+        <p>¿Ya tienes cuenta? <span class="link-btn" onclick="showLogin()">Entrar</span></p>
+        <div id="register-error" class="error-message"></div>
+        <div id="register-success" class="success-message"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script src="firebase.js"></script>
 <script src="script.js"></script>
-<script>
-function showRegister() {
-  document.getElementById("login-form").classList.add("hidden");
-  document.getElementById("register-form").classList.remove("hidden");
-}
-function showLogin() {
-  document.getElementById("register-form").classList.add("hidden");
-  document.getElementById("login-form").classList.remove("hidden");
-}
-</script>
-
 </body>
 </html>
-
 
 
 
