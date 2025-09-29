@@ -24,7 +24,6 @@ function register() {
       successMessage.textContent = "✅ Usuario registrado correctamente";
       setTimeout(showLogin, 2000);
 
-      // Guardar datos en Firestore
       db.collection("usuarios").doc(userCredential.user.uid).set({
         email: email,
         creado: new Date()
@@ -55,6 +54,7 @@ function togglePasswordVisibility(fieldId, iconElement) {
     iconElement.classList.replace("fa-eye", "fa-eye-slash");
   }
 }
+
 
 
 
