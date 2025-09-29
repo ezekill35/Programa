@@ -1,188 +1,149 @@
-// Cambiar secciones
-function showSection(section) {
-  document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
-  document.getElementById(section + "-section").classList.add("active");
+// Inicialización de Firebase
+const firebaseConfig = {
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_AUTH_DOMAIN",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_STORAGE_BUCKET",
+    messagingSenderId: "TU_MESSAGING_SENDER_ID",
+    appId: "TU_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ===== NAVEGACIÓN =====
+const sections = {
+    productos: document.getElementById('productos-section'),
+    proveedores: document.getElementById('proveedores-section'),
+    compras: document.getElementById('compras-section'),
+    ventas: document.getElementById('ventas-section'),
+    gastos: document.getElementById('gastos-section')
+};
+
+const navButtons = {
+    productos: document.querySelector("button[onclick=\"showSection('productos')\"]"),
+    proveedores: document.querySelector("button[onclick=\"showSection('proveedores')\"]"),
+    compras: document.querySelector("button[onclick=\"showSection('compras')\"]"),
+    ventas: document.querySelector("button[onclick=\"showSection('ventas')\"]"),
+    gastos: document.querySelector("button[onclick=\"showSection('gastos')\"]")
+};
+
+function showSection(sectionName) {
+    // Mostrar solo la sección seleccionada
+    for (const key in sections) {
+        if (key === sectionName) {
+            sections[key].classList.add('active');
+            navButtons[key].classList.add('active');
+        } else {
+            sections[key].classList.remove('active');
+            navButtons[key].classList.remove('active');
+        }
+    }
 }
 
-// Cerrar sesión
+// ===== LOGOUT =====
 function logout() {
-  auth.signOut().then(() => window.location.href = "index.html");
+    auth.signOut().then(() => {
+        window.location.href = "index.html";
+    });
 }
 
-// ----------------------
-// PRODUCTOS
-// ----------------------
+// ===== AGREGAR PRODUCTOS =====
 function agregarProducto() {
-  const sku = document.getElementById("producto-sku").value;
-  const nombre = document.getElementById("producto-nombre").value;
-  const marca = document.getElementById("producto-marca").value;
-  const precio = parseFloat(document.getElementById("producto-precio").value);
-  const stock = parseInt(document.getElementById("producto-stock").value);
-  const categoria = document.getElementById("producto-categoria").value;
-
-  db.collection("productos").add({ sku, nombre, marca, precio, stock, categoria })
-    .then(() => {
-      document.getElementById("form-producto").reset();
-      mostrarProductos();
+    const producto = {
+        sku: document.getElementById('producto-sku').value,
+        nombre: document.getElementById('producto-nombre').value,
+        marca: document.getElementById('producto-marca').value,
+        precio: parseFloat(document.getElementById('producto-precio').value),
+        stock: parseInt(document.getElementById('producto-stock').value),
+        categoria: document.getElementById('producto-categoria').value
+    };
+    db.collection('productos').add(producto).then(() => {
+        alert("Producto agregado correctamente");
+        document.getElementById('form-producto').reset();
+        cargarProductos();
     });
 }
 
-function mostrarProductos() {
-  const lista = document.getElementById("lista-productos");
-  lista.innerHTML = "";
-  db.collection("productos").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const p = doc.data();
-      lista.innerHTML += `<div class="card-item">
-        <b>${p.nombre}</b> - ${p.categoria} - S/ ${p.precio} - Stock: ${p.stock}
-      </div>`;
+function cargarProductos() {
+    const lista = document.getElementById('lista-productos');
+    lista.innerHTML = "";
+    db.collection('productos').get().then(snapshot => {
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const div = document.createElement('div');
+            div.textContent = `${data.sku} - ${data.nombre} - S/${data.precio}`;
+            lista.appendChild(div);
+        });
     });
-  });
 }
 
-// ----------------------
-// PROVEEDORES
-// ----------------------
+// ===== AGREGAR PROVEEDORES =====
 function agregarProveedor() {
-  const nombre = document.getElementById("proveedor-nombre").value;
-  const contacto = document.getElementById("proveedor-contacto").value;
-  const telefono = document.getElementById("proveedor-telefono").value;
-  const fax = document.getElementById("proveedor-fax").value;
-  const direccion = document.getElementById("proveedor-direccion").value;
-  const productos = document.getElementById("proveedor-productos").value;
+    const proveedor = {
+        ruc: document.getElementById('proveedor-ruc').value,
+        nombre: document.getElementById('proveedor-nombre').value,
+        contacto: document.getElementById('proveedor-contacto').value,
+        telefono: document.getElementById('proveedor-telefono').value,
+        fax: document.getElementById('proveedor-fax').value,
+        direccion: document.getElementById('proveedor-direccion').value,
+        productos: document.getElementById('proveedor-productos').value
+    };
+    db.collection('proveedores').add(proveedor).then(() => {
+        alert("Proveedor agregado correctamente");
+        document.getElementById('form-proveedor').reset();
+        cargarProveedores();
+    });
+}
 
-  db.collection("proveedores").add({ nombre, contacto, telefono, fax, direccion, productos })
+function cargarProveedores() {
+    const lista = document.getElementById('lista-proveedores');
+    lista.innerHTML = "";
+    db.collection('proveedores').get().then(snapshot => {
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const div = document.createElement('div');
+            div.textContent = `${data.ruc} - ${data.nombre} - ${data.contacto}`;
+            lista.appendChild(div);
+        });
+    });
+}
+
+// ===== LOGIN / REGISTRO =====
+function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    auth.signInWithEmailAndPassword(email, password)
     .then(() => {
-      document.getElementById("form-proveedor").reset();
-      mostrarProveedores();
-      cargarSelectProveedores();
+        window.location.href = "dashboard.html";
+    })
+    .catch(error => {
+        document.getElementById('login-error').textContent = error.message;
     });
 }
 
-function mostrarProveedores() {
-  const lista = document.getElementById("lista-proveedores");
-  lista.innerHTML = "";
-  db.collection("proveedores").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const p = doc.data();
-      lista.innerHTML += `<div class="card-item">
-        <b>${p.nombre}</b> - Contacto: ${p.contacto} - Tel: ${p.telefono}
-      </div>`;
-    });
-  });
-}
+function register() {
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
 
-function cargarSelectProveedores() {
-  const select = document.getElementById("factura-proveedor");
-  select.innerHTML = `<option value="">Seleccione un proveedor</option>`;
-  db.collection("proveedores").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const p = doc.data();
-      select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
-    });
-  });
-}
-
-// ----------------------
-// FACTURAS / COMPRAS
-// ----------------------
-function agregarFactura() {
-  const ruc = document.getElementById("factura-ruc").value;
-  const numero = document.getElementById("factura-numero").value;
-  const proveedor = document.getElementById("factura-proveedor").value;
-  const producto = document.getElementById("factura-producto").value;
-  const cantidad = parseInt(document.getElementById("factura-cantidad").value);
-  const precio = parseFloat(document.getElementById("factura-precio").value);
-  const fecha = document.getElementById("factura-fecha").value;
-
-  db.collection("facturas").add({ ruc, numero, proveedor, producto, cantidad, precio, fecha })
+    auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
-      document.getElementById("form-factura").reset();
-      mostrarFacturas();
+        document.getElementById('register-success').textContent = "Cuenta creada exitosamente";
+        document.getElementById('register-error').textContent = "";
+        document.getElementById('form-register').reset();
+    })
+    .catch(error => {
+        document.getElementById('register-error').textContent = error.message;
     });
 }
 
-function mostrarFacturas() {
-  const lista = document.getElementById("lista-facturas");
-  lista.innerHTML = "";
-  db.collection("facturas").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const f = doc.data();
-      lista.innerHTML += `<div class="card-item">
-        <b>Proveedor:</b> ${f.proveedor} - <b>Producto:</b> ${f.producto} - S/ ${f.precio} x ${f.cantidad} - <b>Fecha:</b> ${f.fecha}
-      </div>`;
-    });
-  });
-}
-
-// ----------------------
-// VENTAS
-// ----------------------
-function agregarVenta() {
-  const cliente = document.getElementById("venta-cliente").value;
-  const producto = document.getElementById("venta-producto").value;
-  const cantidad = parseInt(document.getElementById("venta-cantidad").value);
-  const total = parseFloat(document.getElementById("venta-total").value);
-
-  db.collection("ventas").add({ cliente, producto, cantidad, total })
-    .then(() => {
-      document.getElementById("form-venta").reset();
-      mostrarVentas();
-    });
-}
-
-function mostrarVentas() {
-  const lista = document.getElementById("lista-ventas");
-  lista.innerHTML = "";
-  db.collection("ventas").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const v = doc.data();
-      lista.innerHTML += `<div class="card-item">
-        <b>Cliente:</b> ${v.cliente} - <b>Producto:</b> ${v.producto} - Cantidad: ${v.cantidad} - Total: S/ ${v.total}
-      </div>`;
-    });
-  });
-}
-
-// ----------------------
-// GASTOS
-// ----------------------
-function agregarGasto() {
-  const concepto = document.getElementById("gasto-concepto").value;
-  const tipo = document.getElementById("gasto-tipo").value;
-  const cantidad = parseInt(document.getElementById("gasto-cantidad").value);
-  const valor = parseFloat(document.getElementById("gasto-valor").value);
-  const fecha = document.getElementById("gasto-fecha").value;
-  const total = cantidad * valor;
-
-  db.collection("gastos").add({ concepto, tipo, cantidad, valor, total, fecha })
-    .then(() => {
-      document.getElementById("form-gasto").reset();
-      mostrarGastos();
-    });
-}
-
-function mostrarGastos() {
-  const lista = document.getElementById("lista-gastos");
-  lista.innerHTML = "";
-  db.collection("gastos").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const g = doc.data();
-      lista.innerHTML += `<div class="card-item">
-        <b>${g.tipo}</b> - ${g.concepto} - Cant: ${g.cantidad} - S/ ${g.total} - Fecha: ${g.fecha}
-      </div>`;
-    });
-  });
-}
-
-// Inicializar listas al cargar
-window.onload = function() {
-  mostrarProductos();
-  mostrarProveedores();
-  cargarSelectProveedores();
-  mostrarFacturas();
-  mostrarVentas();
-  mostrarGastos();
-}
+// ===== CARGAR INICIAL =====
+document.addEventListener('DOMContentLoaded', () => {
+    showSection('productos');
+    cargarProductos();
+    cargarProveedores();
+});
 
 
