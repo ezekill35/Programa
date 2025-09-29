@@ -9,96 +9,121 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
-<body class="dashboard-container">
+<body>
+<header class="dashboard-header">
+  <h1>🐶 Discovery Pets</h1>
+  <p>Gestión integral de tu tienda de mascotas 🐾</p>
+  <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+</header>
 
-<div class="navbar">
+<nav class="dashboard-nav">
   <button onclick="showSection('productos')">📦 Productos</button>
   <button onclick="showSection('proveedores')">👥 Proveedores</button>
-  <button onclick="showSection('facturas')">🛒 Compras</button>
+  <button onclick="showSection('compras')">🛒 Compras</button>
   <button onclick="showSection('ventas')">💰 Ventas</button>
   <button onclick="showSection('gastos')">📄 Gastos</button>
-  <button onclick="logout()">Cerrar Sesión</button>
-</div>
+</nav>
 
-<div id="productos-section" class="content-section active">
-  <h3>Productos</h3>
-  <form onsubmit="event.preventDefault(); agregarProducto();">
-    <input id="producto-sku" placeholder="Código / SKU" required>
-    <input id="producto-nombre" placeholder="Nombre" required>
-    <input id="producto-marca" placeholder="Marca">
-    <input id="producto-precio" type="number" placeholder="Precio S/" required>
-    <input id="producto-stock" type="number" placeholder="Stock Inicial" required>
-    <input id="producto-categoria" placeholder="Categoría">
-    <button class="primary-btn" type="submit">Agregar Producto</button>
-  </form>
-  <div class="card-list" id="lista-productos"></div>
-</div>
+<main class="dashboard-main">
 
-<div id="proveedores-section" class="content-section">
-  <h3>Proveedores</h3>
-  <form onsubmit="event.preventDefault(); agregarProveedor();">
-    <input id="proveedor-nombre" placeholder="Nombre Comercial" required>
-    <input id="proveedor-contacto" placeholder="Nombre del Contacto" required>
-    <input id="proveedor-telefono" placeholder="Teléfono" required>
-    <input id="proveedor-fax" placeholder="Fax">
-    <input id="proveedor-direccion" placeholder="Dirección">
-    <input id="proveedor-productos" placeholder="Tipo de Producto">
-    <button class="primary-btn" type="submit">Agregar Proveedor</button>
-  </form>
-  <div class="card-list" id="lista-proveedores"></div>
-</div>
+  <!-- Productos -->
+  <section id="productos-section" class="content-section active">
+    <h2>📦 Productos</h2>
+    <div class="dashboard-grid">
+      <!-- Formulario -->
+      <div class="card form-card">
+        <h3>➕ Agregar Nuevo Producto</h3>
+        <form id="form-producto" onsubmit="event.preventDefault(); agregarProducto();">
+          <div class="form-group"><label>Código / SKU (*)</label><input type="text" id="producto-sku" required></div>
+          <div class="form-group"><label>Nombre (*)</label><input type="text" id="producto-nombre" required></div>
+          <div class="form-group"><label>Marca</label><input type="text" id="producto-marca"></div>
+          <div class="form-group"><label>Precio S/ (*)</label><input type="number" id="producto-precio" step="0.01" required></div>
+          <div class="form-group"><label>Stock Inicial (*)</label><input type="number" id="producto-stock" required></div>
+          <div class="form-group"><label>Categoría</label><input type="text" id="producto-categoria"></div>
+          <button type="submit" class="primary-btn">Agregar Producto</button>
+        </form>
+      </div>
+      <!-- Lista -->
+      <div class="card list-card">
+        <h3>🔍 Productos Registrados</h3>
+        <div id="lista-productos" class="list-items"></div>
+      </div>
+    </div>
+  </section>
 
-<div id="facturas-section" class="content-section">
-  <h3>Compras / Facturas</h3>
-  <form onsubmit="event.preventDefault(); agregarFactura();">
-    <input id="factura-ruc" placeholder="RUC" required>
-    <input id="factura-numero" placeholder="Número de Factura" required>
-    <select id="factura-proveedor" required></select>
-    <input id="factura-producto" placeholder="Producto" required>
-    <input id="factura-cantidad" type="number" placeholder="Cantidad" required>
-    <input id="factura-precio" type="number" placeholder="Precio S/" required>
-    <input id="factura-fecha" type="date" required>
-    <button class="primary-btn" type="submit">Registrar Factura</button>
-  </form>
-  <div class="card-list" id="lista-facturas"></div>
-</div>
+  <!-- Proveedores -->
+  <section id="proveedores-section" class="content-section">
+    <h2>👥 Proveedores</h2>
+    <div class="dashboard-grid">
+      <div class="card form-card">
+        <h3>➕ Agregar Nuevo Proveedor</h3>
+        <form id="form-proveedor" onsubmit="event.preventDefault(); agregarProveedor();">
+          <div class="form-group"><label>Nombre Comercial (*)</label><input type="text" id="proveedor-nombre" required></div>
+          <div class="form-group"><label>Contacto (*)</label><input type="text" id="proveedor-contacto" required></div>
+          <div class="form-group"><label>Teléfono (*)</label><input type="text" id="proveedor-telefono" required></div>
+          <div class="form-group"><label>Fax</label><input type="text" id="proveedor-fax"></div>
+          <div class="form-group"><label>Dirección</label><input type="text" id="proveedor-direccion"></div>
+          <div class="form-group"><label>Tipo de Producto</label><input type="text" id="proveedor-productos" placeholder="Ej: Alimento Seco, Juguetes"></div>
+          <button type="submit" class="primary-btn">Agregar Proveedor</button>
+        </form>
+      </div>
+      <div class="card list-card">
+        <h3>👥 Proveedores Registrados</h3>
+        <div id="lista-proveedores" class="list-items"></div>
+      </div>
+    </div>
+  </section>
 
-<!-- Ventas -->
-<div id="ventas-section" class="content-section">
-  <h3>Ventas</h3>
-  <form onsubmit="event.preventDefault(); agregarVenta();">
-    <input id="venta-cliente" placeholder="Nombre del Cliente" required>
-    <input id="venta-producto" placeholder="Producto" required>
-    <input id="venta-cantidad" type="number" placeholder="Cantidad" required>
-    <input id="venta-total" type="number" placeholder="Total S/" required>
-    <button class="primary-btn" type="submit">Registrar Venta</button>
-  </form>
-  <div class="card-list" id="lista-ventas"></div>
-</div>
+  <!-- Compras -->
+  <section id="compras-section" class="content-section">
+    <h2>🛒 Compras / Facturas</h2>
+    <div class="dashboard-grid">
+      <div class="card form-card">
+        <h3>➕ Registrar Factura de Compra</h3>
+        <form id="form-factura" onsubmit="event.preventDefault(); agregarFactura();">
+          <div class="form-group"><label>RUC (*)</label><input type="text" id="factura-ruc" required></div>
+          <div class="form-group"><label>Número Factura (*)</label><input type="text" id="factura-numero" required></div>
+          <div class="form-group"><label>Proveedor (*)</label>
+            <select id="factura-proveedor" required></select>
+          </div>
+          <div class="form-group"><label>Producto (*)</label><input type="text" id="factura-producto" required></div>
+          <div class="form-group"><label>Cantidad (*)</label><input type="number" id="factura-cantidad" required></div>
+          <div class="form-group"><label>Precio S/ (*)</label><input type="number" id="factura-precio" step="0.01" required></div>
+          <div class="form-group"><label>Fecha (*)</label><input type="date" id="factura-fecha" required></div>
+          <button type="submit" class="primary-btn">Registrar Factura</button>
+        </form>
+      </div>
+      <div class="card list-card">
+        <h3>📄 Facturas Registradas</h3>
+        <div id="lista-facturas" class="list-items"></div>
+      </div>
+    </div>
+  </section>
 
-<!-- Gastos -->
-<div id="gastos-section" class="content-section">
-  <h3>Gastos Operativos</h3>
-  <form onsubmit="event.preventDefault(); agregarGasto();">
-    <input id="gasto-concepto" placeholder="Descripción" required>
-    <select id="gasto-tipo" required>
-      <option value="Alquiler">Alquiler</option>
-      <option value="Servicios">Servicios</option>
-      <option value="Mantenimiento">Mantenimiento</option>
-      <option value="Otros">Otros</option>
-    </select>
-    <input id="gasto-cantidad" type="number" placeholder="Cantidad" value="1" required>
-    <input id="gasto-valor" type="number" placeholder="Valor Unitario S/" required>
-    <input id="gasto-fecha" type="date" required>
-    <button class="primary-btn" type="submit">Registrar Gasto</button>
-  </form>
-  <div class="card-list" id="lista-gastos"></div>
-</div>
+  <!-- Ventas -->
+  <section id="ventas-section" class="content-section">
+    <h2>💰 Ventas</h2>
+    <div class="list-card">
+      <div id="lista-ventas" class="list-items"></div>
+    </div>
+  </section>
+
+  <!-- Gastos -->
+  <section id="gastos-section" class="content-section">
+    <h2>📄 Gastos</h2>
+    <div class="list-card">
+      <div id="lista-gastos" class="list-items"></div>
+    </div>
+  </section>
+
+</main>
 
 <script src="firebase.js"></script>
 <script src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
