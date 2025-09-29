@@ -1,12 +1,8 @@
 /* ====== Fondo Login ====== */
 .login-body {
   margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #ff914d, #ffcc70);
   font-family: "Poppins", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #ff914d, #ffcc70);
 }
 
 /* ====== Wrapper ====== */
@@ -15,18 +11,26 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
 }
 
-/* ====== Tarjeta login centrada ====== */
+/* ====== Centrado solo en pantallas grandes ====== */
+@media (min-width: 768px) {
+  .login-body, .auth-wrapper {
+    height: 100vh; /* altura completa de pantalla solo en PC */
+  }
+  .auth-card {
+    display: flex;
+    align-items: center;       /* CENTRA verticalmente contenido de la tarjeta */
+    justify-content: center;   /* CENTRA horizontalmente contenido */
+    min-height: 400px;
+  }
+}
+
+/* ====== Tarjeta login ====== */
 .auth-card {
   perspective: 1000px;
   width: 100%;
   max-width: 400px;
-  display: flex;
-  align-items: center;       /* CENTRA verticalmente contenido de la tarjeta */
-  justify-content: center;   /* CENTRA horizontalmente contenido */
-  min-height: 400px;
 }
 
 /* ====== Flip 3D ====== */
@@ -58,28 +62,6 @@
 
 .card-front { transform: rotateY(0deg); }
 .card-back { transform: rotateY(180deg); }
-
-/* ====== Encabezado ====== */
-.auth-header {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.auth-header h1 {
-  color: #ff914d;
-  margin-bottom: 5px;
-}
-
-.auth-header p {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-.auth-header h2 {
-  font-size: 1.3rem;
-  margin-bottom: 15px;
-}
 
 /* ====== Inputs ====== */
 .card-face input {
@@ -137,6 +119,8 @@
 /* ====== Mensajes ====== */
 .error-message { color: #e74c3c; font-size: 0.9rem; margin: 5px 0; }
 .success-message { color: #27ae60; font-size: 0.9rem; margin: 5px 0; }
+
+
 
 
 
