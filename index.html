@@ -18,7 +18,7 @@
 
       <div class="card-inner" id="auth-card-inner">
         <!-- LOGIN -->
-        <div class="card-face card-front">
+        <div class="card-face card-front" id="login-form">
           <h2>Iniciar Sesión</h2>
           <input type="text" id="login-username" placeholder="Correo electrónico">
           <div class="password-container">
@@ -31,7 +31,7 @@
         </div>
 
         <!-- REGISTRO -->
-        <div class="card-face card-back">
+        <div class="card-face card-back" id="register-form">
           <h2>Crear Cuenta</h2>
           <input type="text" id="reg-username" placeholder="Correo electrónico">
           <div class="password-container">
@@ -52,18 +52,17 @@
   <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
 
-  <!-- Scripts propios -->
   <script src="firebase.js"></script>
   <script src="script.js"></script>
 
   <script>
-    // Función para voltear la tarjeta
     function flipCard() {
       document.getElementById("auth-card-inner").classList.toggle("is-flipped");
     }
   </script>
 </body>
 </html>
+
 
 
 
