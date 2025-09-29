@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - PetShop Manager</title>
+  <title>Dashboard - Discovery Pets</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
   <div id="main-app">
     <aside class="sidebar">
-      <h1>PetShop Manager</h1>
+      <h1>Discovery Pets</h1>
       <p>Bienvenido, <span id="welcome-username"></span></p>
       <ul class="nav-list">
         <li onclick="showSection('overview')">Dashboard</li>
@@ -19,6 +19,7 @@
         <li onclick="logout()">Cerrar Sesión</li>
       </ul>
     </aside>
+
     <main class="main-content">
       <header>
         <h2 id="dashboard-title">Dashboard</h2>
@@ -26,6 +27,7 @@
           <button onclick="logout()">Cerrar Sesión</button>
         </div>
       </header>
+
       <section id="overview-section" class="content-section active">
         <h3>Resumen Rápido</h3>
       </section>
@@ -38,16 +40,17 @@
     </main>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
-  <!-- Archivos JS -->
+  <!-- Archivos propios -->
   <script src="firebase.js"></script>
   <script src="script.js"></script>
 
   <script>
+    // Protege la página: solo accesible si hay sesión activa
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = "index.html";
@@ -59,3 +62,4 @@
   </script>
 </body>
 </html>
+
