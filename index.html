@@ -12,10 +12,13 @@
   <div class="auth-wrapper">
     <div class="auth-card">
       <div class="card-inner" id="auth-card-inner">
+
         <!-- LOGIN -->
         <div class="card-face card-front">
-          <h1>🐶 Discovery Pets</h1>
-          <p>Bienvenido al sistema de gestión 🐾</p>
+          <div class="auth-header">
+            <h1>🐶 Discovery Pets</h1>
+            <p>Bienvenido al sistema de gestión 🐾</p>
+          </div>
           <input type="text" id="login-username" placeholder="Correo electrónico">
           <div class="password-container">
             <input type="password" id="login-password" placeholder="Contraseña">
@@ -28,7 +31,10 @@
 
         <!-- REGISTRO -->
         <div class="card-face card-back">
-          <h1>Crear Cuenta</h1>
+          <div class="auth-header">
+            <h1>🐶 Discovery Pets</h1>
+            <p>Registro de usuario</p>
+          </div>
           <input type="text" id="reg-username" placeholder="Correo electrónico">
           <div class="password-container">
             <input type="password" id="reg-password" placeholder="Contraseña">
@@ -39,17 +45,24 @@
           <button class="primary-btn" onclick="register()">Registrar</button>
           <button class="secondary-btn" onclick="flipCard()">Ya tengo cuenta</button>
         </div>
+
       </div>
     </div>
   </div>
 
-  <script type="module" src="firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
+
+  <script src="firebase.js"></script>
   <script src="script.js"></script>
+
   <script>
     function flipCard() {
       document.getElementById("auth-card-inner").classList.toggle("is-flipped");
     }
   </script>
+
 </body>
 </html>
 
