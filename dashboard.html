@@ -1,136 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐾 Discovery Pets - Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐾 Discovery Pets - Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="dashboard-body">
 
-<div class="d-flex" id="dashboard-wrapper">
-
-  <!-- Sidebar -->
-  <div class="sidebar bg-warning text-dark p-3 d-flex flex-column">
-    <h2 class="text-center mb-4">🐶 Discovery Pets</h2>
-    <button class="btn btn-light mb-2" onclick="showSection('resumen')">Resumen</button>
-    <button class="btn btn-light mb-2" onclick="showSection('productos')">Productos</button>
-    <button class="btn btn-light mb-2" onclick="showSection('proveedores')">Proveedores</button>
-    <button class="btn btn-light mb-2" onclick="showSection('compras')">Compras</button>
-    <button class="btn btn-light mb-2" onclick="showSection('ventas')">Ventas</button>
-    <button class="btn btn-light mb-2" onclick="showSection('gastos')">Gastos</button>
-    <button class="btn btn-danger mt-auto" onclick="logout()">Cerrar Sesión</button>
+<nav class="navbar navbar-dark bg-dark shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">🐶 Discovery Pets</span>
+    <button class="btn btn-outline-light" onclick="logout()">Cerrar Sesión</button>
   </div>
+</nav>
 
-  <!-- Contenido -->
-  <div class="content p-4 flex-grow-1">
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-md-2">
+      <ul class="nav flex-column nav-pills">
+        <li class="nav-item"><a class="nav-link active" onclick="showSection('productos')">Productos</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="showSection('proveedores')">Proveedores</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="showSection('compras')">Compras</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="showSection('ventas')">Ventas</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="showSection('gastos')">Gastos</a></li>
+      </ul>
+    </div>
+    <div class="col-md-10">
+      <!-- Productos -->
+      <section id="productos-section" class="content-section active">
+        <h3>➕ Agregar Nuevo Producto</h3>
+        <form id="add-product-form" onsubmit="event.preventDefault(); addProducto();">
+          <input type="text" id="prod-sku" placeholder="Código / SKU" class="form-control mb-2" required>
+          <input type="text" id="prod-nombre" placeholder="Nombre" class="form-control mb-2">
+          <input type="text" id="prod-marca" placeholder="Marca" class="form-control mb-2">
+          <input type="number" id="prod-precio" placeholder="Precio Venta S/" class="form-control mb-2" required>
+          <input type="number" id="prod-stock" placeholder="Stock Inicial" class="form-control mb-2" required>
+          <input type="text" id="prod-categoria" placeholder="Categoría" class="form-control mb-2">
+          <button class="btn btn-success">Agregar Producto</button>
+        </form>
+        <hr>
+        <div id="productos-list"></div>
+      </section>
 
-    <!-- Resumen -->
-    <section id="resumen-section" class="content-section active">
-      <h3>📊 Resumen Rápido</h3>
-      <div class="row mt-4">
-        <div class="col-md-3 mb-3"><div class="card p-3 shadow"><h5>Total Productos</h5><p id="total-productos">0</p></div></div>
-        <div class="col-md-3 mb-3"><div class="card p-3 shadow"><h5>Stock Bajo (&lt;10)</h5><p id="stock-bajo">0</p></div></div>
-        <div class="col-md-3 mb-3"><div class="card p-3 shadow"><h5>Total Proveedores</h5><p id="total-proveedores">0</p></div></div>
-        <div class="col-md-3 mb-3"><div class="card p-3 shadow"><h5>Ventas del Mes</h5><p id="ventas-mes">S/ 0.00</p></div></div>
-      </div>
-    </section>
+      <!-- Proveedores -->
+      <section id="proveedores-section" class="content-section">
+        <h3>➕ Agregar Nuevo Proveedor</h3>
+        <form id="add-proveedor-form" onsubmit="event.preventDefault(); addProveedor();">
+          <input type="text" id="prov-nombre" placeholder="Nombre Comercial" class="form-control mb-2" required>
+          <input type="text" id="prov-contacto" placeholder="Nombre del Contacto" class="form-control mb-2" required>
+          <input type="text" id="prov-telefono" placeholder="Teléfono" class="form-control mb-2" required>
+          <input type="text" id="prov-fax" placeholder="Fax (Opcional)" class="form-control mb-2">
+          <input type="text" id="prov-productos" placeholder="Tipo de Producto" class="form-control mb-2">
+          <button class="btn btn-success">Agregar Proveedor</button>
+        </form>
+        <hr>
+        <div id="proveedores-list"></div>
+      </section>
 
-    <!-- Productos -->
-    <section id="productos-section" class="content-section">
-      <h3>📦 Registro de Productos</h3>
-      <form id="add-product-form" onsubmit="event.preventDefault(); addProduct();">
-        <div class="row">
-          <div class="col-md-4 mb-3"><input type="text" id="prod-sku" placeholder="Código / SKU" class="form-control" required></div>
-          <div class="col-md-4 mb-3"><input type="text" id="prod-nombre" placeholder="Descripción" class="form-control"></div>
-          <div class="col-md-4 mb-3"><input type="text" id="prod-marca" placeholder="Marca" class="form-control"></div>
-          <div class="col-md-3 mb-3"><input type="number" id="prod-precio" placeholder="Precio Venta S/" class="form-control" required></div>
-          <div class="col-md-3 mb-3"><input type="number" id="prod-stock" placeholder="Stock Inicial" class="form-control" required></div>
-          <div class="col-md-3 mb-3"><input type="text" id="prod-unidad" placeholder="Unidad de Medida" class="form-control"></div>
-          <div class="col-md-3 mb-3">
-            <select id="prod-categoria" class="form-select">
-              <option value="">Categoría</option>
-              <option value="Perros">Perros</option>
-              <option value="Gatos">Gatos</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-warning mb-3">➕ Agregar Producto</button>
-      </form>
+      <!-- Compras / Facturas -->
+      <section id="compras-section" class="content-section">
+        <h3>➕ Registrar Factura de Compra</h3>
+        <form id="add-compra-form" onsubmit="event.preventDefault(); addCompra();">
+          <select id="comp-proveedor" class="form-control mb-2" required></select>
+          <input type="text" id="comp-factura" placeholder="Número de Factura" class="form-control mb-2" required>
+          <input type="text" id="comp-ruc" placeholder="RUC" class="form-control mb-2" required>
+          <input type="number" id="comp-total" placeholder="Monto Total" class="form-control mb-2" required>
+          <input type="date" id="comp-fecha" class="form-control mb-2" required>
+          <button class="btn btn-success">Registrar Compra</button>
+        </form>
+        <hr>
+        <div id="compras-list"></div>
+      </section>
 
-      <div id="productos-list" class="table-responsive"></div>
-    </section>
+      <!-- Ventas -->
+      <section id="ventas-section" class="content-section">
+        <h3>Registrar Venta</h3>
+        <p>Próximamente...</p>
+      </section>
 
-    <!-- Proveedores -->
-    <section id="proveedores-section" class="content-section">
-      <h3>👥 Registro de Proveedores</h3>
-      <form id="add-proveedor-form" onsubmit="event.preventDefault(); addProveedor();">
-        <div class="row">
-          <div class="col-md-4 mb-3"><input type="text" id="prov-contacto" placeholder="Nombre del Contacto" class="form-control" required></div>
-          <div class="col-md-4 mb-3"><input type="text" id="prov-nombre" placeholder="Nombre Comercial" class="form-control" required></div>
-          <div class="col-md-4 mb-3"><input type="text" id="prov-telefono" placeholder="Teléfono" class="form-control" required></div>
-          <div class="col-md-4 mb-3"><input type="text" id="prov-fax" placeholder="Fax (Opcional)" class="form-control"></div>
-          <div class="col-md-8 mb-3"><input type="text" id="prov-direccion" placeholder="Dirección" class="form-control"></div>
-          <div class="col-md-12 mb-3"><input type="text" id="prov-productos" placeholder="Tipo de Producto (Alimento, Juguetes, Medicamentos)" class="form-control"></div>
-        </div>
-        <button class="btn btn-warning mb-3">➕ Agregar Proveedor</button>
-      </form>
+      <!-- Gastos -->
+      <section id="gastos-section" class="content-section">
+        <h3>Registrar Gasto</h3>
+        <p>Próximamente...</p>
+      </section>
 
-      <div id="proveedores-list" class="table-responsive"></div>
-    </section>
-
-    <!-- Compras -->
-    <section id="compras-section" class="content-section">
-      <h3>🛒 Registrar Compra / Factura</h3>
-      <form id="add-compra-form" onsubmit="event.preventDefault(); addCompra();">
-        <div class="row">
-          <div class="col-md-3 mb-3"><input type="text" id="comp-ruc" placeholder="RUC" class="form-control" required></div>
-          <div class="col-md-3 mb-3"><input type="text" id="comp-factura" placeholder="Número Factura" class="form-control" required></div>
-          <div class="col-md-3 mb-3"><input type="date" id="comp-fecha" class="form-control" required></div>
-          <div class="col-md-3 mb-3"><input type="number" id="comp-total" placeholder="Total S/" class="form-control" required></div>
-        </div>
-        <button class="btn btn-warning mb-3">Registrar Compra</button>
-      </form>
-
-      <div id="compras-list" class="table-responsive"></div>
-    </section>
-
-    <!-- Ventas -->
-    <section id="ventas-section" class="content-section">
-      <h3>💰 Registrar Venta</h3>
-      <form id="add-venta-form" onsubmit="event.preventDefault(); addVenta();">
-        <div class="row">
-          <div class="col-md-6 mb-3"><input type="text" id="venta-cliente" placeholder="Cliente" class="form-control" required></div>
-          <div class="col-md-6 mb-3"><input type="number" id="venta-total" placeholder="Total Venta S/" class="form-control" required></div>
-        </div>
-        <button class="btn btn-warning mb-3">Registrar Venta</button>
-      </form>
-      <div id="ventas-list" class="table-responsive"></div>
-    </section>
-
-    <!-- Gastos -->
-    <section id="gastos-section" class="content-section">
-      <h3>📄 Registrar Gasto Operativo</h3>
-      <form id="add-gasto-form" onsubmit="event.preventDefault(); addGasto();">
-        <div class="row">
-          <div class="col-md-4 mb-3"><input type="text" id="gasto-desc" placeholder="Descripción" class="form-control" required></div>
-          <div class="col-md-4 mb-3"><select id="gasto-tipo" class="form-select" required>
-            <option value="">Tipo de Gasto</option>
-            <option value="Alquiler">Alquiler</option>
-            <option value="Sueldos">Sueldos</option>
-            <option value="Servicios">Servicios</option>
-          </select></div>
-          <div class="col-md-2 mb-3"><input type="number" id="gasto-cantidad" placeholder="Cantidad" class="form-control" required></div>
-          <div class="col-md-2 mb-3"><input type="number" id="gasto-valor" placeholder="Valor Unitario S/" class="form-control" required></div>
-          <div class="col-md-4 mb-3"><input type="date" id="gasto-fecha" class="form-control" required></div>
-        </div>
-        <button class="btn btn-warning mb-3">Registrar Gasto</button>
-      </form>
-      <div id="gastos-list" class="table-responsive"></div>
-    </section>
-
+    </div>
   </div>
 </div>
 
@@ -139,9 +95,9 @@
 <script src="https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
 <script src="dashboard.js"></script>
-
 </body>
 </html>
+
 
 
 
