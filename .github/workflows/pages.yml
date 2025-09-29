@@ -1,32 +1,44 @@
-name: Deploy Static Site
+name: Deploy Static Site to GitHub Pages
 
-# Se ejecuta cada vez que hay un push a main
 on:
   push:
     branches:
-      - main
+      - main  # Se ejecuta al hacer push en main
+  workflow_dispatch:
 
-# ⚠️ Permisos necesarios para evitar el error
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read       # Necesario para acceder al contenido del repo
+  pages: write          # Permiso para desplegar en Pages
+  id-token: write       # Permiso necesario para la autenticación OIDC
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      # Clona el repo
+      # 1️⃣ Clonar el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Subir todo el contenido como artefacto de Pages
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+      # 2️⃣ Instalar Node.js (por si necesitas npm para algún build)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          path: .  # Todo el repo se considera sitio estático
+          node-version: '18'
 
-      # Desplegar a GitHub Pages
+      # 3️⃣ Opcional: Instalar dependencias si tuvieras (npm install)
+      #- name: Install dependencies
+      #  run: npm install
+
+      # 4️⃣ Copiar archivos a carpeta de Pages
+      - name: Build static site
+        run: |
+          mkdir -p ./_site
+          cp -r *.html *.css *.js ./_site/
+
+      # 5️⃣ Deploy a GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
+        with:
+          folder: _site
 
