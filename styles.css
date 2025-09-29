@@ -1,4 +1,4 @@
-/* ====== Fondo del login ====== */
+/* ====== Fondo ====== */
 .login-body {
   background: linear-gradient(135deg, #ff914d, #ffcc70);
   display: flex;
@@ -8,7 +8,7 @@
   font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
-/* ====== Contenedor centrado ====== */
+/* ====== Contenedor principal ====== */
 .auth-wrapper {
   display: flex;
   align-items: center;
@@ -17,33 +17,15 @@
 }
 
 .auth-card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 35px;
+  perspective: 1000px; /* Para el efecto 3D */
+  max-width: 420px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  animation: fadeIn 0.6s ease;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Decoración con huellitas */
-.auth-card::before,
-.auth-card::after {
-  content: "🐾";
-  font-size: 3rem;
-  position: absolute;
-  opacity: 0.08;
-}
-.auth-card::before {
-  top: 15px;
-  left: 20px;
-}
-.auth-card::after {
-  bottom: 15px;
-  right: 20px;
+.auth-header {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .auth-header h1 {
@@ -51,13 +33,42 @@
   color: #ff914d;
 }
 
-.auth-header p {
-  color: #666;
-  margin-bottom: 20px;
+/* ====== Inner card (flippable) ====== */
+.card-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+.card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+/* ====== Faces ====== */
+.card-face {
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  text-align: center;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.card-front {
+  transform: rotateY(0deg);
+}
+
+.card-back {
+  transform: rotateY(180deg);
 }
 
 /* Inputs */
-.auth-card input {
+.card-face input {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
@@ -123,11 +134,3 @@
   font-size: 0.9rem;
   margin: 5px 0;
 }
-
-/* Animación */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
