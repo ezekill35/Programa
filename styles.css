@@ -1,212 +1,122 @@
-/* ===================== GENERAL ===================== */
+/* ======= BODY ======= */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #ffecb3, #ffe0b2);
-  color: #333;
 }
 
-h1, h2, h3, h4 {
-  font-weight: 600;
+/* ======= TARJETA LOGIN ======= */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.login-card {
+  background: linear-gradient(145deg, #fff, #ffe0b2);
+  border-radius: 25px;
+  padding: 40px 50px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.login-card:hover {
+  transform: rotateY(5deg) rotateX(5deg);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.35);
+}
+
+/* ======= TITULOS ======= */
+.login-title {
+  font-size: 2rem;
+  margin-bottom: 10px;
   color: #ff914d;
 }
 
-button {
-  cursor: pointer;
-}
-
-/* ===================== SIDEBAR ===================== */
-#sidebar {
-  width: 220px;
-  background: linear-gradient(to bottom, #ff914d, #ffcc70);
-  height: 100vh;
-  padding: 20px;
-  box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-  position: fixed;
-}
-
-#sidebar h2 {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-#sidebar button {
-  width: 100%;
-  background: transparent;
-  border: none;
-  padding: 12px 0;
-  margin-bottom: 10px;
-  text-align: left;
+.login-subtitle {
   font-size: 1rem;
-  color: #fff;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  margin-bottom: 25px;
+  color: #333;
 }
 
-#sidebar button:hover,
-#sidebar button.active {
-  background: rgba(255,255,255,0.2);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-
-/* ===================== DASHBOARD CONTENT ===================== */
-#dashboard-content {
-  margin-left: 240px;
-  padding: 30px;
-}
-
-.content-section {
-  display: none;
-  transition: transform 0.5s ease, opacity 0.5s ease;
-  transform-style: preserve-3d;
-}
-
-.content-section.active {
-  display: block;
-  transform: rotateY(0deg);
-  opacity: 1;
-}
-
-/* ===================== CARDS ===================== */
-.card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 15px 25px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px) rotateX(3deg);
-  box-shadow: 0 25px 40px rgba(0,0,0,0.2);
-}
-
-/* ===================== FORMS ===================== */
-form {
-  display: flex;
-  flex-wrap: wrap;
-}
-
+/* ======= FORM ======= */
 .form-group {
-  flex: 1 1 200px;
-  display: flex;
-  flex-direction: column;
-  margin-right: 20px;
   margin-bottom: 15px;
+  text-align: left;
 }
 
 .form-group label {
-  font-weight: 500;
+  display: block;
   margin-bottom: 5px;
+  font-weight: 500;
 }
 
-.form-group input,
-.form-group select {
-  padding: 10px;
-  border-radius: 10px;
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
   border: 2px solid #f6c667;
   font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-.form-actions {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-.primary-btn {
-  background: #ff914d;
-  color: #fff;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: background 0.3s ease;
-  margin-left: 10px;
-}
-
-.primary-btn:hover {
-  background: #e67e22;
-}
-
-.secondary-btn {
-  background: #f1f1f1;
-  color: #333;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 12px;
-  font-weight: 500;
-  transition: background 0.3s ease;
-}
-
-.secondary-btn:hover {
-  background: #ddd;
-}
-
-/* ===================== TABLES / LISTS ===================== */
-.data-table-responsive {
-  overflow-x: auto;
-  margin-top: 10px;
-}
-
-.data-table-responsive .card {
-  margin-bottom: 10px;
-}
-
-/* ===================== RESUMEN RAPIDO ===================== */
-.resumen {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.resumen .card {
-  flex: 1 1 200px;
-  text-align: center;
-  color: #ff914d;
-}
-
-/* ===================== HEADER DASHBOARD ===================== */
-#dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-#dashboard-header h1 {
-  font-size: 2rem;
-  color: #ff914d;
-}
-
-/* ===================== EFECTO 3D INPUTS ===================== */
-input:focus, select:focus {
+.form-group input:focus {
   outline: none;
   border-color: #ff914d;
   box-shadow: 0 0 10px rgba(255,145,77,0.5);
   transform: translateZ(2px);
-  transition: all 0.3s ease;
 }
 
-/* ===================== RESPONSIVE ===================== */
-@media screen and (max-width: 992px) {
-  #sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    box-shadow: none;
-    margin-bottom: 20px;
-  }
-  #dashboard-content {
-    margin-left: 0;
-    padding: 20px;
-  }
-  .form-group {
-    margin-right: 0;
-  }
+/* ======= ICONO PASSWORD ======= */
+.password-container {
+  position: relative;
 }
+
+.password-container .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+
+/* ======= BOTON ======= */
+.primary-btn {
+  width: 100%;
+  padding: 12px;
+  background: #ff914d;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 10px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.primary-btn:hover {
+  background: #e67e22;
+  transform: translateY(-2px);
+}
+
+/* ======= MENSAJES ======= */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin: 5px 0;
+  text-align: left;
+}
+
+
 
 
