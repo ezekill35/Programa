@@ -17,17 +17,17 @@
 </header>
 
 <nav class="dashboard-nav">
-  <button id="btn-productos" onclick="showSection('productos')">📦 Productos</button>
-  <button id="btn-proveedores" onclick="showSection('proveedores')">👥 Proveedores</button>
-  <button id="btn-compras" onclick="showSection('compras')">🛒 Facturas</button>
-  <button id="btn-ventas" onclick="showSection('ventas')">💰 Ventas</button>
-  <button id="btn-gastos" onclick="showSection('gastos')">📄 Gastos</button>
+  <button onclick="showSection('productos')">📦 Productos</button>
+  <button onclick="showSection('proveedores')">👥 Proveedores</button>
+  <button onclick="showSection('compras')">🛒 Facturas</button>
+  <button onclick="showSection('ventas')">💰 Ventas</button>
+  <button onclick="showSection('gastos')">📄 Gastos</button>
 </nav>
 
 <main class="dashboard-main">
 
   <!-- Productos -->
-  <section id="productos-section" class="content-section active">
+  <section id="productos-section" class="content-section active productos-color">
     <h2>📦 Productos</h2>
     <div class="dashboard-grid">
       <div class="card form-card">
@@ -50,7 +50,7 @@
   </section>
 
   <!-- Proveedores -->
-  <section id="proveedores-section" class="content-section">
+  <section id="proveedores-section" class="content-section proveedores-color">
     <h2>👥 Proveedores</h2>
     <div class="dashboard-grid">
       <div class="card form-card">
@@ -74,19 +74,19 @@
   </section>
 
   <!-- Compras / Facturas -->
-  <section id="compras-section" class="content-section">
+  <section id="compras-section" class="content-section compras-color">
     <h2>🛒 Facturas</h2>
     <div class="dashboard-grid">
       <div class="card form-card">
         <h3>➕ Registrar Factura</h3>
         <form id="form-factura" onsubmit="event.preventDefault(); agregarFactura();">
-          <div class="form-group"><label>RUC (*)</label><input type="text" id="factura-ruc" required></div>
-          <div class="form-group"><label>Proveedor (*)</label>
-            <select id="factura-proveedor" required></select>
+          <div class="form-group"><label>RUC Proveedor (*)</label>
+            <select id="factura-ruc" required></select>
           </div>
-          <div class="form-group"><label>Producto (*)</label><input type="text" id="factura-producto" required></div>
-          <div class="form-group"><label>Desea registrarlo</label>
-            <select id="factura-registrar">
+          <div class="form-group"><label>Nombre del Producto (*)</label><input type="text" id="factura-producto" required></div>
+          <div class="form-group"><label>Desea registrarlo?</label>
+            <select id="factura-desea" required>
+              <option value="">Seleccione</option>
               <option value="si">Sí</option>
               <option value="no">No</option>
             </select>
@@ -105,7 +105,7 @@
   </section>
 
   <!-- Ventas -->
-  <section id="ventas-section" class="content-section">
+  <section id="ventas-section" class="content-section ventas-color">
     <h2>💰 Ventas</h2>
     <div class="list-card">
       <div id="lista-ventas" class="list-items"></div>
@@ -113,7 +113,7 @@
   </section>
 
   <!-- Gastos -->
-  <section id="gastos-section" class="content-section">
+  <section id="gastos-section" class="content-section gastos-color">
     <h2>📄 Gastos</h2>
     <div class="list-card">
       <div id="lista-gastos" class="list-items"></div>
@@ -124,24 +124,11 @@
 
 <script src="firebase.js"></script>
 <script src="dashboard.js"></script>
-<script>
-function showSection(section) {
-  const sections = document.querySelectorAll('.content-section');
-  sections.forEach(sec => sec.classList.remove('active'));
-  document.getElementById(section + '-section').classList.add('active');
-
-  // Cambiar colores de navegación según selección
-  document.querySelectorAll('.dashboard-nav button').forEach(btn => btn.style.background = '');
-  const btn = document.getElementById('btn-' + section);
-  if(section === 'productos') btn.style.background = '#ff00ff'; // fucsia
-  else if(section === 'proveedores') btn.style.background = '#00bfff'; // azul
-  else if(section === 'compras') btn.style.background = '#ffa500'; // naranja
-  else if(section === 'ventas') btn.style.background = '#32cd32'; // verde
-  else if(section === 'gastos') btn.style.background = '#ff4500'; // rojo
-}
-</script>
 </body>
 </html>
+
+
+
 
 
 
