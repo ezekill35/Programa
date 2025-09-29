@@ -1,12 +1,12 @@
-// Cambiar secciones del dashboard
-function showSection(section) {
-  document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
-  document.getElementById(section + "-section").classList.add("active");
-}
-
 // Cerrar sesión
 function logout() {
   auth.signOut().then(() => window.location.href = "index.html");
+}
+
+// Cambiar secciones
+function showSection(section) {
+  document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
+  document.getElementById(section + "-section").classList.add("active");
 }
 
 // ----------------------
@@ -94,7 +94,7 @@ function cargarSelectProveedores() {
 }
 
 // ----------------------
-// FACTURAS / COMPRAS
+// FACTURAS
 // ----------------------
 function agregarFactura() {
   const ruc = document.getElementById("factura-ruc").value;
@@ -130,10 +130,7 @@ function mostrarFacturas() {
     });
   });
 }
-
-// ----------------------
-// VENTAS
-// ----------------------
+// Ventas
 function agregarVenta() {
   const cliente = document.getElementById("venta-cliente").value;
   const producto = document.getElementById("venta-producto").value;
@@ -163,9 +160,7 @@ function mostrarVentas() {
   });
 }
 
-// ----------------------
-// GASTOS
-// ----------------------
+// Gastos
 function agregarGasto() {
   const concepto = document.getElementById("gasto-concepto").value;
   const tipo = document.getElementById("gasto-tipo").value;
@@ -177,11 +172,10 @@ function agregarGasto() {
   db.collection("gastos").add({ concepto, tipo, cantidad, valor, total, fecha })
     .then(() => {
       document.getElementById("gasto-concepto").value = "";
-      document.getElementById("gasto-tipo").value = "alquiler";
+      document.getElementById("gasto-tipo").value = "Alquiler";
       document.getElementById("gasto-cantidad").value = 1;
       document.getElementById("gasto-valor").value = "";
       document.getElementById("gasto-fecha").value = "";
-      document.getElementById("gasto-total").value = "";
       mostrarGastos();
     });
 }
@@ -199,13 +193,11 @@ function mostrarGastos() {
   });
 }
 
+
 // Inicializar listas al cargar
 window.onload = function() {
   mostrarProductos();
   mostrarProveedores();
   cargarSelectProveedores();
   mostrarFacturas();
-  mostrarVentas();
-  mostrarGastos();
 }
-
