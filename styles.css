@@ -1,19 +1,15 @@
-body.login-body {
-  display: flex; justify-content: center; align-items: center; min-height: 100vh;
-  font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #ff914d, #ffcc70);
-}
-.auth-wrapper { display: flex; justify-content: center; align-items: center; width: 100%; }
-.auth-card { perspective: 1000px; max-width: 400px; width: 100%; }
-.card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.8s; }
-.card-inner.is-flipped { transform: rotateY(180deg); }
-.card-face { background: #fff; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.2); position: absolute; top: 0; left: 0; width: 100%; backface-visibility: hidden; }
-.card-back { transform: rotateY(180deg); }
-input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 10px; border: 2px solid #f6c667; }
-.primary-btn { width: 100%; background: #ff914d; color: #fff; border: none; padding: 12px; border-radius: 10px; cursor: pointer; margin-top: 10px; }
-.primary-btn:hover { background: #e67e22; }
-.secondary-btn { width: 100%; background: #f1f1f1; border: none; color: #333; padding: 12px; border-radius: 10px; cursor: pointer; margin-top: 10px; }
-.secondary-btn:hover { background: #ddd; }
-.error-message { color: #e74c3c; }
-.success-message { color: #27ae60; }
-.content-section { display: none; }
-.content-section.active { display: block; }
+body, html { margin:0; padding:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
+#sidebar { position: fixed; left:0; top:0; width:220px; height:100%; background:#ff914d; color:#fff; display:flex; flex-direction:column; padding-top:20px; }
+#sidebar h2 { text-align:center; margin-bottom:30px; }
+.nav-link { display:block; padding:12px 20px; margin:5px 0; background:none; border:none; text-align:left; color:#fff; cursor:pointer; border-radius:8px; font-size:1rem; }
+.nav-link.active, .nav-link:hover { background:#e67e22; }
+.logout-btn { margin-top:auto; background:#c0392b; }
+#main-content { margin-left:240px; padding:20px; }
+.content-section { display:none; }
+.content-section.active { display:block; }
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; }
+.cards-grid .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; }
+.primary-btn { padding:10px 15px; background:#ff914d; color:#fff; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }
+.primary-btn:hover { background:#e67e22; }
+input, select { width:100%; padding:10px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
+
