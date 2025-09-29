@@ -1,22 +1,31 @@
-/* ==== General ==== */
+/* =========================
+   Estilos Globales
+   ========================= */
+:root {
+  --primary: #2E86C1;    /* Azul Discovery Pets */
+  --secondary: #F39C12;  /* Naranja acento */
+  --danger: #E74C3C;     /* Rojo para logout/errores */
+  --background: #F4F6F7; /* Fondo general */
+  --text-dark: #2C3E50;  /* Texto principal */
+  --text-light: #ECF0F1; /* Texto claro */
+}
+
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #F4F6F7;
-  color: #2C3E50;
+  background: var(--background);
+  color: var(--text-dark);
 }
 
-h1, h2, h3 {
-  margin: 0;
-}
-
-/* ==== Login / Registro ==== */
+/* =========================
+   Login / Registro
+   ========================= */
 #auth-section {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #2E86C1, #5DADE2);
+  background: linear-gradient(135deg, var(--primary), #5DADE2);
 }
 
 .auth-container {
@@ -26,10 +35,11 @@ h1, h2, h3 {
   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
   width: 380px;
   text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
 .auth-container h2 {
-  color: #2E86C1;
+  color: var(--primary);
   margin-bottom: 20px;
   font-weight: bold;
 }
@@ -45,7 +55,7 @@ h1, h2, h3 {
 }
 
 .auth-container input:focus {
-  border-color: #2E86C1;
+  border-color: var(--primary);
 }
 
 .password-container {
@@ -62,7 +72,7 @@ h1, h2, h3 {
 
 .primary-btn {
   width: 100%;
-  background: #2E86C1;
+  background: var(--primary);
   color: #fff;
   padding: 12px;
   margin-top: 15px;
@@ -79,7 +89,7 @@ h1, h2, h3 {
 
 .secondary-btn {
   width: 100%;
-  background: #F39C12;
+  background: var(--secondary);
   color: #fff;
   padding: 10px;
   margin-top: 10px;
@@ -95,7 +105,7 @@ h1, h2, h3 {
 }
 
 .error-message {
-  color: red;
+  color: var(--danger);
   font-size: 13px;
   margin: 5px 0;
 }
@@ -106,7 +116,9 @@ h1, h2, h3 {
   margin: 5px 0;
 }
 
-/* ==== Dashboard ==== */
+/* =========================
+   Dashboard Layout
+   ========================= */
 #main-app {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -115,8 +127,8 @@ h1, h2, h3 {
 
 /* Sidebar */
 .sidebar {
-  background: #2E86C1;
-  color: #fff;
+  background: var(--primary);
+  color: var(--text-light);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -126,7 +138,9 @@ h1, h2, h3 {
 .sidebar h1 {
   font-size: 22px;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .sidebar p {
@@ -146,17 +160,18 @@ h1, h2, h3 {
   margin: 8px 0;
   cursor: pointer;
   border-radius: 6px;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .nav-list li:hover {
   background: #1B4F72;
+  transform: translateX(4px);
 }
 
 /* Main Content */
 .main-content {
   padding: 25px;
-  background: #F4F6F7;
+  background: var(--background);
   overflow-y: auto;
 }
 
@@ -169,11 +184,11 @@ header {
 
 header h2 {
   font-size: 22px;
-  color: #2C3E50;
+  color: var(--text-dark);
 }
 
 .user-controls button {
-  background: #E74C3C;
+  background: var(--danger);
   color: white;
   border: none;
   padding: 8px 14px;
@@ -193,6 +208,7 @@ header h2 {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  animation: fadeIn 0.4s ease-in-out;
 }
 
 .content-section.active {
@@ -200,6 +216,14 @@ header h2 {
 }
 
 .content-section h3 {
-  color: #2E86C1;
+  color: var(--primary);
   margin-bottom: 15px;
+}
+
+/* =========================
+   Animaciones
+   ========================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
