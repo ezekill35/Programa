@@ -1,31 +1,17 @@
-// ===== Firebase Config =====
-const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:a073cc5af230b32f4c5322",
-  measurementId: "G-W5RGYVTW3V"
-};
-
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// ===== Mostrar secciones =====
+// Cambiar secciones
 function showSection(section) {
   document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
   document.getElementById(section + "-section").classList.add("active");
 }
 
-// ===== Cerrar sesión =====
+// Cerrar sesión
 function logout() {
   auth.signOut().then(() => window.location.href = "index.html");
 }
 
-// ===== PRODUCTOS =====
+// ----------------------
+// PRODUCTOS
+// ----------------------
 function agregarProducto() {
   const sku = document.getElementById("producto-sku").value;
   const nombre = document.getElementById("producto-nombre").value;
@@ -48,13 +34,15 @@ function mostrarProductos() {
     snapshot.forEach(doc => {
       const p = doc.data();
       lista.innerHTML += `<div class="card-item">
-        <b>${p.nombre}</b> - ${p.categoria} - S/ ${p.precio.toFixed(2)} - Stock: ${p.stock}
+        <b>${p.nombre}</b> - ${p.categoria} - S/ ${p.precio} - Stock: ${p.stock}
       </div>`;
     });
   });
 }
 
-// ===== PROVEEDORES =====
+// ----------------------
+// PROVEEDORES
+// ----------------------
 function agregarProveedor() {
   const nombre = document.getElementById("proveedor-nombre").value;
   const contacto = document.getElementById("proveedor-contacto").value;
@@ -95,7 +83,9 @@ function cargarSelectProveedores() {
   });
 }
 
-// ===== FACTURAS / COMPRAS =====
+// ----------------------
+// FACTURAS / COMPRAS
+// ----------------------
 function agregarFactura() {
   const ruc = document.getElementById("factura-ruc").value;
   const numero = document.getElementById("factura-numero").value;
@@ -119,13 +109,15 @@ function mostrarFacturas() {
     snapshot.forEach(doc => {
       const f = doc.data();
       lista.innerHTML += `<div class="card-item">
-        <b>Proveedor:</b> ${f.proveedor} - <b>Producto:</b> ${f.producto} - ${f.cantidad} x S/ ${f.precio.toFixed(2)} - <b>Fecha:</b> ${f.fecha}
+        <b>Proveedor:</b> ${f.proveedor} - <b>Producto:</b> ${f.producto} - S/ ${f.precio} x ${f.cantidad} - <b>Fecha:</b> ${f.fecha}
       </div>`;
     });
   });
 }
 
-// ===== VENTAS =====
+// ----------------------
+// VENTAS
+// ----------------------
 function agregarVenta() {
   const cliente = document.getElementById("venta-cliente").value;
   const producto = document.getElementById("venta-producto").value;
@@ -134,10 +126,7 @@ function agregarVenta() {
 
   db.collection("ventas").add({ cliente, producto, cantidad, total })
     .then(() => {
-      document.getElementById("venta-cliente").value = "";
-      document.getElementById("venta-producto").value = "";
-      document.getElementById("venta-cantidad").value = "";
-      document.getElementById("venta-total").value = "";
+      document.getElementById("form-venta").reset();
       mostrarVentas();
     });
 }
@@ -149,13 +138,15 @@ function mostrarVentas() {
     snapshot.forEach(doc => {
       const v = doc.data();
       lista.innerHTML += `<div class="card-item">
-        <b>Cliente:</b> ${v.cliente} - <b>Producto:</b> ${v.producto} - Cant: ${v.cantidad} - Total: S/ ${v.total.toFixed(2)}
+        <b>Cliente:</b> ${v.cliente} - <b>Producto:</b> ${v.producto} - Cantidad: ${v.cantidad} - Total: S/ ${v.total}
       </div>`;
     });
   });
 }
 
-// ===== GASTOS =====
+// ----------------------
+// GASTOS
+// ----------------------
 function agregarGasto() {
   const concepto = document.getElementById("gasto-concepto").value;
   const tipo = document.getElementById("gasto-tipo").value;
@@ -166,11 +157,7 @@ function agregarGasto() {
 
   db.collection("gastos").add({ concepto, tipo, cantidad, valor, total, fecha })
     .then(() => {
-      document.getElementById("gasto-concepto").value = "";
-      document.getElementById("gasto-tipo").value = "alquiler";
-      document.getElementById("gasto-cantidad").value = 1;
-      document.getElementById("gasto-valor").value = "";
-      document.getElementById("gasto-fecha").value = "";
+      document.getElementById("form-gasto").reset();
       mostrarGastos();
     });
 }
@@ -182,13 +169,13 @@ function mostrarGastos() {
     snapshot.forEach(doc => {
       const g = doc.data();
       lista.innerHTML += `<div class="card-item">
-        <b>${g.tipo}</b> - ${g.concepto} - Cant: ${g.cantidad} - S/ ${g.total.toFixed(2)} - Fecha: ${g.fecha}
+        <b>${g.tipo}</b> - ${g.concepto} - Cant: ${g.cantidad} - S/ ${g.total} - Fecha: ${g.fecha}
       </div>`;
     });
   });
 }
 
-// ===== Inicializar listas =====
+// Inicializar listas al cargar
 window.onload = function() {
   mostrarProductos();
   mostrarProveedores();
@@ -197,4 +184,5 @@ window.onload = function() {
   mostrarVentas();
   mostrarGastos();
 }
+
 
