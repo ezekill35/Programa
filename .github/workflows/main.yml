@@ -1,0 +1,19 @@
+name: Deploy Static Site
+
+on:
+  push:
+    branches:
+      - main  # Cambia si tu rama principal es otra
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Clonar el repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Subir contenido a GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
