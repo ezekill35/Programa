@@ -1,44 +1,62 @@
-/* ====== Login / Registro ====== */
+/* ====== Fondo del login ====== */
 .login-body {
   background: linear-gradient(135deg, #ff914d, #ffcc70);
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
-.auth-container {
+/* ====== Contenedor centrado ====== */
+.auth-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 400px;
-  padding: 20px;
 }
 
 .auth-card {
   background: #fff;
-  border-radius: 15px;
-  padding: 30px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  text-align: center;
+  border-radius: 20px;
+  padding: 35px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   animation: fadeIn 0.6s ease;
+  text-align: center;
   position: relative;
   overflow: hidden;
 }
 
-.auth-card::before {
+/* Decoración con huellitas */
+.auth-card::before,
+.auth-card::after {
   content: "🐾";
   font-size: 3rem;
   position: absolute;
+  opacity: 0.08;
+}
+.auth-card::before {
   top: 15px;
+  left: 20px;
+}
+.auth-card::after {
+  bottom: 15px;
   right: 20px;
-  opacity: 0.1;
 }
 
-.auth-card h2 {
-  margin-bottom: 20px;
+.auth-header h1 {
+  font-size: 2rem;
   color: #ff914d;
-  font-size: 1.6rem;
 }
 
+.auth-header p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
 .auth-card input {
   width: 100%;
   padding: 12px;
@@ -61,6 +79,7 @@
   color: #888;
 }
 
+/* Botones */
 .primary-btn {
   width: 100%;
   background: #ff914d;
@@ -73,7 +92,6 @@
   margin-top: 10px;
   transition: background 0.3s ease;
 }
-
 .primary-btn:hover {
   background: #e67e22;
 }
@@ -90,24 +108,26 @@
   margin-top: 10px;
   transition: background 0.3s ease;
 }
-
 .secondary-btn:hover {
   background: #ddd;
 }
 
+/* Mensajes */
 .error-message {
   color: #e74c3c;
   font-size: 0.9rem;
   margin: 5px 0;
 }
-
 .success-message {
   color: #27ae60;
   font-size: 0.9rem;
   margin: 5px 0;
 }
 
+/* Animación */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
