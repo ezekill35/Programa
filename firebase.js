@@ -18,4 +18,3 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();      // 🔑 Login/registro
 const db = firebase.firestore();   // 📦 Base de datos en la nube
 
-
