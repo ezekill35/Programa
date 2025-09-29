@@ -48,6 +48,14 @@ function togglePasswordVisibility(fieldId, iconElement) {
   }
 }
 
+// -------- Dashboard Secciones --------
+function showSection(section) {
+  document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
+  document.getElementById(section + "-section").classList.add("active");
+}
+
+
+
 
 
 
