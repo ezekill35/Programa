@@ -1,76 +1,69 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f0f2f5;
+.dashboard {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
-  margin: 0;
 }
 
-.login-container {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-  width: 350px;
+.sidebar {
+  width: 240px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+}
+
+.sidebar h2 {
   text-align: center;
-}
-
-.login-container h1 {
-  color: #1877f2;
-  margin-bottom: 10px;
-}
-
-.subtitle {
   margin-bottom: 20px;
-  color: #555;
+  color: #1877f2;
 }
 
-.form {
-  display: none;
-  flex-direction: column;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
 }
 
-.form.active {
-  display: flex;
-}
-
-input {
+.sidebar .menu-item {
   padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ddd;
+  margin: 6px 0;
+  cursor: pointer;
   border-radius: 6px;
+  transition: background 0.3s;
 }
 
-button {
+.sidebar .menu-item:hover {
+  background: #f0f0f0;
+}
+
+.sidebar .menu-item.active {
+  background: fuchsia;
+  color: white;
+  font-weight: bold;
+}
+
+.logout {
+  margin-top: 30px;
+  width: 100%;
   padding: 12px;
-  margin-top: 10px;
-  background: #1877f2;
+  background: crimson;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #145dbf;
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-p {
-  margin-top: 12px;
-  font-size: 14px;
+.section {
+  display: none;
 }
 
-a {
-  color: #1877f2;
-  text-decoration: none;
+.section.active {
+  display: block;
 }
 
-a:hover {
-  text-decoration: underline;
-}
 
 
 
