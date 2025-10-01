@@ -1,68 +1,95 @@
-.dashboard {
+/* Fondo decorativo */
+.auth-body {
   display: flex;
-  height: 100vh;
-}
-
-.sidebar {
-  width: 240px;
-  background: #fff;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-}
-
-.sidebar h2 {
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff80ab, #ff4081, #f50057); /* fondo fucsia/rosado */
+  background-size: 300% 300%;
+  animation: gradientMove 8s infinite alternate;
+  font-family: Arial, sans-serif;
+  color: white;
   text-align: center;
-  margin-bottom: 20px;
-  color: #1877f2;
 }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
+/* Animación de fondo */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
-.sidebar .menu-item {
-  padding: 12px;
-  margin: 6px 0;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.3s;
-}
-
-.sidebar .menu-item:hover {
-  background: #f0f0f0;
-}
-
-.sidebar .menu-item.active {
-  background: fuchsia;
-  color: white;
-  font-weight: bold;
-}
-
-.logout {
-  margin-top: 30px;
+/* Contenedor de formularios */
+.form-wrapper {
+  max-width: 400px;
   width: 100%;
-  padding: 12px;
-  background: crimson;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
-.content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
+/* Títulos */
+.title {
+  font-size: 32px;
+  margin-bottom: 10px;
 }
 
-.section {
+.subtitle {
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* Formularios */
+.auth-box {
   display: none;
 }
 
-.section.active {
+.auth-box.active {
   display: block;
 }
+
+.auth-box input {
+  width: 90%;
+  padding: 12px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 25px;
+  outline: none;
+  font-size: 14px;
+}
+
+.auth-box input:focus {
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* Botón */
+.auth-box button {
+  width: 95%;
+  padding: 12px;
+  margin-top: 12px;
+  background: white;
+  border: none;
+  border-radius: 25px;
+  color: #f50057;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.auth-box button:hover {
+  background: #f8bbd0;
+  color: #880e4f;
+}
+
+/* Texto inferior */
+.switch {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.switch a {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 
 
 
