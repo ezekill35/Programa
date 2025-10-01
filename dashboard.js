@@ -1,220 +1,112 @@
-// dashboard.js
-import { auth, db, verificarSesion } from "./firebase.js";
-import { collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db, auth } from "./firebase.js";
+import { collection, getDocs, addDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// ==========================
-// 📌 Verificar sesión
-// ==========================
-verificarSesion(user => {
-  console.log("Usuario activo:", user.email);
-  cargarTodo();
-});
+// ================== Secciones ==================
+function mostrarSeccion(id){
+  document.querySelectorAll(".seccion").forEach(sec => sec.classList.add("oculto"));
+  document.getElementById(id).classList.remove("oculto");
+}
 
-// ==========================
-// 📌 FUNCIONES DE DATOS
-// ==========================
-async function cargarDatos(coleccion, tablaId) {
+// ================== Cargar tablas ==================
+async function cargarDatos(coleccion, tablaId){
   const tabla = document.getElementById(tablaId);
   tabla.innerHTML = "";
   const snapshot = await getDocs(collection(db, coleccion));
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
+  snapshot.forEach(docu => {
+    const data = docu.data();
     let fila = "<tr>";
     Object.values(data).forEach(valor => fila += `<td>${valor}</td>`);
-    fila += `<td><button class="btnEliminar" data-id="${docSnap.id}" data-coleccion="${coleccion}">❌</button></td>`;
+    fila += `<td><button onclick="eliminarRegistro('${coleccion}','${docu.id}')">❌ Eliminar</button></td>`;
     fila += "</tr>";
     tabla.innerHTML += fila;
   });
-  activarEliminacion();
 }
 
-// Agregar registro
-async function agregarRegistro(coleccion, datos, tablaId) {
-  try {
-    await addDoc(collection(db, coleccion), datos);
-    alert("✅ Registro agregado correctamente");
-    cargarDatos(coleccion, tablaId);
-  } catch (error) {
-    alert("❌ Error al agregar: " + error.message);
+// ================== CRUD ==================
+async function agregarProveedor(e){
+  e.preventDefault();
+  const form = e.target;
+  const rut = form.rut.value;
+  const nombre = form.nombre.value;
+  const direccion = form.direccion.value;
+  const telefono = form.telefono.value;
+  try{
+    await addDoc(collection(db,"proveedores"), {rut,nombre,direccion,telefono});
+    document.getElementById("mensajeProveedor").textContent = "✅ Proveedor agregado";
+    document.getElementById("mensajeProveedor").style.color="#27ae60";
+    form.reset();
+    cargarTodo();
+  } catch(e){
+    document.getElementById("mensajeProveedor").textContent = "❌ Error al agregar proveedor";
+    document.getElementById("mensajeProveedor").style.color="#e74c3c";
   }
 }
 
-// ==========================
-// 📌 BOTONES DE ELIMINAR
-// ==========================
-function activarEliminacion() {
-  document.querySelectorAll(".btnEliminar").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const coleccion = btn.dataset.coleccion;
-      const id = btn.dataset.id;
-      if (confirm("¿Deseas eliminar este registro?")) {
-        await deleteDoc(doc(db, coleccion, id));
-        alert("✅ Registro eliminado");
-        cargarDatos(coleccion, `tabla${coleccion.charAt(0).toUpperCase() + coleccion.slice(1)}`);
-      }
-    });
-  });
+async function agregarFactura(e){
+  e.preventDefault();
+  const form = e.target;
+  const numero = form.numero.value;
+  const rutProveedor = form.rutProveedor.value;
+  const fecha = form.fecha.value;
+  const monto = form.monto.value;
+
+  // Buscar nombre del proveedor
+  const q = query(collection(db,"proveedores"), where("rut","==",rutProveedor));
+  const snap = await getDocs(q);
+  let nombreProveedor = "";
+  snap.forEach(d => { nombreProveedor = d.data().nombre; });
+  form.nombreProveedor.value = nombreProveedor || "No encontrado";
+
+  try{
+    await addDoc(collection(db,"facturas"), {numero,rutProveedor,nombreProveedor,fecha,monto});
+    document.getElementById("mensajeFactura").textContent = "✅ Factura agregada";
+    document.getElementById("mensajeFactura").style.color="#27ae60";
+    form.reset();
+    cargarTodo();
+  } catch(e){
+    document.getElementById("mensajeFactura").textContent = "❌ Error al agregar factura";
+    document.getElementById("mensajeFactura").style.color="#e74c3c";
+  }
 }
 
-// ==========================
-// 📌 BUSCADORES EN TIEMPO REAL
-// ==========================
-function activarBuscador(inputId, tablaId) {
+// ================== Eliminar ==================
+window.eliminarRegistro = async (coleccion,id)=>{
+  await deleteDoc(doc(db,coleccion,id));
+  cargarTodo();
+}
+
+// ================== Buscadores ==================
+function activarBuscador(inputId, tablaId){
   const input = document.getElementById(inputId);
-  input.addEventListener("input", () => {
+  input.addEventListener("keyup", ()=>{
     const filtro = input.value.toLowerCase();
-    const filas = document.querySelectorAll(`#${tablaId} tr`);
-    filas.forEach(fila => {
+    document.querySelectorAll(`#${tablaId} tr`).forEach(fila=>{
       fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? "" : "none";
     });
   });
 }
 
-// ==========================
-// 📌 CARGAR TODO
-// ==========================
-async function cargarTodo() {
-  await cargarDatos("proveedores", "tablaProveedores");
-  await cargarDatos("facturas", "tablaFacturas");
-  await cargarDatos("servicios", "tablaServicios");
-  await cargarDatos("ventas", "tablaVentas");
-  await cargarDatos("gastos", "tablaGastos");
-
-  activarBuscador("buscarProveedores", "tablaProveedores");
-  activarBuscador("buscarFacturas", "tablaFacturas");
-  activarBuscador("buscarServicios", "tablaServicios");
-  activarBuscador("buscarVentas", "tablaVentas");
-  activarBuscador("buscarGastos", "tablaGastos");
+// ================== Cargar todo ==================
+async function cargarTodo(){
+  await cargarDatos("proveedores","tablaProveedores");
+  await cargarDatos("facturas","tablaFacturas");
 }
 
-// ==========================
-// 📌 FORMULARIOS
-// ==========================
+document.getElementById("formProveedor").addEventListener("submit", agregarProveedor);
+document.getElementById("formFactura").addEventListener("submit", agregarFactura);
 
-// Proveedores
-document.getElementById("formProveedor").addEventListener("submit", e => {
-  e.preventDefault();
-  const datos = {
-    ruc: e.target.ruc.value,
-    nombre: e.target.nombre.value,
-    direccion: e.target.direccion.value,
-    telefono: e.target.telefono.value
-  };
-  agregarRegistro("proveedores", datos, "tablaProveedores");
-  e.target.reset();
+activarBuscador("buscarProveedores","tablaProveedores");
+activarBuscador("buscarFacturas","tablaFacturas");
+
+// ================== Logout ==================
+document.getElementById("btnLogout").addEventListener("click", async ()=>{
+  await signOut(auth);
+  window.location.href="index.html";
 });
 
-// Facturas con búsqueda de proveedor por RUC
-const inputRUC = document.getElementById("inputRUC");
-const nombreProveedorP = document.getElementById("nombreProveedor");
-
-inputRUC.addEventListener("input", async () => {
-  const ruc = inputRUC.value.trim();
-  if (!ruc) {
-    nombreProveedorP.textContent = "";
-    return;
-  }
-
-  const snapshot = await getDocs(collection(db, "proveedores"));
-  let encontrado = false;
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    if (data.ruc === ruc) {
-      nombreProveedorP.textContent = `Proveedor: ${data.nombre}`;
-      encontrado = true;
-    }
-  });
-
-  if (!encontrado) {
-    nombreProveedorP.innerHTML = `Proveedor no encontrado. <button id="btnAgregarProveedor">Agregar proveedor</button>`;
-    document.getElementById("btnAgregarProveedor").addEventListener("click", () => {
-      mostrarSeccion("proveedores");
-      document.getElementById("formProveedor").ruc.value = ruc;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-});
-
-document.getElementById("formFactura").addEventListener("submit", async e => {
-  e.preventDefault();
-  const ruc = e.target.ruc.value.trim();
-  let nombreProveedor = "";
-
-  const snapshot = await getDocs(collection(db, "proveedores"));
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    if (data.ruc === ruc) nombreProveedor = data.nombre;
-  });
-
-  const datos = {
-    ruc: ruc,
-    proveedor: nombreProveedor || "No registrado",
-    fecha: e.target.fecha.value,
-    monto: e.target.monto.value
-  };
-
-  agregarRegistro("facturas", datos, "tablaFacturas");
-  e.target.reset();
-  nombreProveedorP.textContent = "";
-});
-
-// Servicios
-document.getElementById("formServicio").addEventListener("submit", e => {
-  e.preventDefault();
-  const datos = {
-    nombre: e.target.nombre.value,
-    descripcion: e.target.descripcion.value,
-    precio: e.target.precio.value
-  };
-  agregarRegistro("servicios", datos, "tablaServicios");
-  e.target.reset();
-});
-
-// Ventas
-document.getElementById("formVenta").addEventListener("submit", e => {
-  e.preventDefault();
-  const datos = {
-    cliente: e.target.cliente.value,
-    producto: e.target.producto.value,
-    total: e.target.total.value
-  };
-  agregarRegistro("ventas", datos, "tablaVentas");
-  e.target.reset();
-});
-
-// Gastos
-document.getElementById("formGasto").addEventListener("submit", e => {
-  e.preventDefault();
-  const datos = {
-    categoria: e.target.categoria.value,
-    descripcion: e.target.descripcion.value,
-    monto: e.target.monto.value,
-    fecha: e.target.fecha.value
-  };
-  agregarRegistro("gastos", datos, "tablaGastos");
-  e.target.reset();
-});
-
-// ==========================
-// 📌 LOGOUT
-// ==========================
-document.getElementById("btnLogout").addEventListener("click", async () => {
-  if (confirm("¿Deseas cerrar sesión?")) {
-    await signOut(auth);
-    window.location.href = "index.html";
-  }
-});
-
-// ==========================
-// 📌 FUNCION PARA MOSTRAR SECCIONES
-// ==========================
-function mostrarSeccion(id) {
-  document.querySelectorAll(".seccion").forEach(sec => sec.classList.add("oculto"));
-  document.getElementById(id).classList.remove("oculto");
-}
-
-window.mostrarSeccion = mostrarSeccion; // Exponer a global
+// Ejecutar al inicio
+cargarTodo();
 
 
 
