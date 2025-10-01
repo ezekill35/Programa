@@ -1,231 +1,167 @@
 // dashboard.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
 
-// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-  measurementId: "G-0WMLRY8FGM" // opcional
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
 };
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ----------------- MENÚ -----------------
+// SECCIONES Y MENÚ
 const sections = {
-  Proveedor: document.getElementById('sectionProveedor'),
-  Factura: document.getElementById('sectionFactura'),
-  Gastos: document.getElementById('sectionGastos'),
-  Servicio: document.getElementById('sectionServicio')
+  menuReportes: document.getElementById("sectionReportes"),
+  menuProveedor: document.getElementById("sectionProveedor"),
+  menuFactura: document.getElementById("sectionFactura"),
+  menuGastos: document.getElementById("sectionGastos"),
+  menuServicio: document.getElementById("sectionServicio")
 };
 
-const buttons = {
-  Proveedor: document.getElementById('btnProveedor'),
-  Factura: document.getElementById('btnFactura'),
-  Gastos: document.getElementById('btnGastos'),
-  Servicio: document.getElementById('btnServicio')
-};
+const menuItems = document.querySelectorAll(".sidebar ul li");
 
-Object.keys(buttons).forEach(key => {
-  buttons[key].addEventListener('click', () => {
-    // Resaltar botón
-    Object.values(buttons).forEach(btn => btn.classList.remove('active'));
-    buttons[key].classList.add('active');
-    // Mostrar sección
-    Object.values(sections).forEach(sec => sec.classList.remove('active'));
-    sections[key].classList.add('active');
+// Función para cambiar sección visible
+menuItems.forEach(item => {
+  item.addEventListener("click", () => {
+    // Resaltar opción seleccionada
+    menuItems.forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+
+    // Mostrar solo la sección seleccionada
+    Object.keys(sections).forEach(key => {
+      sections[key].classList.add("hidden");
+    });
+
+    const sectionId = "section" + item.id.replace("menu", "");
+    if (document.getElementById(sectionId)) {
+      document.getElementById(sectionId).classList.remove("hidden");
+    }
+
+    // Cerrar sesión
+    if (item.id === "btnCerrarSesion") {
+      alert("Sesión cerrada");
+      // Aquí podrías redirigir al login: location.href = "index.html";
+    }
   });
 });
 
-// ----------------- PROVEEDOR -----------------
-const provRuc = document.getElementById('provRuc');
-const provNombre = document.getElementById('provNombre');
-const provCorreo = document.getElementById('provCorreo');
-const provTelefono = document.getElementById('provTelefono');
-const btnAgregarProveedor = document.getElementById('btnAgregarProveedor');
-const tablaProveedor = document.getElementById('tablaProveedor');
-const searchProveedor = document.getElementById('searchProveedor');
+// -------------------------
+// FUNCIONES PROVEEDOR
+// -------------------------
+const listaProveedor = document.getElementById("listaProveedor");
+const btnAgregarProveedor = document.getElementById("btnAgregarProveedor");
+const buscarProveedor = document.getElementById("buscarProveedor");
 
-btnAgregarProveedor.addEventListener('click', async () => {
-  if (!provRuc.value || !provNombre.value) return alert("RUC y Nombre son obligatorios");
-  await addDoc(collection(db, "proveedores"), {
-    ruc: provRuc.value,
-    nombre: provNombre.value,
-    correo: provCorreo.value,
-    telefono: provTelefono.value
-  });
-  provRuc.value = provNombre.value = provCorreo.value = provTelefono.value = "";
-  cargarProveedores();
-});
+async function listarProveedores(filter = "") {
+  listaProveedor.innerHTML = "";
+  const colRef = collection(db, "proveedores");
+  const docsSnap = await getDocs(colRef);
 
-async function cargarProveedores(search="") {
-  tablaProveedor.innerHTML = "";
-  let q = collection(db, "proveedores");
-  if (search) q = query(q, where("ruc", "==", search));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    tablaProveedor.innerHTML += `
-      <tr>
+  docsSnap.forEach(docu => {
+    const data = docu.data();
+    if (filter === "" || data.ruc.includes(filter) || data.nombre.toLowerCase().includes(filter.toLowerCase())) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
         <td>${data.ruc}</td>
         <td>${data.nombre}</td>
         <td>${data.correo}</td>
         <td>${data.telefono}</td>
-        <td><button class="action-btn" onclick="eliminar('proveedores','${docSnap.id}')">Eliminar</button></td>
-      </tr>
-    `;
+        <td>${data.direccion}</td>
+        <td><button data-id="${docu.id}" class="eliminarProveedor">Eliminar</button></td>
+      `;
+      listaProveedor.appendChild(row);
+    }
+  });
+
+  document.querySelectorAll(".eliminarProveedor").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.getAttribute("data-id");
+      await deleteDoc(doc(db, "proveedores", id));
+      listarProveedores();
+    });
   });
 }
 
-document.getElementById('btnBuscarProveedor').addEventListener('click', () => {
-  cargarProveedores(searchProveedor.value);
+btnAgregarProveedor.addEventListener("click", async () => {
+  const ruc = document.getElementById("provRuc").value;
+  const nombre = document.getElementById("provNombre").value;
+  const correo = document.getElementById("provCorreo").value;
+  const telefono = document.getElementById("provTelefono").value;
+  const direccion = document.getElementById("provDireccion").value;
+
+  if (ruc && nombre) {
+    await addDoc(collection(db, "proveedores"), { ruc, nombre, correo, telefono, direccion });
+    listarProveedores();
+  } else {
+    alert("RUC y Nombre son obligatorios");
+  }
 });
 
-// ----------------- FACTURA -----------------
-const facRuc = document.getElementById('facRuc');
-const facTipo = document.getElementById('facTipo');
-const facDescripcion = document.getElementById('facDescripcion');
-const facFecha = document.getElementById('facFecha');
-const btnAgregarFactura = document.getElementById('btnAgregarFactura');
-const tablaFactura = document.getElementById('tablaFactura');
-const searchFactura = document.getElementById('searchFactura');
-
-btnAgregarFactura.addEventListener('click', async () => {
-  if (!facRuc.value || !facTipo.value) return alert("RUC y Tipo de Factura son obligatorios");
-  await addDoc(collection(db, "facturas"), {
-    ruc: facRuc.value,
-    tipo: facTipo.value,
-    descripcion: facDescripcion.value,
-    fecha: facFecha.value
-  });
-  facRuc.value = facTipo.value = facDescripcion.value = facFecha.value = "";
-  cargarFacturas();
+buscarProveedor.addEventListener("input", () => {
+  listarProveedores(buscarProveedor.value);
 });
 
-async function cargarFacturas(search="") {
-  tablaFactura.innerHTML = "";
-  let q = collection(db, "facturas");
-  if (search) q = query(q, where("ruc", "==", search));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    tablaFactura.innerHTML += `
-      <tr>
+listarProveedores();
+
+// -------------------------
+// FUNCIONES FACTURA
+// -------------------------
+const listaFactura = document.getElementById("listaFactura");
+const btnAgregarFactura = document.getElementById("btnAgregarFactura");
+const buscarFactura = document.getElementById("buscarFactura");
+
+async function listarFacturas(filter = "") {
+  listaFactura.innerHTML = "";
+  const colRef = collection(db, "facturas");
+  const docsSnap = await getDocs(colRef);
+
+  docsSnap.forEach(docu => {
+    const data = docu.data();
+    if (filter === "" || data.ruc.includes(filter)) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
         <td>${data.ruc}</td>
         <td>${data.tipo}</td>
         <td>${data.descripcion}</td>
         <td>${data.fecha}</td>
-        <td><button class="action-btn" onclick="eliminar('facturas','${docSnap.id}')">Eliminar</button></td>
-      </tr>
-    `;
+        <td><button data-id="${docu.id}" class="eliminarFactura">Eliminar</button></td>
+      `;
+      listaFactura.appendChild(row);
+    }
+  });
+
+  document.querySelectorAll(".eliminarFactura").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.getAttribute("data-id");
+      await deleteDoc(doc(db, "facturas", id));
+      listarFacturas();
+    });
   });
 }
 
-document.getElementById('btnBuscarFactura').addEventListener('click', () => {
-  cargarFacturas(searchFactura.value);
-});
+btnAgregarFactura.addEventListener("click", async () => {
+  const ruc = document.getElementById("factRuc").value;
+  const tipo = document.getElementById("factTipo").value;
+  const descripcion = document.getElementById("factDescripcion").value;
+  const fecha = document.getElementById("factFecha").value;
 
-// ----------------- GASTOS -----------------
-const gastoNombre = document.getElementById('gastoNombre');
-const gastoMonto = document.getElementById('gastoMonto');
-const btnAgregarGasto = document.getElementById('btnAgregarGasto');
-const tablaGasto = document.getElementById('tablaGasto');
-const searchGasto = document.getElementById('searchGasto');
-
-btnAgregarGasto.addEventListener('click', async () => {
-  if (!gastoNombre.value || !gastoMonto.value) return alert("Nombre y Monto son obligatorios");
-  await addDoc(collection(db, "gastos"), {
-    nombre: gastoNombre.value,
-    monto: gastoMonto.value
-  });
-  gastoNombre.value = gastoMonto.value = "";
-  cargarGastos();
-});
-
-async function cargarGastos(search="") {
-  tablaGasto.innerHTML = "";
-  let q = collection(db, "gastos");
-  if (search) q = query(q, where("nombre", "==", search));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    tablaGasto.innerHTML += `
-      <tr>
-        <td>${data.nombre}</td>
-        <td>${data.monto}</td>
-        <td><button class="action-btn" onclick="eliminar('gastos','${docSnap.id}')">Eliminar</button></td>
-      </tr>
-    `;
-  });
-}
-
-document.getElementById('btnBuscarGasto').addEventListener('click', () => {
-  cargarGastos(searchGasto.value);
-});
-
-// ----------------- SERVICIO -----------------
-const servNombre = document.getElementById('servNombre');
-const servCosto = document.getElementById('servCosto');
-const btnAgregarServicio = document.getElementById('btnAgregarServicio');
-const tablaServicio = document.getElementById('tablaServicio');
-const searchServicio = document.getElementById('searchServicio');
-
-btnAgregarServicio.addEventListener('click', async () => {
-  if (!servNombre.value || !servCosto.value) return alert("Nombre y Costo son obligatorios");
-  await addDoc(collection(db, "servicios"), {
-    nombre: servNombre.value,
-    costo: servCosto.value
-  });
-  servNombre.value = servCosto.value = "";
-  cargarServicios();
-});
-
-async function cargarServicios(search="") {
-  tablaServicio.innerHTML = "";
-  let q = collection(db, "servicios");
-  if (search) q = query(q, where("nombre", "==", search));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    tablaServicio.innerHTML += `
-      <tr>
-        <td>${data.nombre}</td>
-        <td>${data.costo}</td>
-        <td><button class="action-btn" onclick="eliminar('servicios','${docSnap.id}')">Eliminar</button></td>
-      </tr>
-    `;
-  });
-}
-
-document.getElementById('btnBuscarServicio').addEventListener('click', () => {
-  cargarServicios(searchServicio.value);
-});
-
-// ----------------- ELIMINAR -----------------
-window.eliminar = async (coleccion, id) => {
-  if (confirm("¿Seguro quieres eliminar?")) {
-    await deleteDoc(doc(db, coleccion, id));
-    cargarProveedores();
-    cargarFacturas();
-    cargarGastos();
-    cargarServicios();
+  if (ruc && tipo) {
+    await addDoc(collection(db, "facturas"), { ruc, tipo, descripcion, fecha });
+    listarFacturas();
+  } else {
+    alert("RUC y Tipo de factura son obligatorios");
   }
-};
-
-// ----------------- CERRAR SESIÓN -----------------
-document.getElementById('btnCerrar').addEventListener('click', () => {
-  alert("Sesión cerrada");
-  window.location.href = "index.html";
 });
 
-// Cargar tablas al iniciar
-cargarProveedores();
-cargarFacturas();
-cargarGastos();
-cargarServicios();
+buscarFactura.addEventListener("input", () => {
+  listarFacturas(buscarFactura.value);
+});
+
+listarFacturas();
+
