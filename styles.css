@@ -1,12 +1,12 @@
-/* ---------------- LOGIN ---------------- */
+/* ================== LOGIN ================== */
 body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(to right, #fce4ec, #fff0f5);
-  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #ff99cc, #ff66b2);
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  margin: 0;
 }
 
 .login-container {
@@ -17,89 +17,84 @@ body {
 }
 
 .login-box {
-  background-color: white;
-  padding: 30px 40px;
+  background: white;
+  padding: 30px;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
   text-align: center;
   max-width: 400px;
-  width: 100%;
-  transition: transform 0.3s;
-}
-
-.login-box:hover {
-  transform: translateY(-5px);
+  width: 90%;
+  position: relative;
 }
 
 .login-img {
   width: 120px;
   height: 120px;
+  object-fit: cover;
   border-radius: 50%;
+  border: 4px solid #ff33aa;
   margin-bottom: 15px;
-  border: 3px solid #ff4081;
 }
 
-h1 {
-  color: #d81b60;
+.login-box h1 {
+  color: #ff3399;
+  font-size: 32px;
   margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
-.subtitle {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 25px;
+.login-box .subtitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
 }
 
 /* Formularios */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-form input {
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-form button {
+.login-box input {
+  width: 100%;
   padding: 12px;
-  background-color: #ff4081;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ff99cc;
+  font-size: 14px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #ff33aa;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+  font-size: 16px;
+  transition: 0.3s;
 }
 
-form button:hover {
-  background-color: #d81b60;
+.login-box button:hover {
+  background: #e60073;
 }
 
-a {
-  font-size: 13px;
-  color: #ff4081;
+.login-box a {
+  display: block;
+  margin-top: 10px;
+  color: #ff3399;
   text-decoration: none;
-  margin-top: 5px;
+  font-size: 14px;
 }
 
-a:hover {
+.login-box a:hover {
   text-decoration: underline;
 }
 
-/* Mensajes */
 #mensajeLogin, #mensajeRegister {
-  font-size: 13px;
-  min-height: 18px;
-  margin-top: 5px;
+  font-size: 14px;
+  margin-top: 8px;
 }
-
 .hidden {
   display: none;
 }
+
 
 
 
