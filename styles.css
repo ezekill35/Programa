@@ -10,6 +10,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f0f2f5;
   color: #2c3e50;
+  position: relative;
 }
 
 /* ================== DASHBOARD ================== */
@@ -28,7 +29,6 @@ body {
   flex-direction: column;
 }
 
-/* Logo */
 .sidebar .logo {
   display: flex;
   align-items: center;
@@ -41,11 +41,9 @@ body {
   color: #1abc9c;
 }
 
-/* Menu */
 .sidebar ul {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 .sidebar ul li {
   display: flex;
@@ -62,7 +60,6 @@ body {
   color: white;
 }
 
-/* Sidebar Button */
 .sidebar button {
   margin-top: auto;
   padding: 12px;
@@ -78,12 +75,11 @@ body {
   background: #c0392b;
 }
 
-/* ================== CONTENT ================== */
+/* ================== CONTENIDO ================== */
 .content {
   flex: 1;
   padding: 30px;
 }
-
 .content h1 {
   font-size: 28px;
   margin-bottom: 5px;
@@ -93,15 +89,14 @@ body {
   margin-bottom: 20px;
 }
 
-/* ================== CARDS ================== */
+/* ================== TARJETAS ================== */
 .card {
   background: white;
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
 .card h2 {
   margin-bottom: 15px;
   color: #34495e;
@@ -117,7 +112,6 @@ body {
   gap: 10px;
   margin-bottom: 15px;
 }
-
 .formulario input,
 .formulario button {
   padding: 10px;
@@ -125,12 +119,10 @@ body {
   border: 1px solid #ccc;
   font-size: 14px;
 }
-
 .formulario input {
   flex: 1;
   min-width: 180px;
 }
-
 .formulario button {
   background: #1abc9c;
   color: white;
@@ -148,21 +140,17 @@ table {
   border-collapse: collapse;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
 table thead {
   background: #1abc9c;
   color: white;
 }
-
-table th,
-table td {
+table th, table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
-
 table tr:hover {
   background: #f1f1f1;
 }
@@ -182,16 +170,14 @@ input[type="text"] {
   background: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   max-width: 400px;
   margin: 20px auto;
 }
-
 .form-card h2 {
   margin-bottom: 15px;
   color: #34495e;
 }
-
 .form-card input {
   width: 100%;
   padding: 10px;
@@ -199,7 +185,6 @@ input[type="text"] {
   border-radius: 6px;
   border: 1px solid #ccc;
 }
-
 .form-card button {
   width: 100%;
   padding: 12px;
@@ -214,46 +199,51 @@ input[type="text"] {
 .form-card button:hover {
   background: #16a085;
 }
-
 .form-card .mensaje {
   margin-top: 10px;
   font-size: 14px;
 }
 
 /* ================== OCULTO ================== */
-.hidden,
-.oculto {
+.hidden, .oculto {
   display: none;
+}
+
+/* ================== BANNER DE BIENVENIDA ================== */
+.welcome-banner {
+  position: fixed;
+  top: 20px;
+  right: 20px; /* cambiar a left: 20px; para esquina izquierda */
+  background: #1abc9c;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  font-weight: bold;
+  z-index: 1000;
+  opacity: 1;
+  animation: fadeOut 5s forwards; /* Desaparece después de 5s */
+  transition: all 0.3s ease;
+}
+.welcome-banner:hover {
+  background: #16a085;
+}
+
+/* Animación para desaparecer */
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; display: none; }
 }
 
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
-  .dashboard {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .sidebar ul {
-    display: flex;
-    gap: 10px;
-  }
-
-  .content {
-    padding: 15px;
-  }
-
-  .formulario {
-    flex-direction: column;
-  }
-
-  .formulario input {
-    min-width: 100%;
-  }
+  .dashboard { flex-direction: column; }
+  .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+  .sidebar ul { display: flex; gap: 10px; }
+  .content { padding: 15px; }
+  .formulario { flex-direction: column; }
+  .formulario input { min-width: 100%; }
 }
 
 
