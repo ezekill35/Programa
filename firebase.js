@@ -1,11 +1,8 @@
 // firebase.js
-// Importar Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-// Configuración de tu proyecto
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -16,16 +13,10 @@ const firebaseConfig = {
   measurementId: "G-W5RGYVTW3V"
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-// Inicializar Firestore y Auth
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// Exportar para usar en otros scripts
-export { app, analytics, db, auth };
 
 
 
