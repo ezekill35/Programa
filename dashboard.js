@@ -1,35 +1,23 @@
-import { auth, db } from "./firebase.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { collection, addDoc, getDocs, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { auth, db, signOut, collection, addDoc, getDocs, deleteDoc, doc, query, where } from "./firebase.js";
 
-// Menú
+// Menú y secciones
 const menuItems = {
-  Proveedor: document.getElementById("menuProveedor"),
-  Factura: document.getElementById("menuFactura"),
-  Gastos: document.getElementById("menuGastos"),
-  Servicio: document.getElementById("menuServicio"),
+  menuProveedor: "sectionProveedor",
+  menuFactura: "sectionFactura",
+  menuGastos: "sectionGastos",
+  menuServicio: "sectionServicio",
 };
 
-const sections = {
-  Proveedor: document.getElementById("seccionProveedor"),
-  Factura: document.getElementById("seccionFactura"),
-  Gastos: document.getElementById("seccionGastos"),
-  Servicio: document.getElementById("seccionServicio"),
-};
+Object.keys(menuItems).forEach(menuId => {
+  document.getElementById(menuId).addEventListener("click", () => {
+    // Resaltar opción seleccionada
+    Object.keys(menuItems).forEach(m => document.getElementById(m).classList.remove("active"));
+    document.getElementById(menuId).classList.add("active");
 
-function cambiarSeccion(seccion) {
-  Object.keys(sections).forEach(key => {
-    sections[key].classList.add("hidden");
-    menuItems[key].classList.remove("active");
+    // Mostrar la sección correspondiente
+    Object.values(menuItems).forEach(sec => document.getElementById(sec).classList.add("hidden"));
+    document.getElementById(menuItems[menuId]).classList.remove("hidden");
   });
-  sections[seccion].classList.remove("hidden");
-  menuItems[seccion].classList.add("active");
-  document.getElementById("tituloSeccion").textContent = seccion;
-}
-
-// Event listeners menú
-Object.keys(menuItems).forEach(key => {
-  menuItems[key].addEventListener("click", () => cambiarSeccion(key));
 });
 
 // Cerrar sesión
@@ -39,70 +27,66 @@ document.getElementById("btnLogout").addEventListener("click", () => {
   });
 });
 
-// ------------------ CRUD Proveedor ------------------
+// Funciones para CRUD simplificado de Firestore (Proveedor como ejemplo)
 const tablaProveedor = document.getElementById("tablaProveedor");
-const buscarProveedor = document.getElementById("buscarProveedor");
+const btnAddProveedor = document.getElementById("btnAddProveedor");
+const searchProveedor = document.getElementById("searchProveedor");
 
 async function cargarProveedores() {
   tablaProveedor.innerHTML = "";
   const querySnapshot = await getDocs(collection(db, "proveedores"));
-  querySnapshot.forEach(docu => {
-    const data = docu.data();
-    tablaProveedor.innerHTML += `
-      <tr>
-        <td>${data.ruc}</td>
-        <td>${data.nombre}</td>
-        <td>${data.direccion}</td>
-        <td><button onclick="eliminarProveedor('${docu.id}')">Eliminar</button></td>
-      </tr>
+  querySnapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${data.ruc}</td>
+      <td>${data.nombre}</td>
+      <td>${data.direccion}</td>
+      <td><button onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
     `;
+    tablaProveedor.appendChild(tr);
   });
 }
 
 window.eliminarProveedor = async (id) => {
   await deleteDoc(doc(db, "proveedores", id));
   cargarProveedores();
-};
+}
 
-document.getElementById("btnAgregarProveedor").addEventListener("click", async () => {
-  const ruc = document.getElementById("provRuc").value;
+btnAddProveedor.addEventListener("click", async () => {
+  const ruc = document.getElementById("provRUC").value;
   const nombre = document.getElementById("provNombre").value;
   const direccion = document.getElementById("provDireccion").value;
-  if (ruc && nombre && direccion) {
+
+  if(ruc && nombre && direccion) {
     await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion });
-    document.getElementById("provRuc").value = "";
+    cargarProveedores();
+    document.getElementById("provRUC").value = "";
     document.getElementById("provNombre").value = "";
     document.getElementById("provDireccion").value = "";
-    cargarProveedores();
   }
 });
 
-buscarProveedor.addEventListener("input", async () => {
-  const val = buscarProveedor.value.toLowerCase();
+searchProveedor.addEventListener("input", async () => {
+  const valor = searchProveedor.value.toLowerCase();
+  const querySnapshot = await getDocs(collection(db, "proveedores"));
   tablaProveedor.innerHTML = "";
-  const q = query(collection(db, "proveedores"));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docu => {
-    const data = docu.data();
-    if (data.ruc.toLowerCase().includes(val) || data.nombre.toLowerCase().includes(val)) {
-      tablaProveedor.innerHTML += `
-        <tr>
-          <td>${data.ruc}</td>
-          <td>${data.nombre}</td>
-          <td>${data.direccion}</td>
-          <td><button onclick="eliminarProveedor('${docu.id}')">Eliminar</button></td>
-        </tr>
+  querySnapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    if(data.ruc.toLowerCase().includes(valor) || data.nombre.toLowerCase().includes(valor)){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${data.ruc}</td>
+        <td>${data.nombre}</td>
+        <td>${data.direccion}</td>
+        <td><button onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
       `;
+      tablaProveedor.appendChild(tr);
     }
   });
 });
 
-// TODO: Repetir lógica similar para Factura, Gastos y Servicio
-// Cambiar IDs, campos y colecciones: "facturas", "gastos", "servicios"
-
-// Inicialización
+// Inicializar
 cargarProveedores();
-cambiarSeccion("Proveedor");
-
 
 
