@@ -1,8 +1,9 @@
-// Import Firebase (modular)
+// firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Configuración de tu Firebase
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -13,6 +14,15 @@ const firebaseConfig = {
   measurementId: "G-W5RGYVTW3V"
 };
 
-// Inicializa Firebase
+// Inicializar Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// Función para verificar sesión activa
+export function verificarSesion(callback) {
+  onAuthStateChanged(auth, user => {
+    if (user) callback(user);
+    else window.location.href = "index.html";
+  });
+}
