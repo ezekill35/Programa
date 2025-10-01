@@ -2,15 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐾 Discovery Pets - Dashboard</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="dashboard">
-
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="logo"><i>🐶</i> Discovery Pets</div>
+      <div class="logo">
+        <i>🐾</i>
+        <span>Discovery Pets</span>
+      </div>
       <ul>
         <li id="menuProveedor" class="active">Proveedor</li>
         <li id="menuFactura">Factura</li>
@@ -20,97 +22,96 @@
       <button id="btnLogout">Cerrar Sesión</button>
     </div>
 
-    <!-- Contenido -->
+    <!-- CONTENIDO -->
     <div class="content">
-      <h1 id="tituloSeccion">Proveedor</h1>
-      <div id="contenidoSeccion">
-
-        <!-- Formulario y tabla Proveedor -->
-        <div id="seccionProveedor">
-          <div class="formulario">
-            <input type="text" id="provRuc" placeholder="RUC">
-            <input type="text" id="provNombre" placeholder="Nombre">
-            <input type="text" id="provDireccion" placeholder="Dirección">
-            <button id="btnAgregarProveedor">Agregar</button>
-          </div>
-          <input type="text" id="buscarProveedor" placeholder="Buscar proveedor por RUC o Nombre">
-          <table>
-            <thead>
-              <tr>
-                <th>RUC</th>
-                <th>Nombre</th>
-                <th>Dirección</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tablaProveedor"></tbody>
-          </table>
+      <!-- PROVEEDOR -->
+      <div id="sectionProveedor" class="section">
+        <h2>Proveedor</h2>
+        <div class="formulario">
+          <input type="text" id="provRUC" placeholder="RUC">
+          <input type="text" id="provNombre" placeholder="Nombre">
+          <input type="text" id="provDireccion" placeholder="Dirección">
+          <button id="btnAddProveedor">Agregar</button>
         </div>
+        <input type="text" id="searchProveedor" placeholder="Buscar proveedor por RUC o Nombre">
+        <table>
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProveedor"></tbody>
+        </table>
+      </div>
 
-        <!-- Formulario y tabla Factura -->
-        <div id="seccionFactura" class="hidden">
-          <div class="formulario">
-            <input type="text" id="factRuc" placeholder="RUC Proveedor">
-            <input type="text" id="factDescripcion" placeholder="Descripción">
-            <input type="date" id="factFecha">
-            <button id="btnAgregarFactura">Agregar</button>
-          </div>
-          <input type="text" id="buscarFactura" placeholder="Buscar factura por RUC o descripción">
-          <table>
-            <thead>
-              <tr>
-                <th>RUC</th>
-                <th>Descripción</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tablaFactura"></tbody>
-          </table>
+      <!-- FACTURA -->
+      <div id="sectionFactura" class="section hidden">
+        <h2>Factura</h2>
+        <div class="formulario">
+          <input type="text" id="factRUC" placeholder="RUC del Proveedor">
+          <input type="text" id="factDescripcion" placeholder="Descripción">
+          <input type="date" id="factFecha">
+          <button id="btnAddFactura">Agregar</button>
         </div>
+        <input type="text" id="searchFactura" placeholder="Buscar factura por RUC o descripción">
+        <table>
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Descripción</th>
+              <th>Fecha de emisión</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFactura"></tbody>
+        </table>
+      </div>
 
-        <!-- Formulario y tabla Gastos -->
-        <div id="seccionGastos" class="hidden">
-          <div class="formulario">
-            <input type="text" id="gastoDescripcion" placeholder="Descripción Gasto">
-            <input type="number" id="gastoMonto" placeholder="Monto">
-            <input type="date" id="gastoFecha">
-            <button id="btnAgregarGasto">Agregar</button>
-          </div>
-          <input type="text" id="buscarGasto" placeholder="Buscar gasto por descripción">
-          <table>
-            <thead>
-              <tr>
-                <th>Descripción</th>
-                <th>Monto</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tablaGastos"></tbody>
-          </table>
+      <!-- GASTOS -->
+      <div id="sectionGastos" class="section hidden">
+        <h2>Gastos</h2>
+        <div class="formulario">
+          <input type="text" id="gastoDescripcion" placeholder="Descripción">
+          <input type="number" id="gastoMonto" placeholder="Monto">
+          <input type="date" id="gastoFecha">
+          <button id="btnAddGasto">Agregar</button>
         </div>
+        <input type="text" id="searchGasto" placeholder="Buscar gasto por descripción">
+        <table>
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaGasto"></tbody>
+        </table>
+      </div>
 
-        <!-- Formulario y tabla Servicio -->
-        <div id="seccionServicio" class="hidden">
-          <div class="formulario">
-            <input type="text" id="servDescripcion" placeholder="Descripción Servicio">
-            <input type="date" id="servFecha">
-            <button id="btnAgregarServicio">Agregar</button>
-          </div>
-          <input type="text" id="buscarServicio" placeholder="Buscar servicio por descripción">
-          <table>
-            <thead>
-              <tr>
-                <th>Descripción</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tablaServicio"></tbody>
-          </table>
+      <!-- SERVICIO -->
+      <div id="sectionServicio" class="section hidden">
+        <h2>Servicio</h2>
+        <div class="formulario">
+          <input type="text" id="servDescripcion" placeholder="Descripción">
+          <input type="date" id="servFecha">
+          <button id="btnAddServicio">Agregar</button>
         </div>
-
+        <input type="text" id="searchServicio" placeholder="Buscar servicio por descripción">
+        <table>
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaServicio"></tbody>
+        </table>
       </div>
     </div>
   </div>
