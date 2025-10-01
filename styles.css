@@ -1,104 +1,73 @@
-/* Fondo general */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #ff99cc, #ff66a3, #ff3385);
+/* === Dashboard Layout === */
+.dashboard {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
+  background: #f9f9fb;
 }
 
-/* Contenedor centrado */
-.login-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-/* Tarjeta */
-.login-card {
-  background: #fff;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 350px;
-}
-
-/* Título */
-.login-card h1 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.subtitle {
-  margin-bottom: 20px;
-  font-size: 14px;
-  color: #666;
-}
-
-/* Inputs */
-form input {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  outline: none;
-  transition: 0.3s;
-}
-
-form input:focus {
-  border-color: #ff3385;
-  box-shadow: 0 0 6px rgba(255, 51, 133, 0.5);
-}
-
-/* Botones */
-.btn {
-  width: 100%;
-  padding: 12px;
-  background: #ff3385;
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #2c2f48;
   color: #fff;
-  font-weight: bold;
-  border: none;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar .menu-item {
+  padding: 12px;
+  margin: 5px 0;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
   transition: 0.3s;
 }
 
-.btn:hover {
-  background: #e62e73;
+.sidebar .menu-item:hover {
+  background: #44486a;
 }
 
-/* Botón alternativo (registro) */
-.btn.register {
-  background: #33cc99;
-}
-
-.btn.register:hover {
-  background: #2ebd89;
-}
-
-/* Texto de alternar login/registro */
-.toggle-text {
-  margin-top: 15px;
-  font-size: 14px;
-  color: #444;
-}
-
-.toggle-text a {
-  color: #ff3385;
+.sidebar .menu-item.active {
+  background: #ff3385; /* Fucsia al seleccionar */
   font-weight: bold;
-  text-decoration: none;
 }
 
-.toggle-text a:hover {
-  text-decoration: underline;
+.sidebar .logout {
+  margin-top: auto;
+  background: #e63946;
+  text-align: center;
 }
+
+.sidebar .logout:hover {
+  background: #c92e3f;
+}
+
+/* Contenido */
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #fff;
+  border-radius: 20px 0 0 20px;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+}
+
+#section-title {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
 
 
 
