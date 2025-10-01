@@ -1,90 +1,69 @@
-/* Fondo estilo Facebook */
-body.login-body {
-  font-family: Arial, sans-serif;
+body {
   margin: 0;
-  background: linear-gradient(120deg, #3b5998, #8b9dc3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f48fb1, #ba68c8);
   height: 100vh;
-}
-
-/* Caja central */
-.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
 }
 
-.login-box {
-  background: #fff;
-  padding: 40px;
+.auth-container {
+  background: white;
+  padding: 30px;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0px 5px 20px rgba(0,0,0,0.2);
-  width: 350px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  width: 320px;
 }
 
-.login-box h1 {
-  color: #3b5998;
+.auth-container h1 {
+  color: #6a1b9a;
   margin-bottom: 10px;
 }
 
-.login-box p {
+.auth-container p {
   margin-bottom: 20px;
-  color: #555;
+  color: #444;
 }
 
-/* Inputs */
-.login-box input {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
+.form {
+  display: none;
+  flex-direction: column;
+}
+
+.form.active {
+  display: flex;
+}
+
+.form input {
+  margin: 8px 0;
+  padding: 10px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  border-radius: 6px;
 }
 
-/* Botón */
-.login-box button {
-  background: #3b5998;
+button {
+  margin-top: 12px;
+  padding: 10px;
+  background: #6a1b9a;
   color: white;
-  padding: 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  margin-top: 10px;
 }
 
-.login-box button:hover {
-  background: #2d4373;
+button:hover {
+  background: #8e24aa;
 }
 
-/* Links */
-.link {
-  color: #3b5998;
-  cursor: pointer;
+a {
+  color: #6a1b9a;
+  text-decoration: none;
   font-weight: bold;
 }
 
-.link:hover {
-  text-decoration: underline;
-}
 
-/* Mensajes */
-.error {
-  color: red;
-  margin-top: 10px;
-}
-
-.success {
-  color: green;
-  margin-top: 10px;
-}
 
 
 
