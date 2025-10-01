@@ -1,170 +1,102 @@
-import { auth, db } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// Importar Firebase (asegúrate de tener firebase.js con tu configuración)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const userInfo = document.getElementById("userInfo");
-const btnLogout = document.getElementById("btnLogout");
+// Configuración Firebase (reemplazar con tu firebase.js si lo tienes)
+const firebaseConfig = {
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:a073cc5af230b32f4c5322",
+  measurementId: "G-W5RGYVTW3V"
+};
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    userInfo.textContent = `Bienvenido, ${user.email}`;
-    cargarDatos();
-  } else {
-    window.location.href = "index.html";
-  }
-});
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-btnLogout.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "index.html";
-});
+// ==========================
+// 📌 FUNCIONES GENERALES
+// ==========================
 
-// =================== FUNCIONES CRUD ===================
-
-// 🔹 Guardar Producto
-document.getElementById("formProducto").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("prodId").value;
-  const data = {
-    nombre: document.getElementById("prodNombre").value,
-    precio: parseFloat(document.getElementById("prodPrecio").value),
-    stock: parseInt(document.getElementById("prodStock").value),
-    categoria: document.getElementById("prodCategoria").value
-  };
-
-  if (id) {
-    await updateDoc(doc(db, "productos", id), data);
-  } else {
-    await addDoc(collection(db, "productos"), data);
-  }
-  e.target.reset();
-  cargarDatos();
-});
-
-// 🔹 Guardar Proveedor
-document.getElementById("formProveedor").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("provId").value;
-  const data = {
-    nombre: document.getElementById("provNombre").value,
-    ruc: document.getElementById("provRuc").value,
-    telefono: document.getElementById("provTelefono").value
-  };
-
-  if (id) {
-    await updateDoc(doc(db, "proveedores", id), data);
-  } else {
-    await addDoc(collection(db, "proveedores"), data);
-  }
-  e.target.reset();
-  cargarDatos();
-});
-
-// 🔹 Guardar Factura
-document.getElementById("formFactura").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("facId").value;
-  const data = {
-    numero: document.getElementById("facNumero").value,
-    proveedor: document.getElementById("facProveedor").value,
-    fecha: document.getElementById("facFecha").value,
-    total: parseFloat(document.getElementById("facTotal").value)
-  };
-
-  if (id) {
-    await updateDoc(doc(db, "facturas", id), data);
-  } else {
-    await addDoc(collection(db, "facturas"), data);
-  }
-  e.target.reset();
-  cargarDatos();
-});
-
-// 🔹 Guardar Servicio
-document.getElementById("formServicio").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("servId").value;
-  const data = {
-    nombre: document.getElementById("servNombre").value,
-    precio: parseFloat(document.getElementById("servPrecio").value),
-    duracion: document.getElementById("servDuracion").value
-  };
-
-  if (id) {
-    await updateDoc(doc(db, "servicios", id), data);
-  } else {
-    await addDoc(collection(db, "servicios"), data);
-  }
-  e.target.reset();
-  cargarDatos();
-});
-
-// =================== CARGAR DATOS ===================
-async function cargarDatos() {
-  cargarColeccion("productos", "tablaProductos", "prodId", ["nombre", "precio", "stock", "categoria"]);
-  cargarColeccion("proveedores", "tablaProveedores", "provId", ["nombre", "ruc", "telefono"], "facProveedor");
-  cargarColeccion("facturas", "tablaFacturas", "facId", ["numero", "proveedor", "fecha", "total"]);
-  cargarColeccion("servicios", "tablaServicios", "servId", ["nombre", "precio", "duracion"]);
-}
-
-// =================== FUNCIONES GENERALES ===================
-async function cargarColeccion(nombreColeccion, tablaId, inputId, campos, selectId=null) {
-  const snap = await getDocs(collection(db, nombreColeccion));
+// Cargar datos en tabla
+async function cargarDatos(coleccion, tablaId) {
   const tabla = document.getElementById(tablaId);
-  tabla.innerHTML = "";
-  let opciones = "";
+  tabla.innerHTML = ""; // Limpiar
 
-  snap.forEach(docSnap => {
-    const d = docSnap.data();
+  const snapshot = await getDocs(collection(db, coleccion));
+  snapshot.forEach((doc) => {
+    const data = doc.data();
     let fila = "<tr>";
-    fila += `<td>${docSnap.id}</td>`;
-    campos.forEach(c => {
-      fila += `<td>${d[c]}</td>`;
+
+    Object.values(data).forEach(valor => {
+      fila += `<td>${valor}</td>`;
     });
-    fila += `
-      <td>
-        <button onclick="editar('${nombreColeccion}','${docSnap.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️</button>
-        <button onclick="eliminar('${nombreColeccion}','${docSnap.id}')">🗑️</button>
-      </td>
-    `;
+
+    fila += `<td><button onclick="eliminarRegistro('${coleccion}','${doc.id}')">❌ Eliminar</button></td>`;
     fila += "</tr>";
     tabla.innerHTML += fila;
-
-    if (selectId) opciones += `<option value="${d.nombre}">${d.nombre}</option>`;
   });
-
-  if (selectId) {
-    document.getElementById(selectId).innerHTML = `<option value="">Seleccione proveedor</option>` + opciones;
-  }
 }
 
-// =================== EDITAR ===================
-window.editar = function (coleccion, id, data) {
-  const prefix = coleccion.slice(0,4);
-  document.getElementById(prefix+"Id").value = id;
-  for (let campo in data) {
-    let input = document.getElementById(prefix + campo.charAt(0).toUpperCase() + campo.slice(1));
-    if (input) input.value = data[campo];
-  }
-};
+// Eliminar un registro
+async function eliminarRegistro(coleccion, id) {
+  await deleteDoc(doc(db, coleccion, id));
+  alert("Registro eliminado ✅");
+  cargarTodo(); // Recargar tablas
+}
 
-// =================== ELIMINAR ===================
-window.eliminar = async function (coleccion, id) {
-  if (confirm("¿Seguro que deseas eliminar este registro?")) {
-    await deleteDoc(doc(db, coleccion, id));
-    cargarDatos();
-  }
-};
+// ==========================
+// 📌 CARGAR TODAS LAS TABLAS
+// ==========================
+async function cargarTodo() {
+  await cargarDatos("proveedores", "tablaProveedores");
+  await cargarDatos("facturas", "tablaFacturas");
+  await cargarDatos("servicios", "tablaServicios");
+  await cargarDatos("ventas", "tablaVentas");
+  await cargarDatos("gastos", "tablaGastos");
+}
 
-// =================== BUSCAR ===================
-["buscarProductos","buscarProveedores","buscarFacturas","buscarServicios"].forEach(id => {
-  document.getElementById(id).addEventListener("keyup", (e) => {
-    const filtro = e.target.value.toLowerCase();
-    const tabla = e.target.nextElementSibling.nextElementSibling.querySelector("tbody");
-    Array.from(tabla.rows).forEach(fila => {
-      fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? "" : "none";
+// ==========================
+// 📌 LOGOUT
+// ==========================
+document.getElementById("btnLogout").addEventListener("click", async () => {
+  await signOut(auth);
+  alert("Sesión cerrada correctamente ✅");
+  window.location.href = "index.html"; // Volver al login
+});
+
+// ==========================
+// 📌 BUSCADORES
+// ==========================
+function activarBuscador(inputId, tablaId) {
+  const input = document.getElementById(inputId);
+  input.addEventListener("keyup", () => {
+    const filtro = input.value.toLowerCase();
+    const filas = document.querySelectorAll(`#${tablaId} tr`);
+    filas.forEach(fila => {
+      const texto = fila.innerText.toLowerCase();
+      fila.style.display = texto.includes(filtro) ? "" : "none";
     });
   });
-});
+}
+
+activarBuscador("buscarProveedores", "tablaProveedores");
+activarBuscador("buscarFacturas", "tablaFacturas");
+activarBuscador("buscarServicios", "tablaServicios");
+activarBuscador("buscarVentas", "tablaVentas");
+activarBuscador("buscarGastos", "tablaGastos");
+
+// ==========================
+// 📌 EJECUTAR
+// ==========================
+cargarTodo();
+
+// Exponer eliminarRegistro al scope global
+window.eliminarRegistro = eliminarRegistro;
 
 
