@@ -2,15 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐶 Dashboard Discovery Pets</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="dashboard">
+    <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="logo">🐾 Discovery Pets</div>
+      <div class="logo">
+        <i>🐾</i> Discovery Pets
+      </div>
       <ul>
-        <li id="menuProveedor" class="active">Proveedor</li>
+        <li id="menuProveedor">Proveedor</li>
         <li id="menuFactura">Factura</li>
         <li id="menuGastos">Gastos</li>
         <li id="menuServicio">Servicio</li>
@@ -18,73 +21,75 @@
       <button id="btnLogout">Cerrar Sesión</button>
     </div>
 
+    <!-- CONTENIDO -->
     <div class="content">
       <div id="seccionProveedor" class="card">
-        <h2>📦 Proveedores</h2>
-        <form id="formProveedor" class="formulario">
-          <input type="text" id="provRUC" placeholder="RUC">
-          <input type="text" id="provNombre" placeholder="Nombre del proveedor">
-          <input type="text" id="provDireccion" placeholder="Dirección">
-          <button type="button" id="btnAddProveedor">Agregar</button>
-        </form>
-        <input type="text" id="buscarProveedor" placeholder="Buscar proveedor...">
+        <h2>Proveedor</h2>
+        <div class="formulario">
+          <input type="text" id="rucProveedor" placeholder="RUC">
+          <input type="text" id="nombreProveedor" placeholder="Nombre">
+          <input type="text" id="direccionProveedor" placeholder="Dirección">
+          <button id="agregarProveedor">Agregar</button>
+        </div>
+        <input type="text" id="buscarProveedor" placeholder="Buscar proveedor por RUC o Nombre">
         <table id="tablaProveedor">
           <thead>
-            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Acciones</th></tr>
+            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Acción</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
       <div id="seccionFactura" class="card hidden">
-        <h2>🧾 Facturas</h2>
-        <form id="formFactura" class="formulario">
-          <input type="text" id="factRUC" placeholder="RUC del proveedor">
-          <select id="factTipo">
-            <option value="">Tipo de factura</option>
-            <option value="Factura A">Factura A</option>
-            <option value="Factura B">Factura B</option>
+        <h2>Factura</h2>
+        <div class="formulario">
+          <input type="text" id="rucFactura" placeholder="RUC del proveedor">
+          <select id="selectProveedorFactura">
+            <option value="">-- Seleccionar Proveedor --</option>
           </select>
-          <input type="text" id="factDescripcion" placeholder="Descripción">
-          <input type="date" id="factFecha">
-          <button type="button" id="btnAddFactura">Agregar</button>
-        </form>
-        <input type="text" id="buscarFactura" placeholder="Buscar factura...">
+          <button id="registrarProveedorFactura">Registrar Proveedor</button>
+          <input type="text" id="descripcionFactura" placeholder="Descripción">
+          <input type="date" id="fechaFactura">
+          <button id="agregarFactura">Agregar</button>
+        </div>
+        <input type="text" id="buscarFactura" placeholder="Buscar factura por RUC o descripción">
         <table id="tablaFactura">
           <thead>
-            <tr><th>RUC</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Acciones</th></tr>
+            <tr><th>RUC</th><th>Proveedor</th><th>Descripción</th><th>Fecha</th><th>Acción</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
       <div id="seccionGastos" class="card hidden">
-        <h2>💸 Gastos</h2>
-        <form id="formGastos" class="formulario">
-          <input type="text" id="gastoDescripcion" placeholder="Descripción">
-          <input type="number" id="gastoMonto" placeholder="Monto">
-          <button type="button" id="btnAddGasto">Agregar</button>
-        </form>
-        <input type="text" id="buscarGasto" placeholder="Buscar gasto...">
+        <h2>Gastos</h2>
+        <div class="formulario">
+          <input type="text" id="nombreGasto" placeholder="Nombre del gasto">
+          <input type="number" id="montoGasto" placeholder="Monto">
+          <input type="date" id="fechaGasto">
+          <button id="agregarGasto">Agregar</button>
+        </div>
+        <input type="text" id="buscarGasto" placeholder="Buscar gasto por nombre">
         <table id="tablaGasto">
           <thead>
-            <tr><th>Descripción</th><th>Monto</th><th>Acciones</th></tr>
+            <tr><th>Nombre</th><th>Monto</th><th>Fecha</th><th>Acción</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
       <div id="seccionServicio" class="card hidden">
-        <h2>🛠 Servicio</h2>
-        <form id="formServicio" class="formulario">
-          <input type="text" id="servDescripcion" placeholder="Descripción">
-          <input type="number" id="servMonto" placeholder="Monto">
-          <button type="button" id="btnAddServicio">Agregar</button>
-        </form>
-        <input type="text" id="buscarServicio" placeholder="Buscar servicio...">
+        <h2>Servicio</h2>
+        <div class="formulario">
+          <input type="text" id="nombreServicio" placeholder="Nombre del servicio">
+          <input type="number" id="montoServicio" placeholder="Monto">
+          <input type="date" id="fechaServicio">
+          <button id="agregarServicio">Agregar</button>
+        </div>
+        <input type="text" id="buscarServicio" placeholder="Buscar servicio por nombre">
         <table id="tablaServicio">
           <thead>
-            <tr><th>Descripción</th><th>Monto</th><th>Acciones</th></tr>
+            <tr><th>Nombre</th><th>Monto</th><th>Fecha</th><th>Acción</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -92,14 +97,10 @@
     </div>
   </div>
 
-  <script type="module" src="dashboard.js"></script>
   <script type="module" src="firebase.js"></script>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
 
 
 
