@@ -1,110 +1,129 @@
-/* General */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #ffe6f0;
+  font-family: "Poppins", sans-serif;
+  background-color: #fff0f5; /* fondo rosa/morado fuccia suave */
   color: #333;
 }
 
-/* Login */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #ff66b2;
-}
-
-.login-box {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 15px;
-  text-align: center;
-  width: 350px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-}
-
-.login-img {
-  width: 120px;
-  border-radius: 50%;
-  margin-bottom: 15px;
-}
-
-input[type=email], input[type=password], input[type=text], input[type=number], input[type=date] {
-  width: 90%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background-color: #ff66b2;
-  border: none;
-  color: white;
-  padding: 10px 15px;
-  margin: 10px 0;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #e0559e;
-}
-
-.hidden { display: none; }
-
-/* Dashboard */
 .dashboard-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
 }
 
-.menu {
+/* Sidebar */
+.sidebar {
   width: 220px;
-  background-color: #ff66b2;
+  background-color: #ff69b4; /* fuccia */
   color: white;
   padding: 20px;
 }
 
-.menu ul {
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.menu {
   list-style: none;
   padding: 0;
 }
 
-.menu li {
-  padding: 12px;
+.menu-item {
+  padding: 12px 10px;
+  margin: 5px 0;
   cursor: pointer;
-  border-radius: 6px;
-  margin-bottom: 5px;
+  border-radius: 8px;
+  transition: 0.3s;
 }
 
-.menu li:hover, .menu li.active {
-  background-color: #e0559e;
+.menu-item:hover, .menu-item.active {
+  background-color: #ff1493; /* fuccia más intenso */
 }
 
-.content {
-  flex-grow: 1;
+.menu-item.logout {
+  margin-top: 20px;
+  background-color: #ff4500;
+  text-align: center;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
   padding: 20px;
-  background-color: #ffe6f0;
+  overflow-y: auto;
 }
 
+.section {
+  display: block;
+}
+
+.section.hidden {
+  display: none;
+}
+
+h3 {
+  margin-bottom: 15px;
+  color: #c71585; /* color fuccia oscuro */
+}
+
+.formulario {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.formulario input, .formulario button {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.formulario button {
+  background-color: #ff69b4;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.formulario button:hover {
+  background-color: #ff1493;
+}
+
+/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
 }
 
+table, th, td {
+  border: 1px solid #ddd;
+}
+
 th, td {
-  border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
 }
 
 th {
-  background-color: #ff66b2;
-  color: white;
+  background-color: #ffb6c1; /* fuccia claro */
 }
+
+.delete-btn {
+  background-color: #ff4500;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.delete-btn:hover {
+  background-color: #dc143c;
+}
+
+
 
 
 
