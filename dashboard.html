@@ -99,89 +99,85 @@
     <button onclick="showSection('servicios')">🐕 Servicios</button>
   </nav>
 
-  <div class="content">
-    <!-- Productos -->
-    <div id="productos" class="section active">
-      <h2>📦 Gestión de Productos</h2>
-      <form id="formProducto">
-        <input type="text" id="prodNombre" placeholder="Nombre del producto" required>
-        <input type="number" id="prodPrecio" placeholder="Precio (S/.)" required>
-        <input type="number" id="prodStock" placeholder="Stock inicial" required>
-        <input type="text" id="prodCategoria" placeholder="Categoría" required>
-        <button type="submit">Agregar Producto</button>
-      </form>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th></tr>
-        </thead>
-        <tbody id="tablaProductos"></tbody>
-      </table>
-    </div>
+ <!-- Productos -->
+<div id="productos" class="section active">
+  <h2>📦 Gestión de Productos</h2>
+  <input type="text" id="buscarProductos" placeholder="🔍 Buscar producto...">
+  <form id="formProducto">
+    <input type="hidden" id="prodId">
+    <input type="text" id="prodNombre" placeholder="Nombre del producto" required>
+    <input type="number" id="prodPrecio" placeholder="Precio (S/.)" required>
+    <input type="number" id="prodStock" placeholder="Stock inicial" required>
+    <input type="text" id="prodCategoria" placeholder="Categoría" required>
+    <button type="submit">Guardar Producto</button>
+  </form>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaProductos"></tbody>
+  </table>
+</div>
 
-    <!-- Proveedores -->
-    <div id="proveedores" class="section">
-      <h2>👥 Proveedores</h2>
-      <form id="formProveedor">
-        <input type="text" id="provNombre" placeholder="Nombre proveedor" required>
-        <input type="text" id="provRuc" placeholder="RUC" required>
-        <input type="text" id="provTelefono" placeholder="Teléfono">
-        <button type="submit">Registrar Proveedor</button>
-      </form>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Nombre</th><th>RUC</th><th>Teléfono</th></tr>
-        </thead>
-        <tbody id="tablaProveedores"></tbody>
-      </table>
-    </div>
+<!-- Proveedores -->
+<div id="proveedores" class="section">
+  <h2>👥 Proveedores</h2>
+  <input type="text" id="buscarProveedores" placeholder="🔍 Buscar proveedor...">
+  <form id="formProveedor">
+    <input type="hidden" id="provId">
+    <input type="text" id="provNombre" placeholder="Nombre proveedor" required>
+    <input type="text" id="provRuc" placeholder="RUC" required>
+    <input type="text" id="provTelefono" placeholder="Teléfono">
+    <button type="submit">Guardar Proveedor</button>
+  </form>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Nombre</th><th>RUC</th><th>Teléfono</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaProveedores"></tbody>
+  </table>
+</div>
 
-    <!-- Facturas -->
-    <div id="facturas" class="section">
-      <h2>🧾 Facturas de Compra</h2>
-      <form id="formFactura">
-        <input type="text" id="facNumero" placeholder="Número de factura" required>
-        <select id="facProveedor" required></select>
-        <input type="date" id="facFecha" required>
-        <input type="number" id="facTotal" placeholder="Total (S/.)" required>
-        <button type="submit">Registrar Factura</button>
-      </form>
-      <table>
-        <thead>
-          <tr><th>N° Factura</th><th>Proveedor</th><th>Fecha</th><th>Total</th></tr>
-        </thead>
-        <tbody id="tablaFacturas"></tbody>
-      </table>
-    </div>
+<!-- Facturas -->
+<div id="facturas" class="section">
+  <h2>🧾 Facturas de Compra</h2>
+  <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
+  <form id="formFactura">
+    <input type="hidden" id="facId">
+    <input type="text" id="facNumero" placeholder="Número de factura" required>
+    <select id="facProveedor" required></select>
+    <input type="date" id="facFecha" required>
+    <input type="number" id="facTotal" placeholder="Total (S/.)" required>
+    <button type="submit">Guardar Factura</button>
+  </form>
+  <table>
+    <thead>
+      <tr><th>N° Factura</th><th>Proveedor</th><th>Fecha</th><th>Total</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaFacturas"></tbody>
+  </table>
+</div>
 
-    <!-- Servicios -->
-    <div id="servicios" class="section">
-      <h2>🐕 Servicios</h2>
-      <form id="formServicio">
-        <input type="text" id="servNombre" placeholder="Nombre servicio" required>
-        <input type="number" id="servPrecio" placeholder="Precio (S/.)" required>
-        <input type="text" id="servDuracion" placeholder="Duración (ej: 30 min)" required>
-        <button type="submit">Agregar Servicio</button>
-      </form>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Nombre Servicio</th><th>Precio</th><th>Duración</th></tr>
-        </thead>
-        <tbody id="tablaServicios"></tbody>
-      </table>
-    </div>
-  </div>
+<!-- Servicios -->
+<div id="servicios" class="section">
+  <h2>🐕 Servicios</h2>
+  <input type="text" id="buscarServicios" placeholder="🔍 Buscar servicio...">
+  <form id="formServicio">
+    <input type="hidden" id="servId">
+    <input type="text" id="servNombre" placeholder="Nombre servicio" required>
+    <input type="number" id="servPrecio" placeholder="Precio (S/.)" required>
+    <input type="text" id="servDuracion" placeholder="Duración (ej: 30 min)" required>
+    <button type="submit">Guardar Servicio</button>
+  </form>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Nombre Servicio</th><th>Precio</th><th>Duración</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaServicios"></tbody>
+  </table>
+</div>
 
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="dashboard.js"></script>
 
-  <script>
-    function showSection(id) {
-      document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-    }
-  </script>
-</body>
-</html>
 
 
 
