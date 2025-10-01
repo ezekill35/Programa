@@ -4,10 +4,15 @@ import {
   signInWithEmailAndPassword 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Alternar login / registro
+// Formularios
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 
+// Mensajes
+const mensajeLogin = document.getElementById("mensajeLogin");
+const mensajeRegister = document.getElementById("mensajeRegister");
+
+// Alternar login/registro
 document.getElementById("showRegister").addEventListener("click", () => {
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
@@ -17,10 +22,6 @@ document.getElementById("showLogin").addEventListener("click", () => {
   registerForm.classList.add("hidden");
   loginForm.classList.remove("hidden");
 });
-
-// Mensajes debajo de formularios
-const mensajeLogin = document.getElementById("mensajeLogin");
-const mensajeRegister = document.getElementById("mensajeRegister");
 
 // Registro
 document.getElementById("btnRegister").addEventListener("click", async () => {
@@ -48,7 +49,6 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
     await signInWithEmailAndPassword(auth, email, password);
     mensajeLogin.textContent = "🎉 Sesión iniciada correctamente.";
     mensajeLogin.style.color = "#27ae60";
-    // Redirigir al dashboard con retraso para mostrar mensaje
     setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
   } catch (error) {
     mensajeLogin.textContent = "❌ Error: " + error.message;
