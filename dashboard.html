@@ -9,67 +9,68 @@
   <div class="dashboard">
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="logo">
-        <i>🐾</i>
-        <span>Discovery Pets</span>
-      </div>
+      <div class="logo"><i>🐾</i> Discovery Pets</div>
       <ul>
-        <li id="opProveedor" class="active" onclick="mostrarSeccion('proveedor', this)">Proveedor</li>
-        <li id="opFactura" onclick="mostrarSeccion('factura', this)">Factura</li>
-        <li id="opGastos" onclick="mostrarSeccion('gastos', this)">Gastos</li>
-        <li id="opServicio" onclick="mostrarSeccion('servicio', this)">Servicio</li>
+        <li id="opProveedor" class="active" onclick="mostrarSeccion('proveedor')">Proveedor</li>
+        <li id="opFactura" onclick="mostrarSeccion('factura')">Factura</li>
+        <li id="opGastos" onclick="mostrarSeccion('gastos')">Gastos</li>
+        <li id="opServicio" onclick="mostrarSeccion('servicio')">Servicio</li>
       </ul>
-      <button onclick="cerrarSesion()">Cerrar Sesión</button>
+      <button id="btnLogout">Cerrar Sesión</button>
     </div>
 
     <!-- CONTENIDO -->
     <div class="content">
-      <!-- PROVEEDOR -->
-      <div id="proveedor" class="seccion">
-        <h1>Proveedor</h1>
-        <form class="formulario" id="formProveedor">
+      <h1 id="tituloSeccion">Proveedor</h1>
+      <p class="subtitle">Administra tus registros 🐶</p>
+
+      <!-- FORMULARIOS -->
+      <div class="card">
+        <h2>Registrar</h2>
+        <form id="formProveedor" class="formulario">
           <input type="text" id="rutProveedor" placeholder="RUT">
-          <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor">
+          <input type="text" id="nombreProveedor" placeholder="Nombre">
           <input type="text" id="direccionProveedor" placeholder="Dirección">
-          <button type="button" id="btnRegistrarProveedor">Registrar Proveedor</button>
+          <button type="button" id="btnAddProveedor">Agregar Proveedor</button>
         </form>
-      </div>
 
-      <!-- FACTURA -->
-      <div id="factura" class="seccion hidden">
-        <h1>Factura</h1>
-        <form class="formulario" id="formFactura">
-          <input type="text" id="rutFactura" placeholder="RUT">
-          <select id="selectProveedor">
-            <option value="">Seleccionar proveedor</option>
+        <form id="formFactura" class="formulario hidden">
+          <input type="text" id="rucFactura" placeholder="RUC">
+          <select id="selectProveedorFactura">
+            <option value="">Selecciona un proveedor</option>
           </select>
-          <input type="text" id="tipoFactura" placeholder="Tipo de factura">
-          <input type="date" id="fechaFactura" placeholder="Fecha de emisión">
           <input type="text" id="descripcionFactura" placeholder="Descripción">
-          <button type="button" id="btnRegistrarFactura">Registrar Factura</button>
+          <input type="date" id="fechaFactura">
+          <button type="button" id="btnAddFactura">Agregar Factura</button>
         </form>
-      </div>
 
-      <!-- GASTOS -->
-      <div id="gastos" class="seccion hidden">
-        <h1>Gastos</h1>
-        <form class="formulario" id="formGastos">
-          <input type="text" id="descripcionGasto" placeholder="Descripción">
+        <form id="formGastos" class="formulario hidden">
+          <input type="text" id="nombreGasto" placeholder="Nombre Gasto">
           <input type="number" id="montoGasto" placeholder="Monto">
           <input type="date" id="fechaGasto">
-          <button type="button" id="btnRegistrarGasto">Registrar Gasto</button>
+          <button type="button" id="btnAddGasto">Agregar Gasto</button>
+        </form>
+
+        <form id="formServicio" class="formulario hidden">
+          <input type="text" id="nombreServicio" placeholder="Nombre Servicio">
+          <input type="number" id="costoServicio" placeholder="Costo">
+          <input type="date" id="fechaServicio">
+          <button type="button" id="btnAddServicio">Agregar Servicio</button>
         </form>
       </div>
 
-      <!-- SERVICIO -->
-      <div id="servicio" class="seccion hidden">
-        <h1>Servicio</h1>
-        <form class="formulario" id="formServicio">
-          <input type="text" id="descripcionServicio" placeholder="Descripción">
-          <input type="number" id="montoServicio" placeholder="Monto">
-          <input type="date" id="fechaServicio">
-          <button type="button" id="btnRegistrarServicio">Registrar Servicio</button>
-        </form>
+      <!-- BUSCADOR -->
+      <input type="text" id="buscador" placeholder="Buscar por RUT o nombre...">
+
+      <!-- TABLA DE DATOS -->
+      <div class="card">
+        <h2>Lista de Registros</h2>
+        <table id="tablaDatos">
+          <thead>
+            <tr id="tablaHeader"></tr>
+          </thead>
+          <tbody id="tablaBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -78,8 +79,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
 
 
 
