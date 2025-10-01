@@ -9,36 +9,34 @@
   <div class="dashboard-container">
 
     <!-- Menú lateral -->
-    <nav class="sidebar">
+    <aside class="sidebar">
       <h2>🐾 Discovery Pets</h2>
-      <ul>
-        <li><button id="btnReportes" class="menu-btn active">Reportes</button></li>
-        <li><button id="btnProveedor" class="menu-btn">Proveedor</button></li>
-        <li><button id="btnFactura" class="menu-btn">Factura</button></li>
-        <li><button id="btnGastos" class="menu-btn">Gastos</button></li>
-        <li><button id="btnServicio" class="menu-btn">Servicio</button></li>
-        <li><button id="btnLogout" class="menu-btn logout">Cerrar Sesión</button></li>
-      </ul>
-    </nav>
+      <button id="btnReportes" class="active">Reportes</button>
+      <button id="btnProveedor">Proveedor</button>
+      <button id="btnFactura">Factura</button>
+      <button id="btnGastos">Gastos</button>
+      <button id="btnServicio">Servicio</button>
+      <button id="btnLogout">Cerrar Sesión</button>
+    </aside>
 
     <!-- Contenido principal -->
     <main class="main-content">
-
+      
       <!-- Reportes -->
-      <section id="sectionReportes" class="section active">
-        <h2>📊 Reportes</h2>
-        <p>Visualiza los reportes generales de ventas, gastos y servicios.</p>
+      <section id="sectionReportes" class="active section">
+        <h2>Reportes</h2>
+        <p>Vista general y estadísticas del sistema.</p>
       </section>
 
       <!-- Proveedor -->
       <section id="sectionProveedor" class="section">
-        <h2>Proveedor</h2>
+        <h2>Gestión de Proveedores</h2>
         <form id="formProveedor">
           <input type="text" id="provRUC" placeholder="RUC">
           <input type="text" id="provNombre" placeholder="Nombre">
           <input type="text" id="provDireccion" placeholder="Dirección">
           <input type="email" id="provCorreo" placeholder="Correo">
-          <input type="tel" id="provTelefono" placeholder="Teléfono">
+          <input type="text" id="provTelefono" placeholder="Teléfono">
           <button type="button" id="addProveedor">Agregar</button>
         </form>
         <input type="text" id="searchProveedor" placeholder="Buscar proveedor por RUC o Nombre">
@@ -60,18 +58,16 @@
 
       <!-- Factura -->
       <section id="sectionFactura" class="section">
-        <h2>Factura</h2>
+        <h2>Gestión de Facturas</h2>
         <form id="formFactura">
-          <input type="text" id="factRUC" placeholder="RUC proveedor">
-          <select id="factProveedor">
-            <option value="">Seleccione proveedor</option>
-          </select>
+          <input type="text" id="factRUC" placeholder="RUC">
+          <select id="factProveedor"></select>
           <input type="text" id="factTipo" placeholder="Tipo de factura">
           <input type="text" id="factDescripcion" placeholder="Descripción">
           <input type="date" id="factFecha">
           <button type="button" id="addFactura">Agregar</button>
         </form>
-        <input type="text" id="searchFactura" placeholder="Buscar factura por RUC o proveedor">
+        <input type="text" id="searchFactura" placeholder="Buscar factura por RUC o Proveedor">
         <button type="button" id="btnSearchFactura">Buscar</button>
         <table id="tableFactura">
           <thead>
@@ -90,8 +86,8 @@
 
       <!-- Gastos -->
       <section id="sectionGastos" class="section">
-        <h2>Gastos</h2>
-        <form id="formGastos">
+        <h2>Gestión de Gastos</h2>
+        <form id="formGasto">
           <input type="text" id="gastoConcepto" placeholder="Concepto">
           <input type="number" id="gastoMonto" placeholder="Monto">
           <button type="button" id="addGasto">Agregar</button>
@@ -110,7 +106,7 @@
 
       <!-- Servicio -->
       <section id="sectionServicio" class="section">
-        <h2>Servicio</h2>
+        <h2>Gestión de Servicios</h2>
         <form id="formServicio">
           <input type="text" id="servDescripcion" placeholder="Descripción">
           <input type="number" id="servCosto" placeholder="Costo">
@@ -135,14 +131,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 
