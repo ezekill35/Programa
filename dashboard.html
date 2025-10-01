@@ -6,141 +6,110 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="dashboard-container">
+  <header>
+    <h1>🐾 Discovery Pets</h1>
+  </header>
 
-    <!-- MENU LATERAL -->
-    <div class="menu">
-      <h2>🐾 Discovery Pets</h2>
-      <button id="btnProveedor" class="active">Proveedor</button>
-      <button id="btnFactura">Factura</button>
-      <button id="btnGastos">Gastos</button>
-      <button id="btnServicio">Servicio</button>
-      <button id="btnLogout">Cerrar Sesión</button>
-    </div>
+  <nav class="menu">
+    <button class="menu-btn active" data-section="sectionProveedor" id="btnProveedor">Proveedor</button>
+    <button class="menu-btn" data-section="sectionFactura" id="btnFactura">Factura</button>
+    <button class="menu-btn" data-section="sectionGastos" id="btnGastos">Gastos</button>
+    <button class="menu-btn" data-section="sectionServicio" id="btnServicio">Servicio</button>
+    <button class="menu-btn logout" id="btnLogout">Cerrar Sesión</button>
+  </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <div class="main-content">
+  <main>
+    <!-- Sección Proveedor -->
+    <section class="section active" id="sectionProveedor">
+      <h2>Proveedor</h2>
+      <input type="text" id="provRUC" placeholder="RUC">
+      <input type="text" id="provNombre" placeholder="Nombre">
+      <input type="text" id="provDireccion" placeholder="Dirección">
+      <button id="btnAddProveedor">Agregar</button>
+      <input type="text" id="searchProveedor" placeholder="Buscar proveedor por RUC o Nombre">
+      <button id="btnSearchProveedor">Buscar</button>
+      <table>
+        <thead>
+          <tr>
+            <th>RUC</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaProveedor"></tbody>
+      </table>
+    </section>
 
-      <!-- SECCION PROVEEDOR -->
-      <div id="sectionProveedor" class="section active card">
-        <h4>Proveedor</h4>
-        <div class="formulario">
-          <input type="text" id="provRUC" placeholder="RUC">
-          <input type="text" id="provNombre" placeholder="Nombre">
-          <input type="text" id="provDireccion" placeholder="Dirección">
-          <button id="btnAgregarProveedor">Agregar</button>
-        </div>
-        <div class="formulario">
-          <input type="text" id="buscarProveedor" placeholder="Buscar proveedor por RUC o Nombre">
-          <button id="btnBuscarProveedor">Buscar</button>
-        </div>
-        <div class="table-container">
-          <table id="tablaProveedor">
-            <thead>
-              <tr>
-                <th>RUC</th>
-                <th>Nombre</th>
-                <th>Dirección</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <!-- Sección Factura -->
+    <section class="section" id="sectionFactura">
+      <h2>Factura</h2>
+      <input type="text" id="factRUC" placeholder="RUC del proveedor">
+      <input type="text" id="factDescripcion" placeholder="Descripción">
+      <input type="date" id="factFecha">
+      <button id="btnAddFactura">Agregar Factura</button>
+      <input type="text" id="searchFactura" placeholder="Buscar factura por RUC">
+      <button id="btnSearchFactura">Buscar</button>
+      <table>
+        <thead>
+          <tr>
+            <th>RUC</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaFactura"></tbody>
+      </table>
+    </section>
 
-      <!-- SECCION FACTURA -->
-      <div id="sectionFactura" class="section card">
-        <h4>Factura</h4>
-        <div class="formulario">
-          <input type="text" id="facRUC" placeholder="RUC del proveedor">
-          <input type="text" id="facDescripcion" placeholder="Descripción">
-          <input type="date" id="facFecha">
-          <button id="btnAgregarFactura">Agregar</button>
-        </div>
-        <div class="formulario">
-          <input type="text" id="buscarFactura" placeholder="Buscar por RUC o descripción">
-          <button id="btnBuscarFactura">Buscar</button>
-        </div>
-        <div class="table-container">
-          <table id="tablaFactura">
-            <thead>
-              <tr>
-                <th>RUC</th>
-                <th>Descripción</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <!-- Sección Gastos -->
+    <section class="section" id="sectionGastos">
+      <h2>Gastos</h2>
+      <input type="text" id="gastoDescripcion" placeholder="Descripción">
+      <input type="number" id="gastoMonto" placeholder="Monto">
+      <button id="btnAddGasto">Agregar Gasto</button>
+      <input type="text" id="searchGasto" placeholder="Buscar gasto por descripción">
+      <button id="btnSearchGasto">Buscar</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaGasto"></tbody>
+      </table>
+    </section>
 
-      <!-- SECCION GASTOS -->
-      <div id="sectionGastos" class="section card">
-        <h4>Gastos</h4>
-        <div class="formulario">
-          <input type="text" id="gastoDescripcion" placeholder="Descripción del gasto">
-          <input type="number" id="gastoMonto" placeholder="Monto">
-          <input type="date" id="gastoFecha">
-          <button id="btnAgregarGasto">Agregar</button>
-        </div>
-        <div class="formulario">
-          <input type="text" id="buscarGasto" placeholder="Buscar gasto por descripción">
-          <button id="btnBuscarGasto">Buscar</button>
-        </div>
-        <div class="table-container">
-          <table id="tablaGastos">
-            <thead>
-              <tr>
-                <th>Descripción</th>
-                <th>Monto</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <!-- Sección Servicio -->
+    <section class="section" id="sectionServicio">
+      <h2>Servicio</h2>
+      <input type="text" id="servDescripcion" placeholder="Descripción">
+      <input type="number" id="servMonto" placeholder="Monto">
+      <button id="btnAddServicio">Agregar Servicio</button>
+      <input type="text" id="searchServicio" placeholder="Buscar servicio por descripción">
+      <button id="btnSearchServicio">Buscar</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaServicio"></tbody>
+      </table>
+    </section>
+  </main>
 
-      <!-- SECCION SERVICIO -->
-      <div id="sectionServicio" class="section card">
-        <h4>Servicio</h4>
-        <div class="formulario">
-          <input type="text" id="servDescripcion" placeholder="Descripción del servicio">
-          <input type="text" id="servProveedor" placeholder="Proveedor">
-          <input type="date" id="servFecha">
-          <button id="btnAgregarServicio">Agregar</button>
-        </div>
-        <div class="formulario">
-          <input type="text" id="buscarServicio" placeholder="Buscar servicio por descripción">
-          <button id="btnBuscarServicio">Buscar</button>
-        </div>
-        <div class="table-container">
-          <table id="tablaServicio">
-            <thead>
-              <tr>
-                <th>Descripción</th>
-                <th>Proveedor</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
