@@ -1,103 +1,155 @@
-import { auth } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import { 
+  onAuthStateChanged, 
   signOut 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Referencias DOM
-const menuItems = document.querySelectorAll(".menu-item");
-const sectionTitle = document.getElementById("section-title");
-const sectionContent = document.getElementById("section-content");
+import { 
+  collection, addDoc, getDocs 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Cambiar de sección
-menuItems.forEach(item => {
-  item.addEventListener("click", () => {
-    // Quitar active de todos
-    menuItems.forEach(i => i.classList.remove("active"));
-    // Poner active al actual
-    item.classList.add("active");
+const userInfo = document.getElementById("userInfo");
+const btnLogout = document.getElementById("btnLogout");
 
-    const section = item.getAttribute("data-section");
-    if (section) {
-      sectionTitle.textContent = item.textContent;
-      renderSection(section);
-    }
-
-    // Logout
-    if (item.classList.contains("logout")) {
-      signOut(auth).then(() => {
-        alert("Sesión cerrada ✅");
-        window.location.href = "index.html";
-      });
-    }
-  });
+// 🔹 Verifica usuario logueado
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    userInfo.textContent = `Bienvenido, ${user.email}`;
+    cargarDatos();
+  } else {
+    window.location.href = "index.html";
+  }
 });
 
-// Render dinámico
-function renderSection(section) {
-  switch (section) {
-    case "productos":
-      sectionContent.innerHTML = `
-        <h3>Gestión de Productos</h3>
-        <p>Aquí podrás registrar y ver productos.</p>
-        <form id="form-producto">
-          <input type="text" placeholder="Código / SKU" required>
-          <input type="text" placeholder="Nombre" required>
-          <input type="text" placeholder="Marca">
-          <input type="number" placeholder="Precio S/" required>
-          <input type="number" placeholder="Stock Inicial" required>
-          <input type="text" placeholder="Categoría">
-          <button class="btn">Agregar Producto</button>
-        </form>
-      `;
-      break;
+// 🔹 Logout
+btnLogout.addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+});
 
-    case "proveedores":
-      sectionContent.innerHTML = `
-        <h3>Gestión de Proveedores</h3>
-        <form>
-          <input type="text" placeholder="RUC" required>
-          <input type="text" placeholder="Nombre" required>
-          <input type="text" placeholder="Dirección">
-          <input type="text" placeholder="Teléfono">
-          <button class="btn">Registrar Proveedor</button>
-        </form>
-      `;
-      break;
+// =============== PRODUCTOS ===============
+const formProducto = document.getElementById("formProducto");
+formProducto.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await addDoc(collection(db, "productos"), {
+    nombre: document.getElementById("prodNombre").value,
+    precio: parseFloat(document.getElementById("prodPrecio").value),
+    stock: parseInt(document.getElementById("prodStock").value),
+    categoria: document.getElementById("prodCategoria").value
+  });
+  formProducto.reset();
+  cargarDatos();
+});
 
-    case "facturas":
-      sectionContent.innerHTML = `
-        <h3>Facturas</h3>
-        <form>
-          <input type="text" placeholder="RUC Proveedor" required>
-          <select>
-            <option>Seleccionar Proveedor</option>
-            <option>Proveedor 1</option>
-            <option>Proveedor 2</option>
-          </select>
-          <input type="text" placeholder="Número de Factura" required>
-          <input type="date" required>
-          <button class="btn">Registrar Factura</button>
-        </form>
-      `;
-      break;
+// =============== PROVEEDORES ===============
+const formProveedor = document.getElementById("formProveedor");
+formProveedor.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await addDoc(collection(db, "proveedores"), {
+    nombre: document.getElementById("provNombre").value,
+    ruc: document.getElementById("provRuc").value,
+    telefono: document.getElementById("provTelefono").value
+  });
+  formProveedor.reset();
+  cargarDatos();
+});
 
-    case "ventas":
-      sectionContent.innerHTML = `
-        <h3>Gestión de Ventas</h3>
-        <p>Aquí registrarás ventas a clientes.</p>
-      `;
-      break;
+// =============== FACTURAS ===============
+const formFactura = document.getElementById("formFactura");
+formFactura.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await addDoc(collection(db, "facturas"), {
+    numero: document.getElementById("facNumero").value,
+    proveedor: document.getElementById("facProveedor").value,
+    fecha: document.getElementById("facFecha").value,
+    total: parseFloat(document.getElementById("facTotal").value)
+  });
+  formFactura.reset();
+  cargarDatos();
+});
 
-    case "gastos":
-      sectionContent.innerHTML = `
-        <h3>Gestión de Gastos</h3>
-        <p>Registra los gastos de tu negocio aquí.</p>
-      `;
-      break;
+// =============== SERVICIOS ===============
+const formServicio = document.getElementById("formServicio");
+formServicio.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await addDoc(collection(db, "servicios"), {
+    nombre: document.getElementById("servNombre").value,
+    precio: parseFloat(document.getElementById("servPrecio").value),
+    duracion: document.getElementById("servDuracion").value
+  });
+  formServicio.reset();
+  cargarDatos();
+});
 
-    default:
-      sectionContent.innerHTML = "<p>Selecciona una opción del menú.</p>";
-  }
+// =============== CARGAR DATOS ===============
+async function cargarDatos() {
+  // Productos
+  const productosSnap = await getDocs(collection(db, "productos"));
+  const tablaProductos = document.getElementById("tablaProductos");
+  tablaProductos.innerHTML = "";
+  productosSnap.forEach(doc => {
+    const p = doc.data();
+    tablaProductos.innerHTML += `
+      <tr>
+        <td>${doc.id}</td>
+        <td>${p.nombre}</td>
+        <td>S/. ${p.precio}</td>
+        <td>${p.stock}</td>
+        <td>${p.categoria}</td>
+      </tr>
+    `;
+  });
+
+  // Proveedores
+  const proveedoresSnap = await getDocs(collection(db, "proveedores"));
+  const tablaProveedores = document.getElementById("tablaProveedores");
+  const facProveedor = document.getElementById("facProveedor");
+  tablaProveedores.innerHTML = "";
+  facProveedor.innerHTML = `<option value="">Seleccione proveedor</option>`;
+  proveedoresSnap.forEach(doc => {
+    const pr = doc.data();
+    tablaProveedores.innerHTML += `
+      <tr>
+        <td>${doc.id}</td>
+        <td>${pr.nombre}</td>
+        <td>${pr.ruc}</td>
+        <td>${pr.telefono}</td>
+      </tr>
+    `;
+    facProveedor.innerHTML += `<option value="${pr.nombre}">${pr.nombre}</option>`;
+  });
+
+  // Facturas
+  const facturasSnap = await getDocs(collection(db, "facturas"));
+  const tablaFacturas = document.getElementById("tablaFacturas");
+  tablaFacturas.innerHTML = "";
+  facturasSnap.forEach(doc => {
+    const f = doc.data();
+    tablaFacturas.innerHTML += `
+      <tr>
+        <td>${f.numero}</td>
+        <td>${f.proveedor}</td>
+        <td>${f.fecha}</td>
+        <td>S/. ${f.total}</td>
+      </tr>
+    `;
+  });
+
+  // Servicios
+  const serviciosSnap = await getDocs(collection(db, "servicios"));
+  const tablaServicios = document.getElementById("tablaServicios");
+  tablaServicios.innerHTML = "";
+  serviciosSnap.forEach(doc => {
+    const s = doc.data();
+    tablaServicios.innerHTML += `
+      <tr>
+        <td>${doc.id}</td>
+        <td>${s.nombre}</td>
+        <td>S/. ${s.precio}</td>
+        <td>${s.duracion}</td>
+      </tr>
+    `;
+  });
 }
 
 
