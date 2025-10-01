@@ -1,167 +1,164 @@
-/* ---------------------- ESTILOS GENERALES ---------------------- */
-body {
-  font-family: 'Arial', sans-serif;
+/* 🔹 Reset básico */
+* {
   margin: 0;
   padding: 0;
-  background: linear-gradient(to bottom, #fce4ec, #f8bbd0); /* fondo fuccia suave */
-  color: #333;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-}
-
-.container {
-  padding: 20px;
-}
-
-/* ---------------------- MENÚ LATERAL ---------------------- */
-.sidebar {
-  width: 200px;
-  height: 100vh;
-  background-color: #d81b60; /* fuccia */
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
   box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #ffe6f0; /* color de fondo suave tipo fucsia */
+  color: #333;
+  min-height: 100vh;
+}
+
+/* 🔹 Header */
+header {
+  background: #ff66b2; /* fucsia más intenso */
+  color: #fff;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* 🔹 Menú */
+.menu {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background: #fff0f5;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .menu-btn {
-  padding: 12px;
-  margin-bottom: 10px;
+  background: #ff99cc;
   border: none;
-  background: #ec407a;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
+  padding: 10px 20px;
   border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
 }
 
 .menu-btn:hover {
-  background: #f06292;
+  background: #ff66b2;
+  color: #fff;
 }
 
 .menu-btn.active {
-  background: #880e4f;
+  background: #ff1a75;
+  color: #fff;
 }
 
-/* ---------------------- SECCIONES ---------------------- */
+.menu-btn.logout {
+  background: #ff4d4d;
+  margin-left: 20px;
+}
+
+.menu-btn.logout:hover {
+  background: #e60000;
+}
+
+/* 🔹 Main sections */
+main {
+  padding: 20px;
+}
+
 .section {
   display: none;
+  background: #fff0f5;
   padding: 20px;
-  background-color: #fff3f8;
-  margin-left: 220px; /* espacio para sidebar */
-  min-height: 100vh;
-  box-sizing: border-box;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  margin-top: 20px;
 }
 
 .section.active {
   display: block;
 }
 
-/* Colores distintos por sección */
-#sectionProveedor { border-left: 6px solid #e91e63; }
-#sectionFactura { border-left: 6px solid #f06292; }
-#sectionGastos { border-left: 6px solid #ec407a; }
-#sectionServicio { border-left: 6px solid #d81b60; }
-
-/* ---------------------- FORMULARIOS ---------------------- */
-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-input, select {
+/* 🔹 Inputs y botones dentro de secciones */
+section input[type="text"],
+section input[type="number"],
+section input[type="date"] {
   padding: 10px;
+  margin: 5px 5px 15px 0;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  flex: 1 1 200px;
-  font-size: 14px;
+  border: 1px solid #ff99cc;
 }
 
-button {
+section button {
+  background: #ff66b2;
+  color: #fff;
+  border: none;
   padding: 10px 15px;
   border-radius: 6px;
-  border: none;
-  background-color: #d81b60;
-  color: white;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
 }
 
-button:hover {
-  background-color: #f06292;
+section button:hover {
+  background: #ff1a75;
 }
 
-/* ---------------------- TABLAS ---------------------- */
+/* 🔹 Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 table th, table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border: 1px solid #ff99cc;
+  padding: 10px;
   text-align: left;
 }
 
 table th {
-  background-color: #f8bbd0;
-  color: #880e4f;
+  background: #ff66b2;
+  color: #fff;
 }
 
-table tr:nth-child(even) {
-  background-color: #ffe4ec;
+table tbody tr:nth-child(even) {
+  background: #ffe6f0;
 }
 
-table button {
-  background-color: #d81b60;
-  color: white;
+table tbody button {
+  background: #ff4d4d;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
-table button:hover {
-  background-color: #f06292;
+table tbody button:hover {
+  background: #e60000;
+  color: #fff;
 }
 
-/* ---------------------- BUSCADOR ---------------------- */
-.search-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+/* 🔹 Buscadores */
+section input[type="text"]#searchProveedor,
+section input[type="text"]#searchFactura,
+section input[type="text"]#searchGasto,
+section input[type="text"]#searchServicio {
+  width: 250px;
 }
 
-.search-container input {
-  flex: 1;
-}
-
-.search-container button {
-  flex: 0 0 auto;
-}
-
-/* ---------------------- RESPONSIVE ---------------------- */
-@media (max-width: 768px) {
-  .section {
-    margin-left: 0;
-  }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
+/* 🔹 Responsive */
+@media(max-width: 768px){
+  .menu {
     flex-wrap: wrap;
   }
-  .menu-btn {
-    flex: 1 1 calc(50% - 10px);
+
+  section input, section button {
+    width: 100%;
     margin-bottom: 10px;
   }
 }
+
+
 
 
 
