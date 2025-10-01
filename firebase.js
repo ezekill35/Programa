@@ -1,7 +1,8 @@
-// firebase.js
+// Import Firebase (modular)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// Configuración de tu Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -12,10 +13,6 @@ const firebaseConfig = {
   measurementId: "G-W5RGYVTW3V"
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-export { auth };
-
-
+// Inicializa Firebase
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
