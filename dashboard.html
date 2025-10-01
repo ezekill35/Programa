@@ -10,28 +10,37 @@
 
   <nav>
     <ul>
+      <li onclick="mostrarSeccion('proveedores')">Proveedores</li>
       <li onclick="mostrarSeccion('facturas')">Facturas</li>
       <li onclick="mostrarSeccion('gastos')">Gastos</li>
       <li onclick="mostrarSeccion('servicios')">Servicios</li>
     </ul>
   </nav>
 
+  <!-- SECCION PROVEEDORES -->
+  <section id="proveedores">
+    <h2>🧾 Proveedores</h2>
+    <form id="proveedorForm">
+      <input type="text" id="nombreProveedor" placeholder="Nombre">
+      <input type="text" id="rucProveedorInput" placeholder="RUC">
+      <input type="text" id="direccionProveedor" placeholder="Dirección">
+      <button type="submit">Registrar Proveedor</button>
+    </form>
+    <div id="listaProveedores"></div>
+  </section>
+
   <!-- SECCION FACTURAS -->
-  <section id="facturas">
+  <section id="facturas" class="hidden">
     <h2>📋 Facturas</h2>
     <form id="facturaForm">
-      <label>RUC del proveedor:</label>
-      <input type="text" id="rucProveedor" placeholder="Ingrese RUC">
-
       <label>Proveedor:</label>
-      <select id="selectProveedor"></select>
-      <button type="button" id="btnAgregarProveedor">Registrar Proveedor</button>
+      <select id="selectProveedorFactura"></select>
 
       <label>Descripción:</label>
-      <input type="text" id="descripcion" placeholder="Descripción de la factura">
+      <input type="text" id="descripcionFactura" placeholder="Descripción">
 
       <label>Dirección:</label>
-      <input type="text" id="direccion" placeholder="Dirección del proveedor">
+      <input type="text" id="direccionFactura" placeholder="Dirección">
 
       <button type="submit">Guardar Factura</button>
     </form>
@@ -42,7 +51,7 @@
   <section id="gastos" class="hidden">
     <h2>💸 Gastos</h2>
     <form id="gastoForm">
-      <input type="text" id="gastoDescripcion" placeholder="Descripción del gasto">
+      <input type="text" id="gastoDescripcion" placeholder="Descripción">
       <input type="number" id="gastoMonto" placeholder="Monto">
       <button type="submit">Registrar Gasto</button>
     </form>
@@ -64,6 +73,8 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
