@@ -1,116 +1,140 @@
-/* ================== RESET ================== */
-* {
+/* ---------------- GENERAL ---------------- */
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  background-color: #fce4ec; /* suave color de fondo con tema mascotas */
 }
 
-/* ================== BODY ================== */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #2c3e50;
-  background: url('https://images.unsplash.com/photo-1560807707-8cc77767d783?auto=format&fit=crop&w=800&q=80') no-repeat center center fixed;
-  background-size: cover;
+.container-dashboard {
   display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }
 
-/* ================== CONTAINER ================== */
-.container {
-  background: rgba(255,255,255,0.95);
-  border-radius: 15px;
-  padding: 30px 40px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* ================== TITULOS ================== */
-.container h1 {
-  font-size: 36px;
-  color: #1abc9c;
-  margin-bottom: 10px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-
-.container .subtitle {
-  font-size: 18px;
-  color: #34495e;
-  margin-bottom: 25px;
-}
-
-/* ================== FORM-CARD ================== */
-.form-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.form-card h2 {
-  color: #34495e;
-  margin-bottom: 10px;
-}
-
-.form-card input {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.form-card button {
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #1abc9c;
+/* ---------------- SIDEBAR ---------------- */
+.sidebar {
+  width: 220px;
+  background-color: #ff80ab;
   color: white;
-  font-size: 16px;
+  padding: 20px;
+  box-shadow: 3px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 12px 15px;
+  margin-bottom: 8px;
   cursor: pointer;
-  transition: 0.3s;
+  border-radius: 6px;
+  transition: background 0.3s;
 }
 
-.form-card button:hover {
-  background: #16a085;
+.sidebar li.active,
+.sidebar li:hover {
+  background-color: #ff4081;
 }
 
-.form-card a {
+.logout {
+  margin-top: 20px;
+  background-color: #e91e63;
+  text-align: center;
+}
+
+/* ---------------- MAIN ---------------- */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  background: #fff3f8;
+  overflow-y: auto;
+}
+
+h3 {
+  color: #d81b60;
+  margin-bottom: 15px;
+}
+
+/* ---------------- FORMULARIOS ---------------- */
+.form-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.form-group input,
+.form-group button {
+  padding: 8px;
   font-size: 14px;
-  color: #1abc9c;
-  text-decoration: none;
-  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
-.form-card a:hover {
-  text-decoration: underline;
+.form-group button {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.mensaje {
-  font-size: 14px;
-  margin-top: 5px;
+.form-group button:hover {
+  background-color: #d81b60;
 }
 
-/* ================== OCULTO ================== */
+/* ---------------- INPUT BUSCAR ---------------- */
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* ---------------- TABLAS ---------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff0f5;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #ff80ab;
+  color: white;
+}
+
+td button {
+  padding: 5px 8px;
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+td button:hover {
+  background-color: #d81b60;
+}
+
+/* ---------------- OCULTAR SECCIONES ---------------- */
 .hidden {
   display: none;
 }
 
-/* ================== RESPONSIVE ================== */
-@media (max-width: 480px) {
-  .container {
-    padding: 20px;
-  }
-  .form-card input, .form-card button {
-    font-size: 14px;
-  }
-}
+
 
 
 
