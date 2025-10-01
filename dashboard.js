@@ -1,124 +1,108 @@
-// dashboard.js
-import { auth, db } from "./firebase.js"; // db = getFirestore(app)
-import { collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { db } from "./firebase.js";
+import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-// ======= PROVEEDORES =======
+// Cambiar secciones
+window.mostrarSeccion = function(seccion) {
+  document.querySelectorAll('.seccion').forEach(div => div.classList.add('oculto'));
+  document.getElementById(seccion).classList.remove('oculto');
+};
+
+// --- PROVEEDORES ---
 const formProveedor = document.getElementById("formProveedor");
-const tablaProveedores = document.getElementById("tablaProveedores").querySelector("tbody");
-const selectProveedorFactura = document.getElementById("selectProveedorFactura");
+const tablaProveedores = document.getElementById("tablaProveedores").querySelector('tbody');
 
-// Agregar proveedor a Firestore
-formProveedor.addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.getElementById("btnAgregarProveedor").addEventListener("click", async () => {
+  const ruc = document.getElementById("ruc").value;
   const nombre = document.getElementById("nombreProveedor").value;
-  const ruc = document.getElementById("rucProveedor").value;
   const direccion = document.getElementById("direccionProveedor").value;
-
-  try {
-    await addDoc(collection(db, "proveedores"), { nombre, ruc, direccion });
-    formProveedor.reset();
-  } catch (error) {
-    console.error("Error al agregar proveedor:", error);
-  }
+  if(!ruc || !nombre) return alert("RUC y nombre son obligatorios");
+  await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion });
+  formProveedor.reset();
+  cargarProveedores();
 });
 
-// Actualizar tabla de proveedores en tiempo real
-const proveedoresRef = collection(db, "proveedores");
-onSnapshot(proveedoresRef, (snapshot) => {
+async function cargarProveedores() {
   tablaProveedores.innerHTML = "";
-  selectProveedorFactura.innerHTML = `<option value="">Seleccionar proveedor</option>`;
+  const snapshot = await getDocs(collection(db, "proveedores"));
+  const selectProv = document.getElementById("selectProveedor");
+  selectProv.innerHTML = '<option value="">Selecciona un proveedor</option>';
   snapshot.forEach(doc => {
     const data = doc.data();
     tablaProveedores.innerHTML += `<tr><td>${data.ruc}</td><td>${data.nombre}</td><td>${data.direccion}</td></tr>`;
-    selectProveedorFactura.innerHTML += `<option value="${data.nombre}">${data.nombre}</option>`;
+    selectProv.innerHTML += `<option value="${data.nombre}">${data.nombre}</option>`;
   });
-});
+}
+cargarProveedores();
 
-// ======= FACTURAS =======
+// --- FACTURAS ---
 const formFactura = document.getElementById("formFactura");
-const tablaFacturas = document.getElementById("tablaFacturas").querySelector("tbody");
+const tablaFacturas = document.getElementById("tablaFacturas").querySelector('tbody');
 
-formFactura.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const proveedor = selectProveedorFactura.value;
-  const numero = document.getElementById("numeroFactura").value;
+document.getElementById("btnAgregarFactura").addEventListener("click", async () => {
+  const proveedor = document.getElementById("selectProveedor").value;
+  const numFactura = document.getElementById("numFactura").value;
   const fecha = document.getElementById("fechaFactura").value;
   const descripcion = document.getElementById("descripcionFactura").value;
-  const monto = parseFloat(document.getElementById("montoFactura").value) || 0;
-
-  try {
-    await addDoc(collection(db, "facturas"), { proveedor, numero, fecha, descripcion, monto });
-    formFactura.reset();
-  } catch (error) {
-    console.error("Error al agregar factura:", error);
-  }
+  if(!proveedor || !numFactura) return alert("Proveedor y número de factura son obligatorios");
+  await addDoc(collection(db, "facturas"), { proveedor, numFactura, fecha, descripcion });
+  formFactura.reset();
+  cargarFacturas();
 });
 
-// Actualizar tabla de facturas en tiempo real
-const facturasRef = collection(db, "facturas");
-onSnapshot(facturasRef, (snapshot) => {
+async function cargarFacturas() {
   tablaFacturas.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "facturas"));
   snapshot.forEach(doc => {
-    const f = doc.data();
-    tablaFacturas.innerHTML += `<tr>
-      <td>${f.proveedor}</td>
-      <td>${f.numero}</td>
-      <td>${f.fecha}</td>
-      <td>${f.descripcion}</td>
-      <td>${f.monto.toFixed(2)}</td>
-    </tr>`;
+    const data = doc.data();
+    tablaFacturas.innerHTML += `<tr><td>${data.proveedor}</td><td>${data.numFactura}</td><td>${data.fecha}</td><td>${data.descripcion}</td></tr>`;
   });
-});
+}
+cargarFacturas();
 
-// ======= GASTOS =======
+// --- GASTOS ---
 const formGasto = document.getElementById("formGasto");
-const tablaGastos = document.getElementById("tablaGastos").querySelector("tbody");
+const tablaGastos = document.getElementById("tablaGastos").querySelector('tbody');
 
-formGasto.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const descripcion = document.getElementById("descripcionGasto").value;
-  const monto = parseFloat(document.getElementById("montoGasto").value) || 0;
-
-  try {
-    await addDoc(collection(db, "gastos"), { descripcion, monto });
-    formGasto.reset();
-  } catch (error) {
-    console.error("Error al agregar gasto:", error);
-  }
+document.getElementById("btnAgregarGasto").addEventListener("click", async () => {
+  const nombre = document.getElementById("nombreGasto").value;
+  const monto = document.getElementById("montoGasto").value;
+  if(!nombre || !monto) return alert("Nombre y monto son obligatorios");
+  await addDoc(collection(db, "gastos"), { nombre, monto });
+  formGasto.reset();
+  cargarGastos();
 });
 
-const gastosRef = collection(db, "gastos");
-onSnapshot(gastosRef, (snapshot) => {
+async function cargarGastos() {
   tablaGastos.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "gastos"));
   snapshot.forEach(doc => {
-    const g = doc.data();
-    tablaGastos.innerHTML += `<tr><td>${g.descripcion}</td><td>${g.monto.toFixed(2)}</td></tr>`;
+    const data = doc.data();
+    tablaGastos.innerHTML += `<tr><td>${data.nombre}</td><td>${data.monto}</td></tr>`;
   });
-});
+}
+cargarGastos();
 
-// ======= SERVICIOS =======
+// --- SERVICIOS ---
 const formServicio = document.getElementById("formServicio");
-const tablaServicios = document.getElementById("tablaServicios").querySelector("tbody");
+const tablaServicios = document.getElementById("tablaServicios").querySelector('tbody');
 
-formServicio.addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.getElementById("btnAgregarServicio").addEventListener("click", async () => {
   const nombre = document.getElementById("nombreServicio").value;
-  const costo = parseFloat(document.getElementById("costoServicio").value) || 0;
-
-  try {
-    await addDoc(collection(db, "servicios"), { nombre, costo });
-    formServicio.reset();
-  } catch (error) {
-    console.error("Error al agregar servicio:", error);
-  }
+  const descripcion = document.getElementById("descripcionServicio").value;
+  if(!nombre) return alert("Nombre del servicio es obligatorio");
+  await addDoc(collection(db, "servicios"), { nombre, descripcion });
+  formServicio.reset();
+  cargarServicios();
 });
 
-const serviciosRef = collection(db, "servicios");
-onSnapshot(serviciosRef, (snapshot) => {
+async function cargarServicios() {
   tablaServicios.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "servicios"));
   snapshot.forEach(doc => {
-    const s = doc.data();
-    tablaServicios.innerHTML += `<tr><td>${s.nombre}</td><td>${s.costo.toFixed(2)}</td></tr>`;
+    const data = doc.data();
+    tablaServicios.innerHTML += `<tr><td>${data.nombre}</td><td>${data.descripcion}</td></tr>`;
   });
-});
+}
+cargarServicios();
+
 
