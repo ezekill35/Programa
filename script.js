@@ -1,4 +1,3 @@
-// script.js
 import { auth } from "./firebase.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
@@ -7,7 +6,6 @@ const registerForm = document.getElementById("registerForm");
 const mensajeLogin = document.getElementById("mensajeLogin");
 const mensajeRegister = document.getElementById("mensajeRegister");
 
-// Alternar login / registro
 document.getElementById("showRegister").addEventListener("click", () => {
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
@@ -17,7 +15,6 @@ document.getElementById("showLogin").addEventListener("click", () => {
   loginForm.classList.remove("hidden");
 });
 
-// Registro
 document.getElementById("btnRegister").addEventListener("click", async () => {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
@@ -34,7 +31,6 @@ document.getElementById("btnRegister").addEventListener("click", async () => {
   }
 });
 
-// Login
 document.getElementById("btnLogin").addEventListener("click", async () => {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
