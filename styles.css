@@ -1,175 +1,187 @@
-/* ----------------------------- */
-/* ESTILOS GENERALES */
-/* ----------------------------- */
-body {
+/* --- RESET --- */
+* {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fff0f5; /* Fondo claro con tono fucsia */
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+/* --- BODY --- */
+body {
+  background-color: #f0f2f5;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* --- MENÚ LATERAL --- */
+.sidebar {
+  width: 220px;
+  background-color: #ff66b2; /* Fucsia */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  position: fixed;
+  height: 100%;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar button {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar button:hover {
+  background-color: #e055a3;
+}
+
+.sidebar button.active {
+  background-color: #c04d8c;
+  font-weight: bold;
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+  margin-left: 220px;
+  padding: 30px;
+  width: 100%;
+}
+
+.main-content h1 {
+  margin-bottom: 20px;
   color: #333;
 }
 
-.hidden {
+.section {
   display: none;
 }
 
-/* ----------------------------- */
-/* HEADER / TITULO PRINCIPAL */
-/* ----------------------------- */
-header {
-  padding: 20px;
-  background-color: #ff66b2; /* Fucsia fuerte */
-  color: white;
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
+.section.active {
+  display: block;
 }
 
-/* ----------------------------- */
-/* MENÚ LATERAL */
-/* ----------------------------- */
-.sidebar {
-  width: 220px;
-  background-color: #ff99cc;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  padding-top: 60px;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar ul li {
-  padding: 15px 20px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 500;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.sidebar ul li:hover {
-  background-color: #ff66b2;
-}
-
-.sidebar ul li.active {
-  background-color: #ff3399;
-  color: #fff;
-  font-weight: bold;
-}
-
-/* ----------------------------- */
-/* CONTENIDO PRINCIPAL */
-/* ----------------------------- */
-.main-content {
-  margin-left: 240px;
-  padding: 20px;
-}
-
-h2.section-title {
-  margin-top: 0;
-  color: #ff3399;
-  font-size: 1.5rem;
-  border-bottom: 2px solid #ff66b2;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-
-/* ----------------------------- */
-/* FORMULARIOS */
-/* ----------------------------- */
+/* --- FORMULARIOS --- */
 form {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
-  align-items: center;
-}
-
-form input, form select, form button {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
 }
 
 form input, form select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
   flex: 1;
+  min-width: 150px;
 }
 
 form button {
-  background-color: #ff3399;
-  color: white;
+  padding: 10px 20px;
+  background-color: #ff66b2;
+  color: #fff;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: 0.3s;
 }
 
 form button:hover {
-  background-color: #ff66b2;
+  background-color: #e055a3;
 }
 
-/* ----------------------------- */
-/* TABLAS */
-/* ----------------------------- */
+/* --- TABLAS --- */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table thead {
+  background-color: #ff66b2;
+  color: #fff;
 }
 
 table th, table td {
-  border: 1px solid #ccc;
-  padding: 10px;
+  padding: 12px 15px;
   text-align: left;
-}
-
-table th {
-  background-color: #ff66b2;
-  color: white;
-}
-
-table tr:nth-child(even) {
-  background-color: #ffe6f0;
+  border-bottom: 1px solid #ddd;
 }
 
 table tr:hover {
-  background-color: #ffb3d9;
+  background-color: #f9e6f0;
 }
 
-/* ----------------------------- */
-/* BOTÓN CERRAR SESIÓN */
-/* ----------------------------- */
-#btnCerrarSesion {
-  margin-top: auto;
-  margin-bottom: 20px;
-  background-color: #ff3399;
-  padding: 12px;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: bold;
+table button {
+  padding: 5px 10px;
+  background-color: #ff3366;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  color: white;
 }
 
-#btnCerrarSesion:hover {
-  background-color: #ff66b2;
+table button:hover {
+  background-color: #e02557;
 }
 
-/* ----------------------------- */
-/* REPORTES (SECCIÓN INICIAL) */
-/* ----------------------------- */
+/* --- BÚSQUEDA --- */
+.search-container {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-container input {
+  flex: 1;
+}
+
+/* --- REPORTES --- */
 #sectionReportes {
-  min-height: 300px;
-  background-color: #ffe6f0;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-box {
+  background-color: #fff;
   padding: 20px;
-  color: #ff3399;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* --- RESPONSIVE --- */
+@media screen and (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  .sidebar h2 {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  form {
+    flex-direction: column;
+  }
 }
 
 
