@@ -2,8 +2,43 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐾 Discovery Pets - Dashboard</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Sidebar */
+    .sidebar { background: #34495e; color: white; width: 220px; }
+    .sidebar ul li { padding: 12px; border-radius: 6px; margin-bottom: 5px; cursor: pointer; transition: 0.3s; }
+    .sidebar ul li:hover, .sidebar ul li.active { background: #1abc9c; }
+
+    /* Cards por sección */
+    .card { background: #fff8f0; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    #seccionProveedor { border-top: 4px solid #f39c12; }
+    #seccionFactura { border-top: 4px solid #2980b9; }
+    #seccionGasto { border-top: 4px solid #c0392b; }
+    #seccionServicio { border-top: 4px solid #8e44ad; }
+
+    /* Botones */
+    .formulario button { background: #1abc9c; color: white; border-radius: 6px; transition: 0.3s; }
+    .formulario button:hover { background: #16a085; }
+
+    /* Inputs */
+    .formulario input, .formulario select { padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 10px; }
+
+    /* Tabla */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    table thead { background: #1abc9c; color: white; }
+    table th, table td { padding: 12px; border-bottom: 1px solid #ddd; }
+    table tr:hover { background: #f1f1f1; }
+
+    /* Contenido */
+    .content { flex: 1; padding: 25px; }
+    h2 { font-size: 22px; margin-bottom: 15px; color: #34495e; }
+    input[type="text"], input[type="number"], input[type="date"] { width: calc(33% - 10px); margin-right: 10px; }
+    select { width: calc(33% - 10px); margin-right: 10px; }
+    @media (max-width: 768px) {
+      input[type="text"], input[type="number"], input[type="date"], select { width: 100%; margin-right: 0; }
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard">
@@ -11,7 +46,7 @@
     <div class="sidebar">
       <div class="logo">🐶 Discovery Pets</div>
       <ul>
-        <li id="menuProveedor">Proveedor</li>
+        <li id="menuProveedor" class="active">Proveedor</li>
         <li id="menuFactura">Factura</li>
         <li id="menuGasto">Gastos</li>
         <li id="menuServicio">Servicio</li>
@@ -120,6 +155,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
