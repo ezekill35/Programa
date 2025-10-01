@@ -4,36 +4,152 @@
   <meta charset="UTF-8">
   <title>🐾 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffe6f5, #ffccf2);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ff3399;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    nav {
+      display: flex;
+      background: #ff66b3;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+      color: white;
+      font-weight: bold;
+    }
+
+    nav button.active, nav button:hover {
+      background: #ff1a75;
+      border-radius: 10px;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    section {
+      display: none;
+      background: #fff0f7;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    input, select, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ff99cc;
+      margin: 5px 0;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ff3399;
+      box-shadow: 0 0 5px rgba(255,51,153,0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table, th, td {
+      border: 1px solid #ff99cc;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #ff66b3;
+      color: white;
+    }
+
+    .action-btn {
+      background: #ff3399;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: #e60073;
+    }
+
+    .search-input {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    h2 {
+      color: #ff1a75;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>🐾 Discovery Pets</h1>
-  </header>
+  <header>🐾 Discovery Pets - Dashboard</header>
 
-  <nav class="menu">
-    <button class="menu-btn active" data-section="sectionProveedor" id="btnProveedor">Proveedor</button>
-    <button class="menu-btn" data-section="sectionFactura" id="btnFactura">Factura</button>
-    <button class="menu-btn" data-section="sectionGastos" id="btnGastos">Gastos</button>
-    <button class="menu-btn" data-section="sectionServicio" id="btnServicio">Servicio</button>
-    <button class="menu-btn logout" id="btnLogout">Cerrar Sesión</button>
+  <nav>
+    <button id="btnProveedor" class="active">Proveedor</button>
+    <button id="btnFactura">Factura</button>
+    <button id="btnGastos">Gastos</button>
+    <button id="btnServicio">Servicio</button>
+    <button id="btnCerrar">Cerrar Sesión</button>
   </nav>
 
   <main>
-    <!-- Sección Proveedor -->
-    <section class="section active" id="sectionProveedor">
+    <!-- PROVEEDOR -->
+    <section id="sectionProveedor" class="active">
       <h2>Proveedor</h2>
-      <input type="text" id="provRUC" placeholder="RUC">
+      <input type="text" id="provRuc" placeholder="RUC">
       <input type="text" id="provNombre" placeholder="Nombre">
-      <input type="text" id="provDireccion" placeholder="Dirección">
-      <button id="btnAddProveedor">Agregar</button>
-      <input type="text" id="searchProveedor" placeholder="Buscar proveedor por RUC o Nombre">
-      <button id="btnSearchProveedor">Buscar</button>
+      <input type="email" id="provCorreo" placeholder="Correo">
+      <input type="tel" id="provTelefono" placeholder="Teléfono">
+      <button id="btnAgregarProveedor">Agregar</button>
+
+      <input type="text" id="searchProveedor" class="search-input" placeholder="Buscar proveedor por RUC o Nombre">
+      <button id="btnBuscarProveedor">Buscar</button>
+
       <table>
         <thead>
           <tr>
             <th>RUC</th>
             <th>Nombre</th>
-            <th>Dirección</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
             <th>Acción</th>
           </tr>
         </thead>
@@ -41,19 +157,29 @@
       </table>
     </section>
 
-    <!-- Sección Factura -->
-    <section class="section" id="sectionFactura">
+    <!-- FACTURA -->
+    <section id="sectionFactura">
       <h2>Factura</h2>
-      <input type="text" id="factRUC" placeholder="RUC del proveedor">
-      <input type="text" id="factDescripcion" placeholder="Descripción">
-      <input type="date" id="factFecha">
-      <button id="btnAddFactura">Agregar Factura</button>
-      <input type="text" id="searchFactura" placeholder="Buscar factura por RUC">
-      <button id="btnSearchFactura">Buscar</button>
+      <input type="text" id="facRuc" placeholder="RUC Proveedor">
+      <select id="facTipo">
+        <option value="">Tipo de Factura</option>
+        <option value="Boleta">Boleta</option>
+        <option value="Factura">Factura</option>
+        <option value="Recibo">Recibo</option>
+      </select>
+      <input type="text" id="facDescripcion" placeholder="Descripción">
+      <input type="date" id="facFecha">
+      <button id="btnAgregarFactura">Agregar</button>
+
+      <input type="text" id="searchFactura" class="search-input" placeholder="Buscar factura por RUC">
+      <button id="btnBuscarFactura">Buscar</button>
+
       <table>
         <thead>
           <tr>
             <th>RUC</th>
+            <th>Proveedor</th>
+            <th>Tipo</th>
             <th>Descripción</th>
             <th>Fecha</th>
             <th>Acción</th>
@@ -63,18 +189,20 @@
       </table>
     </section>
 
-    <!-- Sección Gastos -->
-    <section class="section" id="sectionGastos">
+    <!-- GASTOS -->
+    <section id="sectionGastos">
       <h2>Gastos</h2>
-      <input type="text" id="gastoDescripcion" placeholder="Descripción">
+      <input type="text" id="gastoNombre" placeholder="Nombre gasto">
       <input type="number" id="gastoMonto" placeholder="Monto">
-      <button id="btnAddGasto">Agregar Gasto</button>
-      <input type="text" id="searchGasto" placeholder="Buscar gasto por descripción">
-      <button id="btnSearchGasto">Buscar</button>
+      <button id="btnAgregarGasto">Agregar</button>
+
+      <input type="text" id="searchGasto" class="search-input" placeholder="Buscar gasto">
+      <button id="btnBuscarGasto">Buscar</button>
+
       <table>
         <thead>
           <tr>
-            <th>Descripción</th>
+            <th>Nombre</th>
             <th>Monto</th>
             <th>Acción</th>
           </tr>
@@ -83,19 +211,21 @@
       </table>
     </section>
 
-    <!-- Sección Servicio -->
-    <section class="section" id="sectionServicio">
+    <!-- SERVICIO -->
+    <section id="sectionServicio">
       <h2>Servicio</h2>
-      <input type="text" id="servDescripcion" placeholder="Descripción">
-      <input type="number" id="servMonto" placeholder="Monto">
-      <button id="btnAddServicio">Agregar Servicio</button>
-      <input type="text" id="searchServicio" placeholder="Buscar servicio por descripción">
-      <button id="btnSearchServicio">Buscar</button>
+      <input type="text" id="servNombre" placeholder="Nombre servicio">
+      <input type="number" id="servCosto" placeholder="Costo">
+      <button id="btnAgregarServicio">Agregar</button>
+
+      <input type="text" id="searchServicio" class="search-input" placeholder="Buscar servicio">
+      <button id="btnBuscarServicio">Buscar</button>
+
       <table>
         <thead>
           <tr>
-            <th>Descripción</th>
-            <th>Monto</th>
+            <th>Nombre</th>
+            <th>Costo</th>
             <th>Acción</th>
           </tr>
         </thead>
