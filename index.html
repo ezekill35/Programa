@@ -10,19 +10,21 @@
     <h1>🐶 Discovery Pets</h1>
     <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
 
-    <form id="loginForm">
+    <!-- LOGIN -->
+    <form id="loginForm" class="form-card">
       <input type="email" id="loginEmail" placeholder="Email">
       <input type="password" id="loginPassword" placeholder="Contraseña">
       <button type="button" id="btnLogin">Iniciar Sesión</button>
-      <p id="mensajeLogin"></p>
+      <p id="mensajeLogin" class="mensaje"></p>
       <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
     </form>
 
-    <form id="registerForm" class="hidden">
+    <!-- REGISTRO -->
+    <form id="registerForm" class="form-card hidden">
       <input type="email" id="registerEmail" placeholder="Email">
       <input type="password" id="registerPassword" placeholder="Contraseña">
       <button type="button" id="btnRegister">Registrarse</button>
-      <p id="mensajeRegister"></p>
+      <p id="mensajeRegister" class="mensaje"></p>
       <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
     </form>
   </div>
@@ -31,7 +33,6 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
 
 
 
