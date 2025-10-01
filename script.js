@@ -1,6 +1,8 @@
+// script.js
 import { auth } from "./firebase.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
+// Formularios y mensajes
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const mensajeLogin = document.getElementById("mensajeLogin");
@@ -48,6 +50,8 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
     mensajeLogin.style.color = "#e74c3c";
   }
 });
+
+
 
 
 
