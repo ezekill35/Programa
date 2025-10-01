@@ -1,168 +1,268 @@
-/* 🔹 RESET */
+/* ================== RESET ================== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* 🔹 BODY */
+/* ================== BODY ================== */
 body {
-  background: #ffe6f0; /* color fucsia suave */
-  color: #333;
-  display: flex;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  background: #ffe6f0; /* Fucsia suave */
   min-height: 100vh;
 }
 
-/* 🔹 MENÚ LATERAL */
-.sidebar {
-  width: 200px;
-  background: #ff66b3; /* fucsia más intenso */
+/* ================== LOGIN ================== */
+.login-container {
   display: flex;
-  flex-direction: column;
-  padding-top: 20px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.sidebar button {
-  background: transparent;
-  border: none;
-  color: #fff;
-  padding: 15px;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: left;
-  transition: 0.3s;
-}
-
-.sidebar button:hover,
-.sidebar button.active {
-  background: #ff3399;
-}
-
-/* 🔹 CONTENEDOR PRINCIPAL */
-.main {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-/* 🔹 TÍTULOS */
-h1 {
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  margin-bottom: 20px;
-  color: #a30055;
-}
-
-/* 🔹 FORMULARIOS */
-form {
-  margin-bottom: 20px;
-  background: #fff0f6;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-form input, form select, form button {
+.login-box {
+  background: #fff0f5; /* fondo rosa claro */
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-box img.login-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  object-fit: cover;
+  border: 4px solid #ff66b2; /* fucsia borde */
+}
+
+.login-box h1 {
+  font-size: 32px;
+  color: #ff3399;
+  margin-bottom: 5px;
+}
+
+.login-box .subtitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
   border: 1px solid #ff99cc;
   font-size: 14px;
 }
 
-form button {
+.login-box button {
+  width: 100%;
+  padding: 12px;
   background: #ff3399;
-  color: #fff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.login-box button:hover {
+  background: #e60073;
+}
+
+.login-box a {
+  display: block;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ff3399;
+  text-decoration: none;
+}
+
+.login-box a:hover {
+  text-decoration: underline;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ================== DASHBOARD ================== */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  background: #ff3399;
+  color: white;
+  width: 250px;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 35px;
+  text-align: center;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background: #ff66b2;
+  color: white;
+}
+
+.sidebar button {
+  margin-top: auto;
+  padding: 12px;
+  background: #cc0066;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.sidebar button:hover {
+  background: #99004d;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #ffe6f0; /* coincide con el fondo */
+}
+
+.content h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #ff3399;
+}
+
+.content .subtitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Cards */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+  font-size: 20px;
+  color: #ff3399;
+  margin-bottom: 15px;
+}
+
+/* Forms */
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.formulario input,
+.formulario button,
+.formulario select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ff99cc;
+  font-size: 14px;
+}
+
+.formulario input,
+.formulario select {
+  flex: 1;
+  min-width: 180px;
+}
+
+.formulario button {
+  background: #ff3399;
+  color: white;
   border: none;
   cursor: pointer;
   transition: 0.3s;
 }
 
-form button:hover {
+.formulario button:hover {
   background: #e60073;
 }
 
-/* 🔹 TABLAS */
+/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
-  background: #fff0f6;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-table th, table td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ffb3d9;
-}
-
-table th {
-  background: #ff66b3;
+table thead {
+  background: #ff3399;
   color: white;
 }
 
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f2f2f2;
+}
+
 table tr:hover {
-  background: #ffb3d9;
+  background: #ffe6f0;
 }
 
-/* 🔹 BUSCAR */
-.search-box {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.search-box input {
+/* Search Input */
+input[type="text"] {
   width: 100%;
-  padding: 8px;
-  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
   border: 1px solid #ff99cc;
 }
 
-/* 🔹 OCULTO */
-.hidden {
-  display: none;
-}
-
-/* 🔹 BOTÓN CERRAR SESIÓN */
-#btnLogout {
-  margin-top: auto;
-  background: #ff1a75;
-  padding: 12px;
-  border-radius: 0;
-}
-
-#btnLogout:hover {
-  background: #e6005c;
-}
-
-/* 🔹 RESPONSIVE */
+/* Responsive */
 @media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-  .sidebar button {
-    flex: 1;
-    text-align: center;
-  }
+  .dashboard { flex-direction: column; }
+  .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+  .sidebar ul { display: flex; gap: 10px; }
+  .content { padding: 15px; }
+  .formulario { flex-direction: column; }
+  .formulario input, .formulario select { min-width: 100%; }
 }
-
-
-
-
-
-
-
 
 
 
