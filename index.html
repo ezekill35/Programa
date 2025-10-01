@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐶 Discovery Pets - Login</title>
+  <title>🐶 Discovery Pets</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,26 +10,29 @@
     <h1>🐶 Discovery Pets</h1>
     <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
 
-    <!-- Login -->
-    <div class="form-card" id="loginForm">
-      <h2>Iniciar Sesión</h2>
-      <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-      <input type="password" id="loginPassword" placeholder="Contraseña" required>
-      <button id="btnLogin">Entrar</button>
-      <p class="mensaje" id="mensajeLogin"></p>
-      <p>¿No tienes cuenta? <a href="#" id="showRegister">Crear una Cuenta</a></p>
-    </div>
+    <!-- LOGIN -->
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email">
+      <input type="password" id="loginPassword" placeholder="Contraseña">
+      <button type="button" id="btnLogin">Iniciar Sesión</button>
+      <p id="mensajeLogin"></p>
+      <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
+    </form>
 
-    <!-- Registro -->
-    <div class="form-card hidden" id="registerForm">
-      <h2>Registro</h2>
-      <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
-      <input type="password" id="registerPassword" placeholder="Contraseña" required>
-      <button id="btnRegister">Registrar</button>
-      <p class="mensaje" id="mensajeRegister"></p>
-      <p>¿Ya tienes cuenta? <a href="#" id="showLogin">Entrar</a></p>
-    </div>
+    <!-- REGISTRO -->
+    <form id="registerForm" class="hidden">
+      <input type="email" id="registerEmail" placeholder="Email">
+      <input type="password" id="registerPassword" placeholder="Contraseña">
+      <button type="button" id="btnRegister">Registrarse</button>
+      <p id="mensajeRegister"></p>
+      <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
+    </form>
   </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
 
   <!-- Firebase CDN -->
   <script type="module">
@@ -106,6 +108,7 @@
   </script>
 </body>
 </html>
+
 
 
 
