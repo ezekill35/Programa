@@ -1,79 +1,135 @@
+<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard - Discovery Pets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <script type="module" src="dashboard.js" defer></script>
 </head>
 <body>
-  <h1>📊 Dashboard - Discovery Pets</h1>
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo">
+        <i>🐾</i> Discovery Pets
+      </div>
+      <ul>
+        <li onclick="mostrarSeccion('proveedores')">Proveedores</li>
+        <li onclick="mostrarSeccion('facturas')">Facturas</li>
+        <li onclick="mostrarSeccion('gastos')">Gastos</li>
+        <li onclick="mostrarSeccion('servicios')">Servicios</li>
+      </ul>
+      <button onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
 
-  <nav>
-    <ul>
-      <li onclick="mostrarSeccion('proveedores')">Proveedores</li>
-      <li onclick="mostrarSeccion('facturas')">Facturas</li>
-      <li onclick="mostrarSeccion('gastos')">Gastos</li>
-      <li onclick="mostrarSeccion('servicios')">Servicios</li>
-    </ul>
-  </nav>
+    <!-- CONTENIDO -->
+    <div class="content">
+      <!-- Proveedores -->
+      <div id="proveedores" class="card seccion">
+        <h2>Proveedores</h2>
+        <form class="formulario" id="formProveedor">
+          <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" required>
+          <input type="text" id="rucProveedor" placeholder="RUC" required>
+          <input type="text" id="direccionProveedor" placeholder="Dirección">
+          <button type="submit">Agregar Proveedor</button>
+        </form>
+        <table id="tablaProveedores">
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Proveedor</th>
+              <th>Dirección</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
-  <!-- SECCION PROVEEDORES -->
-  <section id="proveedores">
-    <h2>🧾 Proveedores</h2>
-    <form id="proveedorForm">
-      <input type="text" id="nombreProveedor" placeholder="Nombre">
-      <input type="text" id="rucProveedorInput" placeholder="RUC">
-      <input type="text" id="direccionProveedor" placeholder="Dirección">
-      <button type="submit">Registrar Proveedor</button>
-    </form>
-    <div id="listaProveedores"></div>
-  </section>
+      <!-- Facturas -->
+      <div id="facturas" class="card seccion hidden">
+        <h2>Facturas</h2>
+        <form class="formulario" id="formFactura">
+          <select id="selectProveedorFactura" required>
+            <option value="">Seleccionar proveedor</option>
+          </select>
+          <input type="text" id="numeroFactura" placeholder="Número de factura" required>
+          <input type="date" id="fechaFactura" required>
+          <input type="text" id="descripcionFactura" placeholder="Descripción">
+          <input type="number" id="montoFactura" placeholder="Monto" step="0.01">
+          <button type="submit">Agregar Factura</button>
+        </form>
+        <table id="tablaFacturas">
+          <thead>
+            <tr>
+              <th>Proveedor</th>
+              <th>N° Factura</th>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
-  <!-- SECCION FACTURAS -->
-  <section id="facturas" class="hidden">
-    <h2>📋 Facturas</h2>
-    <form id="facturaForm">
-      <label>Proveedor:</label>
-      <select id="selectProveedorFactura"></select>
+      <!-- Gastos -->
+      <div id="gastos" class="card seccion hidden">
+        <h2>Gastos</h2>
+        <form class="formulario" id="formGasto">
+          <input type="text" id="descripcionGasto" placeholder="Descripción del gasto" required>
+          <input type="number" id="montoGasto" placeholder="Monto" step="0.01" required>
+          <button type="submit">Agregar Gasto</button>
+        </form>
+        <table id="tablaGastos">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
-      <label>Descripción:</label>
-      <input type="text" id="descripcionFactura" placeholder="Descripción">
+      <!-- Servicios -->
+      <div id="servicios" class="card seccion hidden">
+        <h2>Servicios</h2>
+        <form class="formulario" id="formServicio">
+          <input type="text" id="nombreServicio" placeholder="Nombre del servicio" required>
+          <input type="number" id="costoServicio" placeholder="Costo" step="0.01" required>
+          <button type="submit">Agregar Servicio</button>
+        </form>
+        <table id="tablaServicios">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Costo</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-      <label>Dirección:</label>
-      <input type="text" id="direccionFactura" placeholder="Dirección">
+  <script type="module">
+    import { auth } from "./firebase.js";
 
-      <button type="submit">Guardar Factura</button>
-    </form>
-    <div id="listaFacturas"></div>
-  </section>
+    // Mostrar sección
+    window.mostrarSeccion = function(seccion) {
+      document.querySelectorAll('.seccion').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(seccion).classList.remove('hidden');
+    }
 
-  <!-- SECCION GASTOS -->
-  <section id="gastos" class="hidden">
-    <h2>💸 Gastos</h2>
-    <form id="gastoForm">
-      <input type="text" id="gastoDescripcion" placeholder="Descripción">
-      <input type="number" id="gastoMonto" placeholder="Monto">
-      <button type="submit">Registrar Gasto</button>
-    </form>
-    <div id="listaGastos"></div>
-  </section>
-
-  <!-- SECCION SERVICIOS -->
-  <section id="servicios" class="hidden">
-    <h2>🛠️ Servicios</h2>
-    <form id="servicioForm">
-      <input type="text" id="servicioNombre" placeholder="Nombre del servicio">
-      <input type="number" id="servicioCosto" placeholder="Costo">
-      <button type="submit">Registrar Servicio</button>
-    </form>
-    <div id="listaServicios"></div>
-  </section>
-
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="dashboard.js"></script>
+    // Cerrar sesión
+    window.cerrarSesion = function() {
+      auth.signOut().then(() => alert("Sesión cerrada")).catch(err => console.error(err));
+    }
+  </script>
 </body>
 </html>
-
 
 
 
