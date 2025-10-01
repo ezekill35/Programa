@@ -1,46 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐶 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <div class="login-container">
-    <h1>🐶 Discovery Pets</h1>
+<body class="auth-body">
+  <div class="form-wrapper">
+    <h1 class="title">🐶 Discovery Pets</h1>
     <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
 
-    <!-- FORMULARIO LOGIN -->
-    <form id="login-form" class="form active">
-      <input type="email" id="login-email" placeholder="Correo electrónico" required>
-      <input type="password" id="login-password" placeholder="Contraseña" required>
-      <button type="submit">Entrar</button>
-      <p>¿No tienes cuenta? <a href="#" id="show-register">Crear una Cuenta</a></p>
-    </form>
+    <!-- LOGIN -->
+    <div id="login-box" class="auth-box active">
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Correo electrónico" required>
+        <input type="password" id="login-password" placeholder="Contraseña" required>
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="switch">¿No tienes cuenta? <a href="#" id="show-register">Crear una Cuenta</a></p>
+    </div>
 
-    <!-- FORMULARIO REGISTRO -->
-    <form id="register-form" class="form">
-      <input type="email" id="register-email" placeholder="Correo electrónico" required>
-      <input type="password" id="register-password" placeholder="Contraseña" required>
-      <button type="submit">Registrar</button>
-      <p>¿Ya tienes cuenta? <a href="#" id="show-login">Entrar</a></p>
-    </form>
+    <!-- REGISTRO -->
+    <div id="register-box" class="auth-box">
+      <form id="register-form">
+        <input type="email" id="register-email" placeholder="Correo electrónico" required>
+        <input type="password" id="register-password" placeholder="Contraseña" required>
+        <button type="submit">Registrar</button>
+      </form>
+      <p class="switch">¿Ya tienes cuenta? <a href="#" id="show-login">Entrar</a></p>
+    </div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
 
