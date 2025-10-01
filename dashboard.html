@@ -2,40 +2,166 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐶 Discovery Pets - Login</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ================== RESET ================== */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    /* ================== DASHBOARD ================== */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background: #f5f5f5;
+    }
+
+    /* ================== SIDEBAR ================== */
+    .sidebar {
+      width: 220px;
+      background: #ff00ff; /* fucsia */
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .sidebar h2 { margin-bottom: 20px; }
+    .sidebar ul { list-style: none; padding:0; }
+    .sidebar ul li {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .sidebar ul li.active, .sidebar ul li:hover { background: #cc00cc; }
+    .sidebar button {
+      margin-top: auto;
+      padding: 12px;
+      border:none;
+      border-radius:6px;
+      background:#e74c3c;
+      color:white;
+      cursor:pointer;
+    }
+    .sidebar button:hover { background:#c0392b; }
+
+    /* ================== CONTENT ================== */
+    .content {
+      flex:1;
+      padding:30px;
+    }
+    .content h1 { font-size:24px; margin-bottom:10px; }
+    .content .subtitle { color:#555; margin-bottom:20px; }
+
+    /* ================== FORMULARIOS ================== */
+    .formulario { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+    .formulario input, .formulario select, .formulario button { padding:10px; border-radius:6px; border:1px solid #ccc; }
+    .formulario input, .formulario select { flex:1; min-width:150px; }
+    .formulario button { background:#ff00ff; color:white; border:none; cursor:pointer; transition:0.3s; }
+    .formulario button:hover { background:#cc00cc; }
+
+    /* ================== TABLAS ================== */
+    table { width:100%; border-collapse:collapse; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.1); margin-top:15px;}
+    table thead { background:#ff00ff; color:white; }
+    table th, table td { padding:12px; text-align:left; border-bottom:1px solid #ddd; }
+    table tr:hover { background:#f1f1f1; }
+
+    /* ================== OCULTO ================== */
+    .hidden { display:none; }
+  </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-box">
-      <img src="https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_640.jpg" alt="Gato" class="login-img">
-      <h1>🐾 Discovery Pets</h1>
-      <p class="subtitle">Bienvenido al sistema de gestión</p>
+  <div class="sidebar">
+    <h2>🐾 Discovery Pets</h2>
+    <ul>
+      <li class="menu-item active" data-section="proveedor">Proveedor</li>
+      <li class="menu-item" data-section="factura">Factura</li>
+      <li class="menu-item" data-section="gastos">Gastos</li>
+      <li class="menu-item" data-section="servicio">Servicio</li>
+    </ul>
+    <button id="btnLogout">Cerrar Sesión</button>
+  </div>
 
-      <!-- LOGIN -->
-      <form id="loginForm">
-        <input type="email" id="loginEmail" placeholder="Email">
-        <input type="password" id="loginPassword" placeholder="Contraseña">
-        <button type="button" id="btnLogin">Iniciar Sesión</button>
-        <p id="mensajeLogin"></p>
-        <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
-      </form>
+  <div class="content">
+    <!-- PROVEEDOR -->
+    <div id="proveedor-section">
+      <h1>Proveedor</h1>
+      <div class="formulario">
+        <input type="text" id="provRuc" placeholder="RUC">
+        <input type="text" id="provNombre" placeholder="Nombre">
+        <input type="text" id="provDireccion" placeholder="Dirección">
+        <button id="btnAddProveedor">Agregar</button>
+      </div>
+      <input type="text" id="searchProveedor" placeholder="Buscar proveedor por RUC o Nombre">
+      <table id="proveedorTable">
+        <thead>
+          <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Acción</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-      <!-- REGISTRO -->
-      <form id="registerForm" class="hidden">
-        <input type="email" id="registerEmail" placeholder="Email">
-        <input type="password" id="registerPassword" placeholder="Contraseña">
-        <button type="button" id="btnRegister">Registrarse</button>
-        <p id="mensajeRegister"></p>
-        <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
-      </form>
+    <!-- FACTURA -->
+    <div id="factura-section" class="hidden">
+      <h1>Factura</h1>
+      <div class="formulario">
+        <input type="text" id="facRuc" placeholder="RUC Proveedor">
+        <select id="facProveedor"></select>
+        <input type="text" id="facDescripcion" placeholder="Descripción">
+        <input type="date" id="facFecha">
+        <button id="btnAddFactura">Agregar</button>
+      </div>
+      <input type="text" id="searchFactura" placeholder="Buscar factura por RUC o Descripción">
+      <table id="facturaTable">
+        <thead>
+          <tr><th>RUC</th><th>Proveedor</th><th>Descripción</th><th>Fecha</th><th>Acción</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- GASTOS -->
+    <div id="gastos-section" class="hidden">
+      <h1>Gastos</h1>
+      <div class="formulario">
+        <input type="text" id="gastDescripcion" placeholder="Descripción">
+        <input type="number" id="gastMonto" placeholder="Monto">
+        <button id="btnAddGasto">Agregar</button>
+      </div>
+      <input type="text" id="searchGasto" placeholder="Buscar gasto por descripción">
+      <table id="gastoTable">
+        <thead>
+          <tr><th>Descripción</th><th>Monto</th><th>Acción</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- SERVICIO -->
+    <div id="servicio-section" class="hidden">
+      <h1>Servicio</h1>
+      <div class="formulario">
+        <input type="text" id="servDescripcion" placeholder="Descripción">
+        <input type="number" id="servPrecio" placeholder="Precio">
+        <button id="btnAddServicio">Agregar</button>
+      </div>
+      <input type="text" id="searchServicio" placeholder="Buscar servicio por descripción">
+      <table id="servicioTable">
+        <thead>
+          <tr><th>Descripción</th><th>Precio</th><th>Acción</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
-  <script type="module" src="script.js"></script>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
