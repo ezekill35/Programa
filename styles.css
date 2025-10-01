@@ -9,8 +9,7 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #2c3e50;
-  background: linear-gradient(135deg, #ffeaa7, #fab1a0); /* Fondo divertido y temático */
-  margin: 0;
+  background: linear-gradient(120deg, #f0f2f5, #dff9fb);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,40 +23,46 @@ body {
   align-items: center;
   text-align: center;
   width: 100%;
-  max-width: 420px;
-  padding: 25px;
-  background: #fff3e0;
+  max-width: 400px;
+  padding: 20px;
+  background: url('https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=800&q=60') no-repeat center/cover;
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-  position: relative;
 }
 
-/* ====== TITULO Y SUBTITULO ====== */
 .container h1 {
-  font-size: 38px;
+  display: block;
+  font-size: 36px;
   margin-bottom: 10px;
-  color: #ff6b6b;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 .container .subtitle {
   font-size: 18px;
-  color: #34495e;
+  color: #f5f6fa;
   margin-bottom: 30px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* ================== FORM-CARD LOGIN / REGISTRO ================== */
 .form-card {
+  background: rgba(255,255,255,0.95);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
 }
 
 .form-card input {
   width: 100%;
   padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
+  margin-bottom: 12px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .form-card button {
@@ -66,14 +71,14 @@ body {
   background: #ff6b6b;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
   transition: 0.3s;
 }
 
 .form-card button:hover {
-  background: #ff4757;
+  background: #ee5253;
 }
 
 .form-card .mensaje {
@@ -81,111 +86,170 @@ body {
   font-size: 14px;
 }
 
-/* ================== OCULTO ================== */
-.hidden {
-  display: none;
-}
-
 /* ================== DASHBOARD ================== */
 .dashboard {
   display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
 /* ================== SIDEBAR ================== */
 .sidebar {
-  background: #ff6b6b;
+  background: #0984e3;
   color: white;
-  width: 260px;
+  width: 250px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  border-radius: 0 15px 15px 0;
 }
 
 .sidebar .logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 30px;
 }
 .sidebar .logo i {
-  font-size: 30px;
+  font-size: 28px;
 }
 
 .sidebar ul {
   list-style: none;
   padding: 0;
 }
+
 .sidebar ul li {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: 0.3s;
   margin-bottom: 5px;
-  background: #ff7f7f;
-}
-.sidebar ul li:hover {
-  background: #ff4757;
+  background: #74b9ff;
   color: #fff;
 }
 
-/* ================== ITEM SELECCIONADO ================== */
+.sidebar ul li:hover {
+  background: #0984e3;
+}
+
 .sidebar ul li.active {
-  background: #ffa502;
+  background: #ffeaa7;
   color: #2d3436;
-  font-weight: bold;
+}
+
+.sidebar button {
+  margin-top: auto;
+  padding: 12px;
+  background: #d63031;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+}
+.sidebar button:hover {
+  background: #e17055;
 }
 
 /* ================== CONTENIDO ================== */
 .content {
   flex: 1;
   padding: 30px;
-  background: #fffaf0;
+  background: linear-gradient(to right, #dff9fb, #f0f2f5);
 }
 
 .content h1 {
   font-size: 28px;
   margin-bottom: 5px;
-  color: #ff6b6b;
+}
+.content .subtitle {
+  color: #636e72;
+  margin-bottom: 20px;
 }
 
-.content .subtitle {
-  color: #7f8c8d;
-  margin-bottom: 20px;
+/* ================== TARJETAS ================== */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+  margin-bottom: 15px;
+  color: #2d3436;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ================== FORMULARIOS ================== */
 .formulario {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 15px;
 }
 .formulario input,
-.formulario button,
-.formulario select {
+.formulario select,
+.formulario button {
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
 }
+
 .formulario input, .formulario select {
   flex: 1;
   min-width: 180px;
 }
+
 .formulario button {
-  background: #ff6b6b;
+  background: #00b894;
   color: white;
   border: none;
   cursor: pointer;
+  transition: 0.3s;
 }
 .formulario button:hover {
-  background: #ff4757;
+  background: #019875;
+}
+
+/* ================== TABLAS ================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+table thead {
+  background: #fd79a8;
+  color: white;
+}
+table th, table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+table tr:hover {
+  background: #ffeaa7;
+}
+
+/* ================== BUSCADOR ================== */
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
 /* ================== RESPONSIVE ================== */
@@ -197,6 +261,8 @@ body {
   .formulario { flex-direction: column; }
   .formulario input, .formulario select { min-width: 100%; }
 }
+
+
 
 
 
