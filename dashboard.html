@@ -4,241 +4,94 @@
   <meta charset="UTF-8">
   <title>🐾 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffe6f5, #ffccf2);
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #ff3399;
-      color: white;
-      padding: 15px 20px;
-      text-align: center;
-      font-size: 1.5em;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    nav {
-      display: flex;
-      background: #ff66b3;
-      justify-content: space-around;
-      padding: 10px 0;
-    }
-
-    nav button {
-      background: transparent;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: 0.3s;
-      color: white;
-      font-weight: bold;
-    }
-
-    nav button.active, nav button:hover {
-      background: #ff1a75;
-      border-radius: 10px;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    section {
-      display: none;
-      background: #fff0f7;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      margin-top: 20px;
-    }
-
-    section.active {
-      display: block;
-    }
-
-    input, select, button {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ff99cc;
-      margin: 5px 0;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #ff3399;
-      box-shadow: 0 0 5px rgba(255,51,153,0.5);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    table, th, td {
-      border: 1px solid #ff99cc;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
-      background: #ff66b3;
-      color: white;
-    }
-
-    .action-btn {
-      background: #ff3399;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-
-    .action-btn:hover {
-      background: #e60073;
-    }
-
-    .search-input {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    h2 {
-      color: #ff1a75;
-      margin-bottom: 10px;
-    }
-  </style>
 </head>
 <body>
-  <header>🐾 Discovery Pets - Dashboard</header>
+  <div class="dashboard-container">
+    <!-- MENÚ LATERAL -->
+    <nav class="sidebar">
+      <h2>🐾 Discovery Pets</h2>
+      <ul>
+        <li id="menuReportes" class="active">Reportes</li>
+        <li id="menuProveedor">Proveedor</li>
+        <li id="menuFactura">Factura</li>
+        <li id="menuGastos">Gastos</li>
+        <li id="menuServicio">Servicio</li>
+        <li id="btnCerrarSesion">Cerrar Sesión</li>
+      </ul>
+    </nav>
 
-  <nav>
-    <button id="btnProveedor" class="active">Proveedor</button>
-    <button id="btnFactura">Factura</button>
-    <button id="btnGastos">Gastos</button>
-    <button id="btnServicio">Servicio</button>
-    <button id="btnCerrar">Cerrar Sesión</button>
-  </nav>
+    <!-- SECCIÓN PRINCIPAL -->
+    <main class="main-content">
+      <div id="sectionReportes" class="section">
+        <h2>📊 Reportes</h2>
+        <p>Aquí se mostrarán los reportes generales de la gestión.</p>
+      </div>
 
-  <main>
-    <!-- PROVEEDOR -->
-    <section id="sectionProveedor" class="active">
-      <h2>Proveedor</h2>
-      <input type="text" id="provRuc" placeholder="RUC">
-      <input type="text" id="provNombre" placeholder="Nombre">
-      <input type="email" id="provCorreo" placeholder="Correo">
-      <input type="tel" id="provTelefono" placeholder="Teléfono">
-      <button id="btnAgregarProveedor">Agregar</button>
+      <div id="sectionProveedor" class="section hidden">
+        <h2>Proveedor</h2>
+        <form id="formProveedor">
+          <input type="text" id="provRuc" placeholder="RUC">
+          <input type="text" id="provNombre" placeholder="Nombre">
+          <input type="text" id="provCorreo" placeholder="Correo">
+          <input type="text" id="provTelefono" placeholder="Teléfono">
+          <input type="text" id="provDireccion" placeholder="Dirección">
+          <button type="button" id="btnAgregarProveedor">Agregar</button>
+        </form>
+        <input type="text" id="buscarProveedor" placeholder="Buscar proveedor por RUC o Nombre">
+        <table>
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="listaProveedor"></tbody>
+        </table>
+      </div>
 
-      <input type="text" id="searchProveedor" class="search-input" placeholder="Buscar proveedor por RUC o Nombre">
-      <button id="btnBuscarProveedor">Buscar</button>
+      <div id="sectionFactura" class="section hidden">
+        <h2>Factura</h2>
+        <form id="formFactura">
+          <input type="text" id="factRuc" placeholder="RUC del proveedor">
+          <input type="text" id="factTipo" placeholder="Tipo de factura">
+          <input type="text" id="factDescripcion" placeholder="Descripción">
+          <input type="date" id="factFecha">
+          <button type="button" id="btnAgregarFactura">Agregar</button>
+        </form>
+        <input type="text" id="buscarFactura" placeholder="Buscar factura por RUC">
+        <table>
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="listaFactura"></tbody>
+        </table>
+      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>RUC</th>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Teléfono</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaProveedor"></tbody>
-      </table>
-    </section>
+      <div id="sectionGastos" class="section hidden">
+        <h2>Gastos</h2>
+        <p>Formulario y lista de gastos aquí.</p>
+      </div>
 
-    <!-- FACTURA -->
-    <section id="sectionFactura">
-      <h2>Factura</h2>
-      <input type="text" id="facRuc" placeholder="RUC Proveedor">
-      <select id="facTipo">
-        <option value="">Tipo de Factura</option>
-        <option value="Boleta">Boleta</option>
-        <option value="Factura">Factura</option>
-        <option value="Recibo">Recibo</option>
-      </select>
-      <input type="text" id="facDescripcion" placeholder="Descripción">
-      <input type="date" id="facFecha">
-      <button id="btnAgregarFactura">Agregar</button>
+      <div id="sectionServicio" class="section hidden">
+        <h2>Servicio</h2>
+        <p>Formulario y lista de servicios aquí.</p>
+      </div>
+    </main>
+  </div>
 
-      <input type="text" id="searchFactura" class="search-input" placeholder="Buscar factura por RUC">
-      <button id="btnBuscarFactura">Buscar</button>
-
-      <table>
-        <thead>
-          <tr>
-            <th>RUC</th>
-            <th>Proveedor</th>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Fecha</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaFactura"></tbody>
-      </table>
-    </section>
-
-    <!-- GASTOS -->
-    <section id="sectionGastos">
-      <h2>Gastos</h2>
-      <input type="text" id="gastoNombre" placeholder="Nombre gasto">
-      <input type="number" id="gastoMonto" placeholder="Monto">
-      <button id="btnAgregarGasto">Agregar</button>
-
-      <input type="text" id="searchGasto" class="search-input" placeholder="Buscar gasto">
-      <button id="btnBuscarGasto">Buscar</button>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Monto</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaGasto"></tbody>
-      </table>
-    </section>
-
-    <!-- SERVICIO -->
-    <section id="sectionServicio">
-      <h2>Servicio</h2>
-      <input type="text" id="servNombre" placeholder="Nombre servicio">
-      <input type="number" id="servCosto" placeholder="Costo">
-      <button id="btnAgregarServicio">Agregar</button>
-
-      <input type="text" id="searchServicio" class="search-input" placeholder="Buscar servicio">
-      <button id="btnBuscarServicio">Buscar</button>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Costo</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaServicio"></tbody>
-      </table>
-    </section>
-  </main>
-
-  <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
 
 
