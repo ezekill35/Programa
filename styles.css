@@ -1,97 +1,109 @@
-/* Reset básico */
+/* 🌟 Fuentes y estilo global */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {
-  background-color: #f5f5f5;
+  background-color: #ffe6f0;
   color: #333;
+  overflow-x: hidden;
 }
 
-/* Contenedor principal */
+/* 📌 Contenedor principal del dashboard */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
+  transition: all 0.3s ease;
 }
 
-/* Menú lateral */
+/* 🟣 Sidebar lateral */
 .sidebar {
-  width: 220px;
-  background-color: #ff0099; /* fucsia */
+  width: 240px;
+  background: linear-gradient(to bottom, #ff0099, #ff66b2);
   color: white;
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  padding: 20px;
+  transition: 0.3s;
 }
 
 .sidebar h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 22px;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .sidebar button {
-  padding: 10px;
-  background: none;
+  padding: 12px 20px;
+  margin: 5px 0;
+  background: transparent;
   border: none;
   color: white;
-  text-align: left;
   font-size: 16px;
+  text-align: left;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 6px;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
-.sidebar button:hover {
-  background-color: #ff66b2;
-}
-
+.sidebar button:hover,
 .sidebar button.active {
-  background-color: #ff66b2;
+  background-color: rgba(255, 255, 255, 0.2);
   font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
-/* Contenido principal */
+/* 🟢 Contenido principal */
 .main-content {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
 }
 
-/* Secciones */
+/* 🔹 Secciones internas */
 .section {
   display: none;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 .section.active {
   display: block;
 }
 
-/* Formularios */
+/* 🌸 Formularios */
 form {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 form input, form select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ff99cc;
   flex: 1;
-  min-width: 150px;
+  min-width: 180px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+form input:focus, form select:focus {
+  border-color: #ff0099;
+  box-shadow: 0 0 5px rgba(255,0,153,0.5);
 }
 
 form button {
-  padding: 8px 15px;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
   border: none;
   background-color: #ff0099;
   color: white;
@@ -101,33 +113,39 @@ form button {
 
 form button:hover {
   background-color: #ff66b2;
+  transform: translateY(-2px);
 }
 
-/* Tablas */
+/* 🔹 Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 table th, table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #ffccd9;
   text-align: left;
+  font-size: 14px;
 }
 
 table th {
   background-color: #ff0099;
   color: white;
+  font-weight: 500;
 }
 
 table tbody tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #ffe6f0;
 }
 
 table button {
   padding: 5px 10px;
-  border-radius: 5px;
+  border-radius: 6px;
   border: none;
   background-color: #ff0099;
   color: white;
@@ -137,18 +155,45 @@ table button {
 
 table button:hover {
   background-color: #ff66b2;
+  transform: translateY(-1px);
 }
 
-/* Inputs de búsqueda */
-#searchProveedor, #searchFactura {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-right: 5px;
-  width: 200px;
+/* 🔹 Inputs de búsqueda */
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-/* Responsivo */
+.search-container input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ff99cc;
+  flex: 1;
+}
+
+.search-container button {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ff0099;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.search-container button:hover {
+  background-color: #ff66b2;
+  transform: translateY(-1px);
+}
+
+/* 🔹 Animación */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* 🔹 Responsivo */
 @media (max-width: 768px) {
   .dashboard-container {
     flex-direction: column;
@@ -158,6 +203,7 @@ table button:hover {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
+    padding: 10px;
     gap: 5px;
   }
 
@@ -173,6 +219,8 @@ table button:hover {
     flex-direction: column;
   }
 }
+
+
 
 
 
