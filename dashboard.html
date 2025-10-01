@@ -2,191 +2,179 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets - Dashboard</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      height: 100vh;
-      background: #f8f9fa;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 250px;
-      background: #fff;
-      border-right: 1px solid #ddd;
-      padding: 20px;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      overflow-y: auto;
-    }
-    .sidebar h2 {
-      font-size: 20px;
-      margin-bottom: 20px;
-      color: #d63384;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    .sidebar ul li {
-      margin-bottom: 15px;
-    }
-    .sidebar ul li a {
-      text-decoration: none;
-      color: #333;
-      display: block;
-      padding: 8px 12px;
-      border-radius: 6px;
-      transition: background 0.3s;
-    }
-    .sidebar ul li a.active,
-    .sidebar ul li a:hover {
-      background: #d63384;
-      color: #fff;
-    }
-
-    /* Contenido */
-    .content {
-      margin-left: 250px;
-      padding: 20px;
-      flex-grow: 1;
-    }
-    .content h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .content section {
-      display: none;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .content section.active {
-      display: block;
-    }
-    input[type="text"] {
-      padding: 8px;
-      margin-bottom: 10px;
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #f1f1f1;
-    }
-  </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>🐶 Discovery Pets</h2>
-    <ul>
-      <li><a href="#" class="active" onclick="mostrarSeccion('proveedores')">👥 Proveedores</a></li>
-      <li><a href="#" onclick="mostrarSeccion('facturas')">🧾 Facturas</a></li>
-      <li><a href="#" onclick="mostrarSeccion('servicios')">🐾 Servicios</a></li>
-      <li><a href="#" onclick="mostrarSeccion('ventas')">💰 Ventas</a></li>
-      <li><a href="#" onclick="mostrarSeccion('gastos')">📄 Gastos</a></li>
-      <li><a href="#" id="btnLogout">🚪 Cerrar sesión</a></li>
-    </ul>
-  </div>
+  <div class="dashboard">
+    
+    <!-- 📌 Barra lateral -->
+    <aside class="sidebar">
+      <h2>Dashboard</h2>
+      <ul>
+        <li onclick="mostrarSeccion('proveedores')">📦 Proveedores</li>
+        <li onclick="mostrarSeccion('facturas')">📄 Facturas</li>
+        <li onclick="mostrarSeccion('servicios')">🛠 Servicios</li>
+        <li onclick="mostrarSeccion('ventas')">💰 Ventas</li>
+        <li onclick="mostrarSeccion('gastos')">📊 Gastos</li>
+      </ul>
+      <button id="btnLogout">🚪 Cerrar Sesión</button>
+    </aside>
 
-  <!-- Contenido -->
-  <div class="content">
-    <h1 id="titulo">Panel de Proveedores</h1>
+    <!-- 📌 Contenido principal -->
+    <main class="content">
+      <h1>🐾 Bienvenido a Discovery Pets</h1>
+      <p>Gestión integral de tu tienda de mascotas</p>
 
-    <!-- Proveedores -->
-    <section id="proveedores" class="active">
-      <h2>👥 Gestión de Proveedores</h2>
-      <input type="text" id="buscarProveedores" placeholder="🔍 Buscar proveedor...">
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>RUC</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaProveedores"></tbody>
-      </table>
-    </section>
+      <!-- ==================== PROVEEDORES ==================== -->
+      <section id="proveedores" class="seccion">
+        <h2>📦 Lista de Proveedores</h2>
+        
+        <!-- Formulario -->
+        <form id="formProveedor" class="formulario">
+          <input type="text" placeholder="RUC" name="ruc" required>
+          <input type="text" placeholder="Nombre" name="nombre" required>
+          <input type="text" placeholder="Dirección" name="direccion">
+          <input type="text" placeholder="Teléfono" name="telefono">
+          <button type="submit">➕ Agregar Proveedor</button>
+        </form>
 
-    <!-- Facturas -->
-    <section id="facturas">
-      <h2>🧾 Gestión de Facturas</h2>
-      <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
-      <table>
-        <thead>
-          <tr><th>N° Factura</th><th>Proveedor</th><th>Fecha</th><th>Base Imponible</th><th>IGV</th><th>Total</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaFacturas"></tbody>
-      </table>
-    </section>
+        <!-- Buscador y Tabla -->
+        <input type="text" id="buscarProveedores" placeholder="🔍 Buscar proveedor...">
+        <table>
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
+      </section>
 
-    <!-- Servicios -->
-    <section id="servicios">
-      <h2>🐾 Servicios</h2>
-      <input type="text" id="buscarServicios" placeholder="🔍 Buscar servicio...">
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>Precio</th><th>Duración</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaServicios"></tbody>
-      </table>
-    </section>
+      <!-- ==================== FACTURAS ==================== -->
+      <section id="facturas" class="seccion oculto">
+        <h2>📄 Facturas</h2>
 
-    <!-- Ventas -->
-    <section id="ventas">
-      <h2>💰 Ventas</h2>
-      <input type="text" id="buscarVentas" placeholder="🔍 Buscar venta...">
-      <table>
-        <thead>
-          <tr><th>Cliente</th><th>Producto/Servicio</th><th>Cantidad</th><th>Total</th><th>Fecha</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaVentas"></tbody>
-      </table>
-    </section>
+        <!-- Formulario -->
+        <form id="formFactura" class="formulario">
+          <input type="text" placeholder="Número de Factura" name="numero" required>
+          <input type="text" placeholder="Proveedor" name="proveedor" required>
+          <input type="date" name="fecha" required>
+          <input type="number" placeholder="Monto" name="monto" required>
+          <button type="submit">➕ Agregar Factura</button>
+        </form>
 
-    <!-- Gastos -->
-    <section id="gastos">
-      <h2>📄 Gastos</h2>
-      <input type="text" id="buscarGastos" placeholder="🔍 Buscar gasto...">
-      <table>
-        <thead>
-          <tr><th>Detalle</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaGastos"></tbody>
-      </table>
-    </section>
+        <!-- Buscador y Tabla -->
+        <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
+        <table>
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Proveedor</th>
+              <th>Fecha</th>
+              <th>Monto</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
+        </table>
+      </section>
+
+      <!-- ==================== SERVICIOS ==================== -->
+      <section id="servicios" class="seccion oculto">
+        <h2>🛠 Servicios</h2>
+
+        <!-- Formulario -->
+        <form id="formServicio" class="formulario">
+          <input type="text" placeholder="Nombre del Servicio" name="nombre" required>
+          <input type="text" placeholder="Descripción" name="descripcion">
+          <input type="number" placeholder="Precio" name="precio" required>
+          <button type="submit">➕ Agregar Servicio</button>
+        </form>
+
+        <!-- Buscador y Tabla -->
+        <input type="text" id="buscarServicios" placeholder="🔍 Buscar servicio...">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaServicios"></tbody>
+        </table>
+      </section>
+
+      <!-- ==================== VENTAS ==================== -->
+      <section id="ventas" class="seccion oculto">
+        <h2>💰 Ventas</h2>
+
+        <!-- Formulario -->
+        <form id="formVenta" class="formulario">
+          <input type="text" placeholder="Cliente" name="cliente" required>
+          <input type="text" placeholder="Producto" name="producto" required>
+          <input type="number" placeholder="Total" name="total" required>
+          <button type="submit">➕ Registrar Venta</button>
+        </form>
+
+        <!-- Buscador y Tabla -->
+        <input type="text" id="buscarVentas" placeholder="🔍 Buscar venta...">
+        <table>
+          <thead>
+            <tr>
+              <th>ID Venta</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Total</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaVentas"></tbody>
+        </table>
+      </section>
+
+      <!-- ==================== GASTOS ==================== -->
+      <section id="gastos" class="seccion oculto">
+        <h2>📊 Gastos</h2>
+
+        <!-- Formulario -->
+        <form id="formGasto" class="formulario">
+          <input type="text" placeholder="Categoría" name="categoria" required>
+          <input type="text" placeholder="Descripción" name="descripcion">
+          <input type="number" placeholder="Monto" name="monto" required>
+          <input type="date" name="fecha" required>
+          <button type="submit">➕ Registrar Gasto</button>
+        </form>
+
+        <!-- Buscador y Tabla -->
+        <input type="text" id="buscarGastos" placeholder="🔍 Buscar gasto...">
+        <table>
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Descripción</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaGastos"></tbody>
+        </table>
+      </section>
+
+    </main>
   </div>
 
   <script type="module" src="dashboard.js"></script>
-  <script>
-    function mostrarSeccion(id) {
-      document.querySelectorAll(".content section").forEach(sec => sec.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-
-      document.querySelectorAll(".sidebar ul li a").forEach(link => link.classList.remove("active"));
-      event.target.classList.add("active");
-
-      document.getElementById("titulo").innerText = "Panel de " + id.charAt(0).toUpperCase() + id.slice(1);
-    }
-  </script>
 </body>
 </html>
+
 
 
 
