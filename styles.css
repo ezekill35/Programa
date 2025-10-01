@@ -1,67 +1,68 @@
-/* --- RESET --- */
+/* Reset básico */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
 }
 
-/* --- BODY --- */
 body {
-  background-color: #f0f2f5;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Contenedor principal */
+.dashboard-container {
   display: flex;
   min-height: 100vh;
 }
 
-/* --- MENÚ LATERAL --- */
+/* Menú lateral */
 .sidebar {
   width: 220px;
-  background-color: #ff66b2; /* Fucsia */
-  color: #fff;
+  background-color: #ff0099; /* fucsia */
+  color: white;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
-  position: fixed;
-  height: 100%;
+  gap: 10px;
 }
 
 .sidebar h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  font-size: 22px;
 }
 
 .sidebar button {
+  padding: 10px;
   background: none;
   border: none;
-  color: #fff;
-  padding: 15px 20px;
+  color: white;
   text-align: left;
   font-size: 16px;
   cursor: pointer;
+  border-radius: 6px;
   transition: 0.3s;
 }
 
 .sidebar button:hover {
-  background-color: #e055a3;
+  background-color: #ff66b2;
 }
 
 .sidebar button.active {
-  background-color: #c04d8c;
+  background-color: #ff66b2;
   font-weight: bold;
 }
 
-/* --- CONTENIDO PRINCIPAL --- */
+/* Contenido principal */
 .main-content {
-  margin-left: 220px;
+  flex: 1;
   padding: 30px;
-  width: 100%;
+  overflow-y: auto;
 }
 
-.main-content h1 {
-  margin-bottom: 20px;
-  color: #333;
-}
-
+/* Secciones */
 .section {
   display: none;
 }
@@ -70,122 +71,108 @@ body {
   display: block;
 }
 
-/* --- FORMULARIOS --- */
+/* Formularios */
 form {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  align-items: center;
 }
 
 form input, form select {
-  padding: 10px;
+  padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 14px;
   flex: 1;
   min-width: 150px;
 }
 
 form button {
-  padding: 10px 20px;
-  background-color: #ff66b2;
-  color: #fff;
-  border: none;
+  padding: 8px 15px;
   border-radius: 6px;
+  border: none;
+  background-color: #ff0099;
+  color: white;
   cursor: pointer;
   transition: 0.3s;
 }
 
 form button:hover {
-  background-color: #e055a3;
+  background-color: #ff66b2;
 }
 
-/* --- TABLAS --- */
+/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-table thead {
-  background-color: #ff66b2;
-  color: #fff;
 }
 
 table th, table td {
-  padding: 12px 15px;
+  border: 1px solid #ccc;
+  padding: 8px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
 }
 
-table tr:hover {
-  background-color: #f9e6f0;
+table th {
+  background-color: #ff0099;
+  color: white;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 
 table button {
   padding: 5px 10px;
-  background-color: #ff3366;
-  color: #fff;
+  border-radius: 5px;
   border: none;
-  border-radius: 4px;
+  background-color: #ff0099;
+  color: white;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 table button:hover {
-  background-color: #e02557;
+  background-color: #ff66b2;
 }
 
-/* --- BÚSQUEDA --- */
-.search-container {
-  margin-bottom: 10px;
-  display: flex;
-  gap: 10px;
+/* Inputs de búsqueda */
+#searchProveedor, #searchFactura {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-right: 5px;
+  width: 200px;
 }
 
-.search-container input {
-  flex: 1;
-}
+/* Responsivo */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
 
-/* --- REPORTES --- */
-#sectionReportes {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.report-box {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* --- RESPONSIVE --- */
-@media screen and (max-width: 768px) {
   .sidebar {
-    position: relative;
     width: 100%;
-    height: auto;
     flex-direction: row;
     overflow-x: auto;
+    gap: 5px;
   }
+
   .sidebar h2 {
     display: none;
   }
+
   .main-content {
-    margin-left: 0;
+    padding: 15px;
   }
+
   form {
     flex-direction: column;
   }
 }
-
-
-
 
 
 
