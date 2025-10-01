@@ -2,98 +2,104 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐶 Discovery Pets Dashboard</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="dashboard">
+    <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="logo">
-        <i>🐾</i> Discovery Pets
-      </div>
+      <div class="logo">🐾 Discovery Pets</div>
       <ul>
         <li onclick="mostrarSeccion('proveedor')">Proveedor</li>
         <li onclick="mostrarSeccion('factura')">Factura</li>
-        <li onclick="mostrarSeccion('gasto')">Gastos</li>
+        <li onclick="mostrarSeccion('gastos')">Gastos</li>
         <li onclick="mostrarSeccion('servicio')">Servicio</li>
       </ul>
+      <button id="btnCerrarSesion">Cerrar Sesión</button>
     </div>
 
+    <!-- CONTENIDO -->
     <div class="content">
-      <!-- PROVEEDOR -->
+      <!-- PROVEEDORES -->
       <div id="proveedor" class="card seccion">
         <h2>Proveedor</h2>
         <form id="formProveedor" class="formulario">
-          <input type="text" id="ruc" placeholder="RUC">
-          <input type="text" id="nombreProveedor" placeholder="Nombre">
-          <input type="text" id="direccionProveedor" placeholder="Dirección">
-          <button type="button" id="btnAgregarProveedor">Agregar</button>
+          <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" required>
+          <input type="text" id="direccionProveedor" placeholder="Dirección del proveedor" required>
+          <button type="button" id="btnAgregarProveedor">Registrar Proveedor</button>
         </form>
         <table id="tablaProveedores">
           <thead>
-            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th></tr>
+            <tr><th>Nombre</th><th>Dirección</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
-      <!-- FACTURA -->
-      <div id="factura" class="card seccion oculto">
+      <!-- FACTURAS -->
+      <div id="factura" class="card seccion hidden">
         <h2>Factura</h2>
         <form id="formFactura" class="formulario">
-          <select id="selectProveedor">
+          <input type="text" id="rucFactura" placeholder="RUC" required>
+          <select id="selectProveedorFactura">
             <option value="">Selecciona un proveedor</option>
           </select>
-          <input type="text" id="numFactura" placeholder="Número de factura">
-          <input type="date" id="fechaFactura">
-          <input type="text" id="descripcionFactura" placeholder="Descripción">
-          <button type="button" id="btnAgregarFactura">Agregar</button>
+          <input type="text" id="descripcionFactura" placeholder="Descripción" required>
+          <input type="date" id="fechaFactura" required>
+          <button type="button" id="btnAgregarFactura">Registrar Factura</button>
         </form>
         <table id="tablaFacturas">
           <thead>
-            <tr><th>Proveedor</th><th>N° Factura</th><th>Fecha</th><th>Descripción</th></tr>
+            <tr><th>RUC</th><th>Proveedor</th><th>Descripción</th><th>Fecha</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
       <!-- GASTOS -->
-      <div id="gasto" class="card seccion oculto">
+      <div id="gastos" class="card seccion hidden">
         <h2>Gastos</h2>
-        <form id="formGasto" class="formulario">
-          <input type="text" id="nombreGasto" placeholder="Nombre del gasto">
-          <input type="number" id="montoGasto" placeholder="Monto">
-          <button type="button" id="btnAgregarGasto">Agregar</button>
+        <form id="formGastos" class="formulario">
+          <input type="text" id="descripcionGasto" placeholder="Descripción" required>
+          <input type="number" id="montoGasto" placeholder="Monto" required>
+          <input type="date" id="fechaGasto" required>
+          <button type="button" id="btnAgregarGasto">Registrar Gasto</button>
         </form>
         <table id="tablaGastos">
           <thead>
-            <tr><th>Nombre</th><th>Monto</th></tr>
+            <tr><th>Descripción</th><th>Monto</th><th>Fecha</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
       <!-- SERVICIO -->
-      <div id="servicio" class="card seccion oculto">
+      <div id="servicio" class="card seccion hidden">
         <h2>Servicio</h2>
         <form id="formServicio" class="formulario">
-          <input type="text" id="nombreServicio" placeholder="Nombre del servicio">
-          <input type="text" id="descripcionServicio" placeholder="Descripción">
-          <button type="button" id="btnAgregarServicio">Agregar</button>
+          <input type="text" id="nombreServicio" placeholder="Nombre del servicio" required>
+          <input type="text" id="detalleServicio" placeholder="Detalle" required>
+          <input type="date" id="fechaServicio" required>
+          <button type="button" id="btnAgregarServicio">Registrar Servicio</button>
         </form>
         <table id="tablaServicios">
           <thead>
-            <tr><th>Nombre</th><th>Descripción</th></tr>
+            <tr><th>Servicio</th><th>Detalle</th><th>Fecha</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
+
     </div>
   </div>
 
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
