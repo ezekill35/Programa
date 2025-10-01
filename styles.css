@@ -87,6 +87,7 @@ body {
 .content .subtitle {
   color: #7f8c8d;
   margin-bottom: 20px;
+  font-size: 16px;
 }
 
 /* ================== TARJETAS ================== */
@@ -209,33 +210,6 @@ input[type="text"] {
   display: none;
 }
 
-/* ================== BANNER DE BIENVENIDA ================== */
-.welcome-banner {
-  position: fixed;
-  top: 20px;
-  right: 20px; /* cambiar a left: 20px; para esquina izquierda */
-  background: #1abc9c;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  font-weight: bold;
-  z-index: 1000;
-  opacity: 1;
-  animation: fadeOut 5s forwards; /* Desaparece después de 5s */
-  transition: all 0.3s ease;
-}
-.welcome-banner:hover {
-  background: #16a085;
-}
-
-/* Animación para desaparecer */
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; display: none; }
-}
-
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
   .dashboard { flex-direction: column; }
@@ -245,6 +219,8 @@ input[type="text"] {
   .formulario { flex-direction: column; }
   .formulario input { min-width: 100%; }
 }
+
+
 
 
 
