@@ -8,9 +8,15 @@
 /* ================== BODY ================== */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f2f5;
   color: #2c3e50;
   position: relative;
+
+  /* CENTRADO LOGIN */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f0f2f5;
 }
 
 /* ================== DASHBOARD ================== */
@@ -210,6 +216,25 @@ input[type="text"] {
   display: none;
 }
 
+/* ================== TITULO BIENVENIDA LOGIN ================== */
+.container {
+  text-align: center;
+}
+
+.container h1 {
+  font-size: 36px;
+  color: #1abc9c;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.container .subtitle {
+  font-size: 18px;
+  color: #34495e;
+  margin-bottom: 30px;
+}
+
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
   .dashboard { flex-direction: column; }
@@ -219,6 +244,7 @@ input[type="text"] {
   .formulario { flex-direction: column; }
   .formulario input { min-width: 100%; }
 }
+
 
 
 
