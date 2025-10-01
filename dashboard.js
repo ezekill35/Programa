@@ -1,33 +1,17 @@
 // dashboard.js
 import { db, auth } from "./firebase.js";
-import { collection, getDocs, addDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { 
+  collection, getDocs, addDoc, deleteDoc, doc, query, where 
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// ================== Mostrar secciones ==================
+// ================== Secciones ==================
 function mostrarSeccion(id){
   document.querySelectorAll(".seccion").forEach(sec => sec.classList.add("oculto"));
   document.getElementById(id).classList.remove("oculto");
 }
 
-// ================== CRUD genérico ==================
-async function agregarDocumento(form, coleccion, camposExtra = {}) {
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const data = {};
-    Array.from(form.elements).forEach(el => {
-      if(el.name) data[el.name] = el.value;
-    });
-    Object.assign(data, camposExtra);
-    try {
-      await addDoc(collection(db, coleccion), data);
-      form.reset();
-      cargarTodo();
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  });
-}
-
+// ================== Cargar datos ==================
 async function cargarDatos(coleccion, tablaId){
   const tabla = document.getElementById(tablaId);
   tabla.innerHTML = "";
@@ -42,9 +26,69 @@ async function cargarDatos(coleccion, tablaId){
   });
 }
 
+// ================== CRUD Proveedor ==================
+async function agregarProveedor(e){
+  e.preventDefault();
+  const form = e.target;
+  const ruc = form.ruc.value;
+  const nombre = form.nombre.value;
+  const direccion = form.direccion.value;
+  const telefono = form.telefono.value;
+  try {
+    await addDoc(collection(db,"proveedores"), {ruc,nombre,direccion,telefono});
+    form.reset();
+    cargarTodo();
+    alert("✅ Proveedor agregado correctamente.");
+  } catch(e){
+    alert("❌ Error al agregar proveedor: " + e.message);
+  }
+}
+
+// ================== CRUD Factura ==================
+async function agregarFactura(e){
+  e.preventDefault();
+  const form = e.target;
+  const ruc = form.inputRUC.value;
+  const tipo = form.tipo.value;
+  const serie = form.serie.value;
+  const fecha = form.fecha.value;
+  const subtotal = parseFloat(form.subtotal.value);
+  const igv = subtotal * 0.18;
+  const total = subtotal + igv;
+  const observaciones = form.observaciones.value;
+
+  // Buscar proveedor por RUC
+  const q = query(collection(db,"proveedores"), where("ruc","==",ruc));
+  const snap = await getDocs(q);
+  let nombreProveedor = "";
+  let direccionProveedor = "";
+  snap.forEach(d => { 
+    nombreProveedor = d.data().nombre; 
+    direccionProveedor = d.data().direccion;
+  });
+
+  if(!nombreProveedor){
+    alert("⚠️ Proveedor no encontrado. Por favor regístrelo primero.");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db,"facturas"), {
+      ruc, nombreProveedor, direccionProveedor, tipo, serie, fecha, subtotal, igv, total, observaciones
+    });
+    form.reset();
+    document.getElementById("nombreProveedor").textContent = "";
+    document.getElementById("direccionProveedor").value = "";
+    cargarTodo();
+    alert("✅ Factura agregada correctamente.");
+  } catch(e){
+    alert("❌ Error al agregar factura: " + e.message);
+  }
+}
+
 // ================== Eliminar ==================
-window.eliminarRegistro = async (coleccion, id)=>{
-  await deleteDoc(doc(db, coleccion, id));
+window.eliminarRegistro = async (coleccion,id)=>{
+  await deleteDoc(doc(db,coleccion,id));
   cargarTodo();
 }
 
@@ -59,36 +103,41 @@ function activarBuscador(inputId, tablaId){
   });
 }
 
-// ================== Inicializar formularios ==================
-function inicializar(){
-  const forms = [
-    {id:"formProveedor", coleccion:"proveedores", tabla:"tablaProveedores"},
-    {id:"formFactura", coleccion:"facturas", tabla:"tablaFacturas"},
-    {id:"formServicio", coleccion:"servicios", tabla:"tablaServicios"},
-    {id:"formVenta", coleccion:"ventas", tabla:"tablaVentas"},
-    {id:"formGasto", coleccion:"gastos", tabla:"tablaGastos"},
-  ];
-
-  forms.forEach(f=>{
-    const formEl = document.getElementById(f.id);
-    agregarDocumento(formEl, f.coleccion);
-    activarBuscador("buscar"+f.coleccion.charAt(0).toUpperCase()+f.coleccion.slice(1), f.tabla);
+// ================== Actualizar datos dinámicos factura ==================
+document.getElementById("inputRUC").addEventListener("input", async ()=>{
+  const ruc = document.getElementById("inputRUC").value;
+  const q = query(collection(db,"proveedores"), where("ruc","==",ruc));
+  const snap = await getDocs(q);
+  let nombreProveedor = "";
+  let direccionProveedor = "";
+  snap.forEach(d => { 
+    nombreProveedor = d.data().nombre; 
+    direccionProveedor = d.data().direccion;
   });
-}
+  document.getElementById("nombreProveedor").textContent = nombreProveedor ? `Proveedor: ${nombreProveedor}` : "Proveedor no encontrado";
+  document.getElementById("direccionProveedor").value = direccionProveedor;
+});
+
+// Calcular IGV y total automáticamente
+document.getElementById("subtotal").addEventListener("input", ()=>{
+  const subtotal = parseFloat(document.getElementById("subtotal").value) || 0;
+  const igv = subtotal * 0.18;
+  const total = subtotal + igv;
+  document.getElementById("igv").value = igv.toFixed(2);
+  document.getElementById("total").value = total.toFixed(2);
+});
 
 // ================== Cargar todo ==================
 async function cargarTodo(){
-  const colecciones = [
-    {coleccion:"proveedores", tabla:"tablaProveedores"},
-    {coleccion:"facturas", tabla:"tablaFacturas"},
-    {coleccion:"servicios", tabla:"tablaServicios"},
-    {coleccion:"ventas", tabla:"tablaVentas"},
-    {coleccion:"gastos", tabla:"tablaGastos"}
-  ];
-  for(const c of colecciones){
-    await cargarDatos(c.coleccion, c.tabla);
-  }
+  await cargarDatos("proveedores","tablaProveedores");
+  await cargarDatos("facturas","tablaFacturas");
 }
+
+document.getElementById("formProveedor").addEventListener("submit", agregarProveedor);
+document.getElementById("formFactura").addEventListener("submit", agregarFactura);
+
+activarBuscador("buscarProveedores","tablaProveedores");
+activarBuscador("buscarFacturas","tablaFacturas");
 
 // ================== Logout ==================
 document.getElementById("btnLogout").addEventListener("click", async ()=>{
@@ -97,11 +146,7 @@ document.getElementById("btnLogout").addEventListener("click", async ()=>{
 });
 
 // Ejecutar al inicio
-inicializar();
 cargarTodo();
-
-// ================== Mostrar secciones ==================
-window.mostrarSeccion = mostrarSeccion;
 
 
 
