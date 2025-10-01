@@ -1,82 +1,124 @@
-import { db } from "./firebase.js";
-import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+// dashboard.js
+import { auth, db } from "./firebase.js"; // db = getFirestore(app)
+import { collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-// Función de navegación
-window.mostrarSeccion = (seccion) => {
-  document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
-  document.getElementById(seccion).classList.remove("hidden");
-};
-
-// ------------------- PROVEEDORES -------------------
-const proveedorForm = document.getElementById("proveedorForm");
-const listaProveedores = document.getElementById("listaProveedores");
+// ======= PROVEEDORES =======
+const formProveedor = document.getElementById("formProveedor");
+const tablaProveedores = document.getElementById("tablaProveedores").querySelector("tbody");
 const selectProveedorFactura = document.getElementById("selectProveedorFactura");
 
-async function cargarProveedores() {
-  listaProveedores.innerHTML = "";
-  selectProveedorFactura.innerHTML = "";
-  const snapshot = await getDocs(collection(db, "proveedores"));
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    // Lista
-    const div = document.createElement("div");
-    div.textContent = `Nombre: ${data.nombre}, RUC: ${data.ruc}, Dirección: ${data.direccion}`;
-    listaProveedores.appendChild(div);
-    // Select para facturas
-    const option = document.createElement("option");
-    option.value = doc.id;
-    option.textContent = data.nombre;
-    selectProveedorFactura.appendChild(option);
-  });
-}
-
-proveedorForm.addEventListener("submit", async (e) => {
+// Agregar proveedor a Firestore
+formProveedor.addEventListener("submit", async (e) => {
   e.preventDefault();
   const nombre = document.getElementById("nombreProveedor").value;
-  const ruc = document.getElementById("rucProveedorInput").value;
+  const ruc = document.getElementById("rucProveedor").value;
   const direccion = document.getElementById("direccionProveedor").value;
 
-  await addDoc(collection(db, "proveedores"), { nombre, ruc, direccion });
-  proveedorForm.reset();
-  cargarProveedores();
+  try {
+    await addDoc(collection(db, "proveedores"), { nombre, ruc, direccion });
+    formProveedor.reset();
+  } catch (error) {
+    console.error("Error al agregar proveedor:", error);
+  }
 });
 
-// Cargar al inicio
-cargarProveedores();
+// Actualizar tabla de proveedores en tiempo real
+const proveedoresRef = collection(db, "proveedores");
+onSnapshot(proveedoresRef, (snapshot) => {
+  tablaProveedores.innerHTML = "";
+  selectProveedorFactura.innerHTML = `<option value="">Seleccionar proveedor</option>`;
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    tablaProveedores.innerHTML += `<tr><td>${data.ruc}</td><td>${data.nombre}</td><td>${data.direccion}</td></tr>`;
+    selectProveedorFactura.innerHTML += `<option value="${data.nombre}">${data.nombre}</option>`;
+  });
+});
 
-// ------------------- FACTURAS -------------------
-const facturaForm = document.getElementById("facturaForm");
-facturaForm.addEventListener("submit", async (e) => {
+// ======= FACTURAS =======
+const formFactura = document.getElementById("formFactura");
+const tablaFacturas = document.getElementById("tablaFacturas").querySelector("tbody");
+
+formFactura.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const proveedorId = selectProveedorFactura.value;
+  const proveedor = selectProveedorFactura.value;
+  const numero = document.getElementById("numeroFactura").value;
+  const fecha = document.getElementById("fechaFactura").value;
   const descripcion = document.getElementById("descripcionFactura").value;
-  const direccion = document.getElementById("direccionFactura").value;
+  const monto = parseFloat(document.getElementById("montoFactura").value) || 0;
 
-  await addDoc(collection(db, "facturas"), { proveedorId, descripcion, direccion, fecha: new Date() });
-  facturaForm.reset();
-  alert("Factura registrada!");
+  try {
+    await addDoc(collection(db, "facturas"), { proveedor, numero, fecha, descripcion, monto });
+    formFactura.reset();
+  } catch (error) {
+    console.error("Error al agregar factura:", error);
+  }
 });
 
-// ------------------- GASTOS -------------------
-const gastoForm = document.getElementById("gastoForm");
-gastoForm.addEventListener("submit", async (e) => {
+// Actualizar tabla de facturas en tiempo real
+const facturasRef = collection(db, "facturas");
+onSnapshot(facturasRef, (snapshot) => {
+  tablaFacturas.innerHTML = "";
+  snapshot.forEach(doc => {
+    const f = doc.data();
+    tablaFacturas.innerHTML += `<tr>
+      <td>${f.proveedor}</td>
+      <td>${f.numero}</td>
+      <td>${f.fecha}</td>
+      <td>${f.descripcion}</td>
+      <td>${f.monto.toFixed(2)}</td>
+    </tr>`;
+  });
+});
+
+// ======= GASTOS =======
+const formGasto = document.getElementById("formGasto");
+const tablaGastos = document.getElementById("tablaGastos").querySelector("tbody");
+
+formGasto.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const descripcion = document.getElementById("gastoDescripcion").value;
-  const monto = document.getElementById("gastoMonto").value;
-  await addDoc(collection(db, "gastos"), { descripcion, monto, fecha: new Date() });
-  gastoForm.reset();
-  alert("Gasto registrado!");
+  const descripcion = document.getElementById("descripcionGasto").value;
+  const monto = parseFloat(document.getElementById("montoGasto").value) || 0;
+
+  try {
+    await addDoc(collection(db, "gastos"), { descripcion, monto });
+    formGasto.reset();
+  } catch (error) {
+    console.error("Error al agregar gasto:", error);
+  }
 });
 
-// ------------------- SERVICIOS -------------------
-const servicioForm = document.getElementById("servicioForm");
-servicioForm.addEventListener("submit", async (e) => {
+const gastosRef = collection(db, "gastos");
+onSnapshot(gastosRef, (snapshot) => {
+  tablaGastos.innerHTML = "";
+  snapshot.forEach(doc => {
+    const g = doc.data();
+    tablaGastos.innerHTML += `<tr><td>${g.descripcion}</td><td>${g.monto.toFixed(2)}</td></tr>`;
+  });
+});
+
+// ======= SERVICIOS =======
+const formServicio = document.getElementById("formServicio");
+const tablaServicios = document.getElementById("tablaServicios").querySelector("tbody");
+
+formServicio.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const nombre = document.getElementById("servicioNombre").value;
-  const costo = document.getElementById("servicioCosto").value;
-  await addDoc(collection(db, "servicios"), { nombre, costo, fecha: new Date() });
-  servicioForm.reset();
-  alert("Servicio registrado!");
+  const nombre = document.getElementById("nombreServicio").value;
+  const costo = parseFloat(document.getElementById("costoServicio").value) || 0;
+
+  try {
+    await addDoc(collection(db, "servicios"), { nombre, costo });
+    formServicio.reset();
+  } catch (error) {
+    console.error("Error al agregar servicio:", error);
+  }
 });
 
+const serviciosRef = collection(db, "servicios");
+onSnapshot(serviciosRef, (snapshot) => {
+  tablaServicios.innerHTML = "";
+  snapshot.forEach(doc => {
+    const s = doc.data();
+    tablaServicios.innerHTML += `<tr><td>${s.nombre}</td><td>${s.costo.toFixed(2)}</td></tr>`;
+  });
+});
 
