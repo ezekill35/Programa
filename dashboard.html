@@ -2,106 +2,41 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐶 Discovery Pets - Dashboard</title>
+  <title>🐶 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container-dashboard">
-    <!-- MENÚ LATERAL -->
-    <aside class="sidebar">
-      <h2>🐶 Discovery Pets</h2>
-      <nav>
-        <ul>
-          <li id="menuProveedor" class="active">Proveedor</li>
-          <li id="menuFactura">Factura</li>
-          <li id="menuGastos">Gastos</li>
-          <li id="menuServicio">Servicio</li>
-          <li id="btnLogout" class="logout">Cerrar Sesión</li>
-        </ul>
-      </nav>
-    </aside>
+  <div class="login-container">
+    <div class="login-box">
+      <img src="https://images.unsplash.com/photo-1561948955-570c42b9a1b6?auto=format&fit=crop&w=150&q=80" alt="Perro" class="login-img">
+      <h1>🐾 Discovery Pets</h1>
+      <p class="subtitle">Bienvenido al sistema de gestión</p>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="main-content">
+      <!-- LOGIN -->
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Contraseña">
+        <button type="button" id="btnLogin">Iniciar Sesión</button>
+        <p id="mensajeLogin"></p>
+        <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
+      </form>
 
-      <!-- SECCIÓN PROVEEDOR -->
-      <section id="seccionProveedor">
-        <h3>Proveedor</h3>
-        <div class="form-group">
-          <input type="text" id="provRuc" placeholder="RUC">
-          <input type="text" id="provNombre" placeholder="Nombre">
-          <input type="text" id="provDireccion" placeholder="Dirección">
-          <button id="btnAgregarProveedor">Agregar</button>
-        </div>
-        <input type="text" id="buscarProveedor" placeholder="Buscar proveedor por RUC o Nombre">
-        <table id="tablaProveedor">
-          <thead>
-            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Acción</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </section>
-
-      <!-- SECCIÓN FACTURA -->
-      <section id="seccionFactura" class="hidden">
-        <h3>Factura</h3>
-        <div class="form-group">
-          <input type="text" id="facRuc" placeholder="RUC">
-          <input type="text" id="facDescripcion" placeholder="Descripción">
-          <input type="date" id="facFecha" placeholder="Fecha de emisión">
-          <button id="btnAgregarFactura">Agregar</button>
-        </div>
-        <input type="text" id="buscarFactura" placeholder="Buscar factura por RUC o descripción">
-        <table id="tablaFactura">
-          <thead>
-            <tr><th>RUC</th><th>Proveedor</th><th>Descripción</th><th>Fecha</th><th>Acción</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </section>
-
-      <!-- SECCIÓN GASTOS -->
-      <section id="seccionGastos" class="hidden">
-        <h3>Gastos</h3>
-        <div class="form-group">
-          <input type="text" id="gastoDescripcion" placeholder="Descripción">
-          <input type="number" id="gastoMonto" placeholder="Monto">
-          <input type="date" id="gastoFecha" placeholder="Fecha">
-          <button id="btnAgregarGasto">Agregar</button>
-        </div>
-        <input type="text" id="buscarGasto" placeholder="Buscar gasto por descripción">
-        <table id="tablaGasto">
-          <thead>
-            <tr><th>Descripción</th><th>Monto</th><th>Fecha</th><th>Acción</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </section>
-
-      <!-- SECCIÓN SERVICIO -->
-      <section id="seccionServicio" class="hidden">
-        <h3>Servicio</h3>
-        <div class="form-group">
-          <input type="text" id="servDescripcion" placeholder="Descripción">
-          <input type="number" id="servPrecio" placeholder="Precio">
-          <input type="date" id="servFecha" placeholder="Fecha">
-          <button id="btnAgregarServicio">Agregar</button>
-        </div>
-        <input type="text" id="buscarServicio" placeholder="Buscar servicio por descripción">
-        <table id="tablaServicio">
-          <thead>
-            <tr><th>Descripción</th><th>Precio</th><th>Fecha</th><th>Acción</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </section>
-
-    </main>
+      <!-- REGISTRO -->
+      <form id="registerForm" class="hidden">
+        <input type="email" id="registerEmail" placeholder="Email">
+        <input type="password" id="registerPassword" placeholder="Contraseña">
+        <button type="button" id="btnRegister">Registrarse</button>
+        <p id="mensajeRegister"></p>
+        <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
+      </form>
+    </div>
   </div>
 
-  <script type="module" src="dashboard.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
