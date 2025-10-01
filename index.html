@@ -5,39 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐶 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
-<body class="auth-body">
-  <div class="form-wrapper">
-    <h1 class="title">🐶 Discovery Pets</h1>
-    <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
+<body class="login-body">
 
-    <!-- LOGIN -->
-    <div id="login-box" class="auth-box active">
-      <form id="login-form">
-        <input type="email" id="login-email" placeholder="Correo electrónico" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit">Entrar</button>
-      </form>
-      <p class="switch">¿No tienes cuenta? <a href="#" id="show-register">Crear una Cuenta</a></p>
-    </div>
+  <div class="login-container">
+    <div class="login-box">
+      <h1>🐶 Discovery Pets</h1>
+      <p>Bienvenido al sistema de gestión 🐾</p>
 
-    <!-- REGISTRO -->
-    <div id="register-box" class="auth-box">
-      <form id="register-form">
-        <input type="email" id="register-email" placeholder="Correo electrónico" required>
-        <input type="password" id="register-password" placeholder="Contraseña" required>
-        <button type="submit">Registrar</button>
-      </form>
-      <p class="switch">¿Ya tienes cuenta? <a href="#" id="show-login">Entrar</a></p>
+      <!-- Login -->
+      <div id="login-form">
+        <input type="email" id="login-email" placeholder="Correo electrónico">
+        <input type="password" id="login-password" placeholder="Contraseña">
+        <button onclick="login()">Entrar</button>
+        <p>¿No tienes cuenta? 
+          <span class="link" onclick="toggleForms('register')">Crear una Cuenta</span>
+        </p>
+        <div id="login-error" class="error"></div>
+      </div>
+
+      <!-- Registro -->
+      <div id="register-form" style="display:none;">
+        <input type="email" id="reg-email" placeholder="Correo electrónico">
+        <input type="password" id="reg-password" placeholder="Contraseña">
+        <button onclick="register()">Registrar</button>
+        <p>¿Ya tienes cuenta? 
+          <span class="link" onclick="toggleForms('login')">Entrar</span>
+        </p>
+        <div id="register-error" class="error"></div>
+        <div id="register-success" class="success"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="firebase.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
