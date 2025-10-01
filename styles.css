@@ -1,135 +1,96 @@
-/* ---------------- GENERAL ---------------- */
+/* ---------------- LOGIN ---------------- */
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
-  background-color: #fce4ec; /* suave color de fondo con tema mascotas */
-}
-
-.container-dashboard {
+  background: linear-gradient(to right, #fce4ec, #fff0f5);
+  height: 100vh;
   display: flex;
-  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
 }
 
-/* ---------------- SIDEBAR ---------------- */
-.sidebar {
-  width: 220px;
-  background-color: #ff80ab;
-  color: white;
-  padding: 20px;
-  box-shadow: 3px 0 5px rgba(0,0,0,0.1);
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
-.sidebar h2 {
+.login-box {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   text-align: center;
-  margin-bottom: 30px;
+  max-width: 400px;
+  width: 100%;
 }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
+.login-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 3px solid #ff4081;
 }
 
-.sidebar li {
-  padding: 12px 15px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.3s;
-}
-
-.sidebar li.active,
-.sidebar li:hover {
-  background-color: #ff4081;
-}
-
-.logout {
-  margin-top: 20px;
-  background-color: #e91e63;
-  text-align: center;
-}
-
-/* ---------------- MAIN ---------------- */
-.main-content {
-  flex: 1;
-  padding: 30px;
-  background: #fff3f8;
-  overflow-y: auto;
-}
-
-h3 {
+h1 {
   color: #d81b60;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
-/* ---------------- FORMULARIOS ---------------- */
-.form-group {
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* Formularios */
+form {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.form-group input,
-.form-group button {
-  padding: 8px;
+form input {
+  padding: 10px;
   font-size: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
 
-.form-group button {
+form button {
+  padding: 10px;
   background-color: #ff4081;
   color: white;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s;
 }
 
-.form-group button:hover {
+form button:hover {
   background-color: #d81b60;
 }
 
-/* ---------------- INPUT BUSCAR ---------------- */
-input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+a {
+  font-size: 13px;
+  color: #ff4081;
+  text-decoration: none;
+  margin-top: 5px;
 }
 
-/* ---------------- TABLAS ---------------- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff0f5;
+a:hover {
+  text-decoration: underline;
 }
 
-th, td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+/* Mensajes */
+#mensajeLogin, #mensajeRegister {
+  font-size: 13px;
+  min-height: 18px;
+  margin-top: 5px;
 }
 
-th {
-  background-color: #ff80ab;
-  color: white;
-}
-
-td button {
-  padding: 5px 8px;
-  background-color: #e91e63;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-td button:hover {
-  background-color: #d81b60;
-}
-
-/* ---------------- OCULTAR SECCIONES ---------------- */
 .hidden {
   display: none;
 }
