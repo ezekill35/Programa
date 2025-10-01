@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebas
 
 // Configuración de tu Firebase
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
@@ -17,5 +17,6 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
 
 
