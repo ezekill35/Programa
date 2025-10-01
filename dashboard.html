@@ -57,16 +57,30 @@
         <div class="card">
           <h2><i class='bx bx-file'></i> Facturas</h2>
           <form id="formFactura" class="formulario">
-            <input type="text" placeholder="RUC del Proveedor" name="ruc" id="inputRUC" required>
+            <input type="text" id="inputRUC" placeholder="RUC del proveedor" required>
             <p id="nombreProveedor" class="info"></p>
+            <p id="opcionRegistrar" class="info"></p>
+            <input type="text" id="direccionProveedor" placeholder="Dirección del proveedor" readonly>
+            
+            <select name="tipo" required>
+              <option value="">Tipo de comprobante</option>
+              <option value="factura">Factura</option>
+              <option value="boleta">Boleta</option>
+              <option value="nota_credito">Nota de crédito</option>
+              <option value="nota_debito">Nota de débito</option>
+            </select>
+            <input type="text" name="serie" placeholder="Serie (ej. F001-00012345)" required>
             <input type="date" name="fecha" required>
-            <input type="number" placeholder="Monto" name="monto" required>
-            <button type="submit"><i class='bx bx-plus'></i> Agregar</button>
+            <input type="number" id="subtotal" placeholder="Subtotal" required>
+            <input type="number" id="igv" placeholder="IGV (18%)" readonly>
+            <input type="number" id="total" placeholder="Total" readonly>
+            <input type="text" name="observaciones" placeholder="Observaciones">
+            <button type="submit"><i class='bx bx-plus'></i> Agregar Factura</button>
           </form>
           <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
           <table>
             <thead>
-              <tr><th>RUC</th><th>Proveedor</th><th>Fecha</th><th>Monto</th><th>Acciones</th></tr>
+              <tr><th>RUC</th><th>Proveedor</th><th>Dirección</th><th>Tipo</th><th>Serie</th><th>Fecha</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaFacturas"></tbody>
           </table>
@@ -140,6 +154,8 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
