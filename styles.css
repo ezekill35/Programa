@@ -1,93 +1,89 @@
-/* Fondo decorativo */
-.auth-body {
+/* Fondo estilo Facebook */
+body.login-body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(120deg, #3b5998, #8b9dc3);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ff80ab, #ff4081, #f50057); /* fondo fucsia/rosado */
-  background-size: 300% 300%;
-  animation: gradientMove 8s infinite alternate;
-  font-family: Arial, sans-serif;
-  color: white;
-  text-align: center;
+  height: 100vh;
 }
 
-/* Animación de fondo */
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
-/* Contenedor de formularios */
-.form-wrapper {
-  max-width: 400px;
+/* Caja central */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
 }
 
-/* Títulos */
-.title {
-  font-size: 32px;
+.login-box {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.2);
+  width: 350px;
+}
+
+.login-box h1 {
+  color: #3b5998;
   margin-bottom: 10px;
 }
 
-.subtitle {
-  font-size: 14px;
-  margin-bottom: 25px;
+.login-box p {
+  margin-bottom: 20px;
+  color: #555;
 }
 
-/* Formularios */
-.auth-box {
-  display: none;
-}
-
-.auth-box.active {
+/* Inputs */
+.login-box input {
   display: block;
-}
-
-.auth-box input {
-  width: 90%;
+  width: 100%;
   padding: 12px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 25px;
-  outline: none;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
   font-size: 14px;
-}
-
-.auth-box input:focus {
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
 /* Botón */
-.auth-box button {
-  width: 95%;
+.login-box button {
+  background: #3b5998;
+  color: white;
   padding: 12px;
-  margin-top: 12px;
-  background: white;
   border: none;
-  border-radius: 25px;
-  color: #f50057;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
   font-size: 16px;
+  margin-top: 10px;
+}
+
+.login-box button:hover {
+  background: #2d4373;
+}
+
+/* Links */
+.link {
+  color: #3b5998;
   cursor: pointer;
   font-weight: bold;
-  transition: 0.3s;
 }
 
-.auth-box button:hover {
-  background: #f8bbd0;
-  color: #880e4f;
-}
-
-/* Texto inferior */
-.switch {
-  margin-top: 12px;
-  font-size: 14px;
-}
-
-.switch a {
-  color: #fff;
-  font-weight: bold;
+.link:hover {
   text-decoration: underline;
+}
+
+/* Mensajes */
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+.success {
+  color: green;
+  margin-top: 10px;
 }
 
 
