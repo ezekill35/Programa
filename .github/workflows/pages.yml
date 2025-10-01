@@ -14,24 +14,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      # 1️⃣ Clonar el repositorio
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Pages
+      # 2️⃣ Configurar GitHub Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v3
 
+      # 3️⃣ Subir los archivos de tu sitio (root del repositorio)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .  # carpeta raíz del sitio
+          path: .   # raíz del proyecto (index.html, dashboard.html, etc.)
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
+      # URL pública generada automáticamente
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
