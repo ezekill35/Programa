@@ -1,161 +1,175 @@
-/* 🔹 Reset básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* ----------------------------- */
+/* ESTILOS GENERALES */
+/* ----------------------------- */
 body {
-  background: #ffe6f0; /* color de fondo suave tipo fucsia */
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff0f5; /* Fondo claro con tono fucsia */
   color: #333;
-  min-height: 100vh;
 }
 
-/* 🔹 Header */
-header {
-  background: #ff66b2; /* fucsia más intenso */
-  color: #fff;
-  padding: 15px 0;
-  text-align: center;
-  font-size: 2em;
-  font-weight: bold;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-}
-
-/* 🔹 Menú */
-.menu {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  background: #fff0f5;
-  padding: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.menu-btn {
-  background: #ff99cc;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.menu-btn:hover {
-  background: #ff66b2;
-  color: #fff;
-}
-
-.menu-btn.active {
-  background: #ff1a75;
-  color: #fff;
-}
-
-.menu-btn.logout {
-  background: #ff4d4d;
-  margin-left: 20px;
-}
-
-.menu-btn.logout:hover {
-  background: #e60000;
-}
-
-/* 🔹 Main sections */
-main {
-  padding: 20px;
-}
-
-.section {
+.hidden {
   display: none;
-  background: #fff0f5;
+}
+
+/* ----------------------------- */
+/* HEADER / TITULO PRINCIPAL */
+/* ----------------------------- */
+header {
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  margin-top: 20px;
-}
-
-.section.active {
-  display: block;
-}
-
-/* 🔹 Inputs y botones dentro de secciones */
-section input[type="text"],
-section input[type="number"],
-section input[type="date"] {
-  padding: 10px;
-  margin: 5px 5px 15px 0;
-  border-radius: 6px;
-  border: 1px solid #ff99cc;
-}
-
-section button {
-  background: #ff66b2;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
+  background-color: #ff66b2; /* Fucsia fuerte */
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
   font-weight: bold;
-  transition: 0.3s;
 }
 
-section button:hover {
-  background: #ff1a75;
+/* ----------------------------- */
+/* MENÚ LATERAL */
+/* ----------------------------- */
+.sidebar {
+  width: 220px;
+  background-color: #ff99cc;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 🔹 Tablas */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 15px 20px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar ul li:hover {
+  background-color: #ff66b2;
+}
+
+.sidebar ul li.active {
+  background-color: #ff3399;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* ----------------------------- */
+/* CONTENIDO PRINCIPAL */
+/* ----------------------------- */
+.main-content {
+  margin-left: 240px;
+  padding: 20px;
+}
+
+h2.section-title {
+  margin-top: 0;
+  color: #ff3399;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #ff66b2;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+/* ----------------------------- */
+/* FORMULARIOS */
+/* ----------------------------- */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+form input, form select, form button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+form input, form select {
+  flex: 1;
+}
+
+form button {
+  background-color: #ff3399;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #ff66b2;
+}
+
+/* ----------------------------- */
+/* TABLAS */
+/* ----------------------------- */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 table th, table td {
-  border: 1px solid #ff99cc;
+  border: 1px solid #ccc;
   padding: 10px;
   text-align: left;
 }
 
 table th {
-  background: #ff66b2;
-  color: #fff;
+  background-color: #ff66b2;
+  color: white;
 }
 
-table tbody tr:nth-child(even) {
-  background: #ffe6f0;
+table tr:nth-child(even) {
+  background-color: #ffe6f0;
 }
 
-table tbody button {
-  background: #ff4d4d;
-  padding: 5px 10px;
-  border-radius: 5px;
+table tr:hover {
+  background-color: #ffb3d9;
 }
 
-table tbody button:hover {
-  background: #e60000;
-  color: #fff;
+/* ----------------------------- */
+/* BOTÓN CERRAR SESIÓN */
+/* ----------------------------- */
+#btnCerrarSesion {
+  margin-top: auto;
+  margin-bottom: 20px;
+  background-color: #ff3399;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
 }
 
-/* 🔹 Buscadores */
-section input[type="text"]#searchProveedor,
-section input[type="text"]#searchFactura,
-section input[type="text"]#searchGasto,
-section input[type="text"]#searchServicio {
-  width: 250px;
+#btnCerrarSesion:hover {
+  background-color: #ff66b2;
 }
 
-/* 🔹 Responsive */
-@media(max-width: 768px){
-  .menu {
-    flex-wrap: wrap;
-  }
-
-  section input, section button {
-    width: 100%;
-    margin-bottom: 10px;
-  }
+/* ----------------------------- */
+/* REPORTES (SECCIÓN INICIAL) */
+/* ----------------------------- */
+#sectionReportes {
+  min-height: 300px;
+  background-color: #ffe6f0;
+  border-radius: 8px;
+  padding: 20px;
+  color: #ff3399;
 }
 
 
