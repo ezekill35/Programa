@@ -1,81 +1,193 @@
+/* ================== ESTILO GENERAL ================== */
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #1877f2, #42a5f5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
-  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f6fa;
+  color: #2c3e50;
 }
 
-.container {
-  text-align: center;
+h1, h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
 }
 
-.subtitle {
+p {
+  color: #7f8c8d;
+}
+
+/* ================== DASHBOARD ================== */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ================== SIDEBAR ================== */
+.sidebar {
+  background: #2c3e50;
+  color: white;
+  width: 240px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 22px;
   margin-bottom: 20px;
+  text-align: center;
+  color: #ecf0f1;
 }
 
-.form-card {
-  background: #fff;
-  color: #333;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  width: 320px;
-  margin: auto;
-  animation: fadeIn 0.5s ease;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
 }
 
-.form-card h2 {
-  margin-bottom: 15px;
-  color: #1877f2;
-}
-
-.form-card input {
-  width: 100%;
+.sidebar ul li {
   padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.form-card button {
-  background: #1877f2;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  width: 100%;
-  border-radius: 8px;
-  font-size: 16px;
+  margin: 5px 0;
+  background: #34495e;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-.form-card button:hover {
-  background: #145dbf;
+.sidebar ul li:hover {
+  background: #1abc9c;
 }
 
-.hidden {
+.sidebar button {
+  margin-top: auto;
+  padding: 12px;
+  background: #e74c3c;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s;
+}
+
+.sidebar button:hover {
+  background: #c0392b;
+}
+
+/* ================== CONTENIDO ================== */
+.content {
+  flex: 1;
+  padding: 30px;
+}
+
+.seccion {
+  margin-top: 20px;
+}
+
+.oculto {
   display: none;
 }
 
-a {
-  color: #1877f2;
-  text-decoration: none;
+/* ================== FORMULARIOS ================== */
+.formulario {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  flex-wrap: wrap;
 }
 
-a:hover {
-  text-decoration: underline;
+.formulario input, 
+.formulario button {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.formulario input {
+  flex: 1;
+  min-width: 180px;
 }
 
+.formulario button {
+  background: #1abc9c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
+.formulario button:hover {
+  background: #16a085;
+}
 
+/* ================== TABLAS ================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table thead {
+  background: #1abc9c;
+  color: white;
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+  background: #f1f1f1;
+}
+
+/* ================== BUSCADOR ================== */
+input[type="text"]#buscarProveedores,
+input[type="text"]#buscarFacturas,
+input[type="text"]#buscarServicios,
+input[type="text"]#buscarVentas,
+input[type="text"]#buscarGastos {
+  width: 100%;
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .sidebar ul {
+    display: flex;
+    gap: 10px;
+  }
+
+  .content {
+    padding: 15px;
+  }
+
+  .formulario {
+    flex-direction: column;
+  }
+
+  .formulario input {
+    min-width: 100%;
+  }
+}
 
 
 
