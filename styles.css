@@ -9,14 +9,89 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #2c3e50;
-  position: relative;
+  background: #f0f2f5;
+  margin: 0;
 
-  /* CENTRADO LOGIN */
+  /* Centrar todo vertical y horizontal */
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f0f2f5;
+}
+
+/* ================== LOGIN/REGISTRO ================== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+.container h1 {
+  font-size: 36px;
+  color: #1abc9c;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.container .subtitle {
+  font-size: 18px;
+  color: #34495e;
+  margin-bottom: 30px;
+}
+
+/* ================== FORM-CARD LOGIN / REGISTRO ================== */
+.form-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.form-card h2 {
+  margin-bottom: 15px;
+  color: #34495e;
+}
+
+.form-card input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-card button {
+  width: 100%;
+  padding: 12px;
+  background: #1abc9c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.form-card button:hover {
+  background: #16a085;
+}
+
+.form-card .mensaje {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* ================== OCULTO ================== */
+.hidden, .oculto {
+  display: none;
 }
 
 /* ================== DASHBOARD ================== */
@@ -93,7 +168,6 @@ body {
 .content .subtitle {
   color: #7f8c8d;
   margin-bottom: 20px;
-  font-size: 16px;
 }
 
 /* ================== TARJETAS ================== */
@@ -172,69 +246,6 @@ input[type="text"] {
   font-size: 14px;
 }
 
-/* ================== FORM-CARD LOGIN / REGISTRO ================== */
-.form-card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  max-width: 400px;
-  margin: 20px auto;
-}
-.form-card h2 {
-  margin-bottom: 15px;
-  color: #34495e;
-}
-.form-card input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-.form-card button {
-  width: 100%;
-  padding: 12px;
-  background: #1abc9c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
-}
-.form-card button:hover {
-  background: #16a085;
-}
-.form-card .mensaje {
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-/* ================== OCULTO ================== */
-.hidden, .oculto {
-  display: none;
-}
-
-/* ================== TITULO BIENVENIDA LOGIN ================== */
-.container {
-  text-align: center;
-}
-
-.container h1 {
-  font-size: 36px;
-  color: #1abc9c;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-
-.container .subtitle {
-  font-size: 18px;
-  color: #34495e;
-  margin-bottom: 30px;
-}
-
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
   .dashboard { flex-direction: column; }
@@ -244,6 +255,7 @@ input[type="text"] {
   .formulario { flex-direction: column; }
   .formulario input { min-width: 100%; }
 }
+
 
 
 
