@@ -1,41 +1,53 @@
-// Cambiar entre login y registro
-function toggleForms(type) {
-  document.getElementById("login-form").style.display = 
-    (type === "login") ? "block" : "none";
-  document.getElementById("register-form").style.display = 
-    (type === "register") ? "block" : "none";
-}
+// script.js
+import { auth } from "./firebase.js";
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// Login
-function login() {
+// ---- Toggle entre login y registro ----
+const loginForm = document.getElementById("login-form");
+const registerForm = document.getElementById("register-form");
+
+document.getElementById("show-register").addEventListener("click", () => {
+  loginForm.classList.remove("active");
+  registerForm.classList.add("active");
+});
+
+document.getElementById("show-login").addEventListener("click", () => {
+  registerForm.classList.remove("active");
+  loginForm.classList.add("active");
+});
+
+// ---- Login ----
+document.getElementById("login-btn").addEventListener("click", async () => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  auth.signInWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      alert("✅ Bienvenido: " + userCredential.user.email);
-      window.location.href = "dashboard.html"; // Redirige
-    })
-    .catch(error => {
-      document.getElementById("login-error").innerText = error.message;
-    });
-}
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("✅ Bienvenido a Discovery Pets");
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    alert("❌ Error al iniciar sesión: " + error.message);
+  }
+});
 
-// Registro
-function register() {
-  const email = document.getElementById("reg-email").value;
-  const password = document.getElementById("reg-password").value;
+// ---- Registro ----
+document.getElementById("register-btn").addEventListener("click", async () => {
+  const email = document.getElementById("register-email").value;
+  const password = document.getElementById("register-password").value;
 
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      document.getElementById("register-success").innerText =
-        "✅ Usuario creado: " + userCredential.user.email;
-      document.getElementById("register-error").innerText = "";
-    })
-    .catch(error => {
-      document.getElementById("register-error").innerText = error.message;
-    });
-}
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert("✅ Usuario registrado correctamente");
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    alert("❌ Error al registrar: " + error.message);
+  }
+});
+
+
 
 
 
