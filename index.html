@@ -2,39 +2,41 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐶 Discovery Pets</title>
+  <title>🐶 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🐶 Discovery Pets</h1>
-    <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
+  <div class="login-container">
+    <div class="login-box">
+      <img src="https://images.unsplash.com/photo-1561948955-570c42b9a1b6?auto=format&fit=crop&w=150&q=80" alt="Perro" class="login-img">
+      <h1>🐾 Discovery Pets</h1>
+      <p class="subtitle">Bienvenido al sistema de gestión</p>
 
-    <!-- LOGIN -->
-    <form id="loginForm" class="form-card">
-      <h2>Iniciar Sesión</h2>
-      <input type="email" id="loginEmail" placeholder="Email">
-      <input type="password" id="loginPassword" placeholder="Contraseña">
-      <button type="button" id="btnLogin">Iniciar Sesión</button>
-      <p id="mensajeLogin" class="mensaje"></p>
-      <a href="#" id="showRegister">¿No tienes cuenta? Regístrate 🐾</a>
-    </form>
+      <!-- LOGIN -->
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Contraseña">
+        <button type="button" id="btnLogin">Iniciar Sesión</button>
+        <p id="mensajeLogin"></p>
+        <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
+      </form>
 
-    <!-- REGISTRO -->
-    <form id="registerForm" class="form-card hidden">
-      <h2>Registrarse</h2>
-      <input type="email" id="registerEmail" placeholder="Email">
-      <input type="password" id="registerPassword" placeholder="Contraseña">
-      <button type="button" id="btnRegister">Registrarse</button>
-      <p id="mensajeRegister" class="mensaje"></p>
-      <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión 🐾</a>
-    </form>
+      <!-- REGISTRO -->
+      <form id="registerForm" class="hidden">
+        <input type="email" id="registerEmail" placeholder="Email">
+        <input type="password" id="registerPassword" placeholder="Contraseña">
+        <button type="button" id="btnRegister">Registrarse</button>
+        <p id="mensajeRegister"></p>
+        <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
+      </form>
+    </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
