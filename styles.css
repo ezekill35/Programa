@@ -30,12 +30,16 @@ body {
   padding: 20px;
 }
 
+/* ====== TITULO Y SUBTITULO ====== */
 .container h1 {
-  font-size: 36px;
-  color: #1abc9c;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  display: block;
+  font-size: 36px;                          /* tamaño grande */
+  margin: 0 0 10px 0;                        /* elimina márgenes por defecto y agrega espacio inferior */
+  font-weight: bold;                          /* negrita */
+  color: #1abc9c;                             /* color temático */
+  text-align: center;                          /* centra horizontalmente */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);  /* sombra ligera */
+  unicode-bidi: isolate;
 }
 
 .container .subtitle {
@@ -255,24 +259,6 @@ input[type="text"] {
   .formulario { flex-direction: column; }
   .formulario input { min-width: 100%; }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
