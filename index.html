@@ -1,50 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐶 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
-<body class="login-body">
+<body>
+  <div class="login-container">
+    <h1>🐶 Discovery Pets</h1>
+    <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
 
-<div class="auth-wrapper">
-  <div class="auth-card">
-    <div class="card-inner" id="card-inner">
-      
-      <!-- Login -->
-      <div class="card-face card-front">
-        <h1>🐶 Discovery Pets</h1>
-        <p>Bienvenido al sistema de gestión 🐾</p>
-        <input type="email" id="login-email" placeholder="Correo electrónico">
-        <input type="password" id="login-password" placeholder="Contraseña">
-        <button class="primary-btn" onclick="login()">Entrar</button>
-        <p>¿No tienes cuenta? <span class="link-btn" onclick="showRegister()">Crear una Cuenta</span></p>
-        <div id="login-error" class="error-message"></div>
-      </div>
+    <!-- FORMULARIO LOGIN -->
+    <form id="login-form" class="form active">
+      <input type="email" id="login-email" placeholder="Correo electrónico" required>
+      <input type="password" id="login-password" placeholder="Contraseña" required>
+      <button type="submit">Entrar</button>
+      <p>¿No tienes cuenta? <a href="#" id="show-register">Crear una Cuenta</a></p>
+    </form>
 
-      <!-- Registro -->
-      <div class="card-face card-back">
-        <h1>Registro</h1>
-        <input type="email" id="reg-email" placeholder="Correo electrónico">
-        <input type="password" id="reg-password" placeholder="Contraseña">
-        <button class="primary-btn" onclick="register()">Registrar</button>
-        <p>¿Ya tienes cuenta? <span class="link-btn" onclick="showLogin()">Entrar</span></p>
-        <div id="register-error" class="error-message"></div>
-        <div id="register-success" class="success-message"></div>
-      </div>
-
-    </div>
+    <!-- FORMULARIO REGISTRO -->
+    <form id="register-form" class="form">
+      <input type="email" id="register-email" placeholder="Correo electrónico" required>
+      <input type="password" id="register-password" placeholder="Contraseña" required>
+      <button type="submit">Registrar</button>
+      <p>¿Ya tienes cuenta? <a href="#" id="show-login">Entrar</a></p>
+    </form>
   </div>
-</div>
 
-<script src="firebase.js"></script>
-<script src="script.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
