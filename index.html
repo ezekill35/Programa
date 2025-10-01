@@ -2,34 +2,131 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐶 Discovery Pets - Login</title>
+  <title>🐾 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* 🔹 Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #ffe6f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: #fff0f5;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 350px;
+    }
+
+    .login-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      object-fit: cover;
+      border: 3px solid #ff66b2;
+    }
+
+    h1 {
+      color: #ff1a75;
+      margin-bottom: 5px;
+      font-size: 1.8em;
+    }
+
+    .subtitle {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1em;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ff99cc;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px;
+      background: #ff66b2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ff1a75;
+    }
+
+    p, a {
+      font-size: 0.9em;
+      color: #333;
+      margin-top: 5px;
+    }
+
+    a {
+      color: #ff66b2;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #mensajeLogin, #mensajeRegister {
+      font-size: 0.85em;
+      min-height: 18px;
+    }
+  </style>
 </head>
 <body>
   <div class="login-container">
-    <div class="login-box">
-      
-      <h1>🐾 Discovery Pets</h1>
-      <p class="subtitle">Bienvenido al sistema de gestión</p>
+    <img src="https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_640.jpg" alt="Gato" class="login-img">
+    <h1>🐾 Discovery Pets</h1>
+    <p class="subtitle">Bienvenido al sistema de gestión</p>
 
-      <!-- LOGIN -->
-      <form id="loginForm">
-        <input type="email" id="loginEmail" placeholder="Email">
-        <input type="password" id="loginPassword" placeholder="Contraseña">
-        <button type="button" id="btnLogin">Iniciar Sesión</button>
-        <p id="mensajeLogin"></p>
-        <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
-      </form>
+    <!-- LOGIN -->
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+      <button type="button" id="btnLogin">Iniciar Sesión</button>
+      <p id="mensajeLogin"></p>
+      <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
+    </form>
 
-      <!-- REGISTRO -->
-      <form id="registerForm" class="hidden">
-        <input type="email" id="registerEmail" placeholder="Email">
-        <input type="password" id="registerPassword" placeholder="Contraseña">
-        <button type="button" id="btnRegister">Registrarse</button>
-        <p id="mensajeRegister"></p>
-        <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
-      </form>
-    </div>
+    <!-- REGISTRO -->
+    <form id="registerForm" class="hidden">
+      <input type="email" id="registerEmail" placeholder="Email" required>
+      <input type="password" id="registerPassword" placeholder="Contraseña" required>
+      <button type="button" id="btnRegister">Registrarse</button>
+      <p id="mensajeRegister"></p>
+      <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
+    </form>
   </div>
 
   <script type="module" src="firebase.js"></script>
