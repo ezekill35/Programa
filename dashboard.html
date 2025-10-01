@@ -2,158 +2,69 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐶 Discovery Pets - Dashboard</title>
+  <title>Dashboard - Discovery Pets</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="dashboard">
+  <h1>📊 Dashboard - Discovery Pets</h1>
 
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="sidebar">
-      <div class="logo">
-        <i class='bx bx-paw'></i>
-        <span>Discovery Pets</span>
-      </div>
-      <ul>
-        <li onclick="mostrarSeccion('proveedores')"><i class='bx bx-package'></i> Proveedores</li>
-        <li onclick="mostrarSeccion('facturas')"><i class='bx bx-file'></i> Facturas</li>
-        <li onclick="mostrarSeccion('servicios')"><i class='bx bx-wrench'></i> Servicios</li>
-        <li onclick="mostrarSeccion('ventas')"><i class='bx bx-cart'></i> Ventas</li>
-        <li onclick="mostrarSeccion('gastos')"><i class='bx bx-bar-chart-alt'></i> Gastos</li>
-      </ul>
-      <button id="btnLogout"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
-    </aside>
+  <nav>
+    <ul>
+      <li onclick="mostrarSeccion('facturas')">Facturas</li>
+      <li onclick="mostrarSeccion('gastos')">Gastos</li>
+      <li onclick="mostrarSeccion('servicios')">Servicios</li>
+    </ul>
+  </nav>
 
-    <!-- ================= CONTENIDO ================= -->
-    <main class="content">
-      <h1>🐾 Bienvenido a Discovery Pets</h1>
-      <p class="subtitle">Gestión integral de tu tienda de mascotas</p>
+  <!-- SECCION FACTURAS -->
+  <section id="facturas">
+    <h2>📋 Facturas</h2>
+    <form id="facturaForm">
+      <label>RUC del proveedor:</label>
+      <input type="text" id="rucProveedor" placeholder="Ingrese RUC">
 
-      <!-- ================= PROVEEDORES ================= -->
-      <section id="proveedores" class="seccion">
-        <div class="card">
-          <h2><i class='bx bx-package'></i> Proveedores</h2>
-          <form id="formProveedor" class="formulario">
-            <input type="text" placeholder="RUC" name="ruc" required>
-            <input type="text" placeholder="Nombre" name="nombre" required>
-            <input type="text" placeholder="Dirección" name="direccion">
-            <input type="text" placeholder="Teléfono" name="telefono">
-            <button type="submit"><i class='bx bx-plus'></i> Agregar</button>
-          </form>
-          <input type="text" id="buscarProveedores" placeholder="🔍 Buscar proveedor...">
-          <table>
-            <thead>
-              <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaProveedores"></tbody>
-          </table>
-        </div>
-      </section>
+      <label>Proveedor:</label>
+      <select id="selectProveedor"></select>
+      <button type="button" id="btnAgregarProveedor">Registrar Proveedor</button>
 
-      <!-- ================= FACTURAS ================= -->
-      <section id="facturas" class="seccion oculto">
-        <div class="card">
-          <h2><i class='bx bx-file'></i> Facturas</h2>
-          <form id="formFactura" class="formulario">
-            <input type="text" id="inputRUC" placeholder="RUC del proveedor" required>
-            <p id="nombreProveedor" class="info"></p>
-            <p id="opcionRegistrar" class="info"></p>
-            <input type="text" id="direccionProveedor" placeholder="Dirección del proveedor" readonly>
-            
-            <select name="tipo" required>
-              <option value="">Tipo de comprobante</option>
-              <option value="factura">Factura</option>
-              <option value="boleta">Boleta</option>
-              <option value="nota_credito">Nota de crédito</option>
-              <option value="nota_debito">Nota de débito</option>
-            </select>
-            <input type="text" name="serie" placeholder="Serie (ej. F001-00012345)" required>
-            <input type="date" name="fecha" required>
-            <input type="number" id="subtotal" placeholder="Subtotal" required>
-            <input type="number" id="igv" placeholder="IGV (18%)" readonly>
-            <input type="number" id="total" placeholder="Total" readonly>
-            <input type="text" name="observaciones" placeholder="Observaciones">
-            <button type="submit"><i class='bx bx-plus'></i> Agregar Factura</button>
-          </form>
-          <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
-          <table>
-            <thead>
-              <tr><th>RUC</th><th>Proveedor</th><th>Dirección</th><th>Tipo</th><th>Serie</th><th>Fecha</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaFacturas"></tbody>
-          </table>
-        </div>
-      </section>
+      <label>Descripción:</label>
+      <input type="text" id="descripcion" placeholder="Descripción de la factura">
 
-      <!-- ================= SERVICIOS ================= -->
-      <section id="servicios" class="seccion oculto">
-        <div class="card">
-          <h2><i class='bx bx-wrench'></i> Servicios</h2>
-          <form id="formServicio" class="formulario">
-            <input type="text" placeholder="Nombre del Servicio" name="nombre" required>
-            <input type="text" placeholder="Descripción" name="descripcion">
-            <input type="number" placeholder="Precio" name="precio" required>
-            <button type="submit"><i class='bx bx-plus'></i> Agregar</button>
-          </form>
-          <input type="text" id="buscarServicios" placeholder="🔍 Buscar servicio...">
-          <table>
-            <thead>
-              <tr><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaServicios"></tbody>
-          </table>
-        </div>
-      </section>
+      <label>Dirección:</label>
+      <input type="text" id="direccion" placeholder="Dirección del proveedor">
 
-      <!-- ================= VENTAS ================= -->
-      <section id="ventas" class="seccion oculto">
-        <div class="card">
-          <h2><i class='bx bx-cart'></i> Ventas</h2>
-          <form id="formVenta" class="formulario">
-            <input type="text" placeholder="Cliente" name="cliente" required>
-            <input type="text" placeholder="Producto" name="producto" required>
-            <input type="number" placeholder="Total" name="total" required>
-            <button type="submit"><i class='bx bx-plus'></i> Agregar</button>
-          </form>
-          <input type="text" id="buscarVentas" placeholder="🔍 Buscar venta...">
-          <table>
-            <thead>
-              <tr><th>Cliente</th><th>Producto</th><th>Total</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaVentas"></tbody>
-          </table>
-        </div>
-      </section>
+      <button type="submit">Guardar Factura</button>
+    </form>
+    <div id="listaFacturas"></div>
+  </section>
 
-      <!-- ================= GASTOS ================= -->
-      <section id="gastos" class="seccion oculto">
-        <div class="card">
-          <h2><i class='bx bx-bar-chart-alt'></i> Gastos</h2>
-          <form id="formGasto" class="formulario">
-            <input type="text" placeholder="Categoría" name="categoria" required>
-            <input type="text" placeholder="Descripción" name="descripcion">
-            <input type="number" placeholder="Monto" name="monto" required>
-            <input type="date" name="fecha" required>
-            <button type="submit"><i class='bx bx-plus'></i> Agregar</button>
-          </form>
-          <input type="text" id="buscarGastos" placeholder="🔍 Buscar gasto...">
-          <table>
-            <thead>
-              <tr><th>Categoría</th><th>Descripción</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaGastos"></tbody>
-          </table>
-        </div>
-      </section>
+  <!-- SECCION GASTOS -->
+  <section id="gastos" class="hidden">
+    <h2>💸 Gastos</h2>
+    <form id="gastoForm">
+      <input type="text" id="gastoDescripcion" placeholder="Descripción del gasto">
+      <input type="number" id="gastoMonto" placeholder="Monto">
+      <button type="submit">Registrar Gasto</button>
+    </form>
+    <div id="listaGastos"></div>
+  </section>
 
-    </main>
-  </div>
+  <!-- SECCION SERVICIOS -->
+  <section id="servicios" class="hidden">
+    <h2>🛠️ Servicios</h2>
+    <form id="servicioForm">
+      <input type="text" id="servicioNombre" placeholder="Nombre del servicio">
+      <input type="number" id="servicioCosto" placeholder="Costo">
+      <button type="submit">Registrar Servicio</button>
+    </form>
+    <div id="listaServicios"></div>
+  </section>
 
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
