@@ -3,179 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐶 Discovery Pets - Dashboard</title>
+  <title>Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
       margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f8f9fa;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #d63384;
+    }
+    .sidebar ul {
+      list-style: none;
       padding: 0;
     }
-    header {
-      background: #2c3e50;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
+    .sidebar ul li {
+      margin-bottom: 15px;
     }
-    nav {
-      background: #34495e;
-      display: flex;
-      justify-content: center;
-      padding: 10px;
-    }
-    nav button {
-      background: #1abc9c;
-      border: none;
-      color: white;
-      margin: 5px;
-      padding: 10px 20px;
-      cursor: pointer;
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #333;
+      display: block;
+      padding: 8px 12px;
       border-radius: 6px;
+      transition: background 0.3s;
     }
-    nav button:hover {
-      background: #16a085;
+    .sidebar ul li a.active,
+    .sidebar ul li a:hover {
+      background: #d63384;
+      color: #fff;
     }
+
+    /* Contenido */
     .content {
+      margin-left: 250px;
       padding: 20px;
+      flex-grow: 1;
     }
-    .section {
+    .content h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .content section {
       display: none;
       background: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .section.active {
+    .content section.active {
       display: block;
+    }
+    input[type="text"] {
+      padding: 8px;
+      margin-bottom: 10px;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
     }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
     th, td {
       padding: 10px;
-      border: 1px solid #ddd;
       text-align: left;
     }
     th {
-      background: #1abc9c;
-      color: #fff;
-    }
-    form {
-      margin-top: 15px;
-      display: grid;
-      gap: 10px;
-    }
-    form input, form select, form button {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    form button {
-      background: #1abc9c;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    form button:hover {
-      background: #16a085;
+      background: #f1f1f1;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🐾 Dashboard de Facturación - Discovery Pets</h1>
-    <p id="userInfo">Cargando usuario...</p>
-    <button id="btnLogout">Cerrar Sesión</button>
-  </header>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🐶 Discovery Pets</h2>
+    <ul>
+      <li><a href="#" class="active" onclick="mostrarSeccion('proveedores')">👥 Proveedores</a></li>
+      <li><a href="#" onclick="mostrarSeccion('facturas')">🧾 Facturas</a></li>
+      <li><a href="#" onclick="mostrarSeccion('servicios')">🐾 Servicios</a></li>
+      <li><a href="#" onclick="mostrarSeccion('ventas')">💰 Ventas</a></li>
+      <li><a href="#" onclick="mostrarSeccion('gastos')">📄 Gastos</a></li>
+      <li><a href="#" id="btnLogout">🚪 Cerrar sesión</a></li>
+    </ul>
+  </div>
 
-  <nav>
-    <button onclick="showSection('productos')">📦 Productos</button>
-    <button onclick="showSection('proveedores')">👥 Proveedores</button>
-    <button onclick="showSection('facturas')">🧾 Facturas</button>
-    <button onclick="showSection('servicios')">🐕 Servicios</button>
-  </nav>
+  <!-- Contenido -->
+  <div class="content">
+    <h1 id="titulo">Panel de Proveedores</h1>
 
- <!-- Productos -->
-<div id="productos" class="section active">
-  <h2>📦 Gestión de Productos</h2>
-  <input type="text" id="buscarProductos" placeholder="🔍 Buscar producto...">
-  <form id="formProducto">
-    <input type="hidden" id="prodId">
-    <input type="text" id="prodNombre" placeholder="Nombre del producto" required>
-    <input type="number" id="prodPrecio" placeholder="Precio (S/.)" required>
-    <input type="number" id="prodStock" placeholder="Stock inicial" required>
-    <input type="text" id="prodCategoria" placeholder="Categoría" required>
-    <button type="submit">Guardar Producto</button>
-  </form>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaProductos"></tbody>
-  </table>
-</div>
+    <!-- Proveedores -->
+    <section id="proveedores" class="active">
+      <h2>👥 Gestión de Proveedores</h2>
+      <input type="text" id="buscarProveedores" placeholder="🔍 Buscar proveedor...">
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>RUC</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaProveedores"></tbody>
+      </table>
+    </section>
 
-<!-- Proveedores -->
-<div id="proveedores" class="section">
-  <h2>👥 Proveedores</h2>
-  <input type="text" id="buscarProveedores" placeholder="🔍 Buscar proveedor...">
-  <form id="formProveedor">
-    <input type="hidden" id="provId">
-    <input type="text" id="provNombre" placeholder="Nombre proveedor" required>
-    <input type="text" id="provRuc" placeholder="RUC" required>
-    <input type="text" id="provTelefono" placeholder="Teléfono">
-    <button type="submit">Guardar Proveedor</button>
-  </form>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>Nombre</th><th>RUC</th><th>Teléfono</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaProveedores"></tbody>
-  </table>
-</div>
+    <!-- Facturas -->
+    <section id="facturas">
+      <h2>🧾 Gestión de Facturas</h2>
+      <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
+      <table>
+        <thead>
+          <tr><th>N° Factura</th><th>Proveedor</th><th>Fecha</th><th>Base Imponible</th><th>IGV</th><th>Total</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaFacturas"></tbody>
+      </table>
+    </section>
 
-<!-- Facturas -->
-<div id="facturas" class="section">
-  <h2>🧾 Facturas de Compra</h2>
-  <input type="text" id="buscarFacturas" placeholder="🔍 Buscar factura...">
-  <form id="formFactura">
-    <input type="hidden" id="facId">
-    <input type="text" id="facNumero" placeholder="Número de factura" required>
-    <select id="facProveedor" required></select>
-    <input type="date" id="facFecha" required>
-    <input type="number" id="facTotal" placeholder="Total (S/.)" required>
-    <button type="submit">Guardar Factura</button>
-  </form>
-  <table>
-    <thead>
-      <tr><th>N° Factura</th><th>Proveedor</th><th>Fecha</th><th>Total</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaFacturas"></tbody>
-  </table>
-</div>
+    <!-- Servicios -->
+    <section id="servicios">
+      <h2>🐾 Servicios</h2>
+      <input type="text" id="buscarServicios" placeholder="🔍 Buscar servicio...">
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Precio</th><th>Duración</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaServicios"></tbody>
+      </table>
+    </section>
 
-<!-- Servicios -->
-<div id="servicios" class="section">
-  <h2>🐕 Servicios</h2>
-  <input type="text" id="buscarServicios" placeholder="🔍 Buscar servicio...">
-  <form id="formServicio">
-    <input type="hidden" id="servId">
-    <input type="text" id="servNombre" placeholder="Nombre servicio" required>
-    <input type="number" id="servPrecio" placeholder="Precio (S/.)" required>
-    <input type="text" id="servDuracion" placeholder="Duración (ej: 30 min)" required>
-    <button type="submit">Guardar Servicio</button>
-  </form>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>Nombre Servicio</th><th>Precio</th><th>Duración</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaServicios"></tbody>
-  </table>
-</div>
+    <!-- Ventas -->
+    <section id="ventas">
+      <h2>💰 Ventas</h2>
+      <input type="text" id="buscarVentas" placeholder="🔍 Buscar venta...">
+      <table>
+        <thead>
+          <tr><th>Cliente</th><th>Producto/Servicio</th><th>Cantidad</th><th>Total</th><th>Fecha</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaVentas"></tbody>
+      </table>
+    </section>
+
+    <!-- Gastos -->
+    <section id="gastos">
+      <h2>📄 Gastos</h2>
+      <input type="text" id="buscarGastos" placeholder="🔍 Buscar gasto...">
+      <table>
+        <thead>
+          <tr><th>Detalle</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaGastos"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+  <script>
+    function mostrarSeccion(id) {
+      document.querySelectorAll(".content section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+
+      document.querySelectorAll(".sidebar ul li a").forEach(link => link.classList.remove("active"));
+      event.target.classList.add("active");
+
+      document.getElementById("titulo").innerText = "Panel de " + id.charAt(0).toUpperCase() + id.slice(1);
+    }
+  </script>
+</body>
+</html>
+
 
 
 
