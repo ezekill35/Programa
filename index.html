@@ -3,41 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐶 Discovery Pets - Login</title>
+  <title>Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="login-wrapper">
-    <div class="login-card">
-      <h1>🐶 Discovery Pets</h1>
-      <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
+  <div class="container">
+    <h1>🐶 Discovery Pets</h1>
+    <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
 
-      <!-- LOGIN -->
-      <form id="login-form">
-        <input type="email" id="login-email" placeholder="Correo electrónico" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit" class="btn">Entrar</button>
-      </form>
+    <!-- Formulario Login -->
+    <form id="loginForm" class="card">
+      <h2>Iniciar Sesión</h2>
+      <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+      <button type="submit">Entrar</button>
+      <p class="switch">¿No tienes cuenta? <a href="#" id="showRegister">Crear una Cuenta</a></p>
+    </form>
 
-      <p class="toggle-text">¿No tienes cuenta? 
-        <a href="#" id="show-register">Crear una Cuenta</a>
-      </p>
-
-      <!-- REGISTRO -->
-      <form id="register-form" style="display:none;">
-        <input type="email" id="register-email" placeholder="Correo electrónico" required>
-        <input type="password" id="register-password" placeholder="Contraseña" required>
-        <button type="submit" class="btn register">Registrar</button>
-      </form>
-
-      <p class="toggle-text" id="show-login" style="display:none;">
-        ¿Ya tienes cuenta? <a href="#">Entrar</a>
-      </p>
-    </div>
+    <!-- Formulario Registro -->
+    <form id="registerForm" class="card hidden">
+      <h2>Registro</h2>
+      <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+      <input type="password" id="registerPassword" placeholder="Contraseña" required>
+      <button type="submit">Registrar</button>
+      <p class="switch">¿Ya tienes cuenta? <a href="#" id="showLogin">Entrar</a></p>
+    </form>
   </div>
 
-  <!-- Firebase + lógica -->
-  <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
 </body>
 </html>
