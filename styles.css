@@ -1,18 +1,11 @@
-/* ================== ESTILO GENERAL ================== */
+/* ================== RESET ================== */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+/* ================== BODY ================== */
 body {
-  margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f6fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f2f5;
   color: #2c3e50;
-}
-
-h1, h2 {
-  color: #2c3e50;
-  margin-bottom: 10px;
-}
-
-p {
-  color: #7f8c8d;
 }
 
 /* ================== DASHBOARD ================== */
@@ -23,171 +16,108 @@ p {
 
 /* ================== SIDEBAR ================== */
 .sidebar {
-  background: #2c3e50;
+  background: #34495e;
   color: white;
-  width: 240px;
+  width: 250px;
   padding: 20px;
   display: flex;
   flex-direction: column;
 }
 
-.sidebar h2 {
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 22px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #ecf0f1;
+  margin-bottom: 30px;
 }
 
+.sidebar .logo i { font-size:28px; color:#1abc9c; }
+
 .sidebar ul {
-  list-style: none;
-  padding: 0;
+  list-style:none;
 }
 
 .sidebar ul li {
-  padding: 12px;
-  margin: 5px 0;
-  background: #34495e;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.3s;
+  margin-bottom:5px;
 }
 
 .sidebar ul li:hover {
   background: #1abc9c;
+  color:white;
 }
 
 .sidebar button {
-  margin-top: auto;
-  padding: 12px;
-  background: #e74c3c;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-  font-size: 15px;
-  transition: background 0.3s;
+  margin-top:auto;
+  padding:12px;
+  background:#e74c3c;
+  border:none;
+  border-radius:6px;
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+  transition:0.3s;
 }
 
-.sidebar button:hover {
-  background: #c0392b;
-}
+.sidebar button:hover { background:#c0392b; }
 
 /* ================== CONTENIDO ================== */
 .content {
-  flex: 1;
-  padding: 30px;
+  flex:1;
+  padding:30px;
 }
 
-.seccion {
-  margin-top: 20px;
+.content h1 { font-size:28px; margin-bottom:5px; }
+.content .subtitle { color:#7f8c8d; margin-bottom:20px; }
+
+/* ================== TARJETAS ================== */
+.card {
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:25px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-.oculto {
-  display: none;
-}
+.card h2 { margin-bottom:15px; color:#34495e; display:flex; align-items:center; gap:8px; }
 
 /* ================== FORMULARIOS ================== */
-.formulario {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
-  flex-wrap: wrap;
+.formulario { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px; }
+
+.formulario input, .formulario button {
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  font-size:14px;
 }
 
-.formulario input, 
+.formulario input { flex:1; min-width:180px; }
 .formulario button {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  background:#1abc9c;
+  color:white;
+  border:none;
+  cursor:pointer;
+  transition:0.3s;
 }
 
-.formulario input {
-  flex: 1;
-  min-width: 180px;
-}
-
-.formulario button {
-  background: #1abc9c;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.formulario button:hover {
-  background: #16a085;
-}
+.formulario button:hover { background:#16a085; }
 
 /* ================== TABLAS ================== */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-table thead {
-  background: #1abc9c;
-  color: white;
-}
-
-table th, table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-table tr:hover {
-  background: #f1f1f1;
-}
+table { width:100%; border-collapse:collapse; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+table thead { background:#1abc9c; color:white; }
+table th, table td { padding:12px; text-align:left; border-bottom:1px solid #ddd; }
+table tr:hover { background:#f1f1f1; }
 
 /* ================== BUSCADOR ================== */
-input[type="text"]#buscarProveedores,
-input[type="text"]#buscarFacturas,
-input[type="text"]#buscarServicios,
-input[type="text"]#buscarVentas,
-input[type="text"]#buscarGastos {
-  width: 100%;
-  padding: 10px;
-  margin: 15px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
+input[type="text"] { width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc;
 
-/* ================== RESPONSIVE ================== */
-@media (max-width: 768px) {
-  .dashboard {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .sidebar ul {
-    display: flex;
-    gap: 10px;
-  }
-
-  .content {
-    padding: 15px;
-  }
-
-  .formulario {
-    flex-direction: column;
-  }
-
-  .formulario input {
-    min-width: 100%;
-  }
-}
 
 
 
