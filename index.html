@@ -3,35 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐶 Discovery Pets - Iniciar Sesión</title>
+  <title>🐶 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="auth-container">
-    <h1>🐶 Discovery Pets</h1>
-    <p>Bienvenido al sistema de gestión 🐾</p>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h1>🐶 Discovery Pets</h1>
+      <p class="subtitle">Bienvenido al sistema de gestión 🐾</p>
 
-    <!-- Login -->
-    <div id="login-form" class="form active">
-      <input type="email" id="login-email" placeholder="Correo electrónico">
-      <input type="password" id="login-password" placeholder="Contraseña">
-      <button id="login-btn">Entrar</button>
-      <p>¿No tienes cuenta? <a href="#" id="show-register">Crear una Cuenta</a></p>
-    </div>
+      <!-- LOGIN -->
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Correo electrónico" required>
+        <input type="password" id="login-password" placeholder="Contraseña" required>
+        <button type="submit" class="btn">Entrar</button>
+      </form>
 
-    <!-- Registro -->
-    <div id="register-form" class="form">
-      <input type="email" id="register-email" placeholder="Correo electrónico">
-      <input type="password" id="register-password" placeholder="Contraseña">
-      <button id="register-btn">Registrar</button>
-      <p>¿Ya tienes cuenta? <a href="#" id="show-login">Entrar</a></p>
+      <p class="toggle-text">¿No tienes cuenta? 
+        <a href="#" id="show-register">Crear una Cuenta</a>
+      </p>
+
+      <!-- REGISTRO -->
+      <form id="register-form" style="display:none;">
+        <input type="email" id="register-email" placeholder="Correo electrónico" required>
+        <input type="password" id="register-password" placeholder="Contraseña" required>
+        <button type="submit" class="btn register">Registrar</button>
+      </form>
+
+      <p class="toggle-text" id="show-login" style="display:none;">
+        ¿Ya tienes cuenta? <a href="#">Entrar</a>
+      </p>
     </div>
   </div>
 
+  <!-- Firebase + lógica -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
