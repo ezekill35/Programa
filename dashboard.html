@@ -2,16 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>🐾 Discovery Pets - Dashboard</title>
+  <title>🐶 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="dashboard">
+
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="logo">
-        <i>🐾</i> Discovery Pets
-      </div>
       <ul>
         <li id="menuProveedor" class="active">Proveedor</li>
         <li id="menuFactura">Factura</li>
@@ -21,80 +19,97 @@
       <button id="btnLogout">Cerrar Sesión</button>
     </div>
 
-    <!-- CONTENIDO -->
+    <!-- CONTENT -->
     <div class="content">
-      <h1 id="tituloSeccion">Proveedor</h1>
-      <p class="subtitle">Gestiona los registros de tu negocio 🐶</p>
-
-      <!-- FORMULARIO DINÁMICO -->
-      <div class="card" id="formCard">
-        <!-- Proveedor -->
-        <div id="formProveedor">
-          <input type="text" id="provRUC" placeholder="RUC">
-          <input type="text" id="provNombre" placeholder="Nombre">
-          <input type="text" id="provDireccion" placeholder="Dirección">
-          <button id="btnAgregarProveedor">Agregar</button>
-          <input type="text" id="buscarProveedor" placeholder="Buscar proveedor por RUC o Nombre">
-        </div>
-
-        <!-- Factura -->
-        <div id="formFactura" class="hidden">
-          <input type="text" id="factRUC" placeholder="RUC Proveedor">
-          <input type="text" id="factTipo" placeholder="Tipo de factura">
-          <input type="text" id="factDescripcion" placeholder="Descripción">
-          <input type="date" id="factFecha">
-          <button id="btnAgregarFactura">Agregar</button>
-          <input type="text" id="buscarFactura" placeholder="Buscar factura por RUC o descripción">
-        </div>
-
-        <!-- Gastos -->
-        <div id="formGastos" class="hidden">
-          <input type="text" id="gastoDescripcion" placeholder="Descripción del gasto">
-          <input type="number" id="gastoMonto" placeholder="Monto">
-          <input type="date" id="gastoFecha">
-          <button id="btnAgregarGasto">Agregar</button>
-          <input type="text" id="buscarGasto" placeholder="Buscar gasto por descripción">
-        </div>
-
-        <!-- Servicio -->
-        <div id="formServicio" class="hidden">
-          <input type="text" id="servDescripcion" placeholder="Descripción del servicio">
-          <input type="number" id="servCosto" placeholder="Costo">
-          <input type="date" id="servFecha">
-          <button id="btnAgregarServicio">Agregar</button>
-          <input type="text" id="buscarServicio" placeholder="Buscar servicio por descripción">
-        </div>
-      </div>
-
-      <!-- TABLA -->
-      <div class="card">
-        <table id="tablaDatos">
+      <!-- PROVEEDOR -->
+      <div id="sectionProveedor" class="card">
+        <h2>Proveedor</h2>
+        <input type="text" id="provRUC" placeholder="RUC">
+        <input type="text" id="provNombre" placeholder="Nombre">
+        <input type="text" id="provDireccion" placeholder="Dirección">
+        <button id="addProveedor">Agregar</button>
+        <input type="text" id="searchProveedor" placeholder="Buscar proveedor por RUC o Nombre">
+        <table id="tableProveedor">
           <thead>
-            <tr id="tablaHeader">
-              <th>Campo1</th>
-              <th>Campo2</th>
-              <th>Campo3</th>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
               <th>Acción</th>
             </tr>
           </thead>
-          <tbody id="tablaBody">
-            <!-- Los datos se cargarán aquí -->
-          </tbody>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- FACTURA -->
+      <div id="sectionFactura" class="card hidden">
+        <h2>Factura</h2>
+        <input type="text" id="factRUC" placeholder="RUC Proveedor">
+        <input type="text" id="factTipo" placeholder="Tipo de factura">
+        <input type="text" id="factDescripcion" placeholder="Descripción">
+        <input type="date" id="factFecha">
+        <button id="addFactura">Agregar</button>
+        <input type="text" id="searchFactura" placeholder="Buscar factura por RUC o descripción">
+        <table id="tableFactura">
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- GASTOS -->
+      <div id="sectionGastos" class="card hidden">
+        <h2>Gastos</h2>
+        <input type="text" id="gastoDescripcion" placeholder="Descripción">
+        <input type="number" id="gastoMonto" placeholder="Monto">
+        <button id="addGasto">Agregar</button>
+        <input type="text" id="searchGasto" placeholder="Buscar gasto por descripción">
+        <table id="tableGasto">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Monto</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- SERVICIO -->
+      <div id="sectionServicio" class="card hidden">
+        <h2>Servicio</h2>
+        <input type="text" id="servNombre" placeholder="Nombre del servicio">
+        <input type="text" id="servDescripcion" placeholder="Descripción">
+        <button id="addServicio">Agregar</button>
+        <input type="text" id="searchServicio" placeholder="Buscar servicio por nombre">
+        <table id="tableServicio">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
         </table>
       </div>
     </div>
+
   </div>
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
