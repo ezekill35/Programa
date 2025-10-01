@@ -1,9 +1,9 @@
-name: Deploy static content to Pages
+name: Deploy Discovery Pets to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # Se desplegará al hacer push en la rama main
 
 permissions:
   contents: read
@@ -11,8 +11,9 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       # 1️⃣ Clonar el repositorio
       - name: Checkout repository
@@ -22,21 +23,26 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v3
 
-      # 3️⃣ Subir los archivos de tu sitio (root del repositorio)
-      - name: Upload artifact
+      # 3️⃣ Subir solo los archivos necesarios
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .   # raíz del proyecto (index.html, dashboard.html, etc.)
+          path: |
+            index.html
+            dashboard.html
+            styles.css
+            dashboard.js
+            firebase.js
+            script.js
 
   deploy:
-    needs: build
+    needs: build-and-deploy
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      # URL pública generada automáticamente
+      # La URL pública generada automáticamente
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
