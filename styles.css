@@ -19,11 +19,16 @@ body {
 .login-box {
   background-color: white;
   padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   text-align: center;
   max-width: 400px;
   width: 100%;
+  transition: transform 0.3s;
+}
+
+.login-box:hover {
+  transform: translateY(-5px);
 }
 
 .login-img {
@@ -55,17 +60,18 @@ form {
 form input {
   padding: 10px;
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #ccc;
 }
 
 form button {
-  padding: 10px;
+  padding: 12px;
   background-color: #ff4081;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
   transition: background 0.3s;
 }
 
@@ -94,6 +100,7 @@ a:hover {
 .hidden {
   display: none;
 }
+
 
 
 
