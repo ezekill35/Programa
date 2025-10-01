@@ -1,51 +1,73 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #f48fb1, #ba68c8);
+/* ---- Dashboard ---- */
+.dashboard-container {
+  display: flex;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.auth-container {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-  width: 320px;
+.sidebar {
+  width: 220px;
+  background: #6a1b9a;
+  color: white;
+  padding: 20px;
 }
 
-.auth-container h1 {
-  color: #6a1b9a;
-  margin-bottom: 10px;
-}
-
-.auth-container p {
+.sidebar h2 {
   margin-bottom: 20px;
-  color: #444;
+  font-size: 18px;
 }
 
-.form {
-  display: none;
-  flex-direction: column;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
 }
 
-.form.active {
-  display: flex;
-}
-
-.form input {
+.sidebar ul li {
+  padding: 12px;
   margin: 8px 0;
-  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.sidebar ul li:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar ul li.active {
+  background: #f50057; /* Fucsia */
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #f3e5f5;
+  overflow-y: auto;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th, table td {
   border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 8px;
+  text-align: left;
 }
 
 button {
   margin-top: 12px;
-  padding: 10px;
+  padding: 10px 15px;
   background: #6a1b9a;
   color: white;
   border: none;
@@ -57,11 +79,6 @@ button:hover {
   background: #8e24aa;
 }
 
-a {
-  color: #6a1b9a;
-  text-decoration: none;
-  font-weight: bold;
-}
 
 
 
