@@ -1,14 +1,9 @@
+// script.js
 import { auth } from "./firebase.js";
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// Formularios
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
-
-// Mensajes
 const mensajeLogin = document.getElementById("mensajeLogin");
 const mensajeRegister = document.getElementById("mensajeRegister");
 
@@ -17,7 +12,6 @@ document.getElementById("showRegister").addEventListener("click", () => {
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
 });
-
 document.getElementById("showLogin").addEventListener("click", () => {
   registerForm.classList.add("hidden");
   loginForm.classList.remove("hidden");
@@ -55,7 +49,6 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
     mensajeLogin.style.color = "#e74c3c";
   }
 });
-
 
 
 
