@@ -1,17 +1,14 @@
-// =======================================
-// 🐾 Dashboard JS - Discovery Pets (Firebase)
-// =======================================
-
-import { db } from './firebase.js';
+import { db, auth, cerrarSesion } from './firebase.js';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// ------------------ Variables globales ------------------
-let proveedores = [];
-let facturas = [];
-let gastos = [];
-let servicios = [];
+// 🚫 Bloquear acceso al dashboard si no hay sesión
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = 'login.html';
+});
 
-// ------------------ Contadores ------------------
+// ------------------ Variables ------------------
+let proveedores = [], facturas = [], gastos = [], servicios = [];
 const totalProveedores = document.getElementById('total-proveedores');
 const totalFacturas = document.getElementById('total-facturas');
 const totalGastos = document.getElementById('total-gastos');
@@ -26,13 +23,19 @@ menuItems.forEach(item => {
     menuItems.forEach(i => i.classList.remove('active'));
     sections.forEach(sec => sec.classList.remove('active'));
     item.classList.add('active');
-
     const sectionId = item.id.replace('menu-', '');
     document.getElementById(sectionId).classList.add('active');
   });
 });
 
-// =================== FIREBASE COLLECTIONS ===================
+// ------------------ Botón Cerrar Sesión ------------------
+document.getElementById('menu-logout').addEventListener('click', async () => {
+  await cerrarSesion();
+  alert('Sesión cerrada');
+  window.location.href = 'login.html';
+});
+
+// ------------------ Colecciones Firebase ------------------
 const proveedoresCol = collection(db, "proveedores");
 const facturasCol = collection(db, "facturas");
 const gastosCol = collection(db, "gastos");
@@ -50,13 +53,11 @@ btnAgregarProveedor.addEventListener('click', async () => {
   const producto = document.getElementById('provProducto').value.trim();
 
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
-
   await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
   document.getElementById('formProveedor').reset();
 });
 
-// Cargar proveedores desde Firebase
 async function cargarProveedores() {
   const snapshot = await getDocs(proveedoresCol);
   proveedores = [];
@@ -92,7 +93,6 @@ async function eliminarProveedorFirebase(id) {
   }
 }
 
-// Función para editar proveedor
 window.editarProveedor = async (id) => {
   const prov = proveedores.find(p => p.id === id);
   const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
@@ -100,25 +100,19 @@ window.editarProveedor = async (id) => {
   const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
   const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
   const producto = prompt("Producto:", prov.producto) || prov.producto;
-
   await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
 }
 
-// Actualizar select en Facturas
 function actualizarSelectProveedores() {
   const select = document.getElementById('facRucProveedor');
   select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
-  proveedores.forEach(p => {
-    select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
-  });
+  proveedores.forEach(p => select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`);
 }
 
 // =================== FACTURAS ===================
 const listaFacturas = document.getElementById('listaFacturas');
-const btnAgregarFactura = document.getElementById('btnAgregarFactura');
-
-btnAgregarFactura.addEventListener('click', async () => {
+document.getElementById('btnAgregarFactura').addEventListener('click', async () => {
   const proveedor = document.getElementById('facRucProveedor').value;
   const tipo = document.getElementById('facTipo').value.trim();
   const descripcion = document.getElementById('facDescripcion').value.trim();
@@ -126,7 +120,6 @@ btnAgregarFactura.addEventListener('click', async () => {
   const monto = document.getElementById('facMonto').value.trim();
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
-
   await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto });
   cargarFacturas();
   document.getElementById('facRucProveedor').value = '';
@@ -177,23 +170,19 @@ window.editarFactura = async (id) => {
   const descripcion = prompt("Descripción:", fac.descripcion) || fac.descripcion;
   const fecha = prompt("Fecha:", fac.fecha) || fac.fecha;
   const monto = prompt("Monto:", fac.monto) || fac.monto;
-
   await updateDoc(doc(db,"facturas", id), { proveedor, tipo, descripcion, fecha, monto });
   cargarFacturas();
 }
 
 // =================== GASTOS ===================
 const listaGastos = document.getElementById('listaGastos');
-const btnAgregarGasto = document.getElementById('btnAgregarGasto');
-
-btnAgregarGasto.addEventListener('click', async () => {
+document.getElementById('btnAgregarGasto').addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
   const tipo = document.getElementById('gastoTipo').value;
   const monto = document.getElementById('gastoMonto').value.trim();
   const fecha = document.getElementById('gastoFecha').value;
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
-
   await addDoc(gastosCol, { nombre, tipo, monto, fecha });
   cargarGastos();
   document.getElementById('formGasto').reset();
@@ -238,23 +227,19 @@ window.editarGasto = async (id) => {
   const tipo = prompt("Tipo:", g.tipo) || g.tipo;
   const monto = prompt("Monto:", g.monto) || g.monto;
   const fecha = prompt("Fecha:", g.fecha) || g.fecha;
-
   await updateDoc(doc(db,"gastos", id), { nombre, tipo, monto, fecha });
   cargarGastos();
 }
 
 // =================== SERVICIOS ===================
 const listaServicios = document.getElementById('listaServicios');
-const btnAgregarServicio = document.getElementById('btnAgregarServicio');
-
-btnAgregarServicio.addEventListener('click', async () => {
+document.getElementById('btnAgregarServicio').addEventListener('click', async () => {
   const nombre = document.getElementById('servNombre').value.trim();
   const descripcion = document.getElementById('servDescripcion').value.trim();
   const fecha = document.getElementById('servFecha').value;
   const precio = document.getElementById('servPrecio').value.trim();
 
   if(!nombre) return alert('Nombre es obligatorio');
-
   await addDoc(serviciosCol, { nombre, descripcion, fecha, precio });
   cargarServicios();
   document.getElementById('servNombre').value = '';
@@ -302,127 +287,15 @@ window.editarServicio = async (id) => {
   const descripcion = prompt("Descripción:", s.descripcion) || s.descripcion;
   const fecha = prompt("Fecha:", s.fecha) || s.fecha;
   const precio = prompt("Precio:", s.precio) || s.precio;
-
   await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
   cargarServicios();
 }
-
-// =================== BUSQUEDAS EN TIEMPO REAL ===================
-
-// Proveedores
-document.getElementById('buscarProveedor').addEventListener('input', (e) => {
-  const busqueda = e.target.value.toLowerCase();
-  const filtrados = proveedores.filter(p => 
-    p.ruc.toLowerCase().includes(busqueda) ||
-    p.nombre.toLowerCase().includes(busqueda) ||
-    p.direccion.toLowerCase().includes(busqueda) ||
-    p.telefono.toLowerCase().includes(busqueda) ||
-    p.producto.toLowerCase().includes(busqueda)
-  );
-  listaProveedores.innerHTML = '';
-  filtrados.forEach(prov => {
-    listaProveedores.innerHTML += `
-      <tr>
-        <td>${prov.ruc}</td>
-        <td>${prov.nombre}</td>
-        <td>${prov.direccion}</td>
-        <td>${prov.telefono}</td>
-        <td>${prov.producto}</td>
-        <td>
-          <button onclick="editarProveedor('${prov.id}')">✏️</button>
-          <button onclick="eliminarProveedorFirebase('${prov.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-});
-
-// Facturas
-document.getElementById('buscarFactura').addEventListener('input', (e) => {
-  const busqueda = e.target.value.toLowerCase();
-  const filtrados = facturas.filter(f => 
-    f.proveedor.toLowerCase().includes(busqueda) ||
-    f.tipo.toLowerCase().includes(busqueda) ||
-    f.descripcion.toLowerCase().includes(busqueda) ||
-    f.fecha.toLowerCase().includes(busqueda) ||
-    f.monto.toLowerCase().includes(busqueda)
-  );
-  listaFacturas.innerHTML = '';
-  filtrados.forEach(fac => {
-    listaFacturas.innerHTML += `
-      <tr>
-        <td>${fac.proveedor}</td>
-        <td>${fac.tipo}</td>
-        <td>${fac.descripcion}</td>
-        <td>${fac.fecha}</td>
-        <td>${fac.monto}</td>
-        <td>
-          <button onclick="editarFactura('${fac.id}')">✏️</button>
-          <button onclick="eliminarFacturaFirebase('${fac.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-});
-
-// Gastos
-document.getElementById('buscarGasto').addEventListener('input', (e) => {
-  const busqueda = e.target.value.toLowerCase();
-  const filtrados = gastos.filter(g => 
-    g.nombre.toLowerCase().includes(busqueda) ||
-    g.tipo.toLowerCase().includes(busqueda) ||
-    g.monto.toLowerCase().includes(busqueda) ||
-    g.fecha.toLowerCase().includes(busqueda)
-  );
-  listaGastos.innerHTML = '';
-  filtrados.forEach(g => {
-    listaGastos.innerHTML += `
-      <tr>
-        <td>${g.nombre}</td>
-        <td>${g.tipo}</td>
-        <td>${g.monto}</td>
-        <td>${g.fecha}</td>
-        <td>
-          <button onclick="editarGasto('${g.id}')">✏️</button>
-          <button onclick="eliminarGastoFirebase('${g.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-});
-
-// Servicios
-document.getElementById('buscarServicio').addEventListener('input', (e) => {
-  const busqueda = e.target.value.toLowerCase();
-  const filtrados = servicios.filter(s => 
-    s.nombre.toLowerCase().includes(busqueda) ||
-    s.descripcion.toLowerCase().includes(busqueda) ||
-    s.fecha.toLowerCase().includes(busqueda) ||
-    s.precio.toLowerCase().includes(busqueda)
-  );
-  listaServicios.innerHTML = '';
-  filtrados.forEach(s => {
-    listaServicios.innerHTML += `
-      <tr>
-        <td>${s.nombre}</td>
-        <td>${s.descripcion}</td>
-        <td>${s.fecha}</td>
-        <td>${s.precio}</td>
-        <td>
-          <button onclick="editarServicio('${s.id}')">✏️</button>
-          <button onclick="eliminarServicioFirebase('${s.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-});
 
 // =================== CARGA INICIAL ===================
 cargarProveedores();
 cargarFacturas();
 cargarGastos();
 cargarServicios();
-
 
 
 
