@@ -1,243 +1,310 @@
-// Importar Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { 
-  getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where 
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+// =======================================
+// 🐾 Dashboard JS - Discovery Pets
+// =======================================
 
-// Configuración Firebase (Discovery Pets)
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
-};
+// ------------------ Variables globales ------------------
+let proveedores = [];
+let facturas = [];
+let gastos = [];
+let servicios = [];
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+// ------------------ Contadores ------------------
+const totalProveedores = document.getElementById('total-proveedores');
+const totalFacturas = document.getElementById('total-facturas');
+const totalGastos = document.getElementById('total-gastos');
+const totalServicios = document.getElementById('total-servicios');
 
-// ---------------------- MENU LATERAL ----------------------
+// ------------------ Menú lateral ------------------
 const menuItems = document.querySelectorAll('.sidebar ul li');
 const sections = document.querySelectorAll('.section');
 
 menuItems.forEach(item => {
   item.addEventListener('click', () => {
     menuItems.forEach(i => i.classList.remove('active'));
+    sections.forEach(sec => sec.classList.remove('active'));
     item.classList.add('active');
 
-    const idMap = {
-      'menu-reportes': 'reportes',
-      'menu-proveedores': 'proveedores',
-      'menu-facturas': 'facturas',
-      'menu-gastos': 'gastos',
-      'menu-servicios': 'servicios'
-    };
-
-    const targetSectionId = idMap[item.id];
-
-    sections.forEach(sec => {
-      sec.classList.toggle('active', sec.id === targetSectionId);
-    });
-
-    if(item.id === "menu-logout") {
-      signOut(auth).then(() => window.location = "index.html");
-    }
+    const sectionId = item.id.replace('menu-', '');
+    document.getElementById(sectionId).classList.add('active');
   });
 });
 
-// ---------------------- REPORTES ----------------------
-async function actualizarReportes() {
-  const proveedores = await getDocs(collection(db, "proveedores"));
-  const facturas = await getDocs(collection(db, "facturas"));
-  const gastos = await getDocs(collection(db, "gastos"));
-  const servicios = await getDocs(collection(db, "servicios"));
+// =======================================
+// 🏪 PROVEEDORES
+// =======================================
+const listaProveedores = document.getElementById('listaProveedores');
+const btnAgregarProveedor = document.getElementById('btnAgregarProveedor');
 
-  document.getElementById("total-proveedores").innerText = proveedores.size;
-  document.getElementById("total-facturas").innerText = facturas.size;
-  document.getElementById("total-gastos").innerText = gastos.size;
-  document.getElementById("total-servicios").innerText = servicios.size;
-}
-actualizarReportes();
+btnAgregarProveedor.addEventListener('click', () => {
+  const ruc = document.getElementById('provRuc').value.trim();
+  const nombre = document.getElementById('provNombre').value.trim();
+  const direccion = document.getElementById('provDireccion').value.trim();
+  const correo = document.getElementById('provCorreo').value.trim();
+  const telefono = document.getElementById('provTelefono').value.trim();
+  const producto = document.getElementById('provProducto').value.trim();
 
-// ---------------------- PROVEEDORES ----------------------
-const listaProveedores = document.getElementById("listaProveedores");
-const selectProveedores = document.getElementById("facRucProveedor");
+  if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
 
-async function listarProveedores() {
-  listaProveedores.innerHTML = "";
-  selectProveedores.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
+  proveedores.push({ruc, nombre, direccion, correo, telefono, producto});
+  actualizarProveedores();
+  document.getElementById('formProveedor').reset();
+});
 
-  const snapshot = await getDocs(collection(db, "proveedores"));
-  snapshot.forEach(docSnap => {
-    const p = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.ruc}</td>
-      <td>${p.nombre}</td>
-      <td>${p.direccion}</td>
-      <td>${p.correo}</td>
-      <td>${p.telefono}</td>
-      <td>${p.producto || ""}</td>
-      <td><button onclick="eliminarProveedor('${docSnap.id}')">❌</button></td>
+function actualizarProveedores() {
+  listaProveedores.innerHTML = '';
+  proveedores.forEach((prov, index) => {
+    listaProveedores.innerHTML += `
+      <tr>
+        <td>${prov.ruc}</td>
+        <td>${prov.nombre}</td>
+        <td>${prov.direccion}</td>
+        <td>${prov.correo}</td>
+        <td>${prov.telefono}</td>
+        <td>${prov.producto}</td>
+        <td><button onclick="eliminarProveedor(${index})">❌</button></td>
+      </tr>
     `;
-    listaProveedores.appendChild(tr);
-
-    selectProveedores.innerHTML += `<option value="${p.ruc}">${p.nombre}</option>`;
   });
-  actualizarReportes();
+
+  totalProveedores.textContent = proveedores.length;
+  actualizarSelectProveedores();
 }
 
-window.eliminarProveedor = async (id) => {
-  await deleteDoc(doc(db, "proveedores", id));
-  listarProveedores();
-};
+function eliminarProveedor(index) {
+  if(confirm('¿Eliminar proveedor?')) {
+    proveedores.splice(index,1);
+    actualizarProveedores();
+  }
+}
 
-document.getElementById("btnAgregarProveedor").addEventListener("click", async () => {
-  const ruc = document.getElementById("provRuc").value;
-  const nombre = document.getElementById("provNombre").value;
-  const direccion = document.getElementById("provDireccion").value;
-  const correo = document.getElementById("provCorreo").value;
-  const telefono = document.getElementById("provTelefono").value;
-  const producto = document.getElementById("provProducto").value;
+// Actualizar select en Facturas
+function actualizarSelectProveedores() {
+  const select = document.getElementById('facRucProveedor');
+  select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
+  proveedores.forEach(p => {
+    select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
+  });
+}
 
-  if(!ruc || !nombre) return alert("RUC y Nombre son obligatorios");
-
-  await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, correo, telefono, producto });
-  listarProveedores();
-});
-
-// ---------------------- FACTURAS ----------------------
-const listaFacturas = document.getElementById("listaFacturas");
-
-async function listarFacturas() {
-  listaFacturas.innerHTML = "";
-  const snapshot = await getDocs(collection(db, "facturas"));
-  snapshot.forEach(docSnap => {
-    const f = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${f.rucProveedor}</td>
-      <td>${f.nombreProveedor || ""}</td>
-      <td>${f.tipo}</td>
-      <td>${f.descripcion || ""}</td>
-      <td>${f.fecha}</td>
-      <td>${f.monto}</td>
-      <td><button onclick="eliminarFactura('${docSnap.id}')">❌</button></td>
+// Buscador Proveedores
+document.getElementById('btnBuscarProveedor').addEventListener('click', () => {
+  const busqueda = document.getElementById('buscarProveedor').value.toLowerCase();
+  const filtrados = proveedores.filter(p => 
+    p.ruc.toLowerCase().includes(busqueda) ||
+    p.nombre.toLowerCase().includes(busqueda)
+  );
+  listaProveedores.innerHTML = '';
+  filtrados.forEach((prov, index) => {
+    listaProveedores.innerHTML += `
+      <tr>
+        <td>${prov.ruc}</td>
+        <td>${prov.nombre}</td>
+        <td>${prov.direccion}</td>
+        <td>${prov.correo}</td>
+        <td>${prov.telefono}</td>
+        <td>${prov.producto}</td>
+        <td><button onclick="eliminarProveedor(${index})">❌</button></td>
+      </tr>
     `;
-    listaFacturas.appendChild(tr);
   });
-  actualizarReportes();
-}
-
-window.eliminarFactura = async (id) => {
-  await deleteDoc(doc(db, "facturas", id));
-  listarFacturas();
-};
-
-document.getElementById("btnAgregarFactura").addEventListener("click", async () => {
-  const rucProveedor = document.getElementById("facRucProveedor").value;
-  const tipo = document.getElementById("facTipo").value;
-  const descripcion = document.getElementById("facDescripcion").value;
-  const fecha = document.getElementById("facFecha").value;
-  const monto = document.getElementById("facMonto").value;
-
-  if(!rucProveedor) return alert("Debe seleccionar un proveedor");
-
-  // Obtener nombre del proveedor
-  let nombreProveedor = "";
-  const q = query(collection(db, "proveedores"), where("ruc", "==", rucProveedor));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap => { nombreProveedor = docSnap.data().nombre; });
-
-  await addDoc(collection(db, "facturas"), { rucProveedor, nombreProveedor, tipo, descripcion, fecha, monto });
-  listarFacturas();
 });
 
-// ---------------------- GASTOS ----------------------
-const listaGastos = document.getElementById("listaGastos");
+// =======================================
+// 📑 FACTURAS
+// =======================================
+const listaFacturas = document.getElementById('listaFacturas');
+const btnAgregarFactura = document.getElementById('btnAgregarFactura');
 
-async function listarGastos() {
-  listaGastos.innerHTML = "";
-  const snapshot = await getDocs(collection(db, "gastos"));
-  snapshot.forEach(docSnap => {
-    const g = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${g.nombre}</td>
-      <td>${g.tipo}</td>
-      <td>${g.monto}</td>
-      <td>${g.fecha}</td>
-      <td><button onclick="eliminarGasto('${docSnap.id}')">❌</button></td>
+btnAgregarFactura.addEventListener('click', () => {
+  const proveedor = document.getElementById('facRucProveedor').value;
+  const tipo = document.getElementById('facTipo').value.trim();
+  const descripcion = document.getElementById('facDescripcion').value.trim();
+  const fecha = document.getElementById('facFecha').value;
+  const monto = document.getElementById('facMonto').value.trim();
+
+  if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
+
+  facturas.push({proveedor, tipo, descripcion, fecha, monto});
+  actualizarFacturas();
+  document.getElementById('facRucProveedor').value = '';
+  document.getElementById('facTipo').value = '';
+  document.getElementById('facDescripcion').value = '';
+  document.getElementById('facFecha').value = '';
+  document.getElementById('facMonto').value = '';
+});
+
+function actualizarFacturas() {
+  listaFacturas.innerHTML = '';
+  facturas.forEach((fac, index) => {
+    listaFacturas.innerHTML += `
+      <tr>
+        <td>${fac.proveedor}</td>
+        <td>${fac.tipo}</td>
+        <td>${fac.descripcion}</td>
+        <td>${fac.fecha}</td>
+        <td>${fac.monto}</td>
+        <td><button onclick="eliminarFactura(${index})">❌</button></td>
+      </tr>
     `;
-    listaGastos.appendChild(tr);
   });
-  actualizarReportes();
+  totalFacturas.textContent = facturas.length;
 }
 
-window.eliminarGasto = async (id) => {
-  await deleteDoc(doc(db, "gastos", id));
-  listarGastos();
-};
+function eliminarFactura(index) {
+  if(confirm('¿Eliminar factura?')) {
+    facturas.splice(index,1);
+    actualizarFacturas();
+  }
+}
 
-document.getElementById("btnAgregarGasto").addEventListener("click", async () => {
-  const nombre = document.getElementById("gastoNombre").value;
-  const tipo = document.getElementById("gastoTipo").value;
-  const monto = document.getElementById("gastoMonto").value;
-  const fecha = document.getElementById("gastoFecha").value;
-
-  if(!tipo) return alert("Tipo es obligatorio");
-
-  await addDoc(collection(db, "gastos"), { nombre, tipo, monto, fecha });
-  listarGastos();
-});
-
-// ---------------------- SERVICIOS ----------------------
-const listaServicios = document.getElementById("listaServicios");
-
-async function listarServicios() {
-  listaServicios.innerHTML = "";
-  const snapshot = await getDocs(collection(db, "servicios"));
-  snapshot.forEach(docSnap => {
-    const s = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${s.nombre}</td>
-      <td>${s.descripcion}</td>
-      <td>${s.fecha}</td>
-      <td>${s.precio}</td>
-      <td><button onclick="eliminarServicio('${docSnap.id}')">❌</button></td>
+// Buscador Facturas
+document.getElementById('btnBuscarFactura').addEventListener('click', () => {
+  const busqueda = document.getElementById('buscarFactura').value.toLowerCase();
+  const filtrados = facturas.filter(f => 
+    f.tipo.toLowerCase().includes(busqueda) || f.proveedor.toLowerCase().includes(busqueda)
+  );
+  listaFacturas.innerHTML = '';
+  filtrados.forEach((fac,index) => {
+    listaFacturas.innerHTML += `
+      <tr>
+        <td>${fac.proveedor}</td>
+        <td>${fac.tipo}</td>
+        <td>${fac.descripcion}</td>
+        <td>${fac.fecha}</td>
+        <td>${fac.monto}</td>
+        <td><button onclick="eliminarFactura(${index})">❌</button></td>
+      </tr>
     `;
-    listaServicios.appendChild(tr);
   });
-  actualizarReportes();
-}
-
-window.eliminarServicio = async (id) => {
-  await deleteDoc(doc(db, "servicios", id));
-  listarServicios();
-};
-
-document.getElementById("btnAgregarServicio").addEventListener("click", async () => {
-  const nombre = document.getElementById("servNombre").value;
-  const descripcion = document.getElementById("servDescripcion").value;
-  const fecha = document.getElementById("servFecha").value;
-  const precio = document.getElementById("servPrecio").value;
-
-  if(!nombre || !precio) return alert("Nombre y Precio son obligatorios");
-
-  await addDoc(collection(db, "servicios"), { nombre, descripcion, fecha, precio });
-  listarServicios();
 });
 
-// ---------------------- INICIALIZAR LISTADOS ----------------------
-listarProveedores();
-listarFacturas();
-listarGastos();
-listarServicios();
+// =======================================
+// 💰 GASTOS
+// =======================================
+const listaGastos = document.getElementById('listaGastos');
+const btnAgregarGasto = document.getElementById('btnAgregarGasto');
+
+btnAgregarGasto.addEventListener('click', () => {
+  const nombre = document.getElementById('gastoNombre').value.trim();
+  const tipo = document.getElementById('gastoTipo').value;
+  const monto = document.getElementById('gastoMonto').value.trim();
+  const fecha = document.getElementById('gastoFecha').value;
+
+  if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
+
+  gastos.push({nombre,tipo,monto,fecha});
+  actualizarGastos();
+  document.getElementById('formGasto').reset();
+});
+
+function actualizarGastos() {
+  listaGastos.innerHTML = '';
+  gastos.forEach((g,index) => {
+    listaGastos.innerHTML += `
+      <tr>
+        <td>${g.nombre}</td>
+        <td>${g.tipo}</td>
+        <td>${g.monto}</td>
+        <td>${g.fecha}</td>
+        <td><button onclick="eliminarGasto(${index})">❌</button></td>
+      </tr>
+    `;
+  });
+  totalGastos.textContent = gastos.length;
+}
+
+function eliminarGasto(index) {
+  if(confirm('¿Eliminar gasto?')) {
+    gastos.splice(index,1);
+    actualizarGastos();
+  }
+}
+
+// Buscador Gastos
+document.getElementById('btnBuscarGasto').addEventListener('click', () => {
+  const busqueda = document.getElementById('buscarGasto').value.toLowerCase();
+  const filtrados = gastos.filter(g => 
+    g.nombre.toLowerCase().includes(busqueda) || g.tipo.toLowerCase().includes(busqueda)
+  );
+  listaGastos.innerHTML = '';
+  filtrados.forEach((g,index) => {
+    listaGastos.innerHTML += `
+      <tr>
+        <td>${g.nombre}</td>
+        <td>${g.tipo}</td>
+        <td>${g.monto}</td>
+        <td>${g.fecha}</td>
+        <td><button onclick="eliminarGasto(${index})">❌</button></td>
+      </tr>
+    `;
+  });
+});
+
+// =======================================
+// 🛠 SERVICIOS
+// =======================================
+const listaServicios = document.getElementById('listaServicios');
+const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+
+btnAgregarServicio.addEventListener('click', () => {
+  const nombre = document.getElementById('servNombre').value.trim();
+  const descripcion = document.getElementById('servDescripcion').value.trim();
+  const fecha = document.getElementById('servFecha').value;
+  const precio = document.getElementById('servPrecio').value.trim();
+
+  if(!nombre) return alert('Nombre es obligatorio');
+
+  servicios.push({nombre,descripcion,fecha,precio});
+  actualizarServicios();
+  document.getElementById('servNombre').value = '';
+  document.getElementById('servDescripcion').value = '';
+  document.getElementById('servFecha').value = '';
+  document.getElementById('servPrecio').value = '';
+});
+
+function actualizarServicios() {
+  listaServicios.innerHTML = '';
+  servicios.forEach((s,index) => {
+    listaServicios.innerHTML += `
+      <tr>
+        <td>${s.nombre}</td>
+        <td>${s.descripcion}</td>
+        <td>${s.fecha}</td>
+        <td>${s.precio}</td>
+        <td><button onclick="eliminarServicio(${index})">❌</button></td>
+      </tr>
+    `;
+  });
+  totalServicios.textContent = servicios.length;
+}
+
+function eliminarServicio(index) {
+  if(confirm('¿Eliminar servicio?')) {
+    servicios.splice(index,1);
+    actualizarServicios();
+  }
+}
+
+// Buscador Servicios
+document.getElementById('btnBuscarServicio').addEventListener('click', () => {
+  const busqueda = document.getElementById('buscarServicio').value.toLowerCase();
+  const filtrados = servicios.filter(s => 
+    s.nombre.toLowerCase().includes(busqueda) || s.descripcion.toLowerCase().includes(busqueda)
+  );
+  listaServicios.innerHTML = '';
+  filtrados.forEach((s,index) => {
+    listaServicios.innerHTML += `
+      <tr>
+        <td>${s.nombre}</td>
+        <td>${s.descripcion}</td>
+        <td>${s.fecha}</td>
+        <td>${s.precio}</td>
+        <td><button onclick="eliminarServicio(${index})">❌</button></td>
+      </tr>
+    `;
+  });
+});
+
 
 
 
