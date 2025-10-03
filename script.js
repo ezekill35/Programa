@@ -22,6 +22,7 @@ document.getElementById("btnRegister").addEventListener("click", async () => {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
   mensajeRegister.textContent = "";
+
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     mensajeRegister.textContent = "✅ Registro exitoso. Ahora inicia sesión.";
@@ -39,6 +40,7 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
   mensajeLogin.textContent = "";
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
     mensajeLogin.textContent = "🎉 Sesión iniciada correctamente.";
@@ -49,6 +51,7 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
     mensajeLogin.style.color = "#e74c3c";
   }
 });
+
 
 
 
