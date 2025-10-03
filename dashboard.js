@@ -55,9 +55,12 @@ actualizarReportes();
 
 // ---------------------- PROVEEDORES ----------------------
 const listaProveedores = document.getElementById("listaProveedores");
+const selectProveedores = document.getElementById("facRucProveedor"); // select para facturas
 
 async function listarProveedores() {
   listaProveedores.innerHTML = "";
+  selectProveedores.innerHTML = `<option value="">Seleccione un proveedor</option>`;
+  
   const snapshot = await getDocs(collection(db, "proveedores"));
   snapshot.forEach(docSnap => {
     const p = docSnap.data();
@@ -68,9 +71,13 @@ async function listarProveedores() {
       <td>${p.direccion}</td>
       <td>${p.correo}</td>
       <td>${p.telefono}</td>
+      <td>${p.producto || ""}</td>
       <td><button onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
     `;
     listaProveedores.appendChild(tr);
+
+    // llenar select facturas
+    selectProveedores.innerHTML += `<option value="${p.ruc}">${p.nombre}</option>`;
   });
   actualizarReportes();
 }
@@ -86,10 +93,11 @@ document.getElementById("btnAgregarProveedor").addEventListener("click", async (
   const direccion = document.getElementById("provDireccion").value;
   const correo = document.getElementById("provCorreo").value;
   const telefono = document.getElementById("provTelefono").value;
+  const producto = document.getElementById("provProducto").value;
 
   if(!ruc || !nombre) return alert("RUC y Nombre son obligatorios");
 
-  await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, correo, telefono });
+  await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, correo, telefono, producto });
   listarProveedores();
 });
 
@@ -110,6 +118,7 @@ document.getElementById("btnBuscarProveedor").addEventListener("click", async ()
       <td>${p.direccion}</td>
       <td>${p.correo}</td>
       <td>${p.telefono}</td>
+      <td>${p.producto || ""}</td>
       <td><button onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
     `;
     listaProveedores.appendChild(tr);
@@ -134,8 +143,9 @@ async function listarFacturas() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${f.rucProveedor}</td>
+      <td>${f.nombreProveedor || ""}</td>
       <td>${f.tipo}</td>
-      <td>${f.descripcion}</td>
+      <td>${f.descripcion || ""}</td>
       <td>${f.fecha}</td>
       <td>${f.monto}</td>
       <td><button onclick="eliminarFactura('${docSnap.id}')">Eliminar</button></td>
@@ -157,9 +167,19 @@ document.getElementById("btnAgregarFactura").addEventListener("click", async () 
   const fecha = document.getElementById("facFecha").value;
   const monto = document.getElementById("facMonto").value;
 
-  if(!rucProveedor || !tipo) return alert("RUC y Tipo son obligatorios");
+  if(!rucProveedor) {
+    const agregar = confirm("Proveedor no encontrado. ¿Desea registrarlo?");
+    if(agregar) document.getElementById("menu-proveedores").click();
+    return;
+  }
 
-  await addDoc(collection(db, "facturas"), { rucProveedor, tipo, descripcion, fecha, monto });
+  // buscar nombre del proveedor
+  let nombreProveedor = "";
+  const q = query(collection(db, "proveedores"), where("ruc", "==", rucProveedor));
+  const snapshot = await getDocs(q);
+  snapshot.forEach(docSnap => { nombreProveedor = docSnap.data().nombre; });
+
+  await addDoc(collection(db, "facturas"), { rucProveedor, nombreProveedor, tipo, descripcion, fecha, monto });
   listarFacturas();
 });
 
@@ -176,8 +196,9 @@ document.getElementById("btnBuscarFactura").addEventListener("click", async () =
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${f.rucProveedor}</td>
+      <td>${f.nombreProveedor || ""}</td>
       <td>${f.tipo}</td>
-      <td>${f.descripcion}</td>
+      <td>${f.descripcion || ""}</td>
       <td>${f.fecha}</td>
       <td>${f.monto}</td>
       <td><button onclick="eliminarFactura('${docSnap.id}')">Eliminar</button></td>
