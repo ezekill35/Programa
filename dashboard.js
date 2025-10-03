@@ -1,8 +1,11 @@
 
-import { db } from './firebase.js';
-import { 
-  collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot 
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+// =======================================
+// 🐾 Dashboard JS - Discovery Pets (Firebase)
+// =======================================
+
+import { db, auth } from './firebase.js';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 // ------------------ Variables globales ------------------
 let proveedores = [];
@@ -27,14 +30,15 @@ menuItems.forEach(item => {
     item.classList.add('active');
 
     const sectionId = item.id.replace('menu-', '');
-    document.getElementById(sectionId).classList.add('active');
-
-    // Logout
-    if(sectionId === "logout"){
-      localStorage.removeItem("userLogged");
-      window.location.href = "index.html";
-    }
+    if(sectionId !== "logout") document.getElementById(sectionId).classList.add('active');
   });
+});
+
+// Logout
+document.getElementById('menu-logout').addEventListener('click', async () => {
+  await signOut(auth);
+  localStorage.removeItem('user');
+  window.location.href = 'index.html';
 });
 
 // =================== FIREBASE COLLECTIONS ===================
@@ -55,15 +59,14 @@ btnAgregarProveedor.addEventListener('click', async () => {
   const producto = document.getElementById('provProducto').value.trim();
 
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
-  if(!/^\d+$/.test(ruc)) return alert('RUC solo permite números');
-  if(!/^\d+$/.test(telefono)) return alert('Teléfono solo permite números');
+  if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
 
   await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
   document.getElementById('formProveedor').reset();
 });
 
 // Cargar proveedores en tiempo real
-onSnapshot(proveedoresCol, (snapshot) => {
+onSnapshot(proveedoresCol, snapshot => {
   proveedores = [];
   snapshot.forEach(d => proveedores.push({ id: d.id, ...d.data() }));
   actualizarProveedores();
@@ -71,7 +74,7 @@ onSnapshot(proveedoresCol, (snapshot) => {
 
 function actualizarProveedores() {
   listaProveedores.innerHTML = '';
-  proveedores.forEach(prov => {
+  proveedores.forEach((prov) => {
     listaProveedores.innerHTML += `
       <tr>
         <td>${prov.ruc}</td>
@@ -104,8 +107,7 @@ window.editarProveedor = async (id) => {
   const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
   const producto = prompt("Producto:", prov.producto) || prov.producto;
 
-  if(!/^\d+$/.test(ruc)) return alert('RUC solo permite números');
-  if(!/^\d+$/.test(telefono)) return alert('Teléfono solo permite números');
+  if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
 
   await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
 }
@@ -127,15 +129,13 @@ btnAgregarFactura.addEventListener('click', async () => {
   const tipo = document.getElementById('facTipo').value.trim();
   const descripcion = document.getElementById('facDescripcion').value.trim();
   const fecha = document.getElementById('facFecha').value;
-  let monto = document.getElementById('facMonto').value.trim();
-  const moneda = document.getElementById('facMoneda')?.value || "S/.";
+  const monto = document.getElementById('facMonto').value.trim();
+  const moneda = document.getElementById('facMoneda').value;
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
-  if(isNaN(monto)) return alert('Monto debe ser un número');
+  if(isNaN(monto) || monto <= 0) return alert('Monto debe ser un número válido');
 
-  monto = `${monto} ${moneda}`;
-
-  await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto });
+  await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto, moneda });
   document.getElementById('facRucProveedor').value = '';
   document.getElementById('facTipo').value = '';
   document.getElementById('facDescripcion').value = '';
@@ -143,8 +143,7 @@ btnAgregarFactura.addEventListener('click', async () => {
   document.getElementById('facMonto').value = '';
 });
 
-// Facturas en tiempo real
-onSnapshot(facturasCol, (snapshot) => {
+onSnapshot(facturasCol, snapshot => {
   facturas = [];
   snapshot.forEach(d => facturas.push({ id: d.id, ...d.data() }));
   actualizarFacturas();
@@ -159,7 +158,7 @@ function actualizarFacturas() {
         <td>${fac.tipo}</td>
         <td>${fac.descripcion}</td>
         <td>${fac.fecha}</td>
-        <td>${fac.monto}</td>
+        <td>${fac.moneda}${fac.monto}</td>
         <td>
           <button onclick="editarFactura('${fac.id}')">✏️</button>
           <button onclick="eliminarFacturaFirebase('${fac.id}')">❌</button>
@@ -183,10 +182,11 @@ window.editarFactura = async (id) => {
   const descripcion = prompt("Descripción:", fac.descripcion) || fac.descripcion;
   const fecha = prompt("Fecha:", fac.fecha) || fac.fecha;
   let monto = prompt("Monto:", fac.monto) || fac.monto;
+  const moneda = prompt("Moneda (S/., $, €):", fac.moneda) || fac.moneda;
 
-  if(isNaN(parseFloat(monto))) return alert('Monto debe ser un número');
+  if(isNaN(monto) || monto <= 0) return alert('Monto debe ser un número válido');
 
-  await updateDoc(doc(db,"facturas", id), { proveedor, tipo, descripcion, fecha, monto });
+  await updateDoc(doc(db,"facturas", id), { proveedor, tipo, descripcion, fecha, monto, moneda });
 }
 
 // =================== GASTOS ===================
@@ -200,14 +200,13 @@ btnAgregarGasto.addEventListener('click', async () => {
   const fecha = document.getElementById('gastoFecha').value;
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
-  if(isNaN(monto)) return alert('Monto debe ser un número');
+  if(isNaN(monto) || monto <= 0) return alert('Monto debe ser un número válido');
 
   await addDoc(gastosCol, { nombre, tipo, monto, fecha });
   document.getElementById('formGasto').reset();
 });
 
-// Gastos en tiempo real
-onSnapshot(gastosCol, (snapshot) => {
+onSnapshot(gastosCol, snapshot => {
   gastos = [];
   snapshot.forEach(d => gastos.push({ id: d.id, ...d.data() }));
   actualizarGastos();
@@ -242,10 +241,10 @@ window.editarGasto = async (id) => {
   const g = gastos.find(x => x.id === id);
   const nombre = prompt("Nombre:", g.nombre) || g.nombre;
   const tipo = prompt("Tipo:", g.tipo) || g.tipo;
-  const monto = prompt("Monto:", g.monto) || g.monto;
+  let monto = prompt("Monto:", g.monto) || g.monto;
   const fecha = prompt("Fecha:", g.fecha) || g.fecha;
 
-  if(isNaN(parseFloat(monto))) return alert('Monto debe ser un número');
+  if(isNaN(monto) || monto <= 0) return alert('Monto debe ser un número válido');
 
   await updateDoc(doc(db,"gastos", id), { nombre, tipo, monto, fecha });
 }
@@ -261,7 +260,7 @@ btnAgregarServicio.addEventListener('click', async () => {
   const precio = document.getElementById('servPrecio').value.trim();
 
   if(!nombre) return alert('Nombre es obligatorio');
-  if(isNaN(precio)) return alert('Precio debe ser un número');
+  if(isNaN(precio) || precio <= 0) return alert('Precio debe ser un número válido');
 
   await addDoc(serviciosCol, { nombre, descripcion, fecha, precio });
   document.getElementById('servNombre').value = '';
@@ -270,8 +269,7 @@ btnAgregarServicio.addEventListener('click', async () => {
   document.getElementById('servPrecio').value = '';
 });
 
-// Servicios en tiempo real
-onSnapshot(serviciosCol, (snapshot) => {
+onSnapshot(serviciosCol, snapshot => {
   servicios = [];
   snapshot.forEach(d => servicios.push({ id: d.id, ...d.data() }));
   actualizarServicios();
@@ -307,9 +305,12 @@ window.editarServicio = async (id) => {
   const nombre = prompt("Nombre:", s.nombre) || s.nombre;
   const descripcion = prompt("Descripción:", s.descripcion) || s.descripcion;
   const fecha = prompt("Fecha:", s.fecha) || s.fecha;
-  const precio = prompt("Precio:", s.precio) || s.precio;
+  let precio = prompt("Precio:", s.precio) || s.precio;
 
-  if(isNaN(parseFloat(precio))) return alert('Precio debe ser un número');
+  if(isNaN(precio) || precio <= 0) return alert('Precio debe ser un número válido');
+
+  await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
+}
 
   await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
 }
