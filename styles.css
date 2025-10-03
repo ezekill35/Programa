@@ -143,9 +143,65 @@ table button:hover {
 
 /* ------------------ Tarjetas de Reportes ------------------ */
 .cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
 
+.cards .card {
+  background: #fff;
+  flex: 1 1 200px;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
 
+.cards .card:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
 
+.cards .card h3 {
+  font-size: 2rem;
+  color: #ff1abc;
+  margin-bottom: 8px;
+}
+
+.cards .card p {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #555;
+}
+
+/* ------------------ Responsive ------------------ */
+@media(max-width: 900px) {
+  .sidebar {
+    width: 60px;
+    padding: 10px 0;
+  }
+
+  .sidebar h2 {
+    display: none;
+  }
+
+  .sidebar ul li a {
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .main-content {
+    margin-left: 60px;
+    padding: 20px;
+  }
+  
+  .cards {
+    flex-direction: column;
+  }
+}
 
 
 
