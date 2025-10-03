@@ -127,34 +127,29 @@
         </table>
       </section>
 
-      <!-- ================= SERVICIOS ================= -->
+     <!-- 📌 SERVICIOS -->
 <section id="servicios" class="section">
-  <form id="formServicio">
-    <h3>Gestión de Servicios</h3>
-    <div class="formulario">
-      <input type="text" id="servNombre" placeholder="Nombre del Servicio">
-      <input type="text" id="servDescripcion" placeholder="Descripción">
-      <input type="number" id="servPrecio" placeholder="Precio">
-      <select id="servEstado">
-        <option value="">Estado</option>
-        <option value="Activo">Activo</option>
-        <option value="Inactivo">Inactivo</option>
-      </select>
-      <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
-    </div>
-  </form>
+  <h2>Gestión de Servicios</h2>
+
+  <div class="formulario">
+    <input id="servNombre" placeholder="Nombre">
+    <input id="servDescripcion" placeholder="Descripción">
+    <input id="servFecha" type="date">
+    <input id="servPrecio" placeholder="Precio">
+    <button id="btnAgregarServicio">Agregar Servicio</button>
+  </div>
 
   <table>
     <thead>
       <tr>
         <th>Nombre</th>
         <th>Descripción</th>
+        <th>Fecha</th>
         <th>Precio</th>
-        <th>Estado</th>
         <th>Acción</th>
       </tr>
     </thead>
-    <tbody id="tablaServicios"></tbody>
+    <tbody id="listaServicios"></tbody>
   </table>
 </section>
 
@@ -166,6 +161,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
