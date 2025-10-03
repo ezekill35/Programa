@@ -54,12 +54,12 @@ async function actualizarReportes() {
 actualizarReportes();
 
 // ---------------------- PROVEEDORES ----------------------
-const listaProveedores = document.getElementById("listaProveedores");
+const listaProveedores = document.getElementById("tablaProveedores");
 const selectProveedores = document.getElementById("facRucProveedor"); // select para facturas
 
 async function listarProveedores() {
   listaProveedores.innerHTML = "";
-  selectProveedores.innerHTML = `<option value="">Seleccione un proveedor</option>`;
+  selectProveedores.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
   
   const snapshot = await getDocs(collection(db, "proveedores"));
   snapshot.forEach(docSnap => {
@@ -93,7 +93,7 @@ document.getElementById("btnAgregarProveedor").addEventListener("click", async (
   const direccion = document.getElementById("provDireccion").value;
   const correo = document.getElementById("provCorreo").value;
   const telefono = document.getElementById("provTelefono").value;
-  const producto = document.getElementById("provProducto").value;
+  const producto = document.getElementById("provProducto")?.value || "";
 
   if(!ruc || !nombre) return alert("RUC y Nombre son obligatorios");
 
@@ -211,7 +211,7 @@ document.getElementById("btnBuscarFactura").addEventListener("click", async () =
 listarFacturas();
 
 // ---------------------- GASTOS ----------------------
-const listaGastos = document.getElementById("listaGastos");
+const listaGastos = document.getElementById("tablaGastos");
 
 async function listarGastos() {
   listaGastos.innerHTML = "";
@@ -220,10 +220,10 @@ async function listarGastos() {
     const g = docSnap.data();
     const tr = document.createElement("tr");
     tr.innerHTML = `
+      <td>${g.nombre || ""}</td>
       <td>${g.tipo}</td>
-      <td>${g.descripcion}</td>
-      <td>${g.fecha}</td>
       <td>${g.monto}</td>
+      <td>${g.fecha}</td>
       <td><button onclick="eliminarGasto('${docSnap.id}')">Eliminar</button></td>
     `;
     listaGastos.appendChild(tr);
@@ -237,14 +237,14 @@ window.eliminarGasto = async (id) => {
 };
 
 document.getElementById("btnAgregarGasto").addEventListener("click", async () => {
+  const nombre = document.getElementById("gastoNombre").value;
   const tipo = document.getElementById("gastoTipo").value;
-  const descripcion = document.getElementById("gastoDescripcion").value;
-  const fecha = document.getElementById("gastoFecha").value;
   const monto = document.getElementById("gastoMonto").value;
+  const fecha = document.getElementById("gastoFecha").value;
 
   if(!tipo) return alert("Tipo es obligatorio");
 
-  await addDoc(collection(db, "gastos"), { tipo, descripcion, fecha, monto });
+  await addDoc(collection(db, "gastos"), { nombre, tipo, monto, fecha });
   listarGastos();
 });
 
@@ -285,5 +285,6 @@ document.getElementById("btnAgregarServicio").addEventListener("click", async ()
   await addDoc(collection(db, "servicios"), { nombre, descripcion, fecha, precio });
   listarServicios();
 });
+
 
 
