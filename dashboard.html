@@ -63,36 +63,36 @@
         </table>
       </section>
 
-      <!-- ================= FACTURAS ================= -->
+  <!-- 📌 FACTURAS -->
 <section id="facturas" class="section">
-  <form id="formFactura">
-    <h3>Registrar Factura</h3>
-    <div class="formulario">
-      <input type="text" id="factNum" placeholder="Número de Factura">
-      <input type="date" id="factFecha">
-      <select id="factTipo">
-        <option value="">Seleccione Tipo</option>
-        <option value="Compra">Compra</option>
-        <option value="Venta">Venta</option>
-      </select>
-      <input type="number" id="factMonto" placeholder="Monto">
-      <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
-    </div>
-  </form> 
+  <h2>Gestión de Facturas</h2>
+
+  <div class="formulario">
+    <input id="facRucProveedor" placeholder="RUC Proveedor">
+    <input id="facTipo" placeholder="Tipo de Factura">
+    <input id="facDescripcion" placeholder="Descripción">
+    <input id="facFecha" type="date">
+    <input id="facMonto" placeholder="Monto">
+    <button id="btnAgregarFactura">Agregar Factura</button>
+    <input id="buscarFactura" placeholder="Buscar por tipo">
+    <button id="btnBuscarFactura">Buscar</button>
+  </div>
 
   <table>
     <thead>
       <tr>
-        <th>Número</th>
-        <th>Fecha</th>
+        <th>RUC Proveedor</th>
         <th>Tipo</th>
+        <th>Descripción</th>
+        <th>Fecha</th>
         <th>Monto</th>
         <th>Acción</th>
       </tr>
     </thead>
-    <tbody id="tablaFacturas"></tbody>
+    <tbody id="listaFacturas"></tbody>
   </table>
 </section>
+
 
       <!-- ================= GASTOS ================= -->
       <section id="gastos" class="section">
@@ -166,6 +166,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
