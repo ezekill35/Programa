@@ -1,6 +1,7 @@
 // =======================================
-// 🐾 Dashboard JS - Discovery Pets
+// 🐾 Dashboard JS - Discovery Pets (Firebase)
 // =======================================
+
 import { db, auth } from './firebase.js';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -18,7 +19,7 @@ const totalGastos = document.getElementById('total-gastos');
 const totalServicios = document.getElementById('total-servicios');
 
 // ------------------ Menú lateral ------------------
-const menuItems = document.querySelectorAll('.sidebar ul li a');
+const menuItems = document.querySelectorAll('.sidebar ul li');
 const sections = document.querySelectorAll('.section');
 
 menuItems.forEach(item => {
@@ -36,7 +37,7 @@ menuItems.forEach(item => {
   });
 });
 
-// =================== FIREBASE COLLECTIONS ===================
+// ------------------ FIREBASE COLLECTIONS ------------------
 const proveedoresCol = collection(db, "proveedores");
 const facturasCol = collection(db, "facturas");
 const gastosCol = collection(db, "gastos");
@@ -67,7 +68,6 @@ onSnapshot(proveedoresCol, snapshot => {
   actualizarProveedores();
 });
 
-// Actualizar proveedores
 function actualizarProveedores() {
   listaProveedores.innerHTML = '';
   proveedores.forEach(p => {
@@ -89,33 +89,30 @@ function actualizarProveedores() {
   actualizarSelectProveedores();
 }
 
-// Editar proveedor
 window.editarProveedor = async (id) => {
-  const p = proveedores.find(x=>x.id===id);
-  const ruc = prompt("RUC:", p.ruc) || p.ruc;
-  const nombre = prompt("Nombre:", p.nombre) || p.nombre;
-  const direccion = prompt("Dirección:", p.direccion) || p.direccion;
-  const telefono = prompt("Teléfono:", p.telefono) || p.telefono;
-  const producto = prompt("Producto:", p.producto) || p.producto;
+  const prov = proveedores.find(p => p.id === id);
+  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
+  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
+  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
+  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
+  const producto = prompt("Producto:", prov.producto) || prov.producto;
+
   if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
-  await updateDoc(doc(db,"proveedores",id), { ruc, nombre, direccion, telefono, producto });
+
+  await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
 }
 
-// Eliminar proveedor
-async function eliminarProveedorFirebase(id){
-  if(confirm('¿Eliminar proveedor?')) await deleteDoc(doc(db,"proveedores",id));
+async function eliminarProveedorFirebase(id) {
+  if(confirm('¿Eliminar proveedor?')){
+    await deleteDoc(doc(db,"proveedores", id));
+  }
 }
-window.eliminarProveedorFirebase = eliminarProveedorFirebase;
 
-// Actualizar select y datalist proveedores
-function actualizarSelectProveedores(){
+function actualizarSelectProveedores() {
   const select = document.getElementById('facRucProveedor');
-  const datalist = document.getElementById('proveedoresDatalist');
-  select.value = '';
-  select.innerHTML = '';
-  datalist.innerHTML = '';
-  proveedores.forEach(p=>{
-    datalist.innerHTML += `<option value="${p.nombre}"></option>`;
+  select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
+  proveedores.forEach(p => {
+    select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
   });
 }
 
@@ -132,7 +129,7 @@ btnAgregarFactura.addEventListener('click', async () => {
   const moneda = document.getElementById('facMoneda').value;
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
-  if(isNaN(monto)) return alert('Monto debe ser número');
+  if(isNaN(monto)) return alert('Monto debe ser un número');
 
   await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto, moneda });
 
@@ -142,24 +139,23 @@ btnAgregarFactura.addEventListener('click', async () => {
   document.getElementById('facMonto').value='';
 });
 
-// Tiempo real facturas
 onSnapshot(facturasCol, snapshot => {
   facturas = [];
   snapshot.forEach(doc => facturas.push({ id: doc.id, ...doc.data() }));
   actualizarFacturas();
 });
 
-function actualizarFacturas(){
+function actualizarFacturas() {
   listaFacturas.innerHTML = '';
-  facturas.forEach(f=>{
+  facturas.forEach(f => {
     listaFacturas.innerHTML += `
       <tr>
         <td>${f.proveedor}</td>
-        <td>${f.moneda}</td>
         <td>${f.tipo}</td>
         <td>${f.descripcion}</td>
         <td>${f.fecha}</td>
-        <td>${f.monto}</td>
+        <td>${f.monto.toFixed(2)}</td>
+        <td>${f.moneda}</td>
         <td>
           <button class="btn btn-sm btn-warning" onclick="editarFactura('${f.id}')">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarFacturaFirebase('${f.id}')">❌</button>
@@ -170,55 +166,55 @@ function actualizarFacturas(){
   totalFacturas.textContent = facturas.length;
 }
 
-// Editar factura
-window.editarFactura = async id=>{
-  const f = facturas.find(x=>x.id===id);
-  const proveedor = prompt("Proveedor:", f.proveedor)||f.proveedor;
-  const tipo = prompt("Tipo:", f.tipo)||f.tipo;
-  const descripcion = prompt("Descripción:", f.descripcion)||f.descripcion;
-  const fecha = prompt("Fecha:", f.fecha)||f.fecha;
-  const monto = parseFloat(prompt("Monto:", f.monto)||f.monto);
-  const moneda = prompt("Moneda (S/, $, €):", f.moneda)||f.moneda;
-  if(isNaN(monto)) return alert('Monto debe ser número');
+window.editarFactura = async (id) => {
+  const f = facturas.find(x => x.id===id);
+  const proveedor = prompt("Proveedor:", f.proveedor) || f.proveedor;
+  const tipo = prompt("Tipo:", f.tipo) || f.tipo;
+  const descripcion = prompt("Descripción:", f.descripcion) || f.descripcion;
+  const fecha = prompt("Fecha:", f.fecha) || f.fecha;
+  const monto = parseFloat(prompt("Monto:", f.monto) || f.monto);
+  const moneda = prompt("Moneda:", f.moneda) || f.moneda;
+
+  if(isNaN(monto)) return alert('Monto debe ser un número');
+
   await updateDoc(doc(db,"facturas",id), { proveedor, tipo, descripcion, fecha, monto, moneda });
 }
 
-// Eliminar factura
 async function eliminarFacturaFirebase(id){
   if(confirm('¿Eliminar factura?')) await deleteDoc(doc(db,"facturas",id));
 }
-window.eliminarFacturaFirebase = eliminarFacturaFirebase;
 
 // =================== GASTOS ===================
 const listaGastos = document.getElementById('listaGastos');
 const btnAgregarGasto = document.getElementById('btnAgregarGasto');
 
-btnAgregarGasto.addEventListener('click', async ()=>{
+btnAgregarGasto.addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
   const tipo = document.getElementById('gastoTipo').value;
   const monto = parseFloat(document.getElementById('gastoMonto').value);
   const fecha = document.getElementById('gastoFecha').value;
+
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
   if(isNaN(monto)) return alert('Monto debe ser número');
+
   await addDoc(gastosCol, { nombre, tipo, monto, fecha });
   document.getElementById('formGasto').reset();
 });
 
-// Tiempo real gastos
-onSnapshot(gastosCol, snapshot=>{
+onSnapshot(gastosCol, snapshot => {
   gastos = [];
-  snapshot.forEach(doc=>gastos.push({id:doc.id,...doc.data()}));
+  snapshot.forEach(doc => gastos.push({ id: doc.id, ...doc.data() }));
   actualizarGastos();
 });
 
 function actualizarGastos(){
   listaGastos.innerHTML='';
-  gastos.forEach(g=>{
-    listaGastos.innerHTML += `
+  gastos.forEach(g => {
+    listaGastos.innerHTML+=`
       <tr>
         <td>${g.nombre}</td>
         <td>${g.tipo}</td>
-        <td>${g.monto}</td>
+        <td>${g.monto.toFixed(2)}</td>
         <td>${g.fecha}</td>
         <td>
           <button class="btn btn-sm btn-warning" onclick="editarGasto('${g.id}')">✏️</button>
@@ -230,51 +226,52 @@ function actualizarGastos(){
   totalGastos.textContent = gastos.length;
 }
 
-window.editarGasto = async id=>{
-  const g = gastos.find(x=>x.id===id);
+window.editarGasto = async id => {
+  const g = gastos.find(x => x.id===id);
   const nombre = prompt("Nombre:", g.nombre)||g.nombre;
   const tipo = prompt("Tipo:", g.tipo)||g.tipo;
   const monto = parseFloat(prompt("Monto:", g.monto)||g.monto);
   const fecha = prompt("Fecha:", g.fecha)||g.fecha;
   if(isNaN(monto)) return alert('Monto debe ser número');
-  await updateDoc(doc(db,"gastos",id), { nombre, tipo, monto, fecha });
+  await updateDoc(doc(db,"gastos",id), { nombre,tipo,monto,fecha });
 }
 
 async function eliminarGastoFirebase(id){
   if(confirm('¿Eliminar gasto?')) await deleteDoc(doc(db,"gastos",id));
 }
-window.eliminarGastoFirebase = eliminarGastoFirebase;
 
 // =================== SERVICIOS ===================
 const listaServicios = document.getElementById('listaServicios');
 const btnAgregarServicio = document.getElementById('btnAgregarServicio');
 
-btnAgregarServicio.addEventListener('click', async ()=>{
+btnAgregarServicio.addEventListener('click', async () => {
   const nombre = document.getElementById('servNombre').value.trim();
   const descripcion = document.getElementById('servDescripcion').value.trim();
   const fecha = document.getElementById('servFecha').value;
   const precio = parseFloat(document.getElementById('servPrecio').value);
+
   if(!nombre) return alert('Nombre es obligatorio');
   if(isNaN(precio)) return alert('Precio debe ser número');
+
   await addDoc(serviciosCol, { nombre, descripcion, fecha, precio });
+  document.getElementById('formServicio').reset();
 });
 
-// Tiempo real servicios
-onSnapshot(serviciosCol, snapshot=>{
+onSnapshot(serviciosCol, snapshot => {
   servicios = [];
-  snapshot.forEach(doc=>servicios.push({id:doc.id,...doc.data()}));
+  snapshot.forEach(doc => servicios.push({ id: doc.id, ...doc.data() }));
   actualizarServicios();
 });
 
 function actualizarServicios(){
   listaServicios.innerHTML='';
   servicios.forEach(s=>{
-    listaServicios.innerHTML += `
+    listaServicios.innerHTML+=`
       <tr>
         <td>${s.nombre}</td>
         <td>${s.descripcion}</td>
         <td>${s.fecha}</td>
-        <td>${s.precio}</td>
+        <td>${s.precio.toFixed(2)}</td>
         <td>
           <button class="btn btn-sm btn-warning" onclick="editarServicio('${s.id}')">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarServicioFirebase('${s.id}')">❌</button>
@@ -292,19 +289,18 @@ window.editarServicio = async id=>{
   const fecha = prompt("Fecha:", s.fecha)||s.fecha;
   const precio = parseFloat(prompt("Precio:", s.precio)||s.precio);
   if(isNaN(precio)) return alert('Precio debe ser número');
-  await updateDoc(doc(db,"servicios",id), { nombre, descripcion, fecha, precio });
+  await updateDoc(doc(db,"servicios",id), { nombre,descripcion,fecha,precio });
 }
 
 async function eliminarServicioFirebase(id){
   if(confirm('¿Eliminar servicio?')) await deleteDoc(doc(db,"servicios",id));
 }
-window.eliminarServicioFirebase = eliminarServicioFirebase;
 
 // =================== CERRAR SESIÓN ===================
 async function cerrarSesion(){
-  if(confirm("¿Cerrar sesión?")){
+  if(confirm('Cerrar sesión?')){
     await signOut(auth);
-    window.location.href = "index.html";
+    window.location.href = 'index.html';
   }
 }
 
