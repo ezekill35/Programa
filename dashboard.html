@@ -40,11 +40,11 @@
         <form id="formProveedor">
           <h3>🏪 Registrar Proveedor</h3>
           <div class="formulario">
-            <input type="text" id="provRuc" placeholder="RUC">
+            <input type="text" id="provRuc" placeholder="RUC" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             <input type="text" id="provNombre" placeholder="Nombre">
             <input type="text" id="provDireccion" placeholder="Dirección">
-            <input type="text" id="provTelefono" placeholder="Teléfono">
-            <input type="text" id="provProducto" placeholder="Producto">
+            <input type="text" id="provTelefono" placeholder="Teléfono" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            <input type="text" id="provProducto" placeholder="Producto que vende">
             <button type="button" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
           </div>
         </form>
@@ -72,6 +72,7 @@
       <!-- ================= FACTURAS ================= -->
       <section id="facturas" class="section">
         <h2>📑 Gestión de Facturas</h2>
+
         <div class="formulario">
           <select id="facRucProveedor">
             <option value="">-- Selecciona un Proveedor --</option>
@@ -79,7 +80,11 @@
           <input id="facTipo" placeholder="Tipo de Factura">
           <input id="facDescripcion" placeholder="Descripción">
           <input id="facFecha" type="date">
-          <input id="facMonto" placeholder="Monto">
+          <input id="facMonto" placeholder="Monto" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+          <select id="facMoneda">
+            <option value="PEN">S/</option>
+            <option value="USD">$</option>
+          </select>
           <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
         </div>
 
@@ -96,6 +101,7 @@
               <th>Descripción</th>
               <th>Fecha</th>
               <th>Monto</th>
+              <th>Moneda</th>
               <th>Acción</th>
             </tr>
           </thead>
@@ -144,11 +150,12 @@
       <!-- ================= SERVICIOS ================= -->
       <section id="servicios" class="section">
         <h2>🛠 Gestión de Servicios</h2>
+
         <div class="formulario">
           <input id="servNombre" placeholder="Nombre">
           <input id="servDescripcion" placeholder="Descripción">
           <input id="servFecha" type="date">
-          <input id="servPrecio" placeholder="Precio">
+          <input id="servPrecio" placeholder="Precio" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
           <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
         </div>
 
@@ -171,14 +178,15 @@
         </table>
       </section>
 
-    </div><!-- cierre .content -->
-  </div><!-- cierre .dashboard-container -->
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
