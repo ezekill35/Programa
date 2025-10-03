@@ -71,23 +71,40 @@ body {
 }
 
 /* ------------------ Formularios ------------------ */
+.formulario-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+  transition: transform 0.2s ease;
+}
+
+.formulario-box:hover {
+  transform: translateY(-3px);
+}
+
+.formulario-box h3 {
+  margin-bottom: 20px;
+  color: #ff1abc;
+  font-size: 1.4rem;
+  text-align: center;
+  border-bottom: 2px solid #ff1abc33;
+  padding-bottom: 8px;
+}
+
 .formulario {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  margin-bottom: 20px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .formulario input, 
 .formulario select {
-  flex: 1 1 200px;
-  padding: 12px 14px;
+  flex: 1 1 220px;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   font-size: 14px;
   transition: all 0.3s ease;
 }
@@ -95,29 +112,27 @@ body {
 .formulario input:focus, 
 .formulario select:focus {
   border-color: #ff1abc;
-  box-shadow: 0 0 6px rgba(255, 26, 188, 0.3);
+  box-shadow: 0 0 6px rgba(255, 26, 188, 0.4);
   outline: none;
 }
 
 .formulario button {
   flex: 1 1 100%;
-  padding: 12px;
-  background: #ff1abc;
+  background: linear-gradient(45deg, #ff1abc, #ff66b2);
   color: #fff;
+  padding: 12px;
   border: none;
   border-radius: 8px;
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: 0.3s;
 }
 
 .formulario button:hover {
-  background: #ff66b2;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(255, 26, 188, 0.3);
+  background: linear-gradient(45deg, #ff66b2, #ff1abc);
+  transform: scale(1.03);
 }
-
 /* ------------------ Tablas ------------------ */
 table {
   width: 100%;
@@ -209,6 +224,7 @@ table button:hover {
     gap: 10px;
   }
 }
+
 
 
 
