@@ -63,9 +63,11 @@ body {
 }
 
 /* ------------------ Titulos de sección ------------------ */
-.section h3 {
+.section h3, 
+.section h2 {
   margin-bottom: 20px;
   color: #ff1abc;
+  font-weight: bold;
 }
 
 /* ------------------ Formularios ------------------ */
@@ -74,29 +76,46 @@ body {
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
-.formulario input, .formulario select, .formulario button {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.formulario input, 
+.formulario select {
+  flex: 1 1 200px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   font-size: 14px;
+  transition: all 0.3s ease;
 }
 
-.formulario input, .formulario select {
-  flex: 1 1 150px;
+.formulario input:focus, 
+.formulario select:focus {
+  border-color: #ff1abc;
+  box-shadow: 0 0 6px rgba(255, 26, 188, 0.3);
+  outline: none;
 }
 
 .formulario button {
+  flex: 1 1 100%;
+  padding: 12px;
   background: #ff1abc;
   color: #fff;
   border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s;
 }
 
 .formulario button:hover {
   background: #ff66b2;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(255, 26, 188, 0.3);
 }
 
 /* ------------------ Tablas ------------------ */
@@ -189,7 +208,8 @@ table button:hover {
   .formulario {
     gap: 10px;
   }
-} 
+}
+
 
 
 
