@@ -22,7 +22,8 @@
 
     <!-- CONTENIDO -->
     <div class="content">
-      <!-- REPORTES -->
+      
+      <!-- ================= REPORTES ================= -->
       <section id="reportes" class="section active">
         <h2>📊 Reportes</h2>
         <div class="cards">
@@ -33,134 +34,140 @@
         </div>
       </section>
 
-     <!-- PROVEEDORES --> 
-    <section id="proveedores" class="section">
-  <form id="formProveedor">
-    <h3>Registrar Proveedor</h3>
-    <div class="formulario">
-      <input type="text" id="provRuc" placeholder="RUC">
-      <input type="text" id="provNombre" placeholder="Nombre">
-      <input type="text" id="provDireccion" placeholder="Dirección">
-      <input type="email" id="provCorreo" placeholder="Correo">
-      <input type="text" id="provTelefono" placeholder="Teléfono">
-      <button type="button" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
-    </div>
-  </div>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>RUC</th>
-        <th>Nombre</th>
-        <th>Dirección</th>
-        <th>Correo</th>
-        <th>Teléfono</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody id="tablaProveedores"></tbody>
-  </table>
-</div>
+      <!-- ================= PROVEEDORES ================= -->
+      <section id="proveedores" class="section">
+        <form id="formProveedor">
+          <h3>Registrar Proveedor</h3>
+          <div class="formulario">
+            <input type="text" id="provRuc" placeholder="RUC">
+            <input type="text" id="provNombre" placeholder="Nombre">
+            <input type="text" id="provDireccion" placeholder="Dirección">
+            <input type="email" id="provCorreo" placeholder="Correo">
+            <input type="text" id="provTelefono" placeholder="Teléfono">
+            <button type="button" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
+          </div>
+        </form>
 
-<!-- ================= FACTURAS ================= -->
-<div id="factura" class="section">
-  <form id="formFactura">
-    <h3>Registrar Factura</h3>
-    <div class="formulario">
-      <input type="text" id="factNum" placeholder="Número de Factura">
-      <input type="date" id="factFecha">
-      <select id="factTipo">
-        <option value="">Seleccione Tipo</option>
-        <option value="Compra">Compra</option>
-        <option value="Venta">Venta</option>
-      </select>
-      <input type="number" id="factMonto" placeholder="Monto">
-      <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
-    </div>
-  </div>
+        <table>
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
+      </section>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Número</th>
-        <th>Fecha</th>
-        <th>Tipo</th>
-        <th>Monto</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody id="tablaFacturas"></tbody>
-  </table>
-</div>
+      <!-- ================= FACTURAS ================= -->
+      <section id="factura" class="section">
+        <form id="formFactura">
+          <h3>Registrar Factura</h3>
+          <div class="formulario">
+            <input type="text" id="factNum" placeholder="Número de Factura">
+            <input type="date" id="factFecha">
+            <select id="factTipo">
+              <option value="">Seleccione Tipo</option>
+              <option value="Compra">Compra</option>
+              <option value="Venta">Venta</option>
+            </select>
+            <input type="number" id="factMonto" placeholder="Monto">
+            <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
+          </div>
+        </form>
 
-<!-- ================= GASTOS ================= -->
-<div id="gastos" class="section">
-  <form id="formGasto">
-    <h3>Registrar Gasto</h3>
-    <div class="formulario">
-      <input type="text" id="gastoNombre" placeholder="Nombre del Gasto">
-      <select id="gastoTipo">
-        <option value="">Tipo de Gasto</option>
-        <option value="Servicios Básicos">Servicios Básicos</option>
-        <option value="Mantenimiento">Mantenimiento</option>
-        <option value="Publicidad">Publicidad</option>
-        <option value="Otros">Otros</option>
-      </select>
-      <input type="number" id="gastoMonto" placeholder="Monto">
-      <input type="date" id="gastoFecha">
-      <button type="button" id="btnAgregarGasto">➕ Registrar Gasto</button>
-    </div>
-  </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
+        </table>
+      </section>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Tipo</th>
-        <th>Monto</th>
-        <th>Fecha</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody id="tablaGastos"></tbody>
-  </table>
-</div>
+      <!-- ================= GASTOS ================= -->
+      <section id="gastos" class="section">
+        <form id="formGasto">
+          <h3>Registrar Gasto</h3>
+          <div class="formulario">
+            <input type="text" id="gastoNombre" placeholder="Nombre del Gasto">
+            <select id="gastoTipo">
+              <option value="">Tipo de Gasto</option>
+              <option value="Servicios Básicos">Servicios Básicos</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+              <option value="Publicidad">Publicidad</option>
+              <option value="Otros">Otros</option>
+            </select>
+            <input type="number" id="gastoMonto" placeholder="Monto">
+            <input type="date" id="gastoFecha">
+            <button type="button" id="btnAgregarGasto">➕ Registrar Gasto</button>
+          </div>
+        </form>
 
-<!-- ================= SERVICIOS ================= -->
-<div id="servicio" class="section">
- <form id="formServicio">
-    <h3>Gestión de Servicios</h3>
-    <div class="formulario">
-      <input type="text" id="servNombre" placeholder="Nombre del Servicio">
-      <input type="text" id="servDescripcion" placeholder="Descripción">
-      <input type="number" id="servPrecio" placeholder="Precio">
-      <select id="servEstado">
-        <option value="">Estado</option>
-        <option value="Activo">Activo</option>
-        <option value="Inactivo">Inactivo</option>
-      </select>
-      <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
-    </div>
-  </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaGastos"></tbody>
+        </table>
+      </section>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Precio</th>
-        <th>Estado</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody id="tablaServicios"></tbody>
-  </table>
-</div>
+      <!-- ================= SERVICIOS ================= -->
+      <section id="servicio" class="section">
+        <form id="formServicio">
+          <h3>Gestión de Servicios</h3>
+          <div class="formulario">
+            <input type="text" id="servNombre" placeholder="Nombre del Servicio">
+            <input type="text" id="servDescripcion" placeholder="Descripción">
+            <input type="number" id="servPrecio" placeholder="Precio">
+            <select id="servEstado">
+              <option value="">Estado</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+            <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
+          </div>
+        </form>
 
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaServicios"></tbody>
+        </table>
+      </section>
+
+    </div><!-- cierre .content -->
+  </div><!-- cierre .dashboard-container -->
+
+  <!-- Scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
-</html> 
+</html>
+
+
 
 
 
