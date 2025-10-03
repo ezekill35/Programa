@@ -3,193 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Discovery Pets</title>
+  <title>🐾 Discovery Pets Dashboard</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Iconos -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <!-- Sidebar -->
-  <div class="sidebar shadow-lg p-3 mb-5 bg-body rounded">
-    <h2 class="text-center">🐾 Discovery Pets</h2>
-    <ul class="list-unstyled">
-      <li id="menu-reportes" class="active">📊 Reportes</li>
-      <li id="menu-proveedores">🏪 Proveedores</li>
-      <li id="menu-facturas">📑 Facturas</li>
-      <li id="menu-gastos">💰 Gastos</li>
-      <li id="menu-servicios">🛠 Servicios</li>
-      <li id="menu-logout">🚪 Cerrar Sesión</li>
+  <div class="sidebar d-flex flex-column">
+    <h2>🐾 Discovery Pets</h2>
+    <ul class="nav flex-column">
+      <li class="nav-item" id="menu-reportes">📊 Reportes</li>
+      <li class="nav-item" id="menu-proveedores">🏪 Proveedores</li>
+      <li class="nav-item" id="menu-facturas">📑 Facturas</li>
+      <li class="nav-item" id="menu-gastos">💰 Gastos</li>
+      <li class="nav-item" id="menu-servicios">🛠 Servicios</li>
+      <li class="nav-item" id="menu-logout">🚪 Cerrar Sesión</li>
     </ul>
   </div>
 
-  <!-- Contenido -->
-  <div class="section active" id="reportes">
-    <h2>📊 Reportes</h2>
-    <div class="row g-3">
-      <div class="col-md-3">
-        <div class="card shadow-sm text-center p-3">
+  <!-- Contenido principal -->
+  <div class="section-container">
+
+    <!-- Reportes -->
+    <div class="section active" id="reportes">
+      <h2>📊 Reportes</h2>
+      <div class="cards row">
+        <div class="card col-md-3">
           <h3 id="total-proveedores">0</h3>
           <p>Proveedores</p>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card shadow-sm text-center p-3">
+        <div class="card col-md-3">
           <h3 id="total-facturas">0</h3>
           <p>Facturas</p>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card shadow-sm text-center p-3">
+        <div class="card col-md-3">
           <h3 id="total-gastos">0</h3>
           <p>Gastos</p>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card shadow-sm text-center p-3">
+        <div class="card col-md-3">
           <h3 id="total-servicios">0</h3>
           <p>Servicios</p>
         </div>
       </div>
     </div>
+
+    <!-- Proveedores -->
+    <div class="section" id="proveedores">
+      <h2>🏪 Proveedores</h2>
+      <form id="formProveedor" class="mb-3 p-3 rounded-3 shadow bg-light">
+        <h3>Agregar Proveedor</h3>
+        <div class="row g-3">
+          <div class="col-md-2"><input type="text" id="provRuc" placeholder="RUC" class="form-control"></div>
+          <div class="col-md-3"><input type="text" id="provNombre" placeholder="Nombre" class="form-control"></div>
+          <div class="col-md-3"><input type="text" id="provDireccion" placeholder="Dirección" class="form-control"></div>
+          <div class="col-md-2"><input type="text" id="provTelefono" placeholder="Teléfono" class="form-control"></div>
+          <div class="col-md-2"><input type="text" id="provProducto" placeholder="Producto" class="form-control"></div>
+        </div>
+        <button type="button" id="btnAgregarProveedor" class="btn btn-primary mt-3">Agregar</button>
+      </form>
+      <table class="table table-hover rounded shadow">
+        <thead class="table-primary">
+          <tr>
+            <th>RUC</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Producto</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="listaProveedores"></tbody>
+      </table>
+    </div>
+
+    <!-- Facturas -->
+    <div class="section" id="facturas">
+      <h2>📑 Facturas</h2>
+      <form id="formFactura" class="mb-3 p-3 rounded-3 shadow bg-light">
+        <h3>Agregar Factura</h3>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <select id="facRucProveedor" class="form-select">
+              <option value="">-- Selecciona Proveedor --</option>
+            </select>
+          </div>
+          <div class="col-md-2"><input type="text" id="facTipo" placeholder="Tipo" class="form-control"></div>
+          <div class="col-md-3"><input type="text" id="facDescripcion" placeholder="Descripción" class="form-control"></div>
+          <div class="col-md-2"><input type="date" id="facFecha" class="form-control"></div>
+          <div class="col-md-1"><input type="number" step="0.01" id="facMonto" placeholder="Monto" class="form-control"></div>
+          <div class="col-md-1">
+            <select id="facMoneda" class="form-select">
+              <option value="S/">S/</option>
+              <option value="$">$</option>
+              <option value="€">€</option>
+            </select>
+          </div>
+        </div>
+        <button type="button" id="btnAgregarFactura" class="btn btn-primary mt-3">Agregar</button>
+      </form>
+      <table class="table table-hover rounded shadow">
+        <thead class="table-primary">
+          <tr>
+            <th>Proveedor</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="listaFacturas"></tbody>
+      </table>
+    </div>
+
+    <!-- Gastos -->
+    <div class="section" id="gastos">
+      <h2>💰 Gastos</h2>
+      <form id="formGasto" class="mb-3 p-3 rounded-3 shadow bg-light">
+        <h3>Agregar Gasto</h3>
+        <div class="row g-3">
+          <div class="col-md-4"><input type="text" id="gastoNombre" placeholder="Nombre" class="form-control"></div>
+          <div class="col-md-4">
+            <select id="gastoTipo" class="form-select">
+              <option value="">-- Selecciona Tipo --</option>
+              <option value="Alquiler">Alquiler</option>
+              <option value="Servicios">Servicios</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          <div class="col-md-2"><input type="number" step="0.01" id="gastoMonto" placeholder="Monto" class="form-control"></div>
+          <div class="col-md-2"><input type="date" id="gastoFecha" class="form-control"></div>
+        </div>
+        <button type="button" id="btnAgregarGasto" class="btn btn-primary mt-3">Agregar</button>
+      </form>
+      <table class="table table-hover rounded shadow">
+        <thead class="table-primary">
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="listaGastos"></tbody>
+      </table>
+    </div>
+
+    <!-- Servicios -->
+    <div class="section" id="servicios">
+      <h2>🛠 Servicios</h2>
+      <p>Aquí puedes agregar la gestión de servicios...</p>
+    </div>
+
   </div>
 
-  <!-- Proveedores -->
-  <div class="section" id="proveedores">
-    <h2>🏪 Proveedores</h2>
-    <form id="formProveedor" class="mb-4 p-3 shadow-sm bg-white rounded">
-      <div class="row g-3">
-        <div class="col-md-2">
-          <input type="text" id="provRuc" class="form-control" placeholder="RUC">
-        </div>
-        <div class="col-md-3">
-          <input type="text" id="provNombre" class="form-control" placeholder="Nombre">
-        </div>
-        <div class="col-md-3">
-          <input type="text" id="provDireccion" class="form-control" placeholder="Dirección">
-        </div>
-        <div class="col-md-2">
-          <input type="text" id="provTelefono" class="form-control" placeholder="Teléfono">
-        </div>
-        <div class="col-md-2">
-          <input type="text" id="provProducto" class="form-control" placeholder="Producto">
-        </div>
-      </div>
-      <button type="button" id="btnAgregarProveedor" class="btn btn-primary mt-3">Agregar Proveedor</button>
-    </form>
-    <table class="table table-hover shadow-sm rounded">
-      <thead class="table-primary">
-        <tr>
-          <th>RUC</th>
-          <th>Nombre</th>
-          <th>Dirección</th>
-          <th>Teléfono</th>
-          <th>Producto</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody id="listaProveedores"></tbody>
-    </table>
-  </div>
-
-  <!-- Facturas -->
-  <div class="section" id="facturas">
-    <h2>📑 Facturas</h2>
-    <form id="formFactura" class="mb-4 p-3 shadow-sm bg-white rounded">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <select id="facRucProveedor" class="form-select">
-            <option value="">-- Selecciona un Proveedor --</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <input type="text" id="facTipo" class="form-control" placeholder="Tipo">
-        </div>
-        <div class="col-md-3">
-          <input type="text" id="facDescripcion" class="form-control" placeholder="Descripción">
-        </div>
-        <div class="col-md-3">
-          <input type="date" id="facFecha" class="form-control">
-        </div>
-        <div class="col-md-2 mt-3">
-          <input type="number" id="facMonto" class="form-control" placeholder="Monto" step="0.01">
-        </div>
-        <div class="col-md-2 mt-3">
-          <select id="facMoneda" class="form-select">
-            <option value="S/">S/</option>
-            <option value="$">$</option>
-            <option value="€">€</option>
-          </select>
-        </div>
-      </div>
-      <button type="button" id="btnAgregarFactura" class="btn btn-primary mt-3">Agregar Factura</button>
-    </form>
-    <table class="table table-hover shadow-sm rounded">
-      <thead class="table-primary">
-        <tr>
-          <th>Proveedor</th>
-          <th>Tipo</th>
-          <th>Descripción</th>
-          <th>Fecha</th>
-          <th>Monto</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody id="listaFacturas"></tbody>
-    </table>
-  </div>
-
-  <!-- Gastos -->
-  <div class="section" id="gastos">
-    <h2>💰 Gastos</h2>
-    <form id="formGasto" class="mb-4 p-3 shadow-sm bg-white rounded">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <input type="text" id="gastoNombre" class="form-control" placeholder="Nombre">
-        </div>
-        <div class="col-md-4">
-          <input type="text" id="gastoTipo" class="form-control" placeholder="Tipo">
-        </div>
-        <div class="col-md-2">
-          <input type="number" id="gastoMonto" class="form-control" placeholder="Monto" step="0.01">
-        </div>
-        <div class="col-md-2">
-          <input type="date" id="gastoFecha" class="form-control">
-        </div>
-      </div>
-      <button type="button" id="btnAgregarGasto" class="btn btn-primary mt-3">Agregar Gasto</button>
-    </form>
-    <table class="table table-hover shadow-sm rounded">
-      <thead class="table-primary">
-        <tr>
-          <th>Nombre</th>
-          <th>Tipo</th>
-          <th>Monto</th>
-          <th>Fecha</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody id="listaGastos"></tbody>
-    </table>
-  </div>
-
-  <!-- Servicios -->
-  <div class="section" id="servicios">
-    <h2>🛠 Servicios</h2>
-    <p>Próximamente...</p>
-  </div>
-
-  <!-- Scripts -->
-  <script type="module" src="dashboard.js"></script>
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Firebase -->
+  <script type="module" src="firebase.js"></script>
+  <!-- Dashboard JS -->
+  <script type="module" src="dashboard.js"></script>
+
 </body>
 </html>
-
-
-
 
 
 
