@@ -185,11 +185,129 @@ window.editarFactura = async (id) => {
 }
 
 // ===================== GASTOS =====================
-// ... Igual que antes (solo números en monto)
+const listaGastos = document.getElementById('listaGastos');
+const btnAgregarGasto = document.getElementById('btnAgregarGasto');
 
+btnAgregarGasto.addEventListener('click', async () => {
+  const nombre = document.getElementById('gastoNombre').value.trim();
+  const tipo = document.getElementById('gastoTipo').value;
+  const monto = document.getElementById('gastoMonto').value.trim();
+  const fecha = document.getElementById('gastoFecha').value;
+
+  if(!nombre || !tipo || !monto) return alert('Nombre, Tipo y Monto son obligatorios');
+
+  await addDoc(gastosCol, { nombre, tipo, monto, fecha });
+  cargarGastos();
+  document.getElementById('formGasto').reset();
+});
+
+async function cargarGastos() {
+  const snapshot = await getDocs(gastosCol);
+  gastos = [];
+  snapshot.forEach(d => gastos.push({ id: d.id, ...d.data() }));
+  actualizarGastos();
+}
+
+function actualizarGastos() {
+  listaGastos.innerHTML = '';
+  gastos.forEach(g => {
+    listaGastos.innerHTML += `
+      <tr>
+        <td>${g.nombre}</td>
+        <td>${g.tipo}</td>
+        <td>${g.monto}</td>
+        <td>${g.fecha}</td>
+        <td>
+          <button onclick="editarGasto('${g.id}')">✏️</button>
+          <button onclick="eliminarGastoFirebase('${g.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+  totalGastos.textContent = gastos.length;
+}
+
+async function eliminarGastoFirebase(id) {
+  if(confirm('¿Eliminar gasto?')) {
+    await deleteDoc(doc(db, "gastos", id));
+    cargarGastos();
+  }
+}
+
+window.editarGasto = async (id) => {
+  const g = gastos.find(x => x.id === id);
+  const nombre = prompt("Nombre:", g.nombre) || g.nombre;
+  const tipo = prompt("Tipo:", g.tipo) || g.tipo;
+  const monto = prompt("Monto:", g.monto) || g.monto;
+  const fecha = prompt("Fecha:", g.fecha) || g.fecha;
+
+  await updateDoc(doc(db,"gastos", id), { nombre, tipo, monto, fecha });
+  cargarGastos();
+}
 
 // ===================== SERVICIOS =====================
-// ... Igual que antes (solo números en precio)
+const listaServicios = document.getElementById('listaServicios');
+const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+
+btnAgregarServicio.addEventListener('click', async () => {
+  const nombre = document.getElementById('servNombre').value.trim();
+  const descripcion = document.getElementById('servDescripcion').value.trim();
+  const fecha = document.getElementById('servFecha').value;
+  const precio = document.getElementById('servPrecio').value.trim();
+
+  if(!nombre || !precio) return alert('Nombre y Precio son obligatorios');
+
+  await addDoc(serviciosCol, { nombre, descripcion, fecha, precio });
+  cargarServicios();
+  document.getElementById('servNombre').value = '';
+  document.getElementById('servDescripcion').value = '';
+  document.getElementById('servFecha').value = '';
+  document.getElementById('servPrecio').value = '';
+});
+
+async function cargarServicios() {
+  const snapshot = await getDocs(serviciosCol);
+  servicios = [];
+  snapshot.forEach(d => servicios.push({ id: d.id, ...d.data() }));
+  actualizarServicios();
+}
+
+function actualizarServicios() {
+  listaServicios.innerHTML = '';
+  servicios.forEach(s => {
+    listaServicios.innerHTML += `
+      <tr>
+        <td>${s.nombre}</td>
+        <td>${s.descripcion}</td>
+        <td>${s.fecha}</td>
+        <td>${s.precio}</td>
+        <td>
+          <button onclick="editarServicio('${s.id}')">✏️</button>
+          <button onclick="eliminarServicioFirebase('${s.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+  totalServicios.textContent = servicios.length;
+}
+
+async function eliminarServicioFirebase(id) {
+  if(confirm('¿Eliminar servicio?')) {
+    await deleteDoc(doc(db, "servicios", id));
+    cargarServicios();
+  }
+}
+
+window.editarServicio = async (id) => {
+  const s = servicios.find(x => x.id === id);
+  const nombre = prompt("Nombre:", s.nombre) || s.nombre;
+  const descripcion = prompt("Descripción:", s.descripcion) || s.descripcion;
+  const fecha = prompt("Fecha:", s.fecha) || s.fecha;
+  const precio = prompt("Precio:", s.precio) || s.precio;
+
+  await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
+  cargarServicios();
+}
 
 // ===================== CARGA INICIAL =====================
 cargarProveedores();
