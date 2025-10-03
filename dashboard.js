@@ -1,27 +1,24 @@
-import { auth, db } from "./firebase.js";
+// =======================================
+// 🐾 Dashboard JS - Discovery Pets (Firebase)
+// =======================================
+
+import { db, auth } from './firebase.js';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// Redirigir al login si no hay sesión
-onAuthStateChanged(auth, (user) => {
-  if(!user) {
-    window.location.href = "index.html";
-  }
-});
-
-// ------------------ Variables ------------------
+// ------------------ Variables globales ------------------
 let proveedores = [];
 let facturas = [];
 let gastos = [];
 let servicios = [];
 
-// Contadores
+// ------------------ Contadores ------------------
 const totalProveedores = document.getElementById('total-proveedores');
 const totalFacturas = document.getElementById('total-facturas');
 const totalGastos = document.getElementById('total-gastos');
 const totalServicios = document.getElementById('total-servicios');
 
-// ------------------ Menú ------------------
+// ------------------ Menú lateral ------------------
 const menuItems = document.querySelectorAll('.sidebar ul li');
 const sections = document.querySelectorAll('.section');
 
@@ -32,28 +29,17 @@ menuItems.forEach(item => {
     item.classList.add('active');
 
     const sectionId = item.id.replace('menu-', '');
-    if(sectionId === "logout") cerrarSesion();
-    else document.getElementById(sectionId).classList.add('active');
+    if(sectionId !== "logout") document.getElementById(sectionId).classList.add('active');
   });
 });
 
-// ------------------ FUNCION CERRAR SESION ------------------
-async function cerrarSesion() {
-  try {
-    await signOut(auth);
-    window.location.href = "index.html";
-  } catch (error) {
-    alert("Error al cerrar sesión: " + error.message);
-  }
-}
-
-// ------------------ FIREBASE COLLECTIONS ------------------
+// =================== FIREBASE COLLECTIONS ===================
 const proveedoresCol = collection(db, "proveedores");
 const facturasCol = collection(db, "facturas");
 const gastosCol = collection(db, "gastos");
 const serviciosCol = collection(db, "servicios");
 
-// ------------------ FUNCIONES DE PROVEEDORES ------------------
+// =================== PROVEEDORES ===================
 const listaProveedores = document.getElementById('listaProveedores');
 const btnAgregarProveedor = document.getElementById('btnAgregarProveedor');
 
@@ -71,6 +57,7 @@ btnAgregarProveedor.addEventListener('click', async () => {
   document.getElementById('formProveedor').reset();
 });
 
+// Cargar proveedores desde Firebase
 async function cargarProveedores() {
   const snapshot = await getDocs(proveedoresCol);
   proveedores = [];
@@ -80,17 +67,17 @@ async function cargarProveedores() {
 
 function actualizarProveedores() {
   listaProveedores.innerHTML = '';
-  proveedores.forEach(p => {
+  proveedores.forEach((prov) => {
     listaProveedores.innerHTML += `
       <tr>
-        <td>${p.ruc}</td>
-        <td>${p.nombre}</td>
-        <td>${p.direccion}</td>
-        <td>${p.telefono}</td>
-        <td>${p.producto}</td>
+        <td>${prov.ruc}</td>
+        <td>${prov.nombre}</td>
+        <td>${prov.direccion}</td>
+        <td>${prov.telefono}</td>
+        <td>${prov.producto}</td>
         <td>
-          <button onclick="editarProveedor('${p.id}')">✏️</button>
-          <button onclick="eliminarProveedorFirebase('${p.id}')">❌</button>
+          <button onclick="editarProveedor('${prov.id}')">✏️</button>
+          <button onclick="eliminarProveedorFirebase('${prov.id}')">❌</button>
         </td>
       </tr>
     `;
@@ -106,18 +93,20 @@ async function eliminarProveedorFirebase(id) {
   }
 }
 
+// Función para editar proveedor
 window.editarProveedor = async (id) => {
-  const p = proveedores.find(x => x.id === id);
-  const ruc = prompt("RUC:", p.ruc) || p.ruc;
-  const nombre = prompt("Nombre:", p.nombre) || p.nombre;
-  const direccion = prompt("Dirección:", p.direccion) || p.direccion;
-  const telefono = prompt("Teléfono:", p.telefono) || p.telefono;
-  const producto = prompt("Producto:", p.producto) || p.producto;
+  const prov = proveedores.find(p => p.id === id);
+  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
+  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
+  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
+  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
+  const producto = prompt("Producto:", prov.producto) || prov.producto;
 
   await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
 }
 
+// Actualizar select en Facturas
 function actualizarSelectProveedores() {
   const select = document.getElementById('facRucProveedor');
   select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
@@ -126,7 +115,7 @@ function actualizarSelectProveedores() {
   });
 }
 
-// ------------------ FACTURAS ------------------
+// =================== FACTURAS ===================
 const listaFacturas = document.getElementById('listaFacturas');
 const btnAgregarFactura = document.getElementById('btnAgregarFactura');
 
@@ -157,17 +146,17 @@ async function cargarFacturas() {
 
 function actualizarFacturas() {
   listaFacturas.innerHTML = '';
-  facturas.forEach(f => {
+  facturas.forEach(fac => {
     listaFacturas.innerHTML += `
       <tr>
-        <td>${f.proveedor}</td>
-        <td>${f.tipo}</td>
-        <td>${f.descripcion}</td>
-        <td>${f.fecha}</td>
-        <td>${f.monto}</td>
+        <td>${fac.proveedor}</td>
+        <td>${fac.tipo}</td>
+        <td>${fac.descripcion}</td>
+        <td>${fac.fecha}</td>
+        <td>${fac.monto}</td>
         <td>
-          <button onclick="editarFactura('${f.id}')">✏️</button>
-          <button onclick="eliminarFacturaFirebase('${f.id}')">❌</button>
+          <button onclick="editarFactura('${fac.id}')">✏️</button>
+          <button onclick="eliminarFacturaFirebase('${fac.id}')">❌</button>
         </td>
       </tr>
     `;
@@ -183,18 +172,18 @@ async function eliminarFacturaFirebase(id) {
 }
 
 window.editarFactura = async (id) => {
-  const f = facturas.find(x => x.id === id);
-  const proveedor = prompt("Proveedor:", f.proveedor) || f.proveedor;
-  const tipo = prompt("Tipo:", f.tipo) || f.tipo;
-  const descripcion = prompt("Descripción:", f.descripcion) || f.descripcion;
-  const fecha = prompt("Fecha:", f.fecha) || f.fecha;
-  const monto = prompt("Monto:", f.monto) || f.monto;
+  const fac = facturas.find(f => f.id === id);
+  const proveedor = prompt("Proveedor:", fac.proveedor) || fac.proveedor;
+  const tipo = prompt("Tipo:", fac.tipo) || fac.tipo;
+  const descripcion = prompt("Descripción:", fac.descripcion) || fac.descripcion;
+  const fecha = prompt("Fecha:", fac.fecha) || fac.fecha;
+  const monto = prompt("Monto:", fac.monto) || fac.monto;
 
   await updateDoc(doc(db,"facturas", id), { proveedor, tipo, descripcion, fecha, monto });
   cargarFacturas();
 }
 
-// ------------------ GASTOS ------------------
+// =================== GASTOS ===================
 const listaGastos = document.getElementById('listaGastos');
 const btnAgregarGasto = document.getElementById('btnAgregarGasto');
 
@@ -255,7 +244,7 @@ window.editarGasto = async (id) => {
   cargarGastos();
 }
 
-// ------------------ SERVICIOS ------------------
+// =================== SERVICIOS ===================
 const listaServicios = document.getElementById('listaServicios');
 const btnAgregarServicio = document.getElementById('btnAgregarServicio');
 
@@ -319,7 +308,21 @@ window.editarServicio = async (id) => {
   cargarServicios();
 }
 
-// ------------------ CARGA INICIAL ------------------
+// =================== CERRAR SESIÓN ===================
+const btnLogout = document.getElementById('menu-logout');
+btnLogout.addEventListener('click', async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+});
+
+// =================== BLOQUEO DASHBOARD ===================
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "index.html";
+  }
+});
+
+// =================== CARGA INICIAL ===================
 cargarProveedores();
 cargarFacturas();
 cargarGastos();
