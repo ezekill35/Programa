@@ -17,7 +17,7 @@ body {
 /* ------------------ Sidebar ------------------ */
 .sidebar {
   width: 220px;
-  background: linear-gradient(180deg, #ff1abc, #ff66b2); /* degradado fuccia */
+  background: linear-gradient(180deg, #ff1abc, #ff66b2);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -50,6 +50,38 @@ body {
 .sidebar ul li.active {
   background: rgba(255, 255, 255, 0.15);
   border-left: 4px solid #fff;
+}
+
+/* ------------------ Topbar / Buscador ------------------ */
+.topbar {
+  position: sticky;
+  top: 0;
+  left: 220px;
+  width: calc(100% - 220px);
+  padding: 15px 30px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.topbar input {
+  padding: 10px 15px;
+  width: 300px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.topbar input:focus {
+  border-color: #ff1abc;
+  box-shadow: 0 0 6px rgba(255, 26, 188, 0.4);
 }
 
 /* ------------------ Secciones ------------------ */
@@ -233,7 +265,20 @@ table button:hover {
   .formulario {
     gap: 10px;
   }
+
+  .topbar {
+    left: 60px;
+    width: calc(100% - 60px);
+    padding: 10px 15px;
+    justify-content: center;
+  }
+
+  .topbar input {
+    width: 80%;
+  }
 }
+
+
 
 
 
