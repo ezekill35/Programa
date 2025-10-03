@@ -46,13 +46,12 @@ btnAgregarProveedor.addEventListener('click', async () => {
   const ruc = document.getElementById('provRuc').value.trim();
   const nombre = document.getElementById('provNombre').value.trim();
   const direccion = document.getElementById('provDireccion').value.trim();
-  const correo = document.getElementById('provCorreo').value.trim();
   const telefono = document.getElementById('provTelefono').value.trim();
   const producto = document.getElementById('provProducto').value.trim();
 
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
 
-  await addDoc(proveedoresCol, { ruc, nombre, direccion, correo, telefono, producto });
+  await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
   document.getElementById('formProveedor').reset();
 });
@@ -73,7 +72,6 @@ function actualizarProveedores() {
         <td>${prov.ruc}</td>
         <td>${prov.nombre}</td>
         <td>${prov.direccion}</td>
-        <td>${prov.correo}</td>
         <td>${prov.telefono}</td>
         <td>${prov.producto}</td>
         <td>
@@ -100,11 +98,10 @@ window.editarProveedor = async (id) => {
   const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
   const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
   const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
-  const correo = prompt("Correo:", prov.correo) || prov.correo;
   const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
   const producto = prompt("Producto:", prov.producto) || prov.producto;
 
-  await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, correo, telefono, producto });
+  await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
 }
 
@@ -309,6 +306,116 @@ window.editarServicio = async (id) => {
   await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
   cargarServicios();
 }
+
+// =================== BUSQUEDAS EN TIEMPO REAL ===================
+
+// Proveedores
+document.getElementById('buscarProveedor').addEventListener('input', (e) => {
+  const busqueda = e.target.value.toLowerCase();
+  const filtrados = proveedores.filter(p => 
+    p.ruc.toLowerCase().includes(busqueda) ||
+    p.nombre.toLowerCase().includes(busqueda) ||
+    p.direccion.toLowerCase().includes(busqueda) ||
+    p.telefono.toLowerCase().includes(busqueda) ||
+    p.producto.toLowerCase().includes(busqueda)
+  );
+  listaProveedores.innerHTML = '';
+  filtrados.forEach(prov => {
+    listaProveedores.innerHTML += `
+      <tr>
+        <td>${prov.ruc}</td>
+        <td>${prov.nombre}</td>
+        <td>${prov.direccion}</td>
+        <td>${prov.telefono}</td>
+        <td>${prov.producto}</td>
+        <td>
+          <button onclick="editarProveedor('${prov.id}')">✏️</button>
+          <button onclick="eliminarProveedorFirebase('${prov.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+});
+
+// Facturas
+document.getElementById('buscarFactura').addEventListener('input', (e) => {
+  const busqueda = e.target.value.toLowerCase();
+  const filtrados = facturas.filter(f => 
+    f.proveedor.toLowerCase().includes(busqueda) ||
+    f.tipo.toLowerCase().includes(busqueda) ||
+    f.descripcion.toLowerCase().includes(busqueda) ||
+    f.fecha.toLowerCase().includes(busqueda) ||
+    f.monto.toLowerCase().includes(busqueda)
+  );
+  listaFacturas.innerHTML = '';
+  filtrados.forEach(fac => {
+    listaFacturas.innerHTML += `
+      <tr>
+        <td>${fac.proveedor}</td>
+        <td>${fac.tipo}</td>
+        <td>${fac.descripcion}</td>
+        <td>${fac.fecha}</td>
+        <td>${fac.monto}</td>
+        <td>
+          <button onclick="editarFactura('${fac.id}')">✏️</button>
+          <button onclick="eliminarFacturaFirebase('${fac.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+});
+
+// Gastos
+document.getElementById('buscarGasto').addEventListener('input', (e) => {
+  const busqueda = e.target.value.toLowerCase();
+  const filtrados = gastos.filter(g => 
+    g.nombre.toLowerCase().includes(busqueda) ||
+    g.tipo.toLowerCase().includes(busqueda) ||
+    g.monto.toLowerCase().includes(busqueda) ||
+    g.fecha.toLowerCase().includes(busqueda)
+  );
+  listaGastos.innerHTML = '';
+  filtrados.forEach(g => {
+    listaGastos.innerHTML += `
+      <tr>
+        <td>${g.nombre}</td>
+        <td>${g.tipo}</td>
+        <td>${g.monto}</td>
+        <td>${g.fecha}</td>
+        <td>
+          <button onclick="editarGasto('${g.id}')">✏️</button>
+          <button onclick="eliminarGastoFirebase('${g.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+});
+
+// Servicios
+document.getElementById('buscarServicio').addEventListener('input', (e) => {
+  const busqueda = e.target.value.toLowerCase();
+  const filtrados = servicios.filter(s => 
+    s.nombre.toLowerCase().includes(busqueda) ||
+    s.descripcion.toLowerCase().includes(busqueda) ||
+    s.fecha.toLowerCase().includes(busqueda) ||
+    s.precio.toLowerCase().includes(busqueda)
+  );
+  listaServicios.innerHTML = '';
+  filtrados.forEach(s => {
+    listaServicios.innerHTML += `
+      <tr>
+        <td>${s.nombre}</td>
+        <td>${s.descripcion}</td>
+        <td>${s.fecha}</td>
+        <td>${s.precio}</td>
+        <td>
+          <button onclick="editarServicio('${s.id}')">✏️</button>
+          <button onclick="eliminarServicioFirebase('${s.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+});
 
 // =================== CARGA INICIAL ===================
 cargarProveedores();
