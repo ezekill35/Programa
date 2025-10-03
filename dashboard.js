@@ -1,13 +1,15 @@
 // =======================================
-// 🐾 Dashboard JS - Discovery Pets
+// 🐾 Dashboard JS - Discovery Pets (Firebase)
 // =======================================
+
+import { db } from './firebase.js';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 // ------------------ Variables globales ------------------
 let proveedores = [];
 let facturas = [];
 let gastos = [];
 let servicios = [];
-let editIndex = { tipo: null, index: null };
 
 // ------------------ Contadores ------------------
 const totalProveedores = document.getElementById('total-proveedores');
@@ -30,13 +32,17 @@ menuItems.forEach(item => {
   });
 });
 
-// =======================================
-// 🏪 PROVEEDORES
-// =======================================
+// =================== FIREBASE COLLECTIONS ===================
+const proveedoresCol = collection(db, "proveedores");
+const facturasCol = collection(db, "facturas");
+const gastosCol = collection(db, "gastos");
+const serviciosCol = collection(db, "servicios");
+
+// =================== PROVEEDORES ===================
 const listaProveedores = document.getElementById('listaProveedores');
 const btnAgregarProveedor = document.getElementById('btnAgregarProveedor');
 
-btnAgregarProveedor.addEventListener('click', () => {
+btnAgregarProveedor.addEventListener('click', async () => {
   const ruc = document.getElementById('provRuc').value.trim();
   const nombre = document.getElementById('provNombre').value.trim();
   const direccion = document.getElementById('provDireccion').value.trim();
@@ -46,59 +52,60 @@ btnAgregarProveedor.addEventListener('click', () => {
 
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
 
-  const prov = { ruc, nombre, direccion, correo, telefono, producto };
-
-  if(editIndex.tipo === 'proveedor'){
-    proveedores[editIndex.index] = prov;
-    editIndex = { tipo:null, index:null };
-  } else {
-    proveedores.push(prov);
-  }
-
+  await addDoc(proveedoresCol, { ruc, nombre, direccion, correo, telefono, producto });
+  cargarProveedores();
   document.getElementById('formProveedor').reset();
-  actualizarProveedores();
 });
 
-function actualizarProveedores(filter=''){
+// Cargar proveedores desde Firebase
+async function cargarProveedores() {
+  const snapshot = await getDocs(proveedoresCol);
+  proveedores = [];
+  snapshot.forEach(d => proveedores.push({ id: d.id, ...d.data() }));
+  actualizarProveedores();
+}
+
+function actualizarProveedores() {
   listaProveedores.innerHTML = '';
-  proveedores.forEach((prov, index) => {
-    if(prov.nombre.toLowerCase().includes(filter.toLowerCase()) || prov.ruc.includes(filter)){
-      listaProveedores.innerHTML += `
-        <tr>
-          <td>${prov.ruc}</td>
-          <td>${prov.nombre}</td>
-          <td>${prov.direccion}</td>
-          <td>${prov.correo}</td>
-          <td>${prov.telefono}</td>
-          <td>${prov.producto}</td>
-          <td>
-            <button onclick="editarProveedor(${index})">✏️</button>
-            <button onclick="eliminarProveedor(${index})">❌</button>
-          </td>
-        </tr>
-      `;
-    }
+  proveedores.forEach((prov) => {
+    listaProveedores.innerHTML += `
+      <tr>
+        <td>${prov.ruc}</td>
+        <td>${prov.nombre}</td>
+        <td>${prov.direccion}</td>
+        <td>${prov.correo}</td>
+        <td>${prov.telefono}</td>
+        <td>${prov.producto}</td>
+        <td>
+          <button onclick="editarProveedor('${prov.id}')">✏️</button>
+          <button onclick="eliminarProveedorFirebase('${prov.id}')">❌</button>
+        </td>
+      </tr>
+    `;
   });
   totalProveedores.textContent = proveedores.length;
   actualizarSelectProveedores();
 }
 
-function editarProveedor(index){
-  const p = proveedores[index];
-  document.getElementById('provRuc').value = p.ruc;
-  document.getElementById('provNombre').value = p.nombre;
-  document.getElementById('provDireccion').value = p.direccion;
-  document.getElementById('provCorreo').value = p.correo;
-  document.getElementById('provTelefono').value = p.telefono;
-  document.getElementById('provProducto').value = p.producto;
-  editIndex = { tipo:'proveedor', index:index };
+async function eliminarProveedorFirebase(id) {
+  if(confirm('¿Eliminar proveedor?')) {
+    await deleteDoc(doc(db, "proveedores", id));
+    cargarProveedores();
+  }
 }
 
-function eliminarProveedor(index){
-  if(confirm('¿Eliminar proveedor?')){
-    proveedores.splice(index,1);
-    actualizarProveedores();
-  }
+// Función para editar proveedor
+window.editarProveedor = async (id) => {
+  const prov = proveedores.find(p => p.id === id);
+  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
+  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
+  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
+  const correo = prompt("Correo:", prov.correo) || prov.correo;
+  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
+  const producto = prompt("Producto:", prov.producto) || prov.producto;
+
+  await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, correo, telefono, producto });
+  cargarProveedores();
 }
 
 // Actualizar select en Facturas
@@ -110,18 +117,11 @@ function actualizarSelectProveedores() {
   });
 }
 
-// Buscador Proveedores
-document.getElementById('btnBuscarProveedor').addEventListener('click', () => {
-  actualizarProveedores(document.getElementById('buscarProveedor').value);
-});
-
-// =======================================
-// 📑 FACTURAS
-// =======================================
+// =================== FACTURAS ===================
 const listaFacturas = document.getElementById('listaFacturas');
 const btnAgregarFactura = document.getElementById('btnAgregarFactura');
 
-btnAgregarFactura.addEventListener('click', () => {
+btnAgregarFactura.addEventListener('click', async () => {
   const proveedor = document.getElementById('facRucProveedor').value;
   const tipo = document.getElementById('facTipo').value.trim();
   const descripcion = document.getElementById('facDescripcion').value.trim();
@@ -130,74 +130,66 @@ btnAgregarFactura.addEventListener('click', () => {
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
 
-  const fac = { proveedor, tipo, descripcion, fecha, monto };
-
-  if(editIndex.tipo === 'factura'){
-    facturas[editIndex.index] = fac;
-    editIndex = { tipo:null, index:null };
-  } else {
-    facturas.push(fac);
-  }
-
+  await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto });
+  cargarFacturas();
   document.getElementById('facRucProveedor').value = '';
   document.getElementById('facTipo').value = '';
   document.getElementById('facDescripcion').value = '';
   document.getElementById('facFecha').value = '';
   document.getElementById('facMonto').value = '';
-  actualizarFacturas();
 });
 
-function actualizarFacturas(filter=''){
+async function cargarFacturas() {
+  const snapshot = await getDocs(facturasCol);
+  facturas = [];
+  snapshot.forEach(d => facturas.push({ id: d.id, ...d.data() }));
+  actualizarFacturas();
+}
+
+function actualizarFacturas() {
   listaFacturas.innerHTML = '';
-  facturas.forEach((fac, index) => {
-    if(fac.tipo.toLowerCase().includes(filter.toLowerCase()) || fac.proveedor.toLowerCase().includes(filter.toLowerCase())){
-      listaFacturas.innerHTML += `
-        <tr>
-          <td>${fac.proveedor}</td>
-          <td>${fac.tipo}</td>
-          <td>${fac.descripcion}</td>
-          <td>${fac.fecha}</td>
-          <td>${fac.monto}</td>
-          <td>
-            <button onclick="editarFactura(${index})">✏️</button>
-            <button onclick="eliminarFactura(${index})">❌</button>
-          </td>
-        </tr>
-      `;
-    }
+  facturas.forEach(fac => {
+    listaFacturas.innerHTML += `
+      <tr>
+        <td>${fac.proveedor}</td>
+        <td>${fac.tipo}</td>
+        <td>${fac.descripcion}</td>
+        <td>${fac.fecha}</td>
+        <td>${fac.monto}</td>
+        <td>
+          <button onclick="editarFactura('${fac.id}')">✏️</button>
+          <button onclick="eliminarFacturaFirebase('${fac.id}')">❌</button>
+        </td>
+      </tr>
+    `;
   });
   totalFacturas.textContent = facturas.length;
 }
 
-function editarFactura(index){
-  const f = facturas[index];
-  document.getElementById('facRucProveedor').value = f.proveedor;
-  document.getElementById('facTipo').value = f.tipo;
-  document.getElementById('facDescripcion').value = f.descripcion;
-  document.getElementById('facFecha').value = f.fecha;
-  document.getElementById('facMonto').value = f.monto;
-  editIndex = { tipo:'factura', index:index };
-}
-
-function eliminarFactura(index){
-  if(confirm('¿Eliminar factura?')){
-    facturas.splice(index,1);
-    actualizarFacturas();
+async function eliminarFacturaFirebase(id) {
+  if(confirm('¿Eliminar factura?')) {
+    await deleteDoc(doc(db, "facturas", id));
+    cargarFacturas();
   }
 }
 
-// Buscador Facturas
-document.getElementById('btnBuscarFactura').addEventListener('click', () => {
-  actualizarFacturas(document.getElementById('buscarFactura').value);
-});
+window.editarFactura = async (id) => {
+  const fac = facturas.find(f => f.id === id);
+  const proveedor = prompt("Proveedor:", fac.proveedor) || fac.proveedor;
+  const tipo = prompt("Tipo:", fac.tipo) || fac.tipo;
+  const descripcion = prompt("Descripción:", fac.descripcion) || fac.descripcion;
+  const fecha = prompt("Fecha:", fac.fecha) || fac.fecha;
+  const monto = prompt("Monto:", fac.monto) || fac.monto;
 
-// =======================================
-// 💰 GASTOS
-// =======================================
+  await updateDoc(doc(db,"facturas", id), { proveedor, tipo, descripcion, fecha, monto });
+  cargarFacturas();
+}
+
+// =================== GASTOS ===================
 const listaGastos = document.getElementById('listaGastos');
 const btnAgregarGasto = document.getElementById('btnAgregarGasto');
 
-btnAgregarGasto.addEventListener('click', () => {
+btnAgregarGasto.addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
   const tipo = document.getElementById('gastoTipo').value;
   const monto = document.getElementById('gastoMonto').value.trim();
@@ -205,68 +197,60 @@ btnAgregarGasto.addEventListener('click', () => {
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
 
-  const g = { nombre,tipo,monto,fecha };
-
-  if(editIndex.tipo === 'gasto'){
-    gastos[editIndex.index] = g;
-    editIndex = { tipo:null, index:null };
-  } else {
-    gastos.push(g);
-  }
-
+  await addDoc(gastosCol, { nombre, tipo, monto, fecha });
+  cargarGastos();
   document.getElementById('formGasto').reset();
-  actualizarGastos();
 });
 
-function actualizarGastos(filter=''){
+async function cargarGastos() {
+  const snapshot = await getDocs(gastosCol);
+  gastos = [];
+  snapshot.forEach(d => gastos.push({ id: d.id, ...d.data() }));
+  actualizarGastos();
+}
+
+function actualizarGastos() {
   listaGastos.innerHTML = '';
-  gastos.forEach((g,index) => {
-    if(g.nombre.toLowerCase().includes(filter.toLowerCase()) || g.tipo.toLowerCase().includes(filter.toLowerCase())){
-      listaGastos.innerHTML += `
-        <tr>
-          <td>${g.nombre}</td>
-          <td>${g.tipo}</td>
-          <td>${g.monto}</td>
-          <td>${g.fecha}</td>
-          <td>
-            <button onclick="editarGasto(${index})">✏️</button>
-            <button onclick="eliminarGasto(${index})">❌</button>
-          </td>
-        </tr>
-      `;
-    }
+  gastos.forEach(g => {
+    listaGastos.innerHTML += `
+      <tr>
+        <td>${g.nombre}</td>
+        <td>${g.tipo}</td>
+        <td>${g.monto}</td>
+        <td>${g.fecha}</td>
+        <td>
+          <button onclick="editarGasto('${g.id}')">✏️</button>
+          <button onclick="eliminarGastoFirebase('${g.id}')">❌</button>
+        </td>
+      </tr>
+    `;
   });
   totalGastos.textContent = gastos.length;
 }
 
-function editarGasto(index){
-  const g = gastos[index];
-  document.getElementById('gastoNombre').value = g.nombre;
-  document.getElementById('gastoTipo').value = g.tipo;
-  document.getElementById('gastoMonto').value = g.monto;
-  document.getElementById('gastoFecha').value = g.fecha;
-  editIndex = { tipo:'gasto', index:index };
-}
-
-function eliminarGasto(index){
-  if(confirm('¿Eliminar gasto?')){
-    gastos.splice(index,1);
-    actualizarGastos();
+async function eliminarGastoFirebase(id) {
+  if(confirm('¿Eliminar gasto?')) {
+    await deleteDoc(doc(db, "gastos", id));
+    cargarGastos();
   }
 }
 
-// Buscador Gastos
-document.getElementById('btnBuscarGasto').addEventListener('click', () => {
-  actualizarGastos(document.getElementById('buscarGasto').value);
-});
+window.editarGasto = async (id) => {
+  const g = gastos.find(x => x.id === id);
+  const nombre = prompt("Nombre:", g.nombre) || g.nombre;
+  const tipo = prompt("Tipo:", g.tipo) || g.tipo;
+  const monto = prompt("Monto:", g.monto) || g.monto;
+  const fecha = prompt("Fecha:", g.fecha) || g.fecha;
 
-// =======================================
-// 🛠 SERVICIOS
-// =======================================
+  await updateDoc(doc(db,"gastos", id), { nombre, tipo, monto, fecha });
+  cargarGastos();
+}
+
+// =================== SERVICIOS ===================
 const listaServicios = document.getElementById('listaServicios');
 const btnAgregarServicio = document.getElementById('btnAgregarServicio');
 
-btnAgregarServicio.addEventListener('click', () => {
+btnAgregarServicio.addEventListener('click', async () => {
   const nombre = document.getElementById('servNombre').value.trim();
   const descripcion = document.getElementById('servDescripcion').value.trim();
   const fecha = document.getElementById('servFecha').value;
@@ -274,63 +258,64 @@ btnAgregarServicio.addEventListener('click', () => {
 
   if(!nombre) return alert('Nombre es obligatorio');
 
-  const s = { nombre, descripcion, fecha, precio };
-
-  if(editIndex.tipo === 'servicio'){
-    servicios[editIndex.index] = s;
-    editIndex = { tipo:null, index:null };
-  } else {
-    servicios.push(s);
-  }
-
+  await addDoc(serviciosCol, { nombre, descripcion, fecha, precio });
+  cargarServicios();
   document.getElementById('servNombre').value = '';
   document.getElementById('servDescripcion').value = '';
   document.getElementById('servFecha').value = '';
   document.getElementById('servPrecio').value = '';
-  actualizarServicios();
 });
 
-function actualizarServicios(filter=''){
+async function cargarServicios() {
+  const snapshot = await getDocs(serviciosCol);
+  servicios = [];
+  snapshot.forEach(d => servicios.push({ id: d.id, ...d.data() }));
+  actualizarServicios();
+}
+
+function actualizarServicios() {
   listaServicios.innerHTML = '';
-  servicios.forEach((s,index) => {
-    if(s.nombre.toLowerCase().includes(filter.toLowerCase()) || s.descripcion.toLowerCase().includes(filter.toLowerCase())){
-      listaServicios.innerHTML += `
-        <tr>
-          <td>${s.nombre}</td>
-          <td>${s.descripcion}</td>
-          <td>${s.fecha}</td>
-          <td>${s.precio}</td>
-          <td>
-            <button onclick="editarServicio(${index})">✏️</button>
-            <button onclick="eliminarServicio(${index})">❌</button>
-          </td>
-        </tr>
-      `;
-    }
+  servicios.forEach(s => {
+    listaServicios.innerHTML += `
+      <tr>
+        <td>${s.nombre}</td>
+        <td>${s.descripcion}</td>
+        <td>${s.fecha}</td>
+        <td>${s.precio}</td>
+        <td>
+          <button onclick="editarServicio('${s.id}')">✏️</button>
+          <button onclick="eliminarServicioFirebase('${s.id}')">❌</button>
+        </td>
+      </tr>
+    `;
   });
   totalServicios.textContent = servicios.length;
 }
 
-function editarServicio(index){
-  const s = servicios[index];
-  document.getElementById('servNombre').value = s.nombre;
-  document.getElementById('servDescripcion').value = s.descripcion;
-  document.getElementById('servFecha').value = s.fecha;
-  document.getElementById('servPrecio').value = s.precio;
-  editIndex = { tipo:'servicio', index:index };
-}
-
-function eliminarServicio(index){
-  if(confirm('¿Eliminar servicio?')){
-    servicios.splice(index,1);
-    actualizarServicios();
+async function eliminarServicioFirebase(id) {
+  if(confirm('¿Eliminar servicio?')) {
+    await deleteDoc(doc(db, "servicios", id));
+    cargarServicios();
   }
 }
 
-// Buscador Servicios
-document.getElementById('btnBuscarServicio').addEventListener('click', () => {
-  actualizarServicios(document.getElementById('buscarServicio').value);
-});
+window.editarServicio = async (id) => {
+  const s = servicios.find(x => x.id === id);
+  const nombre = prompt("Nombre:", s.nombre) || s.nombre;
+  const descripcion = prompt("Descripción:", s.descripcion) || s.descripcion;
+  const fecha = prompt("Fecha:", s.fecha) || s.fecha;
+  const precio = prompt("Precio:", s.precio) || s.precio;
+
+  await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
+  cargarServicios();
+}
+
+// =================== CARGA INICIAL ===================
+cargarProveedores();
+cargarFacturas();
+cargarGastos();
+cargarServicios();
+
 
 
 
