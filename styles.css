@@ -69,6 +69,7 @@ body {
 }
 
 /* ------------------ Formularios ------------------ */
+/* ------------------ Formularios ------------------ */
 .formulario {
   display: flex;
   flex-wrap: wrap;
@@ -76,27 +77,53 @@ body {
   margin-bottom: 20px;
 }
 
-.formulario input, .formulario select, .formulario button {
+/* Inputs, select y botones */
+.formulario input, 
+.formulario select, 
+.formulario button {
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
 }
 
-.formulario input, .formulario select {
-  flex: 1 1 150px;
+/* Inputs y select adaptables */
+.formulario input, 
+.formulario select {
+  flex: 1 1 200px;
 }
 
+/* Botones */
 .formulario button {
   background: #ff1abc;
   color: #fff;
   border: none;
   cursor: pointer;
   transition: 0.3s;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 8px;
 }
 
 .formulario button:hover {
   background: #ff66b2;
+  transform: scale(1.02);
+}
+
+/* ------------------ Caja/Card de los formularios ------------------ */
+.section form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  max-width: 700px;     /* 👈 ancho máximo */
+  margin-bottom: 25px;
+}
+
+/* Títulos dentro de formularios */
+.section form h3 {
+  margin-bottom: 15px;
+  color: #ff1abc;
 }
 
 /* ------------------ Tablas ------------------ */
@@ -190,6 +217,7 @@ table button:hover {
     gap: 10px;
   }
 }  
+
 
 
 
