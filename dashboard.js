@@ -1,8 +1,4 @@
-// =======================================
-// 🐾 Dashboard JS - Discovery Pets (Firebase)
-// =======================================
-
-import { db, auth } from './firebase.js';
+import { db, auth, cerrarSesion } from './firebase.js';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
@@ -25,7 +21,7 @@ const sections = document.querySelectorAll('.section');
 menuItems.forEach(item => {
   item.addEventListener('click', () => {
     menuItems.forEach(i => i.classList.remove('active'));
-    sections.forEach(sec => sec.classList.remove('active'));
+    sections.forEach(sec => sec.classList.add('d-none'));
     item.classList.add('active');
 
     const sectionId = item.id.replace('menu-', '');
@@ -33,7 +29,7 @@ menuItems.forEach(item => {
       cerrarSesion();
       return;
     }
-    document.getElementById(sectionId).classList.add('active');
+    document.getElementById(sectionId).classList.remove('d-none');
   });
 });
 
@@ -57,10 +53,16 @@ btnAgregarProveedor.addEventListener('click', async () => {
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
   if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
 
-  await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
-  document.getElementById('formProveedor').reset();
+  try {
+    await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
+    alert('Proveedor agregado correctamente a la base de datos');
+    document.getElementById('formProveedor').reset();
+  } catch (error) {
+    alert('Error al guardar proveedor: '+error.message);
+  }
 });
 
+// Tiempo real proveedores
 onSnapshot(proveedoresCol, snapshot => {
   proveedores = [];
   snapshot.forEach(doc => proveedores.push({ id: doc.id, ...doc.data() }));
@@ -78,41 +80,34 @@ function actualizarProveedores() {
         <td>${p.telefono}</td>
         <td>${p.producto}</td>
         <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarProveedor('${p.id}')">✏️</button>
+          <button class="btn btn-sm btn-warning" onclick="editarProveedor('${p.id}')">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarProveedorFirebase('${p.id}')">❌</button>
         </td>
       </tr>
     `;
   });
   totalProveedores.textContent = proveedores.length;
-  actualizarSelectProveedores();
 }
 
+// Editar proveedor
 window.editarProveedor = async (id) => {
-  const prov = proveedores.find(p => p.id === id);
-  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
-  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
-  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
-  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
-  const producto = prompt("Producto:", prov.producto) || prov.producto;
-
+  const p = proveedores.find(x => x.id===id);
+  const ruc = prompt("RUC:", p.ruc) || p.ruc;
+  const nombre = prompt("Nombre:", p.nombre) || p.nombre;
+  const direccion = prompt("Dirección:", p.direccion) || p.direccion;
+  const telefono = prompt("Teléfono:", p.telefono) || p.telefono;
+  const producto = prompt("Producto:", p.producto) || p.producto;
   if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
-
-  await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
+  await updateDoc(doc(db,"proveedores",id), { ruc, nombre, direccion, telefono, producto });
+  alert('Proveedor actualizado correctamente');
 }
 
-async function eliminarProveedorFirebase(id) {
-  if(confirm('¿Eliminar proveedor?')){
-    await deleteDoc(doc(db,"proveedores", id));
+// Eliminar proveedor
+window.eliminarProveedorFirebase = async (id) => {
+  if(confirm('¿Eliminar proveedor?')) {
+    await deleteDoc(doc(db,"proveedores",id));
+    alert('Proveedor eliminado');
   }
-}
-
-function actualizarSelectProveedores() {
-  const select = document.getElementById('facRucProveedor');
-  select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
-  proveedores.forEach(p => {
-    select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
-  });
 }
 
 // ------------------ FACTURAS ------------------
@@ -130,11 +125,19 @@ btnAgregarFactura.addEventListener('click', async () => {
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
   if(isNaN(monto)) return alert('Monto debe ser un número');
 
-  await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto, moneda });
-
-  document.getElementById('formFactura').reset();
+  try {
+    await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto, moneda });
+    alert('Factura agregada correctamente a la base de datos');
+    document.getElementById('facTipo').value='';
+    document.getElementById('facDescripcion').value='';
+    document.getElementById('facFecha').value='';
+    document.getElementById('facMonto').value='';
+  } catch(error) {
+    alert('Error al guardar factura: '+error.message);
+  }
 });
 
+// Tiempo real facturas
 onSnapshot(facturasCol, snapshot => {
   facturas = [];
   snapshot.forEach(doc => facturas.push({ id: doc.id, ...doc.data() }));
@@ -152,7 +155,7 @@ function actualizarFacturas() {
         <td>${f.fecha}</td>
         <td>${f.moneda}${f.monto.toFixed(2)}</td>
         <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarFactura('${f.id}')">✏️</button>
+          <button class="btn btn-sm btn-warning" onclick="editarFactura('${f.id}')">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarFacturaFirebase('${f.id}')">❌</button>
         </td>
       </tr>
@@ -161,21 +164,22 @@ function actualizarFacturas() {
   totalFacturas.textContent = facturas.length;
 }
 
-window.editarFactura = async (id) => {
-  const f = facturas.find(x => x.id===id);
+// Editar factura
+window.editarFactura = async id => {
+  const f = facturas.find(x=>x.id===id);
   const proveedor = prompt("Proveedor:", f.proveedor) || f.proveedor;
   const tipo = prompt("Tipo:", f.tipo) || f.tipo;
   const descripcion = prompt("Descripción:", f.descripcion) || f.descripcion;
   const fecha = prompt("Fecha:", f.fecha) || f.fecha;
   const monto = parseFloat(prompt("Monto:", f.monto)) || f.monto;
-  const moneda = prompt("Moneda (S/, $, €):", f.moneda) || f.moneda;
-
+  const moneda = prompt("Moneda:", f.moneda) || f.moneda;
   if(isNaN(monto)) return alert('Monto debe ser número');
-
   await updateDoc(doc(db,"facturas",id), { proveedor, tipo, descripcion, fecha, monto, moneda });
+  alert('Factura actualizada correctamente');
 }
 
-async function eliminarFacturaFirebase(id){
+// Eliminar factura
+window.eliminarFacturaFirebase = async id => {
   if(confirm('¿Eliminar factura?')) await deleteDoc(doc(db,"facturas",id));
 }
 
@@ -185,34 +189,40 @@ const btnAgregarGasto = document.getElementById('btnAgregarGasto');
 
 btnAgregarGasto.addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
-  const tipo = document.getElementById('gastoTipo').value.trim();
+  const tipo = document.getElementById('gastoTipo').value;
   const monto = parseFloat(document.getElementById('gastoMonto').value.trim());
   const fecha = document.getElementById('gastoFecha').value;
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
   if(isNaN(monto)) return alert('Monto debe ser número');
 
-  await addDoc(gastosCol, { nombre, tipo, monto, fecha });
-  document.getElementById('formGasto').reset();
+  try {
+    await addDoc(gastosCol, { nombre, tipo, monto, fecha });
+    alert('Gasto agregado correctamente a la base de datos');
+    document.getElementById('formGasto').reset();
+  } catch(error) {
+    alert('Error al guardar gasto: '+error.message);
+  }
 });
 
+// Tiempo real gastos
 onSnapshot(gastosCol, snapshot => {
   gastos = [];
   snapshot.forEach(doc => gastos.push({ id: doc.id, ...doc.data() }));
   actualizarGastos();
 });
 
-function actualizarGastos(){
-  listaGastos.innerHTML='';
+function actualizarGastos() {
+  listaGastos.innerHTML = '';
   gastos.forEach(g => {
-    listaGastos.innerHTML+=`
+    listaGastos.innerHTML += `
       <tr>
         <td>${g.nombre}</td>
         <td>${g.tipo}</td>
         <td>${g.monto.toFixed(2)}</td>
         <td>${g.fecha}</td>
         <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarGasto('${g.id}')">✏️</button>
+          <button class="btn btn-sm btn-warning" onclick="editarGasto('${g.id}')">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarGastoFirebase('${g.id}')">❌</button>
         </td>
       </tr>
@@ -222,87 +232,28 @@ function actualizarGastos(){
 }
 
 window.editarGasto = async id => {
-  const g = gastos.find(x => x.id===id);
+  const g = gastos.find(x=>x.id===id);
   const nombre = prompt("Nombre:", g.nombre)||g.nombre;
   const tipo = prompt("Tipo:", g.tipo)||g.tipo;
   const monto = parseFloat(prompt("Monto:", g.monto))||g.monto;
   const fecha = prompt("Fecha:", g.fecha)||g.fecha;
-
   if(isNaN(monto)) return alert('Monto debe ser número');
-
   await updateDoc(doc(db,"gastos",id), {nombre,tipo,monto,fecha});
+  alert('Gasto actualizado correctamente');
 }
 
-async function eliminarGastoFirebase(id){
+// Eliminar gasto
+window.eliminarGastoFirebase = async id => {
   if(confirm('¿Eliminar gasto?')) await deleteDoc(doc(db,"gastos",id));
 }
 
-// ------------------ SERVICIOS ------------------
-const listaServicios = document.getElementById('listaServicios');
-const btnAgregarServicio = document.getElementById('btnAgregarServicio');
-
-btnAgregarServicio.addEventListener('click', async () => {
-  const nombre = document.getElementById('servNombre').value.trim();
-  const descripcion = document.getElementById('servDescripcion').value.trim();
-  const monto = parseFloat(document.getElementById('servMonto').value.trim());
-  const fecha = document.getElementById('servFecha').value;
-
-  if(!nombre || !descripcion) return alert('Nombre y Descripción son obligatorios');
-  if(isNaN(monto)) return alert('Monto debe ser número');
-
-  await addDoc(serviciosCol, { nombre, descripcion, monto, fecha });
-  document.getElementById('formServicio').reset();
-});
-
-onSnapshot(serviciosCol, snapshot => {
-  servicios = [];
-  snapshot.forEach(doc => servicios.push({ id: doc.id, ...doc.data() }));
-  actualizarServicios();
-});
-
-function actualizarServicios(){
-  listaServicios.innerHTML='';
-  servicios.forEach(s => {
-    listaServicios.innerHTML+=`
-      <tr>
-        <td>${s.nombre}</td>
-        <td>${s.descripcion}</td>
-        <td>${s.monto.toFixed(2)}</td>
-        <td>${s.fecha}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarServicio('${s.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="eliminarServicioFirebase('${s.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-  totalServicios.textContent = servicios.length;
-}
-
-window.editarServicio = async id => {
-  const s = servicios.find(x => x.id===id);
-  const nombre = prompt("Nombre:", s.nombre)||s.nombre;
-  const descripcion = prompt("Descripción:", s.descripcion)||s.descripcion;
-  const monto = parseFloat(prompt("Monto:", s.monto))||s.monto;
-  const fecha = prompt("Fecha:", s.fecha)||s.fecha;
-
-  if(isNaN(monto)) return alert('Monto debe ser número');
-
-  await updateDoc(doc(db,"servicios",id), {nombre,descripcion,monto,fecha});
-}
-
-async function eliminarServicioFirebase(id){
-  if(confirm('¿Eliminar servicio?')) await deleteDoc(doc(db,"servicios",id));
-}
-
 // ------------------ CERRAR SESIÓN ------------------
-async function cerrarSesion(){
+window.cerrarSesion = async () => {
   await signOut(auth);
   alert("Sesión cerrada");
   window.location.href = 'index.html';
 }
 
-window.cerrarSesion = cerrarSesion;
 
 
 
