@@ -35,38 +35,35 @@
       </section>
 
       <!-- ================= PROVEEDORES ================= -->
-      <section id="proveedores" class="section">
-        <form id="formProveedor">
-          <h3>Registrar Proveedor</h3>
-          <div class="formulario">
-            <input type="text" id="provRuc" placeholder="RUC">
-            <input type="text" id="provNombre" placeholder="Nombre">
-            <input type="text" id="provDireccion" placeholder="Dirección">
-            <input type="email" id="provCorreo" placeholder="Correo">
-            <input type="text" id="provTelefono" placeholder="Teléfono">
-            <button type="button" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
-          </div>
-        </form>
+<section id="proveedores" class="section">
+  <form id="formProveedor">
+    <h3>Registrar Proveedor</h3>
+    <div class="formulario">
+      <input type="text" id="provRuc" placeholder="RUC">
+      <input type="text" id="provNombre" placeholder="Nombre">
+      <input type="text" id="provDireccion" placeholder="Dirección">
+      <input type="email" id="provCorreo" placeholder="Correo">
+      <input type="text" id="provTelefono" placeholder="Teléfono">
+      <input type="text" id="provProducto" placeholder="Producto que vende">
+      <button type="button" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
+    </div>
+  </form>
 
-        <div class="formulario">
-          <input id="buscarProveedor" placeholder="Buscar proveedor por nombre">
-          <button id="btnBuscarProveedor">🔍 Buscar</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>RUC</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Correo</th>
-              <th>Teléfono</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody id="listaProveedores"></tbody>
-        </table>
-      </section>
+  <table>
+    <thead>
+      <tr>
+        <th>RUC</th>
+        <th>Nombre</th>
+        <th>Dirección</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Producto</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="listaProveedores"></tbody>
+  </table>
+</section>
 
       <!-- ================= FACTURAS ================= -->
       <section id="facturas" class="section">
@@ -170,6 +167,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
