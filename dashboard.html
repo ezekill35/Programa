@@ -3,96 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐾 Discovery Pets Dashboard</title>
-  <!-- Bootstrap 5 -->
+  <title>🐾 Discovery Pets - Dashboard</title>
+  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- ================= SIDEBAR ================= -->
-  <nav class="sidebar d-flex flex-column align-items-center">
-    <h2>🐾 Discovery Pets</h2>
-    <ul class="nav flex-column w-100 text-center">
-      <li class="nav-item">
-        <a class="nav-link active" id="menu-reportes" href="#">📊 Reportes</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="menu-proveedores" href="#">🏪 Proveedores</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="menu-facturas" href="#">📑 Facturas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="menu-gastos" href="#">💰 Gastos</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="menu-servicios" href="#">🛠 Servicios</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-danger" id="menu-logout" href="#">🚪 Cerrar Sesión</a>
-      </li>
-    </ul>
-  </nav>
 
-  <!-- ================= CONTENIDO ================= -->
-  <div class="container-fluid section active" id="reportes">
+  <!-- ================= Sidebar ================= -->
+  <div class="sidebar d-flex flex-column text-white">
+    <h2 class="text-center mb-4">🐾 Discovery Pets</h2>
+    <ul class="nav flex-column">
+      <li id="menu-reportes" class="nav-link active">📊 Reportes</li>
+      <li id="menu-proveedores" class="nav-link">🏪 Proveedores</li>
+      <li id="menu-facturas" class="nav-link">📑 Facturas</li>
+      <li id="menu-gastos" class="nav-link">💰 Gastos</li>
+      <li id="menu-servicios" class="nav-link">🛠 Servicios</li>
+      <li id="menu-logout" class="nav-link">🚪 Cerrar Sesión</li>
+    </ul>
+  </div>
+
+  <!-- ================= Contenido ================= -->
+  <div class="section active" id="reportes">
     <h2>📊 Reportes</h2>
-    <div class="row cards">
+    <div class="row g-4">
       <div class="col-md-3">
-        <div class="card shadow p-3 mb-3 bg-body rounded">
-          <h3 id="total-proveedores">0</h3>
-          <p>Proveedores</p>
+        <div class="card text-center shadow-lg">
+          <div class="card-body">
+            <h3 id="total-proveedores">0</h3>
+            <p>Proveedores</p>
+          </div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card shadow p-3 mb-3 bg-body rounded">
-          <h3 id="total-facturas">0</h3>
-          <p>Facturas</p>
+        <div class="card text-center shadow-lg">
+          <div class="card-body">
+            <h3 id="total-facturas">0</h3>
+            <p>Facturas</p>
+          </div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card shadow p-3 mb-3 bg-body rounded">
-          <h3 id="total-gastos">0</h3>
-          <p>Gastos</p>
+        <div class="card text-center shadow-lg">
+          <div class="card-body">
+            <h3 id="total-gastos">0</h3>
+            <p>Gastos</p>
+          </div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card shadow p-3 mb-3 bg-body rounded">
-          <h3 id="total-servicios">0</h3>
-          <p>Servicios</p>
+        <div class="card text-center shadow-lg">
+          <div class="card-body">
+            <h3 id="total-servicios">0</h3>
+            <p>Servicios</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ================= PROVEEDORES ================= -->
-  <div class="container-fluid section" id="proveedores">
+  <!-- ================= Proveedores ================= -->
+  <div class="section" id="proveedores">
     <h2>🏪 Proveedores</h2>
-    <form id="formProveedor" class="mb-3 p-3 bg-light rounded shadow">
+    <form id="formProveedor" class="mb-4 p-4 shadow rounded bg-white">
       <div class="row g-3">
-        <div class="col-md-2">
-          <input type="text" class="form-control" id="provRuc" placeholder="RUC">
-        </div>
-        <div class="col-md-2">
-          <input type="text" class="form-control" id="provNombre" placeholder="Nombre">
-        </div>
-        <div class="col-md-3">
-          <input type="text" class="form-control" id="provDireccion" placeholder="Dirección">
-        </div>
-        <div class="col-md-2">
-          <input type="text" class="form-control" id="provTelefono" placeholder="Teléfono">
-        </div>
-        <div class="col-md-2">
-          <input type="text" class="form-control" id="provProducto" placeholder="Producto">
-        </div>
-        <div class="col-md-1">
-          <button type="button" class="btn btn-primary w-100" id="btnAgregarProveedor">Agregar</button>
-        </div>
+        <div class="col-md-2"><input type="text" id="provRuc" placeholder="RUC" class="form-control"></div>
+        <div class="col-md-2"><input type="text" id="provNombre" placeholder="Nombre" class="form-control"></div>
+        <div class="col-md-2"><input type="text" id="provDireccion" placeholder="Dirección" class="form-control"></div>
+        <div class="col-md-2"><input type="text" id="provTelefono" placeholder="Teléfono" class="form-control"></div>
+        <div class="col-md-2"><input type="text" id="provProducto" placeholder="Producto" class="form-control"></div>
+        <div class="col-md-2"><button type="button" id="btnAgregarProveedor" class="btn btn-primary w-100">Agregar</button></div>
       </div>
     </form>
-
-    <table class="table table-hover shadow rounded">
-      <thead class="table-primary">
+    <table class="table table-hover shadow rounded bg-white" id="tablaProveedores">
+      <thead class="table-dark">
         <tr>
           <th>RUC</th>
           <th>Nombre</th>
@@ -106,43 +93,32 @@
     </table>
   </div>
 
-  <!-- ================= FACTURAS ================= -->
-  <div class="container-fluid section" id="facturas">
+  <!-- ================= Facturas ================= -->
+  <div class="section" id="facturas">
     <h2>📑 Facturas</h2>
-    <form id="formFactura" class="mb-3 p-3 bg-light rounded shadow">
+    <form id="formFactura" class="mb-4 p-4 shadow rounded bg-white">
       <div class="row g-3">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <select id="facRucProveedor" class="form-select">
-            <option value="">-- Selecciona un proveedor --</option>
+            <option value="">-- Selecciona proveedor --</option>
           </select>
         </div>
+        <div class="col-md-2"><input type="text" id="facTipo" placeholder="Tipo" class="form-control"></div>
+        <div class="col-md-2"><input type="text" id="facDescripcion" placeholder="Descripción" class="form-control"></div>
+        <div class="col-md-2"><input type="date" id="facFecha" class="form-control"></div>
+        <div class="col-md-2"><input type="number" step="0.01" id="facMonto" placeholder="Monto" class="form-control"></div>
         <div class="col-md-2">
-          <input type="text" class="form-control" id="facTipo" placeholder="Tipo">
-        </div>
-        <div class="col-md-3">
-          <input type="text" class="form-control" id="facDescripcion" placeholder="Descripción">
-        </div>
-        <div class="col-md-2">
-          <input type="date" class="form-control" id="facFecha">
-        </div>
-        <div class="col-md-1">
-          <input type="number" step="0.01" class="form-control" id="facMonto" placeholder="Monto">
-        </div>
-        <div class="col-md-1">
           <select id="facMoneda" class="form-select">
             <option value="S/">S/</option>
             <option value="$">$</option>
             <option value="€">€</option>
           </select>
         </div>
-        <div class="col-md-12 mt-2">
-          <button type="button" class="btn btn-primary" id="btnAgregarFactura">Agregar Factura</button>
-        </div>
+        <div class="col-md-2"><button type="button" id="btnAgregarFactura" class="btn btn-primary w-100">Agregar</button></div>
       </div>
     </form>
-
-    <table class="table table-hover shadow rounded">
-      <thead class="table-primary">
+    <table class="table table-hover shadow rounded bg-white">
+      <thead class="table-dark">
         <tr>
           <th>Proveedor</th>
           <th>Tipo</th>
@@ -157,30 +133,19 @@
   </div>
 
   <!-- ================= GASTOS ================= -->
-  <div class="container-fluid section" id="gastos">
+  <div class="section" id="gastos">
     <h2>💰 Gastos</h2>
-    <form id="formGasto" class="mb-3 p-3 bg-light rounded shadow">
+    <form id="formGasto" class="mb-4 p-4 shadow rounded bg-white">
       <div class="row g-3">
-        <div class="col-md-3">
-          <input type="text" class="form-control" id="gastoNombre" placeholder="Nombre">
-        </div>
-        <div class="col-md-3">
-          <input type="text" class="form-control" id="gastoTipo" placeholder="Tipo">
-        </div>
-        <div class="col-md-2">
-          <input type="number" step="0.01" class="form-control" id="gastoMonto" placeholder="Monto">
-        </div>
-        <div class="col-md-2">
-          <input type="date" class="form-control" id="gastoFecha">
-        </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-primary w-100" id="btnAgregarGasto">Agregar Gasto</button>
-        </div>
+        <div class="col-md-3"><input type="text" id="gastoNombre" placeholder="Nombre" class="form-control"></div>
+        <div class="col-md-3"><input type="text" id="gastoTipo" placeholder="Tipo" class="form-control"></div>
+        <div class="col-md-3"><input type="number" step="0.01" id="gastoMonto" placeholder="Monto" class="form-control"></div>
+        <div class="col-md-3"><input type="date" id="gastoFecha" class="form-control"></div>
+        <div class="col-md-3"><button type="button" id="btnAgregarGasto" class="btn btn-primary w-100">Agregar</button></div>
       </div>
     </form>
-
-    <table class="table table-hover shadow rounded">
-      <thead class="table-primary">
+    <table class="table table-hover shadow rounded bg-white">
+      <thead class="table-dark">
         <tr>
           <th>Nombre</th>
           <th>Tipo</th>
@@ -194,30 +159,19 @@
   </div>
 
   <!-- ================= SERVICIOS ================= -->
-  <div class="container-fluid section" id="servicios">
+  <div class="section" id="servicios">
     <h2>🛠 Servicios</h2>
-    <form id="formServicio" class="mb-3 p-3 bg-light rounded shadow">
+    <form id="formServicio" class="mb-4 p-4 shadow rounded bg-white">
       <div class="row g-3">
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="servNombre" placeholder="Nombre del servicio">
-        </div>
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="servTipo" placeholder="Tipo">
-        </div>
-        <div class="col-md-2">
-          <input type="number" step="0.01" class="form-control" id="servCosto" placeholder="Costo">
-        </div>
-        <div class="col-md-2">
-          <input type="date" class="form-control" id="servFecha">
-        </div>
-        <div class="col-md-12 mt-2">
-          <button type="button" class="btn btn-primary" id="btnAgregarServicio">Agregar Servicio</button>
-        </div>
+        <div class="col-md-3"><input type="text" id="servNombre" placeholder="Nombre" class="form-control"></div>
+        <div class="col-md-3"><input type="text" id="servTipo" placeholder="Tipo" class="form-control"></div>
+        <div class="col-md-3"><input type="number" step="0.01" id="servCosto" placeholder="Costo" class="form-control"></div>
+        <div class="col-md-3"><input type="date" id="servFecha" class="form-control"></div>
+        <div class="col-md-3"><button type="button" id="btnAgregarServicio" class="btn btn-primary w-100">Agregar</button></div>
       </div>
     </form>
-
-    <table class="table table-hover shadow rounded">
-      <thead class="table-primary">
+    <table class="table table-hover shadow rounded bg-white">
+      <thead class="table-dark">
         <tr>
           <th>Nombre</th>
           <th>Tipo</th>
@@ -230,11 +184,14 @@
     </table>
   </div>
 
-  <!-- Bootstrap JS y Dashboard -->
+  <!-- ================= Scripts ================= -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Dashboard JS -->
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
