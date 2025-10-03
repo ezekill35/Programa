@@ -64,36 +64,36 @@
       </section>
 
       <!-- ================= FACTURAS ================= -->
-      <section id="factura" class="section">
-        <form id="formFactura">
-          <h3>Registrar Factura</h3>
-          <div class="formulario">
-            <input type="text" id="factNum" placeholder="Número de Factura">
-            <input type="date" id="factFecha">
-            <select id="factTipo">
-              <option value="">Seleccione Tipo</option>
-              <option value="Compra">Compra</option>
-              <option value="Venta">Venta</option>
-            </select>
-            <input type="number" id="factMonto" placeholder="Monto">
-            <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
-          </div>
-        </form>
+   <!-- ================= FACTURAS ================= -->
+<div id="factura" class="section">
+  <form id="formFactura">
+    <h3>Registrar Factura</h3>
+    <div class="formulario">
+      <input type="text" id="factNum" placeholder="Número de Factura">
+      <input type="date" id="factFecha">
+      <select id="factTipo">
+        <option value="">Seleccione Tipo</option>
+        <option value="Compra">Compra</option>
+        <option value="Venta">Venta</option>
+      </select>
+      <input type="number" id="factMonto" placeholder="Monto">
+      <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
+    </div>
+  </form> 
 
-        <table>
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Fecha</th>
-              <th>Tipo</th>
-              <th>Monto</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </section>
-
+  <table>
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Fecha</th>
+        <th>Tipo</th>
+        <th>Monto</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="tablaFacturas"></tbody>
+  </table>
+</div>
       <!-- ================= GASTOS ================= -->
       <section id="gastos" class="section">
         <form id="formGasto">
@@ -127,38 +127,37 @@
         </table>
       </section>
 
-      <!-- ================= SERVICIOS ================= -->
-      <section id="servicio" class="section">
-        <form id="formServicio">
-          <h3>Gestión de Servicios</h3>
-          <div class="formulario">
-            <input type="text" id="servNombre" placeholder="Nombre del Servicio">
-            <input type="text" id="servDescripcion" placeholder="Descripción">
-            <input type="number" id="servPrecio" placeholder="Precio">
-            <select id="servEstado">
-              <option value="">Estado</option>
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-            </select>
-            <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
-          </div>
-        </form>
+    <!-- ================= SERVICIOS ================= -->
+<div id="servicio" class="section">
+  <form id="formServicio">
+    <h3>Gestión de Servicios</h3>
+    <div class="formulario">
+      <input type="text" id="servNombre" placeholder="Nombre del Servicio">
+      <input type="text" id="servDescripcion" placeholder="Descripción">
+      <input type="number" id="servPrecio" placeholder="Precio">
+      <select id="servEstado">
+        <option value="">Estado</option>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+      </select>
+      <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
+    </div>
+  </form> <!-- 👈 aquí cierro bien -->
 
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody id="tablaServicios"></tbody>
-        </table>
-      </section>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Estado</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="tablaServicios"></tbody>
+  </table>
+</div>
 
-    </div><!-- cierre .content -->
   </div><!-- cierre .dashboard-container -->
 
   <!-- Scripts -->
@@ -166,6 +165,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
