@@ -71,23 +71,26 @@
 
       <!-- ================= FACTURAS ================= -->
       <section id="facturas" class="section">
-        <h3>📑 Gestión de Facturas</h3>
-        <form id="formFactura">
-          <div class="formulario">
-            <input type="text" id="facRucProveedor" placeholder="Proveedor">
-            <input type="text" id="facTipo" placeholder="Tipo de Factura">
-            <input type="text" id="facDescripcion" placeholder="Descripción">
-            <input type="date" id="facFecha">
+        <h3>📑 Registrar Factura</h3>
+        <div class="formulario">
+          <select id="facRucProveedor">
+            <option value="">-- Selecciona un Proveedor --</option>
+          </select>
+          <input type="text" id="facTipo" placeholder="Tipo de Factura">
+          <input type="text" id="facDescripcion" placeholder="Descripción">
+          <input type="date" id="facFecha">
 
-            <!-- Monto con moneda dentro -->
-            <div class="input-moneda">
-              <span class="moneda">S/.</span>
-              <input type="number" step="0.01" id="facMonto" placeholder="0.00" min="0">
-            </div>
-
-            <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
+          <div class="input-moneda">
+            <select id="facMoneda">
+              <option value="S/.">S/.</option>
+              <option value="$">$</option>
+              <option value="€">€</option>
+            </select>
+            <input type="number" id="facMonto" step="0.01" placeholder="Monto">
           </div>
-        </form>
+
+          <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
+        </div>
 
         <div class="buscar-container">
           <input type="text" id="buscarFactura" placeholder="Buscar factura">
@@ -111,8 +114,8 @@
 
       <!-- ================= GASTOS ================= -->
       <section id="gastos" class="section">
-        <h3>💰 Registrar Gasto</h3>
         <form id="formGasto">
+          <h3>💰 Registrar Gasto</h3>
           <div class="formulario">
             <input type="text" id="gastoNombre" placeholder="Nombre del Gasto">
             <select id="gastoTipo">
@@ -122,10 +125,7 @@
               <option value="Publicidad">Publicidad</option>
               <option value="Otros">Otros</option>
             </select>
-            <div class="input-moneda">
-              <span class="moneda">S/.</span>
-              <input type="number" step="0.01" id="gastoMonto" placeholder="0.00" min="0">
-            </div>
+            <input type="number" id="gastoMonto" step="0.01" placeholder="Monto">
             <input type="date" id="gastoFecha">
             <button type="button" id="btnAgregarGasto">➕ Registrar Gasto</button>
           </div>
@@ -152,19 +152,14 @@
 
       <!-- ================= SERVICIOS ================= -->
       <section id="servicios" class="section">
-        <h3>🛠 Gestión de Servicios</h3>
-        <form id="formServicio">
-          <div class="formulario">
-            <input id="servNombre" placeholder="Nombre">
-            <input id="servDescripcion" placeholder="Descripción">
-            <input id="servFecha" type="date">
-            <div class="input-moneda">
-              <span class="moneda">S/.</span>
-              <input type="number" step="0.01" id="servPrecio" placeholder="0.00" min="0">
-            </div>
-            <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
-          </div>
-        </form>
+        <h3>🛠 Registrar Servicio</h3>
+        <div class="formulario">
+          <input id="servNombre" placeholder="Nombre">
+          <input id="servDescripcion" placeholder="Descripción">
+          <input type="date" id="servFecha">
+          <input type="number" id="servPrecio" step="0.01" placeholder="Precio">
+          <button type="button" id="btnAgregarServicio">➕ Agregar Servicio</button>
+        </div>
 
         <div class="buscar-container">
           <input type="text" id="buscarServicio" placeholder="Buscar servicio">
@@ -185,8 +180,8 @@
         </table>
       </section>
 
-    </div><!-- cierre .content -->
-  </div><!-- cierre .dashboard-container -->
+    </div>
+  </div>
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
