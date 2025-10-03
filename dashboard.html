@@ -63,12 +63,14 @@
         </table>
       </section>
 
-  <!-- 📌 FACTURAS -->
+ <!-- 📌 FACTURAS -->
 <section id="facturas" class="section">
   <h2>Gestión de Facturas</h2>
 
   <div class="formulario">
-    <input id="facRucProveedor" placeholder="RUC Proveedor">
+    <select id="facRucProveedor">
+      <option value="">-- Selecciona un Proveedor --</option>
+    </select>
     <input id="facTipo" placeholder="Tipo de Factura">
     <input id="facDescripcion" placeholder="Descripción">
     <input id="facFecha" type="date">
@@ -81,7 +83,7 @@
   <table>
     <thead>
       <tr>
-        <th>RUC Proveedor</th>
+        <th>Proveedor</th>
         <th>Tipo</th>
         <th>Descripción</th>
         <th>Fecha</th>
@@ -92,6 +94,7 @@
     <tbody id="listaFacturas"></tbody>
   </table>
 </section>
+
 
 
       <!-- ================= GASTOS ================= -->
@@ -161,6 +164,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
