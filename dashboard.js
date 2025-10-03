@@ -1,3 +1,7 @@
+// =======================================
+// 🐾 Dashboard JS - Discovery Pets (Firebase)
+// =======================================
+
 import { db, auth } from './firebase.js';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -57,7 +61,6 @@ btnAgregarProveedor.addEventListener('click', async () => {
   document.getElementById('formProveedor').reset();
 });
 
-// Tiempo real proveedores
 onSnapshot(proveedoresCol, snapshot => {
   proveedores = [];
   snapshot.forEach(doc => proveedores.push({ id: doc.id, ...doc.data() }));
@@ -75,8 +78,8 @@ function actualizarProveedores() {
         <td>${p.telefono}</td>
         <td>${p.producto}</td>
         <td>
-          <button onclick="editarProveedor('${p.id}')" class="btn btn-warning btn-sm">✏️</button>
-          <button onclick="eliminarProveedorFirebase('${p.id}')" class="btn btn-danger btn-sm">❌</button>
+          <button class="btn btn-sm btn-warning me-1" onclick="editarProveedor('${p.id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminarProveedorFirebase('${p.id}')">❌</button>
         </td>
       </tr>
     `;
@@ -106,7 +109,6 @@ async function eliminarProveedorFirebase(id) {
 
 function actualizarSelectProveedores() {
   const select = document.getElementById('facRucProveedor');
-  if(!select) return;
   select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
   proveedores.forEach(p => {
     select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
@@ -133,7 +135,6 @@ btnAgregarFactura.addEventListener('click', async () => {
   document.getElementById('formFactura').reset();
 });
 
-// Tiempo real facturas
 onSnapshot(facturasCol, snapshot => {
   facturas = [];
   snapshot.forEach(doc => facturas.push({ id: doc.id, ...doc.data() }));
@@ -151,8 +152,8 @@ function actualizarFacturas() {
         <td>${f.fecha}</td>
         <td>${f.moneda}${f.monto.toFixed(2)}</td>
         <td>
-          <button onclick="editarFactura('${f.id}')" class="btn btn-warning btn-sm">✏️</button>
-          <button onclick="eliminarFacturaFirebase('${f.id}')" class="btn btn-danger btn-sm">❌</button>
+          <button class="btn btn-sm btn-warning me-1" onclick="editarFactura('${f.id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminarFacturaFirebase('${f.id}')">❌</button>
         </td>
       </tr>
     `;
@@ -176,6 +177,122 @@ window.editarFactura = async (id) => {
 
 async function eliminarFacturaFirebase(id){
   if(confirm('¿Eliminar factura?')) await deleteDoc(doc(db,"facturas",id));
+}
+
+// ------------------ GASTOS ------------------
+const listaGastos = document.getElementById('listaGastos');
+const btnAgregarGasto = document.getElementById('btnAgregarGasto');
+
+btnAgregarGasto.addEventListener('click', async () => {
+  const nombre = document.getElementById('gastoNombre').value.trim();
+  const tipo = document.getElementById('gastoTipo').value.trim();
+  const monto = parseFloat(document.getElementById('gastoMonto').value.trim());
+  const fecha = document.getElementById('gastoFecha').value;
+
+  if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
+  if(isNaN(monto)) return alert('Monto debe ser número');
+
+  await addDoc(gastosCol, { nombre, tipo, monto, fecha });
+  document.getElementById('formGasto').reset();
+});
+
+onSnapshot(gastosCol, snapshot => {
+  gastos = [];
+  snapshot.forEach(doc => gastos.push({ id: doc.id, ...doc.data() }));
+  actualizarGastos();
+});
+
+function actualizarGastos(){
+  listaGastos.innerHTML='';
+  gastos.forEach(g => {
+    listaGastos.innerHTML+=`
+      <tr>
+        <td>${g.nombre}</td>
+        <td>${g.tipo}</td>
+        <td>${g.monto.toFixed(2)}</td>
+        <td>${g.fecha}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-1" onclick="editarGasto('${g.id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminarGastoFirebase('${g.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+  totalGastos.textContent = gastos.length;
+}
+
+window.editarGasto = async id => {
+  const g = gastos.find(x => x.id===id);
+  const nombre = prompt("Nombre:", g.nombre)||g.nombre;
+  const tipo = prompt("Tipo:", g.tipo)||g.tipo;
+  const monto = parseFloat(prompt("Monto:", g.monto))||g.monto;
+  const fecha = prompt("Fecha:", g.fecha)||g.fecha;
+
+  if(isNaN(monto)) return alert('Monto debe ser número');
+
+  await updateDoc(doc(db,"gastos",id), {nombre,tipo,monto,fecha});
+}
+
+async function eliminarGastoFirebase(id){
+  if(confirm('¿Eliminar gasto?')) await deleteDoc(doc(db,"gastos",id));
+}
+
+// ------------------ SERVICIOS ------------------
+const listaServicios = document.getElementById('listaServicios');
+const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+
+btnAgregarServicio.addEventListener('click', async () => {
+  const nombre = document.getElementById('servNombre').value.trim();
+  const descripcion = document.getElementById('servDescripcion').value.trim();
+  const monto = parseFloat(document.getElementById('servMonto').value.trim());
+  const fecha = document.getElementById('servFecha').value;
+
+  if(!nombre || !descripcion) return alert('Nombre y Descripción son obligatorios');
+  if(isNaN(monto)) return alert('Monto debe ser número');
+
+  await addDoc(serviciosCol, { nombre, descripcion, monto, fecha });
+  document.getElementById('formServicio').reset();
+});
+
+onSnapshot(serviciosCol, snapshot => {
+  servicios = [];
+  snapshot.forEach(doc => servicios.push({ id: doc.id, ...doc.data() }));
+  actualizarServicios();
+});
+
+function actualizarServicios(){
+  listaServicios.innerHTML='';
+  servicios.forEach(s => {
+    listaServicios.innerHTML+=`
+      <tr>
+        <td>${s.nombre}</td>
+        <td>${s.descripcion}</td>
+        <td>${s.monto.toFixed(2)}</td>
+        <td>${s.fecha}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-1" onclick="editarServicio('${s.id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminarServicioFirebase('${s.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+  totalServicios.textContent = servicios.length;
+}
+
+window.editarServicio = async id => {
+  const s = servicios.find(x => x.id===id);
+  const nombre = prompt("Nombre:", s.nombre)||s.nombre;
+  const descripcion = prompt("Descripción:", s.descripcion)||s.descripcion;
+  const monto = parseFloat(prompt("Monto:", s.monto))||s.monto;
+  const fecha = prompt("Fecha:", s.fecha)||s.fecha;
+
+  if(isNaN(monto)) return alert('Monto debe ser número');
+
+  await updateDoc(doc(db,"servicios",id), {nombre,descripcion,monto,fecha});
+}
+
+async function eliminarServicioFirebase(id){
+  if(confirm('¿Eliminar servicio?')) await deleteDoc(doc(db,"servicios",id));
 }
 
 // ------------------ CERRAR SESIÓN ------------------
