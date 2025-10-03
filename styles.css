@@ -175,30 +175,63 @@ table button:hover {
   align-items: center;
   height: 100vh;
   width: 100%;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #ffe6f5, #fff0f7); /* degradado suave */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-box {
   background: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  width: 350px; /* ancho fijo más compacto */
+  padding: 35px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  width: 340px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Patitas decorativas */
+.login-box::before {
+  content: "🐾";
+  font-size: 3em;
+  position: absolute;
+  top: -10px;
+  left: -15px;
+  opacity: 0.15;
+}
+
+.login-box::after {
+  content: "🐾";
+  font-size: 3em;
+  position: absolute;
+  bottom: -10px;
+  right: -15px;
+  opacity: 0.15;
 }
 
 .login-box h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #ff1abc;
+  font-size: 1.8em;
+  letter-spacing: 1px;
 }
 
 .login-box input {
   width: 100%;
-  padding: 8px 10px;  /* 👈 más compacto */
+  padding: 10px 12px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px; /* 👈 más pequeño */
+  border: 1px solid #ffcce6;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.login-box input:focus {
+  border-color: #ff1abc;
+  outline: none;
+  box-shadow: 0 0 6px rgba(255, 26, 188, 0.4);
 }
 
 .login-box button {
@@ -208,14 +241,41 @@ table button:hover {
   border: none;
   color: #fff;
   font-size: 15px;
-  border-radius: 6px;
+  font-weight: bold;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s;
 }
 
 .login-box button:hover {
-  background: #ff66b2;
+  background: #e60073;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 26, 188, 0.3);
 }
+
+.login-box p {
+  font-size: 0.9em;
+  margin-top: 10px;
+  color: #555;
+}
+
+.login-box a {
+  color: #ff1abc;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.login-box a:hover {
+  text-decoration: underline;
+}
+
+/* Animación entrada */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 
 /* ------------------ Responsive ------------------ */
 @media(max-width: 900px) {
@@ -242,6 +302,7 @@ table button:hover {
     gap: 10px;
   }
 }
+
 
 
 
