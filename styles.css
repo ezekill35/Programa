@@ -71,68 +71,65 @@ body {
 }
 
 /* ------------------ Formularios ------------------ */
-.formulario-box {
-  background: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin-bottom: 25px;
-  transition: transform 0.2s ease;
-}
-
-.formulario-box:hover {
-  transform: translateY(-3px);
-}
-
-.formulario-box h3 {
-  margin-bottom: 20px;
-  color: #ff1abc;
-  font-size: 1.4rem;
-  text-align: center;
-  border-bottom: 2px solid #ff1abc33;
-  padding-bottom: 8px;
-}
-
 .formulario {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 15px 0 20px;
 }
 
-.formulario input, 
-.formulario select {
-  flex: 1 1 220px;
-  padding: 12px;
+.formulario input,
+.formulario select,
+.formulario button {
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
-  transition: all 0.3s ease;
 }
 
-.formulario input:focus, 
+.formulario input:focus,
 .formulario select:focus {
-  border-color: #ff1abc;
-  box-shadow: 0 0 6px rgba(255, 26, 188, 0.4);
+  border-color: #ff6f91;
   outline: none;
+  box-shadow: 0 0 4px rgba(255, 111, 145, 0.4);
 }
 
 .formulario button {
-  flex: 1 1 100%;
-  background: linear-gradient(45deg, #ff1abc, #ff66b2);
-  color: #fff;
-  padding: 12px;
+  background: #ff6f91;
   border: none;
-  border-radius: 8px;
+  color: #fff;
   font-size: 15px;
-  font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .formulario button:hover {
-  background: linear-gradient(45deg, #ff66b2, #ff1abc);
-  transform: scale(1.03);
+  background: #ff2e63;
 }
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+table thead {
+  background: #ff6f91;
+  color: #fff;
+}
+
+table th, table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
 /* ------------------ Tablas ------------------ */
 table {
   width: 100%;
@@ -224,6 +221,7 @@ table button:hover {
     gap: 10px;
   }
 }
+
 
 
 
