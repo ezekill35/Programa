@@ -1,3 +1,7 @@
+// =======================================
+// 🐾 Firebase Config - Discovery Pets
+// =======================================
+
 // Importar Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -19,10 +23,17 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Función cerrar sesión
+// Función para cerrar sesión
 export const cerrarSesion = async () => {
-  await signOut(auth);
+  try {
+    await signOut(auth);
+    alert("Sesión cerrada");
+    window.location.href = "index.html";
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error);
+  }
 };
+
 
 
 
