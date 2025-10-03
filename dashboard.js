@@ -7,6 +7,7 @@ let proveedores = [];
 let facturas = [];
 let gastos = [];
 let servicios = [];
+let editIndex = { tipo: null, index: null };
 
 // ------------------ Contadores ------------------
 const totalProveedores = document.getElementById('total-proveedores');
@@ -45,33 +46,56 @@ btnAgregarProveedor.addEventListener('click', () => {
 
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
 
-  proveedores.push({ruc, nombre, direccion, correo, telefono, producto});
-  actualizarProveedores();
+  const prov = { ruc, nombre, direccion, correo, telefono, producto };
+
+  if(editIndex.tipo === 'proveedor'){
+    proveedores[editIndex.index] = prov;
+    editIndex = { tipo:null, index:null };
+  } else {
+    proveedores.push(prov);
+  }
+
   document.getElementById('formProveedor').reset();
+  actualizarProveedores();
 });
 
-function actualizarProveedores() {
+function actualizarProveedores(filter=''){
   listaProveedores.innerHTML = '';
   proveedores.forEach((prov, index) => {
-    listaProveedores.innerHTML += `
-      <tr>
-        <td>${prov.ruc}</td>
-        <td>${prov.nombre}</td>
-        <td>${prov.direccion}</td>
-        <td>${prov.correo}</td>
-        <td>${prov.telefono}</td>
-        <td>${prov.producto}</td>
-        <td><button onclick="eliminarProveedor(${index})">❌</button></td>
-      </tr>
-    `;
+    if(prov.nombre.toLowerCase().includes(filter.toLowerCase()) || prov.ruc.includes(filter)){
+      listaProveedores.innerHTML += `
+        <tr>
+          <td>${prov.ruc}</td>
+          <td>${prov.nombre}</td>
+          <td>${prov.direccion}</td>
+          <td>${prov.correo}</td>
+          <td>${prov.telefono}</td>
+          <td>${prov.producto}</td>
+          <td>
+            <button onclick="editarProveedor(${index})">✏️</button>
+            <button onclick="eliminarProveedor(${index})">❌</button>
+          </td>
+        </tr>
+      `;
+    }
   });
-
   totalProveedores.textContent = proveedores.length;
   actualizarSelectProveedores();
 }
 
-function eliminarProveedor(index) {
-  if(confirm('¿Eliminar proveedor?')) {
+function editarProveedor(index){
+  const p = proveedores[index];
+  document.getElementById('provRuc').value = p.ruc;
+  document.getElementById('provNombre').value = p.nombre;
+  document.getElementById('provDireccion').value = p.direccion;
+  document.getElementById('provCorreo').value = p.correo;
+  document.getElementById('provTelefono').value = p.telefono;
+  document.getElementById('provProducto').value = p.producto;
+  editIndex = { tipo:'proveedor', index:index };
+}
+
+function eliminarProveedor(index){
+  if(confirm('¿Eliminar proveedor?')){
     proveedores.splice(index,1);
     actualizarProveedores();
   }
@@ -88,25 +112,7 @@ function actualizarSelectProveedores() {
 
 // Buscador Proveedores
 document.getElementById('btnBuscarProveedor').addEventListener('click', () => {
-  const busqueda = document.getElementById('buscarProveedor').value.toLowerCase();
-  const filtrados = proveedores.filter(p => 
-    p.ruc.toLowerCase().includes(busqueda) ||
-    p.nombre.toLowerCase().includes(busqueda)
-  );
-  listaProveedores.innerHTML = '';
-  filtrados.forEach((prov, index) => {
-    listaProveedores.innerHTML += `
-      <tr>
-        <td>${prov.ruc}</td>
-        <td>${prov.nombre}</td>
-        <td>${prov.direccion}</td>
-        <td>${prov.correo}</td>
-        <td>${prov.telefono}</td>
-        <td>${prov.producto}</td>
-        <td><button onclick="eliminarProveedor(${index})">❌</button></td>
-      </tr>
-    `;
-  });
+  actualizarProveedores(document.getElementById('buscarProveedor').value);
 });
 
 // =======================================
@@ -124,34 +130,57 @@ btnAgregarFactura.addEventListener('click', () => {
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
 
-  facturas.push({proveedor, tipo, descripcion, fecha, monto});
-  actualizarFacturas();
+  const fac = { proveedor, tipo, descripcion, fecha, monto };
+
+  if(editIndex.tipo === 'factura'){
+    facturas[editIndex.index] = fac;
+    editIndex = { tipo:null, index:null };
+  } else {
+    facturas.push(fac);
+  }
+
   document.getElementById('facRucProveedor').value = '';
   document.getElementById('facTipo').value = '';
   document.getElementById('facDescripcion').value = '';
   document.getElementById('facFecha').value = '';
   document.getElementById('facMonto').value = '';
+  actualizarFacturas();
 });
 
-function actualizarFacturas() {
+function actualizarFacturas(filter=''){
   listaFacturas.innerHTML = '';
   facturas.forEach((fac, index) => {
-    listaFacturas.innerHTML += `
-      <tr>
-        <td>${fac.proveedor}</td>
-        <td>${fac.tipo}</td>
-        <td>${fac.descripcion}</td>
-        <td>${fac.fecha}</td>
-        <td>${fac.monto}</td>
-        <td><button onclick="eliminarFactura(${index})">❌</button></td>
-      </tr>
-    `;
+    if(fac.tipo.toLowerCase().includes(filter.toLowerCase()) || fac.proveedor.toLowerCase().includes(filter.toLowerCase())){
+      listaFacturas.innerHTML += `
+        <tr>
+          <td>${fac.proveedor}</td>
+          <td>${fac.tipo}</td>
+          <td>${fac.descripcion}</td>
+          <td>${fac.fecha}</td>
+          <td>${fac.monto}</td>
+          <td>
+            <button onclick="editarFactura(${index})">✏️</button>
+            <button onclick="eliminarFactura(${index})">❌</button>
+          </td>
+        </tr>
+      `;
+    }
   });
   totalFacturas.textContent = facturas.length;
 }
 
-function eliminarFactura(index) {
-  if(confirm('¿Eliminar factura?')) {
+function editarFactura(index){
+  const f = facturas[index];
+  document.getElementById('facRucProveedor').value = f.proveedor;
+  document.getElementById('facTipo').value = f.tipo;
+  document.getElementById('facDescripcion').value = f.descripcion;
+  document.getElementById('facFecha').value = f.fecha;
+  document.getElementById('facMonto').value = f.monto;
+  editIndex = { tipo:'factura', index:index };
+}
+
+function eliminarFactura(index){
+  if(confirm('¿Eliminar factura?')){
     facturas.splice(index,1);
     actualizarFacturas();
   }
@@ -159,23 +188,7 @@ function eliminarFactura(index) {
 
 // Buscador Facturas
 document.getElementById('btnBuscarFactura').addEventListener('click', () => {
-  const busqueda = document.getElementById('buscarFactura').value.toLowerCase();
-  const filtrados = facturas.filter(f => 
-    f.tipo.toLowerCase().includes(busqueda) || f.proveedor.toLowerCase().includes(busqueda)
-  );
-  listaFacturas.innerHTML = '';
-  filtrados.forEach((fac,index) => {
-    listaFacturas.innerHTML += `
-      <tr>
-        <td>${fac.proveedor}</td>
-        <td>${fac.tipo}</td>
-        <td>${fac.descripcion}</td>
-        <td>${fac.fecha}</td>
-        <td>${fac.monto}</td>
-        <td><button onclick="eliminarFactura(${index})">❌</button></td>
-      </tr>
-    `;
-  });
+  actualizarFacturas(document.getElementById('buscarFactura').value);
 });
 
 // =======================================
@@ -192,29 +205,51 @@ btnAgregarGasto.addEventListener('click', () => {
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
 
-  gastos.push({nombre,tipo,monto,fecha});
-  actualizarGastos();
+  const g = { nombre,tipo,monto,fecha };
+
+  if(editIndex.tipo === 'gasto'){
+    gastos[editIndex.index] = g;
+    editIndex = { tipo:null, index:null };
+  } else {
+    gastos.push(g);
+  }
+
   document.getElementById('formGasto').reset();
+  actualizarGastos();
 });
 
-function actualizarGastos() {
+function actualizarGastos(filter=''){
   listaGastos.innerHTML = '';
   gastos.forEach((g,index) => {
-    listaGastos.innerHTML += `
-      <tr>
-        <td>${g.nombre}</td>
-        <td>${g.tipo}</td>
-        <td>${g.monto}</td>
-        <td>${g.fecha}</td>
-        <td><button onclick="eliminarGasto(${index})">❌</button></td>
-      </tr>
-    `;
+    if(g.nombre.toLowerCase().includes(filter.toLowerCase()) || g.tipo.toLowerCase().includes(filter.toLowerCase())){
+      listaGastos.innerHTML += `
+        <tr>
+          <td>${g.nombre}</td>
+          <td>${g.tipo}</td>
+          <td>${g.monto}</td>
+          <td>${g.fecha}</td>
+          <td>
+            <button onclick="editarGasto(${index})">✏️</button>
+            <button onclick="eliminarGasto(${index})">❌</button>
+          </td>
+        </tr>
+      `;
+    }
   });
   totalGastos.textContent = gastos.length;
 }
 
-function eliminarGasto(index) {
-  if(confirm('¿Eliminar gasto?')) {
+function editarGasto(index){
+  const g = gastos[index];
+  document.getElementById('gastoNombre').value = g.nombre;
+  document.getElementById('gastoTipo').value = g.tipo;
+  document.getElementById('gastoMonto').value = g.monto;
+  document.getElementById('gastoFecha').value = g.fecha;
+  editIndex = { tipo:'gasto', index:index };
+}
+
+function eliminarGasto(index){
+  if(confirm('¿Eliminar gasto?')){
     gastos.splice(index,1);
     actualizarGastos();
   }
@@ -222,22 +257,7 @@ function eliminarGasto(index) {
 
 // Buscador Gastos
 document.getElementById('btnBuscarGasto').addEventListener('click', () => {
-  const busqueda = document.getElementById('buscarGasto').value.toLowerCase();
-  const filtrados = gastos.filter(g => 
-    g.nombre.toLowerCase().includes(busqueda) || g.tipo.toLowerCase().includes(busqueda)
-  );
-  listaGastos.innerHTML = '';
-  filtrados.forEach((g,index) => {
-    listaGastos.innerHTML += `
-      <tr>
-        <td>${g.nombre}</td>
-        <td>${g.tipo}</td>
-        <td>${g.monto}</td>
-        <td>${g.fecha}</td>
-        <td><button onclick="eliminarGasto(${index})">❌</button></td>
-      </tr>
-    `;
-  });
+  actualizarGastos(document.getElementById('buscarGasto').value);
 });
 
 // =======================================
@@ -254,32 +274,54 @@ btnAgregarServicio.addEventListener('click', () => {
 
   if(!nombre) return alert('Nombre es obligatorio');
 
-  servicios.push({nombre,descripcion,fecha,precio});
-  actualizarServicios();
+  const s = { nombre, descripcion, fecha, precio };
+
+  if(editIndex.tipo === 'servicio'){
+    servicios[editIndex.index] = s;
+    editIndex = { tipo:null, index:null };
+  } else {
+    servicios.push(s);
+  }
+
   document.getElementById('servNombre').value = '';
   document.getElementById('servDescripcion').value = '';
   document.getElementById('servFecha').value = '';
   document.getElementById('servPrecio').value = '';
+  actualizarServicios();
 });
 
-function actualizarServicios() {
+function actualizarServicios(filter=''){
   listaServicios.innerHTML = '';
   servicios.forEach((s,index) => {
-    listaServicios.innerHTML += `
-      <tr>
-        <td>${s.nombre}</td>
-        <td>${s.descripcion}</td>
-        <td>${s.fecha}</td>
-        <td>${s.precio}</td>
-        <td><button onclick="eliminarServicio(${index})">❌</button></td>
-      </tr>
-    `;
+    if(s.nombre.toLowerCase().includes(filter.toLowerCase()) || s.descripcion.toLowerCase().includes(filter.toLowerCase())){
+      listaServicios.innerHTML += `
+        <tr>
+          <td>${s.nombre}</td>
+          <td>${s.descripcion}</td>
+          <td>${s.fecha}</td>
+          <td>${s.precio}</td>
+          <td>
+            <button onclick="editarServicio(${index})">✏️</button>
+            <button onclick="eliminarServicio(${index})">❌</button>
+          </td>
+        </tr>
+      `;
+    }
   });
   totalServicios.textContent = servicios.length;
 }
 
-function eliminarServicio(index) {
-  if(confirm('¿Eliminar servicio?')) {
+function editarServicio(index){
+  const s = servicios[index];
+  document.getElementById('servNombre').value = s.nombre;
+  document.getElementById('servDescripcion').value = s.descripcion;
+  document.getElementById('servFecha').value = s.fecha;
+  document.getElementById('servPrecio').value = s.precio;
+  editIndex = { tipo:'servicio', index:index };
+}
+
+function eliminarServicio(index){
+  if(confirm('¿Eliminar servicio?')){
     servicios.splice(index,1);
     actualizarServicios();
   }
@@ -287,23 +329,9 @@ function eliminarServicio(index) {
 
 // Buscador Servicios
 document.getElementById('btnBuscarServicio').addEventListener('click', () => {
-  const busqueda = document.getElementById('buscarServicio').value.toLowerCase();
-  const filtrados = servicios.filter(s => 
-    s.nombre.toLowerCase().includes(busqueda) || s.descripcion.toLowerCase().includes(busqueda)
-  );
-  listaServicios.innerHTML = '';
-  filtrados.forEach((s,index) => {
-    listaServicios.innerHTML += `
-      <tr>
-        <td>${s.nombre}</td>
-        <td>${s.descripcion}</td>
-        <td>${s.fecha}</td>
-        <td>${s.precio}</td>
-        <td><button onclick="eliminarServicio(${index})">❌</button></td>
-      </tr>
-    `;
-  });
+  actualizarServicios(document.getElementById('buscarServicio').value);
 });
+
 
 
 
