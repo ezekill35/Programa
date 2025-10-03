@@ -1,15 +1,9 @@
-/* ------------------ Reset básico ------------------ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 /* ------------------ Body ------------------ */
 body {
-  background: #f2f6ff;
-  color: #333;
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(120deg,#f0f4f8,#d9e2ec);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* ------------------ Sidebar ------------------ */
@@ -17,249 +11,92 @@ body {
   width: 220px;
   background: linear-gradient(180deg, #ff1abc, #ff66b2);
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-  z-index: 10;
+  box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+  border-radius: 0 20px 20px 0;
 }
 
 .sidebar h2 {
   text-align: center;
   margin-bottom: 30px;
-  font-size: 1.7rem;
 }
 
 .sidebar ul {
   list-style: none;
+  padding-left: 0;
 }
 
 .sidebar ul li {
   padding: 15px 20px;
   cursor: pointer;
-  transition: 0.3s;
-  user-select: none;
   border-left: 4px solid transparent;
-  font-size: 1.05rem;
+  transition: 0.3s;
 }
 
 .sidebar ul li:hover,
 .sidebar ul li.active {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-left: 4px solid #fff;
 }
 
-/* ------------------ Secciones ------------------ */
+/* ------------------ Contenido ------------------ */
 .section {
+  flex: 1;
   margin-left: 220px;
   padding: 30px;
   display: none;
-  animation: fadeIn 0.4s ease-in-out;
 }
 
 .section.active {
   display: block;
 }
 
-/* Animación de aparición */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ------------------ Títulos ------------------ */
-.section h2 {
-  margin-bottom: 25px;
-  color: #ff1abc;
-  font-weight: bold;
-}
-
-/* ------------------ Cards de reportes ------------------ */
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-.card {
-  background: #fff;
-  flex: 1 1 200px;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-7px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-.card h3 {
-  font-size: 2rem;
-  color: #ff1abc;
-  margin-bottom: 8px;
-}
-
-.card p {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #555;
-}
-
-/* ------------------ Formularios ------------------ */
-.formulario {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.formulario input,
-.formulario select,
-.formulario button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  flex: 1 1 200px;
-}
-
-.formulario button {
-  background: #ff1abc;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-}
-
-.formulario button:hover {
-  background: #ff66b2;
-  transform: scale(1.03);
-}
-
-/* Formularios dentro de card */
-.section form {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  margin-bottom: 25px;
-}
-
-.section form h3 {
-  margin-bottom: 15px;
-  color: #ff1abc;
-}
-
-/* ------------------ Buscadores ------------------ */
-.buscar-container {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.buscar-container input {
-  width: 250px;
-  border-radius: 6px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-}
-
-.buscar-container button {
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: #ff1abc;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.buscar-container button:hover {
-  background: #ff66b2;
-}
-
 /* ------------------ Tablas ------------------ */
 table {
-  width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-table th, table td {
-  padding: 12px 15px;
-  text-align: left;
 }
 
 table th {
-  background: #ff1abc;
-  color: #fff;
-  font-weight: bold;
+  background-color: #ff1abc !important;
+  color: #fff !important;
 }
 
-table tr:nth-child(even) {
-  background: #f9f9f9;
+table td, table th {
+  padding: 10px;
 }
 
-table tr:hover {
-  background: rgba(255,198,230,0.3);
+/* ------------------ Formulario ------------------ */
+form input, form select, form button {
+  border-radius: 8px !important;
 }
 
-table button {
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
+form button:hover {
+  transform: scale(1.05);
+}
+
+/* ------------------ Cards ------------------ */
+.card {
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
   transition: 0.3s;
 }
 
-table button.btn-warning:hover {
-  background: #ff99cc;
-}
-
-table button.btn-danger:hover {
-  background: #ff3d7a;
+.card:hover {
+  transform: translateY(-5px);
 }
 
 /* ------------------ Responsive ------------------ */
-@media(max-width: 900px) {
-  .sidebar {
-    width: 60px;
-    padding: 10px 0;
-  }
-
-  .sidebar h2 {
-    display: none;
-  }
-
-  .sidebar ul li {
-    padding: 12px;
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .section {
-    margin-left: 60px;
-    padding: 20px;
-  }
-
-  .buscar-container input {
-    width: 150px;
-  }
+@media(max-width: 900px){
+  .sidebar { width: 60px; }
+  .sidebar h2 { display: none; }
+  .section { margin-left: 60px; }
 }
-
 
 
 
