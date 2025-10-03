@@ -1,6 +1,8 @@
 // Importar Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 // Configuración Firebase (Discovery Pets)
@@ -54,8 +56,8 @@ async function actualizarReportes() {
 actualizarReportes();
 
 // ---------------------- PROVEEDORES ----------------------
-const listaProveedores = document.getElementById("tablaProveedores");
-const selectProveedores = document.getElementById("facRucProveedor"); // select para facturas
+const listaProveedores = document.getElementById("listaProveedores");
+const selectProveedores = document.getElementById("facRucProveedor"); // select de facturas
 
 async function listarProveedores() {
   listaProveedores.innerHTML = "";
@@ -72,7 +74,7 @@ async function listarProveedores() {
       <td>${p.correo}</td>
       <td>${p.telefono}</td>
       <td>${p.producto || ""}</td>
-      <td><button onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
+      <td><button onclick="eliminarProveedor('${docSnap.id}')">❌</button></td>
     `;
     listaProveedores.appendChild(tr);
 
@@ -101,37 +103,6 @@ document.getElementById("btnAgregarProveedor").addEventListener("click", async (
   listarProveedores();
 });
 
-// Buscar proveedor
-document.getElementById("btnBuscarProveedor").addEventListener("click", async () => {
-  const buscar = document.getElementById("buscarProveedor").value.trim();
-  if(!buscar) return listarProveedores();
-
-  const q = query(collection(db, "proveedores"), where("nombre", "==", buscar));
-  const snapshot = await getDocs(q);
-  listaProveedores.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const p = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.ruc}</td>
-      <td>${p.nombre}</td>
-      <td>${p.direccion}</td>
-      <td>${p.correo}</td>
-      <td>${p.telefono}</td>
-      <td>${p.producto || ""}</td>
-      <td><button onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
-    `;
-    listaProveedores.appendChild(tr);
-  });
-  if(snapshot.empty) {
-    if(confirm("Proveedor no existe. ¿Desea registrarlo?")) {
-      document.getElementById("menu-proveedores").click();
-    }
-  }
-});
-
-listarProveedores();
-
 // ---------------------- FACTURAS ----------------------
 const listaFacturas = document.getElementById("listaFacturas");
 
@@ -148,7 +119,7 @@ async function listarFacturas() {
       <td>${f.descripcion || ""}</td>
       <td>${f.fecha}</td>
       <td>${f.monto}</td>
-      <td><button onclick="eliminarFactura('${docSnap.id}')">Eliminar</button></td>
+      <td><button onclick="eliminarFactura('${docSnap.id}')">❌</button></td>
     `;
     listaFacturas.appendChild(tr);
   });
@@ -173,7 +144,7 @@ document.getElementById("btnAgregarFactura").addEventListener("click", async () 
     return;
   }
 
-  // buscar nombre del proveedor
+  // buscar nombre proveedor
   let nombreProveedor = "";
   const q = query(collection(db, "proveedores"), where("ruc", "==", rucProveedor));
   const snapshot = await getDocs(q);
@@ -183,35 +154,8 @@ document.getElementById("btnAgregarFactura").addEventListener("click", async () 
   listarFacturas();
 });
 
-// Buscar factura
-document.getElementById("btnBuscarFactura").addEventListener("click", async () => {
-  const buscar = document.getElementById("buscarFactura").value.trim();
-  if(!buscar) return listarFacturas();
-
-  const q = query(collection(db, "facturas"), where("tipo", "==", buscar));
-  const snapshot = await getDocs(q);
-  listaFacturas.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const f = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${f.rucProveedor}</td>
-      <td>${f.nombreProveedor || ""}</td>
-      <td>${f.tipo}</td>
-      <td>${f.descripcion || ""}</td>
-      <td>${f.fecha}</td>
-      <td>${f.monto}</td>
-      <td><button onclick="eliminarFactura('${docSnap.id}')">Eliminar</button></td>
-    `;
-    listaFacturas.appendChild(tr);
-  });
-  if(snapshot.empty) alert("No se encontraron facturas");
-});
-
-listarFacturas();
-
 // ---------------------- GASTOS ----------------------
-const listaGastos = document.getElementById("tablaGastos");
+const listaGastos = document.getElementById("listaGastos");
 
 async function listarGastos() {
   listaGastos.innerHTML = "";
@@ -224,7 +168,7 @@ async function listarGastos() {
       <td>${g.tipo}</td>
       <td>${g.monto}</td>
       <td>${g.fecha}</td>
-      <td><button onclick="eliminarGasto('${docSnap.id}')">Eliminar</button></td>
+      <td><button onclick="eliminarGasto('${docSnap.id}')">❌</button></td>
     `;
     listaGastos.appendChild(tr);
   });
@@ -262,7 +206,7 @@ async function listarServicios() {
       <td>${s.descripcion}</td>
       <td>${s.fecha}</td>
       <td>${s.precio}</td>
-      <td><button onclick="eliminarServicio('${docSnap.id}')">Eliminar</button></td>
+      <td><button onclick="eliminarServicio('${docSnap.id}')">❌</button></td>
     `;
     listaServicios.appendChild(tr);
   });
@@ -285,6 +229,13 @@ document.getElementById("btnAgregarServicio").addEventListener("click", async ()
   await addDoc(collection(db, "servicios"), { nombre, descripcion, fecha, precio });
   listarServicios();
 });
+
+// ---------------------- INICIO ----------------------
+listarProveedores();
+listarFacturas();
+listarGastos();
+listarServicios();
+
 
 
 
