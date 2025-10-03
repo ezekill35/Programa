@@ -4,24 +4,6 @@
   <meta charset="UTF-8">
   <title>🐾 Discovery Pets - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; }
-    .dashboard-container { display: flex; min-height: 100vh; }
-    .sidebar { width: 220px; background: #ffccf2; padding: 20px; }
-    .sidebar h2 { color: #ff1a75; margin-bottom: 20px; }
-    .sidebar ul { list-style: none; padding: 0; }
-    .sidebar ul li { padding: 10px; cursor: pointer; margin-bottom: 5px; border-radius: 6px; }
-    .sidebar ul li.active, .sidebar ul li:hover { background: #ff99cc; color: #fff; }
-    .content { flex:1; padding: 20px; background: #fff0f7; overflow-y:auto; }
-    .cards { display: flex; gap: 15px; margin-bottom: 20px; }
-    .card { background: #fff; flex:1; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table th, table td { border: 1px solid #ff99cc; padding: 8px; text-align: left; }
-    .formulario { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-    .formulario input, .formulario select, .formulario button { padding: 8px; border-radius: 6px; border: 1px solid #ff99cc; }
-    .formulario button { background: #ff3399; color: #fff; cursor: pointer; }
-    .busqueda-contenedor { margin: 10px 0; display:flex; gap:5px; }
-  </style>
 </head>
 <body>
   <div class="dashboard-container">
@@ -58,10 +40,10 @@
         <form id="formProveedor">
           <h3>🏪 Registrar Proveedor</h3>
           <div class="formulario">
-            <input type="text" id="provRuc" placeholder="RUC">
+            <input type="text" id="provRuc" placeholder="RUC (solo números)">
             <input type="text" id="provNombre" placeholder="Nombre">
             <input type="text" id="provDireccion" placeholder="Dirección">
-            <input type="text" id="provTelefono" placeholder="Teléfono">
+            <input type="text" id="provTelefono" placeholder="Teléfono (solo números)">
             <input type="text" id="provProducto" placeholder="Producto que vende">
             <button type="button" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
           </div>
@@ -95,15 +77,15 @@
           <select id="facRucProveedor">
             <option value="">-- Selecciona un Proveedor --</option>
           </select>
+          <select id="facMoneda">
+            <option value="S/." selected>Soles (S/.)</option>
+            <option value="$">Dólares ($)</option>
+            <option value="€">Euros (€)</option>
+          </select>
           <input id="facTipo" placeholder="Tipo de Factura">
           <input id="facDescripcion" placeholder="Descripción">
           <input id="facFecha" type="date">
           <input id="facMonto" placeholder="Monto">
-          <select id="facMoneda">
-            <option value="S/">Soles</option>
-            <option value="$">Dólares</option>
-            <option value="€">Euros</option>
-          </select>
           <button type="button" id="btnAgregarFactura">➕ Agregar Factura</button>
         </div>
 
@@ -116,6 +98,7 @@
           <thead>
             <tr>
               <th>Proveedor</th>
+              <th>Moneda</th>
               <th>Tipo</th>
               <th>Descripción</th>
               <th>Fecha</th>
@@ -204,11 +187,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
-
 
 
 
