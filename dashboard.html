@@ -7,201 +7,173 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="d-flex">
 
-<div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-3 text-white">
+      <h2 class="text-center mb-4">🐾 Discovery Pets</h2>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item mb-2"><a href="#" class="nav-link active" id="menu-reportes">📊 Reportes</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link" id="menu-proveedores">🏪 Proveedores</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link" id="menu-facturas">📑 Facturas</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link" id="menu-gastos">💰 Gastos</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link" id="menu-servicios">🛠 Servicios</a></li>
+        <li class="nav-item mt-auto"><a href="#" class="nav-link" id="menu-logout">🚪 Cerrar Sesión</a></li>
+      </ul>
+    </nav>
 
-  <!-- Sidebar -->
-  <nav class="sidebar d-flex flex-column">
-    <h2>🐾 Discovery Pets</h2>
-    <ul class="list-unstyled mt-4">
-      <li id="menu-reportes" class="active">📊 Reportes</li>
-      <li id="menu-proveedores">🏪 Proveedores</li>
-      <li id="menu-facturas">📑 Facturas</li>
-      <li id="menu-gastos">💰 Gastos</li>
-      <li id="menu-servicios">🛠 Servicios</li>
-      <li id="menu-logout">🚪 Cerrar Sesión</li>
-    </ul>
-  </nav>
+    <!-- Contenido -->
+    <div class="content flex-fill p-4">
 
-  <!-- Contenido -->
-  <div class="content p-4 flex-grow-1">
-
-    <!-- Reportes -->
-    <section id="reportes" class="section active">
-      <h2>📊 Reportes</h2>
-      <div class="cards d-flex flex-wrap gap-3">
-        <div class="card text-center p-3">
-          <h3 id="total-proveedores">0</h3><p>Proveedores</p>
+      <!-- Reportes -->
+      <section id="reportes" class="section active">
+        <h2>📊 Reportes</h2>
+        <div class="cards d-flex flex-wrap gap-3">
+          <div class="card text-center shadow p-3"><h3 id="total-proveedores">0</h3><p>Proveedores</p></div>
+          <div class="card text-center shadow p-3"><h3 id="total-facturas">0</h3><p>Facturas</p></div>
+          <div class="card text-center shadow p-3"><h3 id="total-gastos">0</h3><p>Gastos</p></div>
+          <div class="card text-center shadow p-3"><h3 id="total-servicios">0</h3><p>Servicios</p></div>
         </div>
-        <div class="card text-center p-3">
-          <h3 id="total-facturas">0</h3><p>Facturas</p>
-        </div>
-        <div class="card text-center p-3">
-          <h3 id="total-gastos">0</h3><p>Gastos</p>
-        </div>
-        <div class="card text-center p-3">
-          <h3 id="total-servicios">0</h3><p>Servicios</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Proveedores -->
-    <section id="proveedores" class="section">
-      <form id="formProveedor" class="p-3 bg-light rounded shadow-sm mb-3">
-        <h3>🏪 Registrar Proveedor</h3>
-        <div class="d-flex flex-wrap gap-2">
-          <input type="text" id="provRuc" placeholder="RUC (solo números)" class="form-control">
-          <input type="text" id="provNombre" placeholder="Nombre" class="form-control">
-          <input type="text" id="provDireccion" placeholder="Dirección" class="form-control">
-          <input type="text" id="provTelefono" placeholder="Teléfono (solo números)" class="form-control">
-          <input type="text" id="provProducto" placeholder="Producto que vende" class="form-control">
-          <button type="button" id="btnAgregarProveedor" class="btn btn-primary">➕ Agregar Proveedor</button>
-        </div>
-      </form>
-
-      <div class="d-flex justify-content-end mb-2 gap-2">
-        <input type="text" id="buscarProveedor" placeholder="Buscar proveedor" class="form-control w-auto">
-        <button id="btnBuscarProveedor" class="btn btn-secondary">🔍 Buscar</button>
-      </div>
-
-      <table class="table table-hover rounded shadow-sm">
-        <thead class="table-primary">
-          <tr>
-            <th>RUC</th>
-            <th>Nombre</th>
-            <th>Dirección</th>
-            <th>Teléfono</th>
-            <th>Producto</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="listaProveedores"></tbody>
-      </table>
-    </section>
-
-    <!-- Facturas -->
-    <section id="facturas" class="section">
-      <form id="formFactura" class="p-3 bg-light rounded shadow-sm mb-3">
-        <h3>📑 Registrar Factura</h3>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-          <select id="facRucProveedor" class="form-select">
-            <option value="">-- Selecciona un Proveedor --</option>
-          </select>
-          <input type="text" id="facTipo" placeholder="Tipo de factura" class="form-control">
-          <input type="text" id="facDescripcion" placeholder="Descripción" class="form-control">
-          <input type="date" id="facFecha" class="form-control">
-
-          <div class="input-moneda flex-grow-1 position-relative">
-            <span class="moneda-symbol">S/.</span>
-            <input id="facMonto" type="number" step="0.01" placeholder="Monto" class="form-control ps-5">
+      <!-- Proveedores -->
+      <section id="proveedores" class="section">
+        <h2>🏪 Proveedores</h2>
+        <form id="formProveedor" class="bg-light p-3 rounded shadow">
+          <div class="row g-3">
+            <div class="col-md-2"><input type="text" id="provRuc" class="form-control" placeholder="RUC"></div>
+            <div class="col-md-3"><input type="text" id="provNombre" class="form-control" placeholder="Nombre"></div>
+            <div class="col-md-3"><input type="text" id="provDireccion" class="form-control" placeholder="Dirección"></div>
+            <div class="col-md-2"><input type="text" id="provTelefono" class="form-control" placeholder="Teléfono"></div>
+            <div class="col-md-2"><input type="text" id="provProducto" class="form-control" placeholder="Producto"></div>
           </div>
+          <button type="button" class="btn btn-primary mt-3" id="btnAgregarProveedor">➕ Agregar Proveedor</button>
+        </form>
 
-          <select id="facMoneda" class="form-select w-auto">
-            <option value="S/." selected>S/.</option>
-            <option value="$">$</option>
-            <option value="€">€</option>
-          </select>
-
-          <button type="button" id="btnAgregarFactura" class="btn btn-primary">➕ Agregar Factura</button>
+        <div class="input-group mt-3 mb-3">
+          <input type="text" class="form-control" placeholder="Buscar proveedor" id="buscarProveedor">
+          <button class="btn btn-outline-secondary" id="btnBuscarProveedor">🔍 Buscar</button>
         </div>
-      </form>
 
-      <div class="d-flex justify-content-end mb-2 gap-2">
-        <input type="text" id="buscarFactura" placeholder="Buscar factura" class="form-control w-auto">
-        <button id="btnBuscarFactura" class="btn btn-secondary">🔍 Buscar</button>
-      </div>
+        <table class="table table-striped table-hover shadow rounded">
+          <thead class="table-primary">
+            <tr>
+              <th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Producto</th><th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="listaProveedores"></tbody>
+        </table>
+      </section>
 
-      <table class="table table-hover rounded shadow-sm">
-        <thead class="table-primary">
-          <tr>
-            <th>Proveedor</th>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Fecha</th>
-            <th>Monto</th>
-            <th>Moneda</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="listaFacturas"></tbody>
-      </table>
-    </section>
+      <!-- Facturas -->
+      <section id="facturas" class="section">
+        <h2>📑 Facturas</h2>
+        <form id="formFactura" class="bg-light p-3 rounded shadow mb-3">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <select id="facRucProveedor" class="form-select"><option value="">-- Selecciona Proveedor --</option></select>
+            </div>
+            <div class="col-md-3">
+              <input type="text" id="facTipo" class="form-control" placeholder="Tipo de Factura">
+            </div>
+            <div class="col-md-3">
+              <input type="text" id="facDescripcion" class="form-control" placeholder="Descripción">
+            </div>
+            <div class="col-md-2">
+              <input type="date" id="facFecha" class="form-control">
+            </div>
+          </div>
+          <div class="row g-3 mt-2">
+            <div class="col-md-2">
+              <input type="number" step="0.01" id="facMonto" class="form-control" placeholder="Monto">
+            </div>
+            <div class="col-md-2">
+              <select id="facMoneda" class="form-select">
+                <option value="S/." selected>S/.</option>
+                <option value="$">$</option>
+                <option value="€">€</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-success" id="btnAgregarFactura">➕ Agregar Factura</button>
+            </div>
+          </div>
+        </form>
 
-    <!-- Gastos -->
-    <section id="gastos" class="section">
-      <form id="formGasto" class="p-3 bg-light rounded shadow-sm mb-3">
-        <h3>💰 Registrar Gasto</h3>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-          <input type="text" id="gastoNombre" placeholder="Nombre del gasto" class="form-control">
-          <select id="gastoTipo" class="form-select w-auto">
-            <option value="">Tipo de gasto</option>
-            <option value="Servicios Básicos">Servicios Básicos</option>
-            <option value="Mantenimiento">Mantenimiento</option>
-            <option value="Publicidad">Publicidad</option>
-            <option value="Otros">Otros</option>
-          </select>
-          <input type="number" id="gastoMonto" placeholder="Monto" step="0.01" class="form-control">
-          <input type="date" id="gastoFecha" class="form-control">
-          <button type="button" id="btnAgregarGasto" class="btn btn-primary">➕ Agregar Gasto</button>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Buscar factura" id="buscarFactura">
+          <button class="btn btn-outline-secondary" id="btnBuscarFactura">🔍 Buscar</button>
         </div>
-      </form>
 
-      <div class="d-flex justify-content-end mb-2 gap-2">
-        <input type="text" id="buscarGasto" placeholder="Buscar gasto" class="form-control w-auto">
-        <button id="btnBuscarGasto" class="btn btn-secondary">🔍 Buscar</button>
-      </div>
+        <table class="table table-striped table-hover shadow rounded">
+          <thead class="table-primary">
+            <tr><th>Proveedor</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Monto</th><th>Moneda</th><th>Acción</th></tr>
+          </thead>
+          <tbody id="listaFacturas"></tbody>
+        </table>
+      </section>
 
-      <table class="table table-hover rounded shadow-sm">
-        <thead class="table-primary">
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Monto</th>
-            <th>Fecha</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="listaGastos"></tbody>
-      </table>
-    </section>
+      <!-- Gastos -->
+      <section id="gastos" class="section">
+        <h2>💰 Gastos</h2>
+        <form id="formGasto" class="bg-light p-3 rounded shadow mb-3">
+          <div class="row g-3">
+            <div class="col-md-3"><input type="text" id="gastoNombre" class="form-control" placeholder="Nombre del Gasto"></div>
+            <div class="col-md-3">
+              <select id="gastoTipo" class="form-select">
+                <option value="">Tipo de Gasto</option>
+                <option value="Servicios Básicos">Servicios Básicos</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Publicidad">Publicidad</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+            <div class="col-md-2"><input type="number" step="0.01" id="gastoMonto" class="form-control" placeholder="Monto"></div>
+            <div class="col-md-2"><input type="date" id="gastoFecha" class="form-control"></div>
+            <div class="col-md-2"><button type="button" class="btn btn-success" id="btnAgregarGasto">➕ Registrar Gasto</button></div>
+          </div>
+        </form>
 
-    <!-- Servicios -->
-    <section id="servicios" class="section">
-      <form id="formServicio" class="p-3 bg-light rounded shadow-sm mb-3">
-        <h3>🛠 Registrar Servicio</h3>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-          <input type="text" id="servNombre" placeholder="Nombre" class="form-control">
-          <input type="text" id="servDescripcion" placeholder="Descripción" class="form-control">
-          <input type="date" id="servFecha" class="form-control">
-          <input type="number" id="servPrecio" placeholder="Precio" step="0.01" class="form-control">
-          <button type="button" id="btnAgregarServicio" class="btn btn-primary">➕ Agregar Servicio</button>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Buscar gasto" id="buscarGasto">
+          <button class="btn btn-outline-secondary" id="btnBuscarGasto">🔍 Buscar</button>
         </div>
-      </form>
 
-      <div class="d-flex justify-content-end mb-2 gap-2">
-        <input type="text" id="buscarServicio" placeholder="Buscar servicio" class="form-control w-auto">
-        <button id="btnBuscarServicio" class="btn btn-secondary">🔍 Buscar</button>
-      </div>
+        <table class="table table-striped table-hover shadow rounded">
+          <thead class="table-primary">
+            <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acción</th></tr>
+          </thead>
+          <tbody id="listaGastos"></tbody>
+        </table>
+      </section>
 
-      <table class="table table-hover rounded shadow-sm">
-        <thead class="table-primary">
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Fecha</th>
-            <th>Precio</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="listaServicios"></tbody>
-      </table>
-    </section>
+      <!-- Servicios -->
+      <section id="servicios" class="section">
+        <h2>🛠 Servicios</h2>
+        <form id="formServicio" class="bg-light p-3 rounded shadow mb-3">
+          <div class="row g-3">
+            <div class="col-md-3"><input type="text" id="servNombre" class="form-control" placeholder="Nombre"></div>
+            <div class="col-md-4"><input type="text" id="servDescripcion" class="form-control" placeholder="Descripción"></div>
+            <div class="col-md-2"><input type="date" id="servFecha" class="form-control"></div>
+            <div class="col-md-2"><input type="number" step="0.01" id="servPrecio" class="form-control" placeholder="Precio"></div>
+            <div class="col-md-1"><button type="button" class="btn btn-success" id="btnAgregarServicio">➕</button></div>
+          </div>
+        </form>
+
+        <table class="table table-striped table-hover shadow rounded">
+          <thead class="table-primary">
+            <tr><th>Nombre</th><th>Descripción</th><th>Fecha</th><th>Precio</th><th>Acción</th></tr>
+          </thead>
+          <tbody id="listaServicios"></tbody>
+        </table>
+      </section>
+
+    </div>
 
   </div>
-</div>
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="dashboard.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
 
