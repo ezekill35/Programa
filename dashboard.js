@@ -1,20 +1,27 @@
-import { db, auth, cerrarSesion } from './firebase.js';
+import { auth, db } from "./firebase.js";
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// 🚫 Bloquear acceso al dashboard si no hay sesión
+// Redirigir al login si no hay sesión
 onAuthStateChanged(auth, (user) => {
-  if (!user) window.location.href = 'login.html';
+  if(!user) {
+    window.location.href = "index.html";
+  }
 });
 
 // ------------------ Variables ------------------
-let proveedores = [], facturas = [], gastos = [], servicios = [];
+let proveedores = [];
+let facturas = [];
+let gastos = [];
+let servicios = [];
+
+// Contadores
 const totalProveedores = document.getElementById('total-proveedores');
 const totalFacturas = document.getElementById('total-facturas');
 const totalGastos = document.getElementById('total-gastos');
 const totalServicios = document.getElementById('total-servicios');
 
-// ------------------ Menú lateral ------------------
+// ------------------ Menú ------------------
 const menuItems = document.querySelectorAll('.sidebar ul li');
 const sections = document.querySelectorAll('.section');
 
@@ -23,25 +30,30 @@ menuItems.forEach(item => {
     menuItems.forEach(i => i.classList.remove('active'));
     sections.forEach(sec => sec.classList.remove('active'));
     item.classList.add('active');
+
     const sectionId = item.id.replace('menu-', '');
-    document.getElementById(sectionId).classList.add('active');
+    if(sectionId === "logout") cerrarSesion();
+    else document.getElementById(sectionId).classList.add('active');
   });
 });
 
-// ------------------ Botón Cerrar Sesión ------------------
-document.getElementById('menu-logout').addEventListener('click', async () => {
-  await cerrarSesion();
-  alert('Sesión cerrada');
-  window.location.href = 'login.html';
-});
+// ------------------ FUNCION CERRAR SESION ------------------
+async function cerrarSesion() {
+  try {
+    await signOut(auth);
+    window.location.href = "index.html";
+  } catch (error) {
+    alert("Error al cerrar sesión: " + error.message);
+  }
+}
 
-// ------------------ Colecciones Firebase ------------------
+// ------------------ FIREBASE COLLECTIONS ------------------
 const proveedoresCol = collection(db, "proveedores");
 const facturasCol = collection(db, "facturas");
 const gastosCol = collection(db, "gastos");
 const serviciosCol = collection(db, "servicios");
 
-// =================== PROVEEDORES ===================
+// ------------------ FUNCIONES DE PROVEEDORES ------------------
 const listaProveedores = document.getElementById('listaProveedores');
 const btnAgregarProveedor = document.getElementById('btnAgregarProveedor');
 
@@ -53,6 +65,7 @@ btnAgregarProveedor.addEventListener('click', async () => {
   const producto = document.getElementById('provProducto').value.trim();
 
   if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
+
   await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
   document.getElementById('formProveedor').reset();
@@ -67,17 +80,17 @@ async function cargarProveedores() {
 
 function actualizarProveedores() {
   listaProveedores.innerHTML = '';
-  proveedores.forEach((prov) => {
+  proveedores.forEach(p => {
     listaProveedores.innerHTML += `
       <tr>
-        <td>${prov.ruc}</td>
-        <td>${prov.nombre}</td>
-        <td>${prov.direccion}</td>
-        <td>${prov.telefono}</td>
-        <td>${prov.producto}</td>
+        <td>${p.ruc}</td>
+        <td>${p.nombre}</td>
+        <td>${p.direccion}</td>
+        <td>${p.telefono}</td>
+        <td>${p.producto}</td>
         <td>
-          <button onclick="editarProveedor('${prov.id}')">✏️</button>
-          <button onclick="eliminarProveedorFirebase('${prov.id}')">❌</button>
+          <button onclick="editarProveedor('${p.id}')">✏️</button>
+          <button onclick="eliminarProveedorFirebase('${p.id}')">❌</button>
         </td>
       </tr>
     `;
@@ -94,12 +107,13 @@ async function eliminarProveedorFirebase(id) {
 }
 
 window.editarProveedor = async (id) => {
-  const prov = proveedores.find(p => p.id === id);
-  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
-  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
-  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
-  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
-  const producto = prompt("Producto:", prov.producto) || prov.producto;
+  const p = proveedores.find(x => x.id === id);
+  const ruc = prompt("RUC:", p.ruc) || p.ruc;
+  const nombre = prompt("Nombre:", p.nombre) || p.nombre;
+  const direccion = prompt("Dirección:", p.direccion) || p.direccion;
+  const telefono = prompt("Teléfono:", p.telefono) || p.telefono;
+  const producto = prompt("Producto:", p.producto) || p.producto;
+
   await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
   cargarProveedores();
 }
@@ -107,12 +121,16 @@ window.editarProveedor = async (id) => {
 function actualizarSelectProveedores() {
   const select = document.getElementById('facRucProveedor');
   select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
-  proveedores.forEach(p => select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`);
+  proveedores.forEach(p => {
+    select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
+  });
 }
 
-// =================== FACTURAS ===================
+// ------------------ FACTURAS ------------------
 const listaFacturas = document.getElementById('listaFacturas');
-document.getElementById('btnAgregarFactura').addEventListener('click', async () => {
+const btnAgregarFactura = document.getElementById('btnAgregarFactura');
+
+btnAgregarFactura.addEventListener('click', async () => {
   const proveedor = document.getElementById('facRucProveedor').value;
   const tipo = document.getElementById('facTipo').value.trim();
   const descripcion = document.getElementById('facDescripcion').value.trim();
@@ -120,6 +138,7 @@ document.getElementById('btnAgregarFactura').addEventListener('click', async () 
   const monto = document.getElementById('facMonto').value.trim();
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
+
   await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto });
   cargarFacturas();
   document.getElementById('facRucProveedor').value = '';
@@ -138,17 +157,17 @@ async function cargarFacturas() {
 
 function actualizarFacturas() {
   listaFacturas.innerHTML = '';
-  facturas.forEach(fac => {
+  facturas.forEach(f => {
     listaFacturas.innerHTML += `
       <tr>
-        <td>${fac.proveedor}</td>
-        <td>${fac.tipo}</td>
-        <td>${fac.descripcion}</td>
-        <td>${fac.fecha}</td>
-        <td>${fac.monto}</td>
+        <td>${f.proveedor}</td>
+        <td>${f.tipo}</td>
+        <td>${f.descripcion}</td>
+        <td>${f.fecha}</td>
+        <td>${f.monto}</td>
         <td>
-          <button onclick="editarFactura('${fac.id}')">✏️</button>
-          <button onclick="eliminarFacturaFirebase('${fac.id}')">❌</button>
+          <button onclick="editarFactura('${f.id}')">✏️</button>
+          <button onclick="eliminarFacturaFirebase('${f.id}')">❌</button>
         </td>
       </tr>
     `;
@@ -164,25 +183,29 @@ async function eliminarFacturaFirebase(id) {
 }
 
 window.editarFactura = async (id) => {
-  const fac = facturas.find(f => f.id === id);
-  const proveedor = prompt("Proveedor:", fac.proveedor) || fac.proveedor;
-  const tipo = prompt("Tipo:", fac.tipo) || fac.tipo;
-  const descripcion = prompt("Descripción:", fac.descripcion) || fac.descripcion;
-  const fecha = prompt("Fecha:", fac.fecha) || fac.fecha;
-  const monto = prompt("Monto:", fac.monto) || fac.monto;
+  const f = facturas.find(x => x.id === id);
+  const proveedor = prompt("Proveedor:", f.proveedor) || f.proveedor;
+  const tipo = prompt("Tipo:", f.tipo) || f.tipo;
+  const descripcion = prompt("Descripción:", f.descripcion) || f.descripcion;
+  const fecha = prompt("Fecha:", f.fecha) || f.fecha;
+  const monto = prompt("Monto:", f.monto) || f.monto;
+
   await updateDoc(doc(db,"facturas", id), { proveedor, tipo, descripcion, fecha, monto });
   cargarFacturas();
 }
 
-// =================== GASTOS ===================
+// ------------------ GASTOS ------------------
 const listaGastos = document.getElementById('listaGastos');
-document.getElementById('btnAgregarGasto').addEventListener('click', async () => {
+const btnAgregarGasto = document.getElementById('btnAgregarGasto');
+
+btnAgregarGasto.addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
   const tipo = document.getElementById('gastoTipo').value;
   const monto = document.getElementById('gastoMonto').value.trim();
   const fecha = document.getElementById('gastoFecha').value;
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
+
   await addDoc(gastosCol, { nombre, tipo, monto, fecha });
   cargarGastos();
   document.getElementById('formGasto').reset();
@@ -227,19 +250,23 @@ window.editarGasto = async (id) => {
   const tipo = prompt("Tipo:", g.tipo) || g.tipo;
   const monto = prompt("Monto:", g.monto) || g.monto;
   const fecha = prompt("Fecha:", g.fecha) || g.fecha;
+
   await updateDoc(doc(db,"gastos", id), { nombre, tipo, monto, fecha });
   cargarGastos();
 }
 
-// =================== SERVICIOS ===================
+// ------------------ SERVICIOS ------------------
 const listaServicios = document.getElementById('listaServicios');
-document.getElementById('btnAgregarServicio').addEventListener('click', async () => {
+const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+
+btnAgregarServicio.addEventListener('click', async () => {
   const nombre = document.getElementById('servNombre').value.trim();
   const descripcion = document.getElementById('servDescripcion').value.trim();
   const fecha = document.getElementById('servFecha').value;
   const precio = document.getElementById('servPrecio').value.trim();
 
   if(!nombre) return alert('Nombre es obligatorio');
+
   await addDoc(serviciosCol, { nombre, descripcion, fecha, precio });
   cargarServicios();
   document.getElementById('servNombre').value = '';
@@ -287,16 +314,16 @@ window.editarServicio = async (id) => {
   const descripcion = prompt("Descripción:", s.descripcion) || s.descripcion;
   const fecha = prompt("Fecha:", s.fecha) || s.fecha;
   const precio = prompt("Precio:", s.precio) || s.precio;
+
   await updateDoc(doc(db,"servicios", id), { nombre, descripcion, fecha, precio });
   cargarServicios();
 }
 
-// =================== CARGA INICIAL ===================
+// ------------------ CARGA INICIAL ------------------
 cargarProveedores();
 cargarFacturas();
 cargarGastos();
 cargarServicios();
-
 
 
 
