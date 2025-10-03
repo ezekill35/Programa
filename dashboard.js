@@ -61,7 +61,7 @@ btnAgregarProveedor.addEventListener('click', async () => {
   document.getElementById('formProveedor').reset();
 });
 
-// Cargar proveedores en tiempo real
+// Tiempo real proveedores
 onSnapshot(proveedoresCol, snapshot => {
   proveedores = [];
   snapshot.forEach(doc => proveedores.push({ id: doc.id, ...doc.data() }));
@@ -90,25 +90,23 @@ function actualizarProveedores() {
 }
 
 window.editarProveedor = async (id) => {
-  const prov = proveedores.find(p => p.id === id);
-  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
-  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
-  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
-  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
-  const producto = prompt("Producto:", prov.producto) || prov.producto;
+  const p = proveedores.find(x => x.id===id);
+  const ruc = prompt("RUC:", p.ruc) || p.ruc;
+  const nombre = prompt("Nombre:", p.nombre) || p.nombre;
+  const direccion = prompt("Dirección:", p.direccion) || p.direccion;
+  const telefono = prompt("Teléfono:", p.telefono) || p.telefono;
+  const producto = prompt("Producto:", p.producto) || p.producto;
 
   if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
 
   await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
 }
 
-async function eliminarProveedorFirebase(id) {
-  if(confirm('¿Eliminar proveedor?')){
-    await deleteDoc(doc(db,"proveedores", id));
-  }
+async function eliminarProveedorFirebase(id){
+  if(confirm('¿Eliminar proveedor?')) await deleteDoc(doc(db,"proveedores",id));
 }
 
-function actualizarSelectProveedores() {
+function actualizarSelectProveedores(){
   const select = document.getElementById('facRucProveedor');
   select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
   proveedores.forEach(p => {
@@ -125,7 +123,7 @@ btnAgregarFactura.addEventListener('click', async () => {
   const tipo = document.getElementById('facTipo').value.trim();
   const descripcion = document.getElementById('facDescripcion').value.trim();
   const fecha = document.getElementById('facFecha').value;
-  const monto = parseFloat(document.getElementById('facMonto').value.trim());
+  const monto = parseFloat(document.getElementById('facMonto').value);
   const moneda = document.getElementById('facMoneda').value;
 
   if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
@@ -133,21 +131,18 @@ btnAgregarFactura.addEventListener('click', async () => {
 
   await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto, moneda });
 
-  document.getElementById('facTipo').value='';
-  document.getElementById('facDescripcion').value='';
-  document.getElementById('facFecha').value='';
-  document.getElementById('facMonto').value='';
+  document.getElementById('formFactura').reset();
 });
 
-// Cargar facturas en tiempo real
+// Tiempo real facturas
 onSnapshot(facturasCol, snapshot => {
   facturas = [];
   snapshot.forEach(doc => facturas.push({ id: doc.id, ...doc.data() }));
   actualizarFacturas();
 });
 
-function actualizarFacturas() {
-  listaFacturas.innerHTML = '';
+function actualizarFacturas(){
+  listaFacturas.innerHTML='';
   facturas.forEach(f => {
     listaFacturas.innerHTML += `
       <tr>
@@ -191,7 +186,7 @@ const btnAgregarGasto = document.getElementById('btnAgregarGasto');
 btnAgregarGasto.addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
   const tipo = document.getElementById('gastoTipo').value;
-  const monto = parseFloat(document.getElementById('gastoMonto').value.trim());
+  const monto = parseFloat(document.getElementById('gastoMonto').value);
   const fecha = document.getElementById('gastoFecha').value;
 
   if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
@@ -251,6 +246,7 @@ async function cerrarSesion(){
 }
 
 window.cerrarSesion = cerrarSesion;
+
 
 
 
