@@ -1,93 +1,59 @@
-import { auth } from "./firebase.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { auth } from './firebase.js';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-// Formularios
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-const mensajeLogin = document.getElementById("mensajeLogin");
-const mensajeRegister = document.getElementById("mensajeRegister");
+// Elementos
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const showRegister = document.getElementById('showRegister');
+const showLogin = document.getElementById('showLogin');
+const mensajeLogin = document.getElementById('mensajeLogin');
+const mensajeRegister = document.getElementById('mensajeRegister');
+const btnLogin = document.getElementById('btnLogin');
+const btnRegister = document.getElementById('btnRegister');
 
-// Alternar login / registro
-document.getElementById("showRegister").addEventListener("click", () => {
-  loginForm.classList.add("hidden");
-  registerForm.classList.remove("hidden");
-  mensajeLogin.textContent = "";
+// Mostrar/ocultar formularios
+showRegister.addEventListener('click', () => {
+  loginForm.classList.add('d-none');
+  registerForm.classList.remove('d-none');
+  mensajeLogin.textContent = '';
 });
-document.getElementById("showLogin").addEventListener("click", () => {
-  registerForm.classList.add("hidden");
-  loginForm.classList.remove("hidden");
-  mensajeRegister.textContent = "";
+showLogin.addEventListener('click', () => {
+  registerForm.classList.add('d-none');
+  loginForm.classList.remove('d-none');
+  mensajeRegister.textContent = '';
 });
 
-// ---------------- REGISTRO ----------------
-document.getElementById("btnRegister").addEventListener("click", async () => {
-  const email = document.getElementById("registerEmail").value.trim();
-  const password = document.getElementById("registerPassword").value.trim();
-  mensajeRegister.textContent = "";
-
-  if(!email || !password){
-    mensajeRegister.textContent = "❌ Completa todos los campos";
-    mensajeRegister.style.color = "#e74c3c";
-    return;
-  }
-
+// REGISTRO
+btnRegister.addEventListener('click', async () => {
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value.trim();
+  if(!email || !password) return mensajeRegister.textContent = 'Todos los campos son obligatorios';
   try {
     await createUserWithEmailAndPassword(auth, email, password);
-    mensajeRegister.textContent = "✅ Registro exitoso. Ahora inicia sesión.";
-    mensajeRegister.style.color = "#27ae60";
-    registerForm.classList.add("hidden");
-    loginForm.classList.remove("hidden");
+    mensajeRegister.style.color = 'green';
+    mensajeRegister.textContent = 'Usuario registrado correctamente!';
+    registerForm.reset();
   } catch (error) {
-    mensajeRegister.textContent = "❌ Error: " + error.message;
-    mensajeRegister.style.color = "#e74c3c";
+    mensajeRegister.style.color = 'red';
+    mensajeRegister.textContent = error.message;
   }
 });
 
-// ---------------- LOGIN ----------------
-document.getElementById("btnLogin").addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-  mensajeLogin.textContent = "";
-
-  if(!email || !password){
-    mensajeLogin.textContent = "❌ Completa todos los campos";
-    mensajeLogin.style.color = "#e74c3c";
-    return;
-  }
-
+// LOGIN
+btnLogin.addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  if(!email || !password) return mensajeLogin.textContent = 'Todos los campos son obligatorios';
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    mensajeLogin.textContent = "🎉 Sesión iniciada correctamente.";
-    mensajeLogin.style.color = "#27ae60";
-    setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+    mensajeLogin.style.color = 'green';
+    mensajeLogin.textContent = 'Inicio de sesión correcto!';
+    setTimeout(() => window.location.href = 'dashboard.html', 800);
   } catch (error) {
-    mensajeLogin.textContent = "❌ Error: " + error.message;
-    mensajeLogin.style.color = "#e74c3c";
+    mensajeLogin.style.color = 'red';
+    mensajeLogin.textContent = error.message;
   }
 });
-
-// ---------------- CONTROL DE SESIÓN ----------------
-// Si el usuario ya está logueado, redirigir automáticamente al dashboard
-onAuthStateChanged(auth, (user) => {
-  if(user && window.location.pathname.includes("index.html")){
-    window.location.href = "dashboard.html";
-  }
-});
-
-// ---------------- CERRAR SESIÓN ----------------
-// Esta función la llamas desde dashboard.html
-window.cerrarSesion = async () => {
-  try {
-    await signOut(auth);
-    window.location.href = "index.html";
-  } catch (error) {
-    alert("Error al cerrar sesión: " + error.message);
-  }
-};
-
-
-
-
 
 
 
