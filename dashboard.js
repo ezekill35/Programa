@@ -6,7 +6,6 @@ navButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     sections.forEach(s => s.classList.remove('active'));
     document.getElementById(btn.dataset.section).classList.add('active');
-
     navButtons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   });
@@ -33,13 +32,18 @@ const msgProv = document.getElementById('msgProv');
 
 formProveedor.addEventListener('submit', async e => {
   e.preventDefault();
-  const nombre = document.getElementById('nombreProv').value;
-  const producto = document.getElementById('productoProv').value;
-  const ruc = document.getElementById('rucProv').value;
-  const direccion = document.getElementById('direccionProv').value;
+  const ruc = document.getElementById('rucProv').value.trim();
+  const nombre = document.getElementById('nombreProv').value.trim();
+  const producto = document.getElementById('productoProv').value.trim();
+  const direccion = document.getElementById('direccionProv').value.trim();
+
+  if (!/^[0-9]+$/.test(ruc)) {
+    msgProv.textContent = "El RUC debe contener solo números";
+    return;
+  }
 
   try {
-    await db.collection('proveedores').add({ nombre, producto, ruc, direccion });
+    await db.collection('proveedores').add({ ruc, nombre, producto, direccion });
     formProveedor.reset();
     msgProv.textContent = '';
     updateCounts();
@@ -54,9 +58,9 @@ function loadProveedores() {
       const data = doc.data();
       tablaProveedores.innerHTML += `
         <tr>
+          <td>${data.ruc}</td>
           <td>${data.nombre}</td>
           <td>${data.producto}</td>
-          <td>${data.ruc}</td>
           <td>${data.direccion}</td>
           <td>
             <button class="btn btn-sm btn-danger" onclick="deleteDoc('proveedores','${doc.id}')">Eliminar</button>
@@ -69,13 +73,14 @@ function loadProveedores() {
 // ---------------- FACTURAS ----------------
 const formFactura = document.getElementById('formFactura');
 const tablaFacturas = document.getElementById('tablaFacturas');
+
 formFactura.addEventListener('submit', async e => {
   e.preventDefault();
-  const proveedor = document.getElementById('proveedorFactura').value;
-  const tipo = document.getElementById('tipoFactura').value;
+  const proveedor = document.getElementById('proveedorFactura').value.trim();
+  const tipo = document.getElementById('tipoFactura').value.trim();
   const monto = parseFloat(document.getElementById('montoFactura').value);
   const fecha = document.getElementById('fechaFactura').value;
-  const desc = document.getElementById('descFactura').value;
+  const desc = document.getElementById('descFactura').value.trim();
 
   try {
     await db.collection('facturas').add({ proveedor, tipo, monto, fecha, desc });
@@ -106,10 +111,11 @@ function loadFacturas() {
 // ---------------- GASTOS ----------------
 const formGasto = document.getElementById('formGasto');
 const tablaGastos = document.getElementById('tablaGastos');
+
 formGasto.addEventListener('submit', async e => {
   e.preventDefault();
-  const nombre = document.getElementById('nombreGasto').value;
-  const tipo = document.getElementById('tipoGasto').value;
+  const nombre = document.getElementById('nombreGasto').value.trim();
+  const tipo = document.getElementById('tipoGasto').value.trim();
   const monto = parseFloat(document.getElementById('montoGasto').value);
   const fecha = document.getElementById('fechaGasto').value;
 
@@ -141,12 +147,13 @@ function loadGastos() {
 // ---------------- SERVICIOS ----------------
 const formServicio = document.getElementById('formServicio');
 const tablaServicios = document.getElementById('tablaServicios');
+
 formServicio.addEventListener('submit', async e => {
   e.preventDefault();
-  const nombre = document.getElementById('nombreServ').value;
+  const nombre = document.getElementById('nombreServ').value.trim();
   const precio = parseFloat(document.getElementById('precioServ').value);
   const fecha = document.getElementById('fechaServ').value;
-  const desc = document.getElementById('descServ').value;
+  const desc = document.getElementById('descServ').value.trim();
 
   try {
     await db.collection('servicios').add({ nombre, precio, fecha, desc });
@@ -183,7 +190,6 @@ loadProveedores();
 loadFacturas();
 loadGastos();
 loadServicios();
-
 
 
 
