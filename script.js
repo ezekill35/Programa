@@ -9,34 +9,41 @@ const showLogin = document.getElementById('showLogin');
 const mensajeLogin = document.getElementById('mensajeLogin');
 const mensajeRegister = document.getElementById('mensajeRegister');
 
-// Mostrar/ocultar formularios
-showRegister.addEventListener('click', () => {
-  loginForm.classList.remove('active');
-  registerForm.classList.add('active');
+showRegister.addEventListener('click', (e) => {
+  e.preventDefault();
+  loginForm.classList.add('d-none');
+  registerForm.classList.remove('d-none');
+  mensajeLogin.textContent = '';
 });
-showLogin.addEventListener('click', () => {
-  registerForm.classList.remove('active');
-  loginForm.classList.add('active');
+showLogin.addEventListener('click', (e) => {
+  e.preventDefault();
+  registerForm.classList.add('d-none');
+  loginForm.classList.remove('d-none');
+  mensajeRegister.textContent = '';
 });
 
-// Registro
+// Register
 document.getElementById('btnRegister').addEventListener('click', async () => {
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value.trim();
-
   if (!email || !password) {
-    mensajeRegister.textContent = "Completa todos los campos.";
+    mensajeRegister.style.color = 'red';
+    mensajeRegister.textContent = 'Completa todos los campos.';
     return;
   }
-
   try {
     await createUserWithEmailAndPassword(auth, email, password);
-    mensajeRegister.style.color = "green";
-    mensajeRegister.textContent = "Usuario registrado correctamente.";
+    mensajeRegister.style.color = 'green';
+    mensajeRegister.textContent = 'Registro exitoso. Puedes iniciar sesión.';
     registerForm.reset();
-  } catch (error) {
-    mensajeRegister.style.color = "red";
-    mensajeRegister.textContent = error.message;
+    setTimeout(() => {
+      registerForm.classList.add('d-none');
+      loginForm.classList.remove('d-none');
+      mensajeRegister.textContent = '';
+    }, 1000);
+  } catch (err) {
+    mensajeRegister.style.color = 'red';
+    mensajeRegister.textContent = err.message;
   }
 });
 
@@ -44,20 +51,19 @@ document.getElementById('btnRegister').addEventListener('click', async () => {
 document.getElementById('btnLogin').addEventListener('click', async () => {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
-
   if (!email || !password) {
-    mensajeLogin.textContent = "Completa todos los campos.";
+    mensajeLogin.style.color = 'red';
+    mensajeLogin.textContent = 'Completa todos los campos.';
     return;
   }
-
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    mensajeLogin.style.color = "green";
-    mensajeLogin.textContent = "Inicio de sesión exitoso.";
-    setTimeout(() => (window.location.href = "dashboard.html"), 800);
-  } catch (error) {
-    mensajeLogin.style.color = "red";
-    mensajeLogin.textContent = error.message;
+    mensajeLogin.style.color = 'green';
+    mensajeLogin.textContent = 'Inicio de sesión correcto. Redirigiendo...';
+    setTimeout(() => window.location.href = 'dashboard.html', 800);
+  } catch (err) {
+    mensajeLogin.style.color = 'red';
+    mensajeLogin.textContent = err.message;
   }
 });
 
