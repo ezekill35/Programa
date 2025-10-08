@@ -1,3 +1,4 @@
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -11,7 +12,7 @@ const firebaseConfig = {
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Exportar auth y db globalmente
+// Variables globales
 const auth = firebase.auth();
 const db = firebase.firestore();
 
