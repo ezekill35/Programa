@@ -1,47 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets 🐾 | Login</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discovery Pets - Login</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* === ESTILO LOGIN === */
+    body {
+      background: linear-gradient(135deg, #ff4da6, #ff80c0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: aparecer 0.5s ease;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .login-container h2 {
+      color: #ff4da6;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-top: 5px;
+      transition: 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: #ff4da6;
+      box-shadow: 0 0 5px #ff4da6;
+    }
+
+    .btn {
+      background: #ff4da6;
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #ff1a75;
+    }
+
+    .toggle-link {
+      color: #ff4da6;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+
+    .toggle-link:hover {
+      color: #ff1a75;
+    }
+
+    .paw {
+      font-size: 40px;
+      color: #ff4da6;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
-<body class="login-body">
+<body>
+  <div class="login-container" id="login-container">
+    <div class="paw">🐾</div>
+    <h2>Discovery Pets</h2>
 
-  <div class="login-container">
-    <div class="login-card">
-      <h1>🐾 <span>Discovery Pets</span></h1>
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Correo electrónico</label>
+        <input type="email" id="loginEmail" required placeholder="usuario@correo.com" />
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input type="password" id="loginPassword" required placeholder="••••••••" />
+      </div>
+      <button class="btn" type="submit">Iniciar Sesión</button>
+    </form>
 
-      <!-- Login -->
-      <form id="loginForm" class="form active">
-        <h2>Iniciar sesión</h2>
-        <input type="email" id="loginEmail" placeholder="Correo electrónico">
-        <input type="password" id="loginPassword" placeholder="Contraseña">
-        <button type="button" id="btnLogin">Iniciar sesión</button>
-        <p id="mensajeLogin" class="mensaje"></p>
-        <p class="toggle">¿No tienes cuenta? 
-          <a href="#" id="showRegister">Regístrate</a>
-        </p>
-      </form>
-
-      <!-- Registro -->
-      <form id="registerForm" class="form">
-        <h2>Crear cuenta</h2>
-        <input type="email" id="registerEmail" placeholder="Correo electrónico">
-        <input type="password" id="registerPassword" placeholder="Contraseña (min 6)">
-        <button type="button" id="btnRegister">Registrarse</button>
-        <p id="mensajeRegister" class="mensaje"></p>
-        <p class="toggle">¿Ya tienes cuenta? 
-          <a href="#" id="showLogin">Inicia sesión</a>
-        </p>
-      </form>
-    </div>
+    <p style="margin-top: 15px;">¿No tienes cuenta?
+      <span class="toggle-link" id="showRegister">Registrarse</span>
+    </p>
   </div>
 
-  <script type="module" src="firebase.js"></script>
+  <!-- Register Form (oculto) -->
+  <div class="login-container" id="register-container" style="display:none;">
+    <div class="paw">🐾</div>
+    <h2>Crear Cuenta</h2>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="registerEmail">Correo electrónico</label>
+        <input type="email" id="registerEmail" required placeholder="usuario@correo.com" />
+      </div>
+      <div class="form-group">
+        <label for="registerPassword">Contraseña</label>
+        <input type="password" id="registerPassword" required placeholder="••••••••" />
+      </div>
+      <button class="btn" type="submit">Registrarse</button>
+    </form>
+
+    <p style="margin-top: 15px;">¿Ya tienes una cuenta?
+      <span class="toggle-link" id="showLogin">Iniciar sesión</span>
+    </p>
+  </div>
+
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
