@@ -1,78 +1,85 @@
-/* styles.css - Discovery Pets (tema fucsia, glass + profesional) */
-
-/* Reset */
-*{ box-sizing: border-box; margin:0; padding:0; }
-:root{
-  --fuchsia-1:#ff6fb5; --fuchsia-2:#ff3b93; --fuchsia-3:#b3006a;
-  --card-bg: rgba(255,255,255,0.88);
-  --muted: #666;
+/* === Estilo General === */
+* {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* ---------- LOGIN ---------- */
-body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg,#fff5fb,#f7f2ff); color:#222; min-height:100vh; }
-.login-body { display:flex; align-items:center; justify-content:center; height:100vh; }
-.login-card { width:420px; background:var(--card-bg); border-radius:16px; box-shadow: 0 16px 40px rgba(17,12,30,0.08); padding:28px; text-align:center; }
-.logo { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:8px; }
-.logo .emoji{ font-size:34px; }
-.logo h1 { color:var(--fuchsia-3); font-size:20px; margin:0; font-weight:800; }
-.auth-form { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
-.auth-form input { padding:12px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); }
-.btn { padding:11px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; color:#fff; }
-.btn-primary { background: linear-gradient(90deg,var(--fuchsia-1),var(--fuchsia-2)); box-shadow:0 8px 20px rgba(255,91,156,0.12); }
-.btn-secondary { background: linear-gradient(90deg,#6e5cff,#a17bff); box-shadow:0 8px 20px rgba(122,92,255,0.08); }
-
-/* helper */
-.d-none { display:none; }
-.msg { min-height:18px; font-size:0.95rem; color:var(--muted); }
-.muted { color:var(--muted); font-size:0.95rem; }
-
-/* ---------- DASHBOARD LAYOUT ---------- */
-.dashboard-body{ display:flex; min-height:100vh; }
-.sidebar{ width:260px; background: linear-gradient(180deg,var(--fuchsia-1),var(--fuchsia-2)); color:#fff; padding:22px; border-top-right-radius:18px; border-bottom-right-radius:18px; box-shadow:6px 0 30px rgba(0,0,0,0.06); position:fixed; top:0; bottom:0; left:0; }
-.sidebar-top { text-align:center; margin-bottom:10px; }
-.logo-emoji { font-size:28px; }
-.brand { margin-top:6px; font-weight:800; font-size:18px; color:#fff; }
-.menu { display:flex; flex-direction:column; gap:8px; margin-top:20px; }
-.menu-btn { background:transparent; border:0; color:#fff; padding:12px 14px; border-radius:10px; text-align:left; font-weight:700; cursor:pointer; transition: all .18s ease; }
-.menu-btn:hover { transform:translateX(6px); box-shadow:0 8px 20px rgba(0,0,0,0.08); }
-.menu-btn.active { background: rgba(255,255,255,0.18); color:#fff; }
-
-/* main */
-.main { margin-left:260px; padding:32px; width:calc(100% - 260px); min-height:100vh; }
-.section { display:none; }
-.section.active { display:block; }
-.cards { display:flex; gap:18px; margin-top:12px; flex-wrap:wrap; }
-.report-card { flex:1 1 220px; background:var(--card-bg); border-radius:12px; padding:18px; box-shadow:0 18px 40px rgba(17,12,30,0.05); text-align:center; }
-.card-title { color:var(--muted); margin:0; font-weight:700; }
-.card-number { margin-top:8px; font-size:1.8rem; color:var(--fuchsia-3); font-weight:800; }
-
-/* forms */
-.form-panel { background:var(--card-bg); padding:14px; border-radius:12px; box-shadow:0 12px 30px rgba(17,12,30,0.04); margin-top:10px; }
-.form-panel .row { display:flex; gap:12px; margin-bottom:10px; }
-.input { flex:1; padding:10px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); }
-.row.right { justify-content:flex-end; }
-
-/* tables */
-.table-wrap { margin-top:14px; }
-.table { width:100%; border-collapse:collapse; background:var(--card-bg); border-radius:10px; overflow:hidden; box-shadow:0 12px 30px rgba(17,12,30,0.04); }
-.table thead th { text-align:left; padding:12px; background:rgba(255,255,255,0.85); color:#333; font-weight:800; }
-.table tbody td { padding:12px; border-top:1px solid rgba(0,0,0,0.03); }
-.btn.small { padding:6px 8px; border-radius:8px; background:linear-gradient(90deg,#ffd6ec,#ffb8e6); color:var(--fuchsia-3); border:0; cursor:pointer; }
-
-/* toast area */
-.toast-area { position:fixed; top:18px; right:18px; z-index:99999; display:flex; flex-direction:column; gap:10px; }
-.toast { padding:10px 14px; border-radius:10px; color:#fff; font-weight:700; transform:translateY(-6px); opacity:0; transition:all .25s; }
-.toast.visible { transform:translateY(0); opacity:1; }
-.toast.success { background: linear-gradient(90deg,#28d37a,#16c76a); }
-.toast.error { background: linear-gradient(90deg,#ff6b6b,#ff3b3b); }
-
-/* responsive */
-@media (max-width: 900px) {
-  .sidebar { width:72px; padding:12px; border-radius:0; }
-  .main { margin-left:72px; padding:18px; }
-  .menu-btn { font-size:12px; padding:8px; text-align:center; }
-  .form-panel .row { flex-direction:column; }
+/* === Fondo Login === */
+.login-body {
+  background: linear-gradient(135deg, #ff66b2, #ffb3d9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
+
+/* === Tarjeta Login === */
+.login-card {
+  background: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 350px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in;
+}
+
+.login-card h1 {
+  font-size: 1.8rem;
+  color: #ff4da6;
+  margin-bottom: 15px;
+}
+
+.form {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form.active { display: flex; }
+
+input {
+  padding: 10px;
+  border: 2px solid #ff99cc;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #ff4da6;
+  box-shadow: 0 0 5px #ff80bf;
+}
+
+button {
+  background: #ff4da6;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover { background: #ff66b2; }
+
+.toggle a {
+  color: #ff4da6;
+  text-decoration: none;
+}
+
+.mensaje {
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
 
 
 
