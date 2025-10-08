@@ -1,6 +1,6 @@
-// ==============================
-// 🔥 Importar módulos de Firebase
-// ==============================
+// ===============================
+// 📦 Importar módulos de Firebase
+// ===============================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
@@ -8,259 +8,260 @@ import {
   addDoc,
   onSnapshot,
   deleteDoc,
-  doc,
-  getDocs
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ==============================
-// 🔧 Configuración Firebase
-// ==============================
+// ===============================
+// 🔥 Configuración de Firebase
+// ===============================
 const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  apiKey: "TU_API_KEY",
   authDomain: "discovery-pets.firebaseapp.com",
   projectId: "discovery-pets",
-  storageBucket: "discovery-pets.firebasestorage.app",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-  measurementId: "G-0WMLRY8FGM"
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "743510443727",
+  appId: "1:743510443727:web:b340b8e9c2ef63fb9c6542"
 };
 
+// Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ==============================
-// 🚪 Cerrar sesión
-// ==============================
-document.getElementById("logout").addEventListener("click", () => {
-  window.location.href = "index.html";
+// ===============================
+// 🎨 Menú lateral interactivo
+// ===============================
+const botonesMenu = document.querySelectorAll('.menu-btn');
+const secciones = document.querySelectorAll('.seccion');
+
+botonesMenu.forEach(btn => {
+  btn.addEventListener('click', () => {
+    botonesMenu.forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    secciones.forEach(sec => sec.style.display = 'none');
+    const target = document.getElementById(btn.dataset.target);
+    if (target) target.style.display = 'block';
+  });
 });
 
-// ==============================
-// 📊 Menú lateral dinámico
-// ==============================
-const buttons = document.querySelectorAll(".menu button");
-const secciones = document.querySelectorAll(".seccion");
+// ===============================
+// 🏪 PROVEEDORES
+// ===============================
+const formProveedores = document.getElementById('formProveedores');
+const tablaProveedores = document.getElementById('tablaProveedores');
 
-buttons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    buttons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
+formProveedores.addEventListener('submit', async e => {
+  e.preventDefault();
+  const ruc = document.getElementById('rucProveedor').value.trim();
+  const nombre = document.getElementById('nombreProveedor').value.trim();
+  const producto = document.getElementById('productoProveedor').value.trim();
+  const direccion = document.getElementById('direccionProveedor').value.trim();
 
-    const target = btn.getAttribute("data-section");
-    secciones.forEach((sec) => {
-      sec.classList.remove("visible");
-      if (sec.id === target) sec.classList.add("visible");
+  if (!/^[0-9]{11}$/.test(ruc)) {
+    alert('⚠️ El RUC debe tener 11 dígitos numéricos.');
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, 'proveedores'), { ruc, nombre, producto, direccion });
+    alert('✅ Proveedor guardado correctamente.');
+    formProveedores.reset();
+  } catch (error) {
+    console.error('Error al guardar proveedor:', error);
+  }
+});
+
+onSnapshot(collection(db, 'proveedores'), snapshot => {
+  tablaProveedores.innerHTML = '';
+  snapshot.forEach(docu => {
+    const p = docu.data();
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>${p.ruc}</td>
+      <td>${p.nombre}</td>
+      <td>${p.producto}</td>
+      <td>${p.direccion}</td>
+      <td>
+        <button class="btn-eliminar" data-id="${docu.id}">🗑️</button>
+      </td>
+    `;
+    tablaProveedores.appendChild(fila);
+  });
+
+  tablaProveedores.querySelectorAll('.btn-eliminar').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (confirm('¿Eliminar este proveedor?')) {
+        await deleteDoc(doc(db, 'proveedores', btn.dataset.id));
+      }
     });
   });
 });
 
-// ==============================
-// 🏪 PROVEEDORES
-// ==============================
-const formProv = document.getElementById("formProveedores");
-const tablaProv = document.getElementById("tablaProveedores");
+// ===============================
+// 🧾 FACTURAS
+// ===============================
+const formFacturas = document.getElementById('formFacturas');
+const tablaFacturas = document.getElementById('tablaFacturas');
 
-formProv.addEventListener("submit", async (e) => {
+formFacturas.addEventListener('submit', async e => {
   e.preventDefault();
-  const nombre = document.getElementById("provNombre").value.trim();
-  const producto = document.getElementById("provProducto").value.trim();
-  const ruc = document.getElementById("provRUC").value.trim();
-  const direccion = document.getElementById("provDireccion").value.trim();
+  const proveedor = document.getElementById('facturaProveedor').value;
+  const tipo = document.getElementById('facturaTipo').value;
+  const monto = parseFloat(document.getElementById('facturaMonto').value);
+  const fecha = document.getElementById('facturaFecha').value;
+  const descripcion = document.getElementById('facturaDescripcion').value.trim();
 
-  if (!/^\d+$/.test(ruc)) return alert("⚠️ El RUC solo puede contener números");
+  if (!proveedor || !tipo || !monto || !fecha) {
+    alert('⚠️ Complete todos los campos.');
+    return;
+  }
 
   try {
-    await addDoc(collection(db, "proveedores"), { nombre, producto, ruc, direccion });
-    formProv.reset();
-    alert("✅ Proveedor agregado correctamente a la base de datos");
-  } catch (err) {
-    alert("❌ Error al agregar proveedor: " + err.message);
+    await addDoc(collection(db, 'facturas'), { proveedor, tipo, monto, fecha, descripcion });
+    alert('✅ Factura agregada correctamente.');
+    formFacturas.reset();
+  } catch (error) {
+    console.error('Error al guardar factura:', error);
   }
 });
 
-onSnapshot(collection(db, "proveedores"), (snapshot) => {
-  tablaProv.innerHTML = "";
-  snapshot.forEach((docu) => {
-    const d = docu.data();
-    const fila = `
-      <tr>
-        <td>${d.nombre}</td>
-        <td>${d.producto}</td>
-        <td>${d.ruc}</td>
-        <td>${d.direccion}</td>
-        <td><button class="btn-del" data-id="${docu.id}">🗑️</button></td>
-      </tr>`;
-    tablaProv.innerHTML += fila;
-  });
-  actualizarReportes();
-  actualizarSelectProveedores();
-});
-
-tablaProv.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("btn-del")) {
-    const id = e.target.getAttribute("data-id");
-    await deleteDoc(doc(db, "proveedores", id));
-    alert("🗑️ Proveedor eliminado correctamente");
-  }
-});
-
-// ==============================
-// 📑 FACTURAS
-// ==============================
-const formFact = document.getElementById("formFacturas");
-const tablaFact = document.getElementById("tablaFacturas");
-const selectProv = document.getElementById("factProveedor");
-
-async function actualizarSelectProveedores() {
-  const snapshot = await getDocs(collection(db, "proveedores"));
-  selectProv.innerHTML = `<option value="">-- Selecciona proveedor --</option>`;
-  snapshot.forEach((docu) => {
-    selectProv.innerHTML += `<option value="${docu.data().nombre}">${docu.data().nombre}</option>`;
-  });
-}
-
-formFact.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const proveedor = selectProv.value;
-  const tipo = document.getElementById("factTipo").value.trim();
-  const monto = parseFloat(document.getElementById("factMonto").value);
-  const fecha = document.getElementById("factFecha").value;
-  const descripcion = document.getElementById("factDescripcion").value.trim();
-
-  try {
-    await addDoc(collection(db, "facturas"), { proveedor, tipo, monto, fecha, descripcion, moneda: "S/." });
-    formFact.reset();
-    alert("✅ Factura agregada correctamente a la base de datos");
-  } catch (err) {
-    alert("❌ Error al agregar factura: " + err.message);
-  }
-});
-
-onSnapshot(collection(db, "facturas"), (snapshot) => {
-  tablaFact.innerHTML = "";
-  snapshot.forEach((docu) => {
+onSnapshot(collection(db, 'facturas'), snapshot => {
+  tablaFacturas.innerHTML = '';
+  snapshot.forEach(docu => {
     const f = docu.data();
-    const fila = `
-      <tr>
-        <td>${f.proveedor}</td>
-        <td>${f.tipo}</td>
-        <td>S/. ${f.monto.toFixed(2)}</td>
-        <td>${f.fecha}</td>
-        <td>${f.descripcion}</td>
-        <td><button class="btn-del" data-col="facturas" data-id="${docu.id}">🗑️</button></td>
-      </tr>`;
-    tablaFact.innerHTML += fila;
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>${f.proveedor}</td>
+      <td>${f.tipo}</td>
+      <td>S/. ${f.monto.toFixed(2)}</td>
+      <td>${f.fecha}</td>
+      <td>${f.descripcion}</td>
+      <td>
+        <button class="btn-eliminar" data-id="${docu.id}">🗑️</button>
+      </td>
+    `;
+    tablaFacturas.appendChild(fila);
   });
-  actualizarReportes();
+
+  tablaFacturas.querySelectorAll('.btn-eliminar').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (confirm('¿Eliminar esta factura?')) {
+        await deleteDoc(doc(db, 'facturas', btn.dataset.id));
+      }
+    });
+  });
 });
 
-tablaFact.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("btn-del")) {
-    const id = e.target.getAttribute("data-id");
-    await deleteDoc(doc(db, "facturas", id));
-    alert("🗑️ Factura eliminada correctamente");
-  }
-});
-
-// ==============================
+// ===============================
 // 💰 GASTOS
-// ==============================
-const formGasto = document.getElementById("formGastos");
-const tablaGasto = document.getElementById("tablaGastos");
+// ===============================
+const formGastos = document.getElementById('formGastos');
+const tablaGastos = document.getElementById('tablaGastos');
 
-formGasto.addEventListener("submit", async (e) => {
+formGastos.addEventListener('submit', async e => {
   e.preventDefault();
-  const nombre = document.getElementById("gastoNombre").value.trim();
-  const tipo = document.getElementById("gastoTipo").value.trim();
-  const monto = parseFloat(document.getElementById("gastoMonto").value);
-  const fecha = document.getElementById("gastoFecha").value;
+  const nombre = document.getElementById('gastoNombre').value.trim();
+  const tipo = document.getElementById('gastoTipo').value;
+  const monto = parseFloat(document.getElementById('gastoMonto').value);
+  const fecha = document.getElementById('gastoFecha').value;
+
+  if (!nombre || !tipo || !monto || !fecha) {
+    alert('⚠️ Complete todos los campos.');
+    return;
+  }
 
   try {
-    await addDoc(collection(db, "gastos"), { nombre, tipo, monto, fecha });
-    formGasto.reset();
-    alert("✅ Gasto agregado correctamente a la base de datos");
-  } catch (err) {
-    alert("❌ Error al agregar gasto: " + err.message);
+    await addDoc(collection(db, 'gastos'), { nombre, tipo, monto, fecha });
+    alert('✅ Gasto guardado correctamente.');
+    formGastos.reset();
+  } catch (error) {
+    console.error('Error al guardar gasto:', error);
   }
 });
 
-onSnapshot(collection(db, "gastos"), (snapshot) => {
-  tablaGasto.innerHTML = "";
-  snapshot.forEach((docu) => {
+onSnapshot(collection(db, 'gastos'), snapshot => {
+  tablaGastos.innerHTML = '';
+  snapshot.forEach(docu => {
     const g = docu.data();
-    const fila = `
-      <tr>
-        <td>${g.nombre}</td>
-        <td>${g.tipo}</td>
-        <td>S/. ${g.monto.toFixed(2)}</td>
-        <td>${g.fecha}</td>
-        <td><button class="btn-del" data-id="${docu.id}" data-col="gastos">🗑️</button></td>
-      </tr>`;
-    tablaGasto.innerHTML += fila;
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>${g.nombre}</td>
+      <td>${g.tipo}</td>
+      <td>S/. ${g.monto.toFixed(2)}</td>
+      <td>${g.fecha}</td>
+      <td><button class="btn-eliminar" data-id="${docu.id}">🗑️</button></td>
+    `;
+    tablaGastos.appendChild(fila);
   });
-  actualizarReportes();
+
+  tablaGastos.querySelectorAll('.btn-eliminar').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (confirm('¿Eliminar este gasto?')) {
+        await deleteDoc(doc(db, 'gastos', btn.dataset.id));
+      }
+    });
+  });
 });
 
-tablaGasto.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("btn-del")) {
-    const id = e.target.getAttribute("data-id");
-    await deleteDoc(doc(db, "gastos", id));
-    alert("🗑️ Gasto eliminado correctamente");
-  }
-});
-
-// ==============================
+// ===============================
 // 🛠 SERVICIOS
-// ==============================
-const formServ = document.getElementById("formServicios");
-const tablaServ = document.getElementById("tablaServicios");
+// ===============================
+const formServicios = document.getElementById('formServicios');
+const tablaServicios = document.getElementById('tablaServicios');
 
-formServ.addEventListener("submit", async (e) => {
+formServicios.addEventListener('submit', async e => {
   e.preventDefault();
-  const nombre = document.getElementById("servNombre").value.trim();
-  const precio = parseFloat(document.getElementById("servPrecio").value);
-  const fecha = document.getElementById("servFecha").value;
-  const descripcion = document.getElementById("servDescripcion").value.trim();
+  const nombre = document.getElementById('servicioNombre').value.trim();
+  const precio = parseFloat(document.getElementById('servicioPrecio').value);
+  const fecha = document.getElementById('servicioFecha').value;
+  const descripcion = document.getElementById('servicioDescripcion').value.trim();
+
+  if (!nombre || !precio || !fecha) {
+    alert('⚠️ Complete todos los campos.');
+    return;
+  }
 
   try {
-    await addDoc(collection(db, "servicios"), { nombre, precio, fecha, descripcion });
-    formServ.reset();
-    alert("✅ Servicio agregado correctamente a la base de datos");
-  } catch (err) {
-    alert("❌ Error al agregar servicio: " + err.message);
+    await addDoc(collection(db, 'servicios'), { nombre, precio, fecha, descripcion });
+    alert('✅ Servicio agregado correctamente.');
+    formServicios.reset();
+  } catch (error) {
+    console.error('Error al guardar servicio:', error);
   }
 });
 
-onSnapshot(collection(db, "servicios"), (snapshot) => {
-  tablaServ.innerHTML = "";
-  snapshot.forEach((docu) => {
+onSnapshot(collection(db, 'servicios'), snapshot => {
+  tablaServicios.innerHTML = '';
+  snapshot.forEach(docu => {
     const s = docu.data();
-    const fila = `
-      <tr>
-        <td>${s.nombre}</td>
-        <td>S/. ${s.precio.toFixed(2)}</td>
-        <td>${s.fecha}</td>
-        <td>${s.descripcion}</td>
-        <td><button class="btn-del" data-id="${docu.id}" data-col="servicios">🗑️</button></td>
-      </tr>`;
-    tablaServ.innerHTML += fila;
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>${s.nombre}</td>
+      <td>S/. ${s.precio.toFixed(2)}</td>
+      <td>${s.fecha}</td>
+      <td>${s.descripcion}</td>
+      <td><button class="btn-eliminar" data-id="${docu.id}">🗑️</button></td>
+    `;
+    tablaServicios.appendChild(fila);
   });
-  actualizarReportes();
+
+  tablaServicios.querySelectorAll('.btn-eliminar').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (confirm('¿Eliminar este servicio?')) {
+        await deleteDoc(doc(db, 'servicios', btn.dataset.id));
+      }
+    });
+  });
 });
 
-// ==============================
-// 📈 REPORTES
-// ==============================
-async function actualizarReportes() {
-  const prov = (await getDocs(collection(db, "proveedores"))).size;
-  const fact = (await getDocs(collection(db, "facturas"))).size;
-  const gast = (await getDocs(collection(db, "gastos"))).size;
-  const serv = (await getDocs(collection(db, "servicios"))).size;
-  document.getElementById("repProveedores").textContent = prov;
-  document.getElementById("repFacturas").textContent = fact;
-  document.getElementById("repGastos").textContent = gast;
-  document.getElementById("repServicios").textContent = serv;
-}
+// ===============================
+// 🚪 Cerrar sesión (simple)
+const btnCerrar = document.createElement('button');
+btnCerrar.textContent = '🚪 Cerrar sesión';
+btnCerrar.classList.add('btn-cerrar');
+document.querySelector('.sidebar').appendChild(btnCerrar);
+btnCerrar.addEventListener('click', () => {
+  window.location.href = 'index.html';
+});
 
 
 
