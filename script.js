@@ -1,7 +1,3 @@
-import { auth, db } from './firebase.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
-
 // Contenedores
 const containerLogin = document.getElementById('containerLogin');
 const containerRegister = document.getElementById('containerRegister');
@@ -12,13 +8,12 @@ const registerForm = document.getElementById('registerForm');
 const msgLogin = document.getElementById('msgLogin');
 const msgRegister = document.getElementById('msgRegister');
 
-// Cambiar a registro
+// Cambiar entre login y registro
 document.getElementById('goRegister').addEventListener('click', () => {
   containerLogin.style.display = 'none';
   containerRegister.style.display = 'block';
 });
 
-// Cambiar a login
 document.getElementById('goLogin').addEventListener('click', () => {
   containerRegister.style.display = 'none';
   containerLogin.style.display = 'block';
@@ -31,7 +26,7 @@ loginForm.addEventListener('submit', async e => {
   const password = document.getElementById('loginPassword').value;
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await auth.signInWithEmailAndPassword(email, password);
     window.location.href = "dashboard.html";
   } catch (error) {
     msgLogin.textContent = "Correo o contraseña incorrectos";
@@ -46,11 +41,10 @@ registerForm.addEventListener('submit', async e => {
   const password = document.getElementById('registerPassword').value;
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     const user = userCredential.user;
 
-    // Guardar usuario en Firestore
-    await setDoc(doc(db, "usuarios", user.uid), {
+    await db.collection("usuarios").doc(user.uid).set({
       nombre: name,
       email: email,
       rol: "usuario",
@@ -62,6 +56,8 @@ registerForm.addEventListener('submit', async e => {
     msgRegister.textContent = error.message;
   }
 });
+
+
 
 
 
