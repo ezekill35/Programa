@@ -1,15 +1,16 @@
 import { auth } from './firebase.js';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Elementos
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const showRegister = document.getElementById('showRegister');
 const showLogin = document.getElementById('showLogin');
 const mensajeLogin = document.getElementById('mensajeLogin');
 const mensajeRegister = document.getElementById('mensajeRegister');
+const btnLogin = document.getElementById('btnLogin');
+const btnRegister = document.getElementById('btnRegister');
 
-// Mostrar/ocultar formularios
+// Cambio entre login y registro
 showRegister.addEventListener('click', () => {
   loginForm.classList.add('d-none');
   registerForm.classList.remove('d-none');
@@ -19,34 +20,34 @@ showLogin.addEventListener('click', () => {
   loginForm.classList.remove('d-none');
 });
 
-// REGISTRO
-document.getElementById('btnRegister').addEventListener('click', async () => {
+// Registro
+btnRegister.addEventListener('click', async () => {
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value.trim();
-
+  if (!email || !password) return mensajeRegister.textContent = "Complete todos los campos";
   try {
     await createUserWithEmailAndPassword(auth, email, password);
-    mensajeRegister.textContent = '✅ Registro exitoso';
-    mensajeRegister.style.color = 'green';
+    mensajeRegister.style.color = "green";
+    mensajeRegister.textContent = "Usuario registrado correctamente";
   } catch (error) {
+    mensajeRegister.style.color = "red";
     mensajeRegister.textContent = error.message;
-    mensajeRegister.style.color = 'red';
   }
 });
 
-// LOGIN
-document.getElementById('btnLogin').addEventListener('click', async () => {
+// Login
+btnLogin.addEventListener('click', async () => {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
-
+  if (!email || !password) return mensajeLogin.textContent = "Complete todos los campos";
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    mensajeLogin.textContent = '✅ Inicio de sesión correcto';
-    mensajeLogin.style.color = 'green';
-    setTimeout(() => (window.location.href = 'dashboard.html'), 800);
+    mensajeLogin.style.color = "green";
+    mensajeLogin.textContent = "Inicio de sesión exitoso";
+    setTimeout(() => window.location.href = 'dashboard.html', 1000);
   } catch (error) {
+    mensajeLogin.style.color = "red";
     mensajeLogin.textContent = error.message;
-    mensajeLogin.style.color = 'red';
   }
 });
 
