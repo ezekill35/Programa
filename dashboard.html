@@ -7,36 +7,38 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="dashboard-body d-flex">
+<body class="dashboard-body">
 
-  <aside class="sidebar bg-dark text-white p-3">
+  <!-- Sidebar -->
+  <aside class="sidebar d-flex flex-column">
     <h2>🐾 Discovery Pets</h2>
-    <nav class="d-flex flex-column gap-2 mt-3">
-      <button class="nav-btn btn btn-outline-light active" data-section="reportes">📊 Reportes</button>
-      <button class="nav-btn btn btn-outline-light" data-section="proveedores">🏪 Proveedores</button>
-      <button class="nav-btn btn btn-outline-light" data-section="facturas">📑 Facturas</button>
-      <button class="nav-btn btn btn-outline-light" data-section="gastos">💰 Gastos</button>
-      <button class="nav-btn btn btn-outline-light" data-section="servicios">🛠 Servicios</button>
+    <nav class="flex-column mb-3">
+      <button class="nav-btn active mb-2" data-section="reportes">📊 Reportes</button>
+      <button class="nav-btn mb-2" data-section="proveedores">🏪 Proveedores</button>
+      <button class="nav-btn mb-2" data-section="facturas">📑 Facturas</button>
+      <button class="nav-btn mb-2" data-section="gastos">💰 Gastos</button>
+      <button class="nav-btn mb-2" data-section="servicios">🛠 Servicios</button>
     </nav>
-    <button class="logout-btn btn btn-danger mt-3" id="logoutBtn">🚪 Cerrar sesión</button>
+    <button class="logout-btn btn btn-danger mt-auto">🚪 Cerrar sesión</button>
   </aside>
 
-  <main class="main-content flex-grow-1 p-4">
+  <!-- Main -->
+  <main class="main-content container-fluid">
     <!-- Reportes -->
     <section id="reportes" class="content-section active">
       <h1>📊 Reportes Generales</h1>
       <div class="row g-3 mt-3">
-        <div class="col"><div class="card text-center p-3 bg-pink"><h3>Proveedores</h3><p id="countProveedores">0</p></div></div>
-        <div class="col"><div class="card text-center p-3 bg-purple"><h3>Facturas</h3><p id="countFacturas">0</p></div></div>
-        <div class="col"><div class="card text-center p-3 bg-teal"><h3>Gastos</h3><p id="countGastos">0</p></div></div>
-        <div class="col"><div class="card text-center p-3 bg-yellow"><h3>Servicios</h3><p id="countServicios">0</p></div></div>
+        <div class="col-md-3 card bg-pink p-3 text-center"><h5>Proveedores</h5><p id="countProveedores">0</p></div>
+        <div class="col-md-3 card bg-purple p-3 text-center"><h5>Facturas</h5><p id="countFacturas">0</p></div>
+        <div class="col-md-3 card bg-teal p-3 text-center"><h5>Gastos</h5><p id="countGastos">0</p></div>
+        <div class="col-md-3 card bg-yellow p-3 text-center"><h5>Servicios</h5><p id="countServicios">0</p></div>
       </div>
     </section>
 
     <!-- Proveedores -->
     <section id="proveedores" class="content-section">
       <h1>🏪 Registro de Proveedores</h1>
-      <form id="formProveedor" class="row g-2">
+      <form id="formProveedor" class="row g-2 mt-2">
         <input class="col form-control" type="text" id="nombreProv" placeholder="Nombre">
         <input class="col form-control" type="text" id="productoProv" placeholder="Producto">
         <input class="col form-control" type="text" id="rucProv" placeholder="RUC">
@@ -53,7 +55,7 @@
     <!-- Facturas -->
     <section id="facturas" class="content-section">
       <h1>📑 Registro de Facturas</h1>
-      <form id="formFactura" class="row g-2">
+      <form id="formFactura" class="row g-2 mt-2">
         <input class="col form-control" type="text" id="proveedorFactura" placeholder="Proveedor">
         <input class="col form-control" type="text" id="tipoFactura" placeholder="Tipo">
         <input class="col form-control" type="number" id="montoFactura" placeholder="Monto S/.">
@@ -71,7 +73,7 @@
     <!-- Gastos -->
     <section id="gastos" class="content-section">
       <h1>💰 Registro de Gastos</h1>
-      <form id="formGasto" class="row g-2">
+      <form id="formGasto" class="row g-2 mt-2">
         <input class="col form-control" type="text" id="nombreGasto" placeholder="Nombre">
         <input class="col form-control" type="text" id="tipoGasto" placeholder="Tipo">
         <input class="col form-control" type="number" id="montoGasto" placeholder="Monto">
@@ -88,7 +90,7 @@
     <!-- Servicios -->
     <section id="servicios" class="content-section">
       <h1>🛠 Registro de Servicios</h1>
-      <form id="formServicio" class="row g-2">
+      <form id="formServicio" class="row g-2 mt-2">
         <input class="col form-control" type="text" id="nombreServ" placeholder="Nombre">
         <input class="col form-control" type="number" id="precioServ" placeholder="Precio">
         <input class="col form-control" type="date" id="fechaServ">
@@ -101,11 +103,16 @@
         <tbody id="tablaServicios"></tbody>
       </table>
     </section>
+
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/10.2.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.2.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js"></script>
   <script src="dashboard.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
 
