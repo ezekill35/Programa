@@ -2,24 +2,26 @@ import { auth, db } from './firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 
+// Contenedores
+const containerLogin = document.getElementById('containerLogin');
+const containerRegister = document.getElementById('containerRegister');
+
 // Formularios y mensajes
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const msgLogin = document.getElementById('msgLogin');
 const msgRegister = document.getElementById('msgRegister');
 
-// Cambiar de Login a Registro
-document.getElementById('showRegister').addEventListener('click', () => {
-  loginForm.style.display = 'none';
-  registerForm.style.display = 'flex';
-  document.getElementById('formTitle').textContent = "Regístrate";
+// Cambiar a registro
+document.getElementById('goRegister').addEventListener('click', () => {
+  containerLogin.style.display = 'none';
+  containerRegister.style.display = 'block';
 });
 
-// Cambiar de Registro a Login
-document.getElementById('showLogin').addEventListener('click', () => {
-  registerForm.style.display = 'none';
-  loginForm.style.display = 'flex';
-  document.getElementById('formTitle').textContent = "Inicia sesión";
+// Cambiar a login
+document.getElementById('goLogin').addEventListener('click', () => {
+  containerRegister.style.display = 'none';
+  containerLogin.style.display = 'block';
 });
 
 // LOGIN
@@ -60,11 +62,6 @@ registerForm.addEventListener('submit', async e => {
     msgRegister.textContent = error.message;
   }
 });
-
-
-
-
-
 
 
 
