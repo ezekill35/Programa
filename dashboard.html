@@ -3,162 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets - Dashboard</title>
+  <title>Dashboard | Discovery Pets 🐾</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <!-- 🌈 Barra lateral -->
+<body class="dashboard-body">
+
   <aside class="sidebar">
     <h2>🐾 Discovery Pets</h2>
     <nav>
-      <button class="menu-btn activo" data-target="inicio">🏠 Inicio</button>
-      <button class="menu-btn" data-target="reportes">📊 Reportes</button>
-      <button class="menu-btn" data-target="facturas">🧾 Facturas</button>
-      <button class="menu-btn" data-target="gastos">💰 Gastos</button>
-      <button class="menu-btn" data-target="proveedores">🏪 Proveedores</button>
-      <button class="menu-btn" data-target="servicios">🛠 Servicios</button>
+      <button class="nav-btn active" data-section="reportes">📊 Reportes</button>
+      <button class="nav-btn" data-section="proveedores">🏪 Proveedores</button>
+      <button class="nav-btn" data-section="facturas">📑 Facturas</button>
+      <button class="nav-btn" data-section="gastos">💰 Gastos</button>
+      <button class="nav-btn" data-section="servicios">🛠 Servicios</button>
     </nav>
+    <button class="logout-btn" id="logoutBtn">🚪 Cerrar sesión</button>
   </aside>
 
-  <!-- 🧩 Contenido principal -->
-  <main class="contenido">
-
-    <!-- 🏠 INICIO -->
-    <section id="inicio" class="seccion" style="display:block;">
-      <h1>Bienvenido a Discovery Pets</h1>
-      <p>Administra tus servicios, facturas, proveedores y gastos en tiempo real 🐶🐱</p>
-      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Mascotas" class="img-inicio">
-    </section>
-
-    <!-- 📊 REPORTES -->
-    <section id="reportes" class="seccion">
-      <h1>📊 Reportes</h1>
-      <p>Aquí podrás visualizar tus estadísticas de gastos, facturas y servicios.</p>
-      <div class="reporte-contenedor">
-        <p>✨ Próximamente: gráficos interactivos con estadísticas en tiempo real.</p>
+  <main class="main-content">
+    <!-- SECCIÓN REPORTES -->
+    <section id="reportes" class="content-section active">
+      <h1>📊 Reportes Generales</h1>
+      <div class="cards">
+        <div class="card pink"><h3>Proveedores</h3><p id="countProveedores">0</p></div>
+        <div class="card purple"><h3>Facturas</h3><p id="countFacturas">0</p></div>
+        <div class="card teal"><h3>Gastos</h3><p id="countGastos">0</p></div>
+        <div class="card yellow"><h3>Servicios</h3><p id="countServicios">0</p></div>
       </div>
     </section>
 
-    <!-- 🧾 FACTURAS -->
-    <section id="facturas" class="seccion">
-      <h1>🧾 Facturas</h1>
-      <form id="formFacturas" class="formulario">
-        <select id="facturaProveedor" required>
-          <option value="">Seleccione proveedor</option>
-          <option value="Proveedor 1">Proveedor 1</option>
-          <option value="Proveedor 2">Proveedor 2</option>
-        </select>
-        <select id="facturaTipo" required>
-          <option value="">Tipo de factura</option>
-          <option value="Compra">Compra</option>
-          <option value="Venta">Venta</option>
-        </select>
-        <input type="number" id="facturaMonto" placeholder="Monto (S/.)" required>
-        <input type="date" id="facturaFecha" required>
-        <input type="text" id="facturaDescripcion" placeholder="Descripción" required>
-        <button type="submit">➕ Agregar Factura</button>
+    <!-- SECCIÓN PROVEEDORES -->
+    <section id="proveedores" class="content-section">
+      <h1>🏪 Registro de Proveedores</h1>
+      <form id="formProveedor" class="formulario">
+        <input type="text" id="nombreProv" placeholder="Nombre">
+        <input type="text" id="productoProv" placeholder="Producto">
+        <input type="text" id="rucProv" placeholder="RUC" pattern="[0-9]*">
+        <input type="text" id="direccionProv" placeholder="Dirección">
+        <button type="submit">Agregar</button>
       </form>
-
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>Proveedor</th>
-            <th>Tipo</th>
-            <th>Monto</th>
-            <th>Fecha</th>
-            <th>Descripción</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaFacturas"></tbody>
-      </table>
-    </section>
-
-    <!-- 💰 GASTOS -->
-    <section id="gastos" class="seccion">
-      <h1>💰 Gastos</h1>
-      <form id="formGastos" class="formulario">
-        <input type="text" id="gastoNombre" placeholder="Nombre del gasto" required>
-        <select id="gastoTipo" required>
-          <option value="">Tipo</option>
-          <option value="Operativo">Operativo</option>
-          <option value="Administrativo">Administrativo</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <input type="number" id="gastoMonto" placeholder="Monto (S/.)" required>
-        <input type="date" id="gastoFecha" required>
-        <button type="submit">➕ Agregar Gasto</button>
-      </form>
-
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Monto</th>
-            <th>Fecha</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaGastos"></tbody>
-      </table>
-    </section>
-
-    <!-- 🏪 PROVEEDORES -->
-    <section id="proveedores" class="seccion">
-      <h1>🏪 Proveedores</h1>
-      <form id="formProveedores" class="formulario">
-        <input type="text" id="rucProveedor" placeholder="RUC (11 dígitos)" required pattern="[0-9]{11}">
-        <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" required>
-        <input type="text" id="productoProveedor" placeholder="Producto o servicio" required>
-        <input type="text" id="direccionProveedor" placeholder="Dirección" required>
-        <button type="submit">➕ Agregar Proveedor</button>
-      </form>
-
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>RUC</th>
-            <th>Nombre</th>
-            <th>Producto</th>
-            <th>Dirección</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
+      <p id="msgProv" class="mensaje"></p>
+      <table>
+        <thead><tr><th>Nombre</th><th>Producto</th><th>RUC</th><th>Dirección</th><th>Acciones</th></tr></thead>
         <tbody id="tablaProveedores"></tbody>
       </table>
     </section>
 
-    <!-- 🛠 SERVICIOS -->
-    <section id="servicios" class="seccion">
-      <h1>🛠 Servicios</h1>
-      <form id="formServicios" class="formulario">
-        <input type="text" id="servicioNombre" placeholder="Nombre del servicio" required>
-        <input type="number" id="servicioPrecio" placeholder="Precio (S/.)" required>
-        <input type="date" id="servicioFecha" required>
-        <input type="text" id="servicioDescripcion" placeholder="Descripción" required>
-        <button type="submit">➕ Agregar Servicio</button>
+    <!-- SECCIÓN FACTURAS -->
+    <section id="facturas" class="content-section">
+      <h1>📑 Registro de Facturas</h1>
+      <form id="formFactura" class="formulario">
+        <input type="text" id="proveedorFactura" placeholder="Proveedor">
+        <input type="text" id="tipoFactura" placeholder="Tipo">
+        <input type="number" id="montoFactura" placeholder="Monto S/.">
+        <input type="date" id="fechaFactura">
+        <input type="text" id="descFactura" placeholder="Descripción">
+        <button type="submit">Agregar</button>
       </form>
+      <p id="msgFactura" class="mensaje"></p>
+      <table>
+        <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaFacturas"></tbody>
+      </table>
+    </section>
 
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Fecha</th>
-            <th>Descripción</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
+    <!-- SECCIÓN GASTOS -->
+    <section id="gastos" class="content-section">
+      <h1>💰 Registro de Gastos</h1>
+      <form id="formGasto" class="formulario">
+        <input type="text" id="nombreGasto" placeholder="Nombre">
+        <input type="text" id="tipoGasto" placeholder="Tipo">
+        <input type="number" id="montoGasto" placeholder="Monto">
+        <input type="date" id="fechaGasto">
+        <button type="submit">Agregar</button>
+      </form>
+      <p id="msgGasto" class="mensaje"></p>
+      <table>
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaGastos"></tbody>
+      </table>
+    </section>
+
+    <!-- SECCIÓN SERVICIOS -->
+    <section id="servicios" class="content-section">
+      <h1>🛠 Registro de Servicios</h1>
+      <form id="formServicio" class="formulario">
+        <input type="text" id="nombreServ" placeholder="Nombre">
+        <input type="number" id="precioServ" placeholder="Precio">
+        <input type="date" id="fechaServ">
+        <input type="text" id="descServ" placeholder="Descripción">
+        <button type="submit">Agregar</button>
+      </form>
+      <p id="msgServ" class="mensaje"></p>
+      <table>
+        <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
         <tbody id="tablaServicios"></tbody>
       </table>
     </section>
   </main>
 
-  <!-- 🔗 Firebase -->
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
