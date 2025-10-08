@@ -1,155 +1,61 @@
-/* === Dashboard === */
-.dashboard-body {
-  display: flex;
-  background: #fff;
-  min-height: 100vh;
+/* Reset y body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
 }
 
-.sidebar {
-  width: 240px;
-  background: linear-gradient(180deg, #ff4da6, #ff80bf);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 25px;
-  gap: 20px;
-  border-radius: 0 20px 20px 0;
-}
-
-.sidebar h2 {
-  font-size: 1.3em;
-  margin-bottom: 10px;
-}
-
-.nav-btn {
-  background: transparent;
-  color: #fff;
-  border: none;
-  font-size: 1em;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 12px;
+/* Login Card */
+.login-card {
   width: 100%;
-  text-align: left;
-  transition: 0.3s;
-}
-
-.nav-btn:hover,
-.nav-btn.active {
-  background: #fff;
-  color: #ff4da6;
-}
-
-.logout-btn {
-  margin-top: auto;
-  background: #fff;
-  color: #ff4da6;
-  border: none;
-  padding: 10px 20px;
+  max-width: 400px;
   border-radius: 15px;
-  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.login-card:hover {
+  transform: perspective(600px) rotateY(5deg) rotateX(5deg) scale(1.02);
+}
+
+/* Inputs y Botones */
+.form-control {
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 5px rgba(13,110,253,0.5);
+}
+
+.btn-login {
+  border-radius: 10px;
+  padding: 10px;
   font-weight: bold;
-  transition: 0.3s;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s;
 }
 
-.logout-btn:hover {
-  background: #ffe6f2;
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
 }
 
-.main-content {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
+/* Mensaje de error */
+#msgLogin {
+  font-size: 0.9rem;
 }
 
-.content-section {
-  display: none;
-  animation: fadeIn 0.5s ease;
+/* Colores y degradados */
+.text-primary {
+  color: #0d6efd !important;
 }
-.content-section.active {
-  display: block;
-}
-
-.cards {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-}
-
-.card {
-  flex: 1;
-  min-width: 200px;
-  padding: 25px;
-  color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  text-align: center;
-  font-size: 1.2em;
-}
-
-.card.pink { background: #ff4da6; }
-.card.purple { background: #b366ff; }
-.card.teal { background: #00bfa6; }
-.card.yellow { background: #ffcc00; }
-
-.formulario {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.formulario input,
-.formulario button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1.5px solid #ccc;
-}
-
-.formulario button {
-  background: #ff4da6;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.formulario button:hover { background: #ff80bf; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-table th, table td {
-  padding: 8px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-table th {
-  background: #ffccf2;
-}
-table button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1em;
-}
-
-.mensaje {
-  margin-bottom: 10px;
-  font-size: 0.9em;
-  color: #555;
-}
-
-
-
-
-
-
-
-
-
 
 
 
