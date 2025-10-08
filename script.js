@@ -1,4 +1,3 @@
-// script.js
 import { auth } from './firebase.js';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -11,17 +10,15 @@ const mensajeRegister = document.getElementById('mensajeRegister');
 const btnLogin = document.getElementById('btnLogin');
 const btnRegister = document.getElementById('btnRegister');
 
-showRegister.addEventListener('click', (e) => {
-  e.preventDefault();
-  loginForm.classList.add('d-none');
-  registerForm.classList.remove('d-none');
+// Alternar formularios
+showRegister.addEventListener('click', () => {
+  loginForm.classList.remove('active');
+  registerForm.classList.add('active');
   mensajeLogin.textContent = '';
 });
-
-showLogin.addEventListener('click', (e) => {
-  e.preventDefault();
-  registerForm.classList.add('d-none');
-  loginForm.classList.remove('d-none');
+showLogin.addEventListener('click', () => {
+  registerForm.classList.remove('active');
+  loginForm.classList.add('active');
   mensajeRegister.textContent = '';
 });
 
@@ -29,24 +26,15 @@ showLogin.addEventListener('click', (e) => {
 btnRegister.addEventListener('click', async () => {
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value.trim();
-  if (!email || !password) {
-    mensajeRegister.style.color = 'red';
-    mensajeRegister.textContent = 'Completa todos los campos';
-    return;
-  }
+  if (!email || !password) return mensajeRegister.textContent = '⚠️ Todos los campos son obligatorios';
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     mensajeRegister.style.color = 'green';
-    mensajeRegister.textContent = 'Registro correcto. Ya puedes iniciar sesión.';
+    mensajeRegister.textContent = '✅ Usuario registrado con éxito';
     registerForm.reset();
-    setTimeout(() => {
-      registerForm.classList.add('d-none');
-      loginForm.classList.remove('d-none');
-      mensajeRegister.textContent = '';
-    }, 1000);
-  } catch (err) {
+  } catch (error) {
     mensajeRegister.style.color = 'red';
-    mensajeRegister.textContent = err.message;
+    mensajeRegister.textContent = error.message;
   }
 });
 
@@ -54,21 +42,18 @@ btnRegister.addEventListener('click', async () => {
 btnLogin.addEventListener('click', async () => {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
-  if (!email || !password) {
-    mensajeLogin.style.color = 'red';
-    mensajeLogin.textContent = 'Completa todos los campos';
-    return;
-  }
+  if (!email || !password) return mensajeLogin.textContent = '⚠️ Completa los campos';
   try {
     await signInWithEmailAndPassword(auth, email, password);
     mensajeLogin.style.color = 'green';
-    mensajeLogin.textContent = 'Inicio de sesión correcto. Redirigiendo...';
-    setTimeout(() => window.location.href = 'dashboard.html', 800);
-  } catch (err) {
+    mensajeLogin.textContent = '✨ Inicio de sesión exitoso';
+    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+  } catch (error) {
     mensajeLogin.style.color = 'red';
-    mensajeLogin.textContent = err.message;
+    mensajeLogin.textContent = error.message;
   }
 });
+
 
 
 
