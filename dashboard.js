@@ -1,271 +1,398 @@
-// =======================================
-// 🐾 Dashboard JS - Discovery Pets (Firebase)
-// =======================================
+// dashboard.js
+import { auth, db } from "./firebase.js";
+import {
+  collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import { db, auth } from './firebase.js';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+/* ---------------------- Helpers UI ---------------------- */
+const toastSuccess = (t) => {
+  if (window.Swal) Swal.fire({ toast:true, position:'top-end', icon:'success', title:t, showConfirmButton:false, timer:2000 });
+  else alert(t);
+};
+const toastError = (t) => {
+  if (window.Swal) Swal.fire({ toast:true, position:'top-end', icon:'error', title:t, showConfirmButton:false, timer:2500 });
+  else alert(t);
+};
 
-// ------------------ Variables ------------------
-let proveedores = [];
-let facturas = [];
-let gastos = [];
-
-// ------------------ Contadores ------------------
-const totalProveedores = document.getElementById('totalProveedores');
-const totalFacturas = document.getElementById('totalFacturas');
-const totalGastos = document.getElementById('totalGastos');
-const totalServicios = document.getElementById('totalServicios');
-
-// ------------------ Menú lateral ------------------
-const menuItems = document.querySelectorAll('.nav-link');
+/* ---------------------- Navigation ---------------------- */
+const navLinks = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('.section');
-
-menuItems.forEach(item => {
-  item.addEventListener('click', () => {
-    menuItems.forEach(i => i.classList.remove('active'));
-    sections.forEach(sec => sec.classList.remove('active'));
-    item.classList.add('active');
-
-    const sectionId = item.id.replace('menu-', '');
-    if(sectionId === 'logout'){
-      cerrarSesion();
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    navLinks.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    const id = link.id.replace('menu-','');
+    sections.forEach(s => s.style.display = 'none');
+    if (id === 'logout') {
+      signOut(auth).then(()=> window.location.href = 'index.html');
       return;
     }
-    document.getElementById(sectionId).classList.add('active');
+    const target = document.getElementById(id);
+    if (target) target.style.display = 'block';
   });
 });
 
-// =================== FIREBASE COLLECTIONS ===================
-const proveedoresCol = collection(db, "proveedores");
-const facturasCol = collection(db, "facturas");
-const gastosCol = collection(db, "gastos");
+/* ---------------------- Collections ---------------------- */
+const colProveedores = collection(db, 'proveedores');
+const colFacturas   = collection(db, 'facturas');
+const colGastos     = collection(db, 'gastos');
+const colServicios  = collection(db, 'servicios');
 
-// ------------------ PROVEEDORES ------------------
+/* ---------------------- PROVEEDORES ---------------------- */
 const listaProveedores = document.getElementById('listaProveedores');
-const btnAgregarProveedor = document.getElementById('btnAgregarProveedor');
-
-btnAgregarProveedor.addEventListener('click', async () => {
+document.getElementById('btnAgregarProveedor').addEventListener('click', async () => {
   const ruc = document.getElementById('provRuc').value.trim();
   const nombre = document.getElementById('provNombre').value.trim();
   const direccion = document.getElementById('provDireccion').value.trim();
   const telefono = document.getElementById('provTelefono').value.trim();
   const producto = document.getElementById('provProducto').value.trim();
 
-  if(!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
-  if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
+  if (!ruc || !nombre) return toastError('RUC y Nombre son obligatorios');
+  if (telefono && isNaN(telefono)) return toastError('Teléfono inválido');
 
-  await addDoc(proveedoresCol, { ruc, nombre, direccion, telefono, producto });
-  document.getElementById('formProveedor').reset();
-  mostrarMensaje('mensajeProveedor','Proveedor agregado correctamente');
-});
-
-// Tiempo real proveedores
-onSnapshot(proveedoresCol, snapshot => {
-  proveedores = [];
-  snapshot.forEach(doc => proveedores.push({ id: doc.id, ...doc.data() }));
-  actualizarProveedores();
-});
-
-function actualizarProveedores() {
-  listaProveedores.innerHTML = '';
-  proveedores.forEach(p => {
-    listaProveedores.innerHTML += `
-      <tr>
-        <td>${p.ruc}</td>
-        <td>${p.nombre}</td>
-        <td>${p.direccion}</td>
-        <td>${p.telefono}</td>
-        <td>${p.producto}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarProveedor('${p.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="eliminarProveedorFirebase('${p.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-  totalProveedores.textContent = proveedores.length;
-  actualizarSelectProveedores();
-}
-
-window.editarProveedor = async (id) => {
-  const prov = proveedores.find(p => p.id === id);
-  const ruc = prompt("RUC:", prov.ruc) || prov.ruc;
-  const nombre = prompt("Nombre:", prov.nombre) || prov.nombre;
-  const direccion = prompt("Dirección:", prov.direccion) || prov.direccion;
-  const telefono = prompt("Teléfono:", prov.telefono) || prov.telefono;
-  const producto = prompt("Producto:", prov.producto) || prov.producto;
-
-  if(isNaN(ruc) || isNaN(telefono)) return alert('RUC y Teléfono deben ser números');
-
-  await updateDoc(doc(db,"proveedores", id), { ruc, nombre, direccion, telefono, producto });
-  mostrarMensaje('mensajeProveedor','Proveedor actualizado correctamente');
-}
-
-async function eliminarProveedorFirebase(id) {
-  if(confirm('¿Eliminar proveedor?')){
-    await deleteDoc(doc(db,"proveedores", id));
-    mostrarMensaje('mensajeProveedor','Proveedor eliminado correctamente');
+  try {
+    await addDoc(colProveedores, { ruc, nombre, direccion, telefono, producto });
+    toastSuccess('Proveedor guardado');
+    document.getElementById('formProveedor').reset();
+  } catch (err) {
+    console.error(err);
+    toastError('Error al guardar proveedor');
   }
-}
+});
 
-function actualizarSelectProveedores() {
-  const select = document.getElementById('facRucProveedor');
-  select.innerHTML = `<option value="">-- Selecciona un Proveedor --</option>`;
-  proveedores.forEach(p => {
-    select.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
-  });
-}
+onSnapshot(colProveedores, snapshot => {
+  const arr = [];
+  snapshot.forEach(d => arr.push({ id: d.id, ...d.data() }));
+  renderTable(listaProveedores, arr, ['ruc','nombre','direccion','telefono','producto'], 'proveedores');
+  document.getElementById('total-proveedores').textContent = arr.length;
 
-// ------------------ FACTURAS ------------------
+  // llenar select proveedores (valor = docId, text = "Nombre — RUC")
+  const sel = document.getElementById('facProveedor');
+  if (sel) {
+    sel.innerHTML = '<option value="">-- Selecciona proveedor --</option>';
+    arr.forEach(p => sel.innerHTML += `<option value="${p.id}">${p.nombre} — ${p.ruc}</option>`);
+  }
+});
+
+/* ---------------------- FACTURAS ---------------------- */
 const listaFacturas = document.getElementById('listaFacturas');
-const btnAgregarFactura = document.getElementById('btnAgregarFactura');
-
-btnAgregarFactura.addEventListener('click', async () => {
-  const proveedor = document.getElementById('facRucProveedor').value;
+document.getElementById('btnAgregarFactura').addEventListener('click', async () => {
+  const proveedorId = document.getElementById('facProveedor').value;
   const tipo = document.getElementById('facTipo').value.trim();
   const descripcion = document.getElementById('facDescripcion').value.trim();
   const fecha = document.getElementById('facFecha').value;
-  const monto = parseFloat(document.getElementById('facMonto').value.trim());
-  const moneda = document.getElementById('facMoneda').value;
+  const monto = parseFloat(document.getElementById('facMonto').value || 0);
+  const moneda = document.getElementById('facMoneda').value || 'S/.';
 
-  if(!proveedor || !tipo) return alert('Proveedor y Tipo son obligatorios');
-  if(isNaN(monto)) return alert('Monto debe ser un número');
+  if (!proveedorId || !tipo) return toastError('Proveedor y Tipo son obligatorios');
+  if (isNaN(monto)) return toastError('Monto inválido');
 
-  await addDoc(facturasCol, { proveedor, tipo, descripcion, fecha, monto, moneda });
-  document.getElementById('formFactura').reset();
-  mostrarMensaje('mensajeFactura','Factura agregada correctamente');
-});
-
-// Tiempo real facturas
-onSnapshot(facturasCol, snapshot => {
-  facturas = [];
-  snapshot.forEach(doc => facturas.push({ id: doc.id, ...doc.data() }));
-  actualizarFacturas();
-});
-
-function actualizarFacturas() {
-  listaFacturas.innerHTML = '';
-  facturas.forEach(f => {
-    listaFacturas.innerHTML += `
-      <tr>
-        <td>${f.proveedor}</td>
-        <td>${f.tipo}</td>
-        <td>${f.descripcion}</td>
-        <td>${f.fecha}</td>
-        <td>${f.moneda}${f.monto.toFixed(2)}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarFactura('${f.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="eliminarFacturaFirebase('${f.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-  totalFacturas.textContent = facturas.length;
-}
-
-window.editarFactura = async (id) => {
-  const f = facturas.find(x => x.id===id);
-  const proveedor = prompt("Proveedor:", f.proveedor) || f.proveedor;
-  const tipo = prompt("Tipo:", f.tipo) || f.tipo;
-  const descripcion = prompt("Descripción:", f.descripcion) || f.descripcion;
-  const fecha = prompt("Fecha:", f.fecha) || f.fecha;
-  const monto = parseFloat(prompt("Monto:", f.monto)) || f.monto;
-  const moneda = prompt("Moneda (S/, $, €):", f.moneda) || f.moneda;
-
-  if(isNaN(monto)) return alert('Monto debe ser número');
-
-  await updateDoc(doc(db,"facturas",id), { proveedor, tipo, descripcion, fecha, monto, moneda });
-  mostrarMensaje('mensajeFactura','Factura actualizada correctamente');
-}
-
-async function eliminarFacturaFirebase(id){
-  if(confirm('¿Eliminar factura?')){
-    await deleteDoc(doc(db,"facturas",id));
-    mostrarMensaje('mensajeFactura','Factura eliminada correctamente');
+  // obtain provider name & ruc to store for quick display (denormalización)
+  let proveedorDoc = null;
+  try {
+    // we don't import getDoc here to avoid extra calls; assume firestore snapshot keeps list in UI
+    // But to be safe, we will store proveedorId and later display by lookup from latest snapshot array (renderTable callback handles it)
+    await addDoc(colFacturas, { proveedorId, tipo, descripcion, fecha, monto, moneda });
+    toastSuccess('Factura guardada');
+    document.getElementById('formFactura').reset();
+  } catch (err) {
+    console.error(err);
+    toastError('Error al guardar factura');
   }
-}
+});
 
-// ------------------ GASTOS ------------------
+onSnapshot(colFacturas, snapshot => {
+  const arr = [];
+  snapshot.forEach(d => arr.push({ id: d.id, ...d.data() }));
+  // We want to display proveedor name — ruc in table. We'll read current providers snapshot via a closure variable populated above.
+  renderTable(listaFacturas, arr, ['proveedorDisplay','tipo','descripcion','fecha','monto'], 'facturas', (tr, item) => {
+    // monto formatting
+    const montoTd = tr.querySelector('[data-field="monto"]');
+    if (montoTd) montoTd.textContent = `${item.moneda || ''}${Number(item.monto || 0).toFixed(2)}`;
+    // proveedorDisplay: resolve name — ruc from providers table (we keep providers rendered and can query DOM or use global map)
+    const provTd = tr.querySelector('[data-field="proveedorDisplay"]');
+    if (provTd) {
+      // try to find option text in facProveedor select (it was filled with "name — ruc")
+      const sel = document.getElementById('facProveedor');
+      let text = '';
+      if (sel) {
+        const opt = sel.querySelector(`option[value="${item.proveedorId}"]`);
+        if (opt) text = opt.textContent;
+      }
+      provTd.textContent = text || (item.proveedorName ? `${item.proveedorName} — ${item.proveedorRuc || ''}` : item.proveedorId);
+    }
+  });
+  document.getElementById('total-facturas').textContent = arr.length;
+});
+
+/* ---------------------- GASTOS ---------------------- */
 const listaGastos = document.getElementById('listaGastos');
-const btnAgregarGasto = document.getElementById('btnAgregarGasto');
-
-btnAgregarGasto.addEventListener('click', async () => {
+document.getElementById('btnAgregarGasto').addEventListener('click', async () => {
   const nombre = document.getElementById('gastoNombre').value.trim();
-  const tipo = document.getElementById('gastoTipo').value;
-  const monto = parseFloat(document.getElementById('gastoMonto').value.trim());
+  const tipo = document.getElementById('gastoTipo').value.trim();
+  const monto = parseFloat(document.getElementById('gastoMonto').value || 0);
   const fecha = document.getElementById('gastoFecha').value;
 
-  if(!nombre || !tipo) return alert('Nombre y Tipo son obligatorios');
-  if(isNaN(monto)) return alert('Monto debe ser número');
+  if (!nombre || !tipo) return toastError('Nombre y Tipo obligatorios');
+  if (isNaN(monto)) return toastError('Monto inválido');
 
-  await addDoc(gastosCol, { nombre, tipo, monto, fecha });
-  document.getElementById('formGasto').reset();
-  mostrarMensaje('mensajeGasto','Gasto agregado correctamente');
-});
-
-// Tiempo real gastos
-onSnapshot(gastosCol, snapshot => {
-  gastos = [];
-  snapshot.forEach(doc => gastos.push({ id: doc.id, ...doc.data() }));
-  actualizarGastos();
-});
-
-function actualizarGastos(){
-  listaGastos.innerHTML='';
-  gastos.forEach(g => {
-    listaGastos.innerHTML+=`
-      <tr>
-        <td>${g.nombre}</td>
-        <td>${g.tipo}</td>
-        <td>${g.monto.toFixed(2)}</td>
-        <td>${g.fecha}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="editarGasto('${g.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="eliminarGastoFirebase('${g.id}')">❌</button>
-        </td>
-      </tr>
-    `;
-  });
-  totalGastos.textContent = gastos.length;
-}
-
-window.editarGasto = async id => {
-  const g = gastos.find(x => x.id===id);
-  const nombre = prompt("Nombre:", g.nombre)||g.nombre;
-  const tipo = prompt("Tipo:", g.tipo)||g.tipo;
-  const monto = parseFloat(prompt("Monto:", g.monto))||g.monto;
-  const fecha = prompt("Fecha:", g.fecha)||g.fecha;
-
-  if(isNaN(monto)) return alert('Monto debe ser número');
-
-  await updateDoc(doc(db,"gastos",id), {nombre,tipo,monto,fecha});
-  mostrarMensaje('mensajeGasto','Gasto actualizado correctamente');
-}
-
-async function eliminarGastoFirebase(id){
-  if(confirm('¿Eliminar gasto?')){
-    await deleteDoc(doc(db,"gastos",id));
-    mostrarMensaje('mensajeGasto','Gasto eliminado correctamente');
+  try {
+    await addDoc(colGastos, { nombre, tipo, monto, fecha });
+    toastSuccess('Gasto guardado');
+    document.getElementById('formGasto').reset();
+  } catch (err) {
+    console.error(err);
+    toastError('Error al guardar gasto');
   }
+});
+
+onSnapshot(colGastos, snapshot => {
+  const arr = [];
+  snapshot.forEach(d => arr.push({ id: d.id, ...d.data() }));
+  renderTable(listaGastos, arr, ['nombre','tipo','monto','fecha'], 'gastos', (tr, item) => {
+    const montoTd = tr.querySelector('[data-field="monto"]');
+    if (montoTd) montoTd.textContent = Number(item.monto || 0).toFixed(2);
+  });
+  document.getElementById('total-gastos').textContent = arr.length;
+});
+
+/* ---------------------- SERVICIOS ---------------------- */
+const listaServicios = document.getElementById('listaServicios');
+document.getElementById('btnAgregarServicio').addEventListener('click', async () => {
+  const nombre = document.getElementById('servNombre').value.trim();
+  const descripcion = document.getElementById('servDescripcion').value.trim();
+  const precio = parseFloat(document.getElementById('servPrecio').value || 0);
+  const fecha = document.getElementById('servFecha').value;
+
+  if (!nombre) return toastError('Nombre obligatorio');
+  if (isNaN(precio)) return toastError('Precio inválido');
+
+  try {
+    await addDoc(colServicios, { nombre, descripcion, precio, fecha });
+    toastSuccess('Servicio guardado');
+    document.getElementById('formServicio').reset();
+  } catch (err) {
+    console.error(err);
+    toastError('Error al guardar servicio');
+  }
+});
+
+onSnapshot(colServicios, snapshot => {
+  const arr = [];
+  snapshot.forEach(d => arr.push({ id: d.id, ...d.data() }));
+  renderTable(listaServicios, arr, ['nombre','descripcion','precio','fecha'], 'servicios', (tr, item) => {
+    const precioTd = tr.querySelector('[data-field="precio"]');
+    if (precioTd) precioTd.textContent = Number(item.precio || 0).toFixed(2);
+  });
+  document.getElementById('total-servicios').textContent = arr.length;
+});
+
+/* ---------------------- Generic renderTable ---------------------- */
+/**
+ * tbodyEl: DOM tbody
+ * data: array of objects
+ * fields: array of field names to render (use 'proveedorDisplay' or similar for custom display)
+ * collectionName: string used for delete/edit doc path
+ * rowCallback: optional (tr, item) custom formatting
+ */
+function renderTable(tbodyEl, data, fields, collectionName, rowCallback) {
+  tbodyEl.innerHTML = '';
+  data.forEach(item => {
+    const tr = document.createElement('tr');
+
+    fields.forEach(f => {
+      const td = document.createElement('td');
+      td.setAttribute('data-field', f);
+      // default value: item[f] or empty
+      td.textContent = item[f] !== undefined ? item[f] : '';
+      tr.appendChild(td);
+    });
+
+    // actions
+    const tdActions = document.createElement('td');
+    tdActions.innerHTML = `
+      <button class="btn btn-sm btn-warning me-1" data-id="${item.id}" data-type="${collectionName}" data-action="edit">✏️</button>
+      <button class="btn btn-sm btn-danger" data-id="${item.id}" data-type="${collectionName}" data-action="delete">🗑️</button>
+    `;
+    tr.appendChild(tdActions);
+    tbodyEl.appendChild(tr);
+
+    // optional formatting
+    if (typeof rowCallback === 'function') rowCallback(tr, item);
+  });
+
+  // delegate actions (edit/delete)
+  tbodyEl.querySelectorAll('button[data-action]').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      const type = btn.dataset.type;
+      const action = btn.dataset.action;
+
+      if (action === 'delete') {
+        const r = await Swal.fire({
+          title: '¿Eliminar?',
+          text: 'Esta acción no se puede deshacer',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar'
+        });
+        if (r.isConfirmed) {
+          try {
+            await deleteDoc(doc(db, type, id));
+            toastSuccess('Eliminado');
+          } catch (err) {
+            console.error(err);
+            toastError('Error al eliminar');
+          }
+        }
+      }
+
+      if (action === 'edit') {
+        // show edit forms according to collection type
+        try {
+          if (type === 'proveedores') {
+            const existing = (await getCurrentSnapshot(type)).find(x=>x.id===id);
+            const { value } = await Swal.fire({
+              title: 'Editar proveedor',
+              html:
+                `<input id="sw_ruc" class="swal2-input" placeholder="RUC" value="${existing.ruc||''}">` +
+                `<input id="sw_nombre" class="swal2-input" placeholder="Nombre" value="${existing.nombre||''}">` +
+                `<input id="sw_direccion" class="swal2-input" placeholder="Dirección" value="${existing.direccion||''}">` +
+                `<input id="sw_telefono" class="swal2-input" placeholder="Teléfono" value="${existing.telefono||''}">` +
+                `<input id="sw_producto" class="swal2-input" placeholder="Producto" value="${existing.producto||''}">`,
+              focusConfirm: false,
+              preConfirm: () => ({
+                ruc: document.getElementById('sw_ruc').value,
+                nombre: document.getElementById('sw_nombre').value,
+                direccion: document.getElementById('sw_direccion').value,
+                telefono: document.getElementById('sw_telefono').value,
+                producto: document.getElementById('sw_producto').value
+              })
+            });
+            if (value) {
+              await updateDoc(doc(db, 'proveedores', id), value);
+              toastSuccess('Proveedor actualizado');
+            }
+          } else if (type === 'facturas') {
+            const existing = (await getCurrentSnapshot(type)).find(x=>x.id===id);
+            const { value } = await Swal.fire({
+              title: 'Editar factura',
+              html:
+                `<select id="sw_prov" class="swal2-input">${buildProvOptionsForSwal()}</select>` +
+                `<input id="sw_tipo" class="swal2-input" placeholder="Tipo" value="${existing.tipo||''}">` +
+                `<input id="sw_desc" class="swal2-input" placeholder="Descripción" value="${existing.descripcion||''}">` +
+                `<input id="sw_fecha" type="date" class="swal2-input" value="${existing.fecha||''}">` +
+                `<input id="sw_monto" type="number" step="0.01" class="swal2-input" placeholder="Monto" value="${existing.monto||0}">` +
+                `<input id="sw_mon" class="swal2-input" placeholder="Moneda" value="${existing.moneda||'S/.'}">`,
+              focusConfirm: false,
+              preConfirm: () => ({
+                proveedorId: document.getElementById('sw_prov').value,
+                tipo: document.getElementById('sw_tipo').value,
+                descripcion: document.getElementById('sw_desc').value,
+                fecha: document.getElementById('sw_fecha').value,
+                monto: parseFloat(document.getElementById('sw_monto').value||0),
+                moneda: document.getElementById('sw_mon').value
+              })
+            });
+            if (value) {
+              await updateDoc(doc(db, 'facturas', id), value);
+              toastSuccess('Factura actualizada');
+            }
+          } else if (type === 'gastos') {
+            const existing = (await getCurrentSnapshot(type)).find(x=>x.id===id);
+            const { value } = await Swal.fire({
+              title: 'Editar gasto',
+              html:
+                `<input id="sw_nombre" class="swal2-input" placeholder="Nombre" value="${existing.nombre||''}">` +
+                `<input id="sw_tipo" class="swal2-input" placeholder="Tipo" value="${existing.tipo||''}">` +
+                `<input id="sw_monto" type="number" class="swal2-input" placeholder="Monto" value="${existing.monto||0}">` +
+                `<input id="sw_fecha" type="date" class="swal2-input" value="${existing.fecha||''}">`,
+              focusConfirm: false,
+              preConfirm: () => ({
+                nombre: document.getElementById('sw_nombre').value,
+                tipo: document.getElementById('sw_tipo').value,
+                monto: parseFloat(document.getElementById('sw_monto').value||0),
+                fecha: document.getElementById('sw_fecha').value
+              })
+            });
+            if (value) {
+              await updateDoc(doc(db, 'gastos', id), value);
+              toastSuccess('Gasto actualizado');
+            }
+          } else if (type === 'servicios') {
+            const existing = (await getCurrentSnapshot(type)).find(x=>x.id===id);
+            const { value } = await Swal.fire({
+              title: 'Editar servicio',
+              html:
+                `<input id="sw_nombre" class="swal2-input" placeholder="Nombre" value="${existing.nombre||''}">` +
+                `<input id="sw_desc" class="swal2-input" placeholder="Descripción" value="${existing.descripcion||''}">` +
+                `<input id="sw_precio" type="number" class="swal2-input" placeholder="Precio" value="${existing.precio||0}">` +
+                `<input id="sw_fecha" type="date" class="swal2-input" value="${existing.fecha||''}">`,
+              focusConfirm: false,
+              preConfirm: () => ({
+                nombre: document.getElementById('sw_nombre').value,
+                descripcion: document.getElementById('sw_desc').value,
+                precio: parseFloat(document.getElementById('sw_precio').value||0),
+                fecha: document.getElementById('sw_fecha').value
+              })
+            });
+            if (value) {
+              await updateDoc(doc(db, 'servicios', id), value);
+              toastSuccess('Servicio actualizado');
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          toastError('Error al editar');
+        }
+      }
+    };
+  });
 }
 
-// ------------------ MENSAJE ------------------
-function mostrarMensaje(id,texto){
-  const msg = document.getElementById(id);
-  msg.textContent = texto;
-  msg.style.color = 'green';
-  setTimeout(()=>{ msg.textContent=''; },3000);
+/* ---------------------- Utilities to build provider options for Swal ---------------------- */
+function buildProvOptionsForSwal() {
+  const sel = document.getElementById('facProveedor');
+  if (!sel) return '<option value="">--no prov--</option>';
+  let html = '';
+  sel.querySelectorAll('option').forEach(opt => {
+    html += `<option value="${opt.value}">${opt.textContent}</option>`;
+  });
+  return html;
 }
 
-// ------------------ CERRAR SESIÓN ------------------
-async function cerrarSesion(){
-  await signOut(auth);
-  alert("Sesión cerrada");
-  window.location.href = 'index.html';
+/* ---------------------- Helper: snapshots cache ---------------------- */
+/**
+ * We read current rendered DOM for providers/facturas/gastos/servicios
+ * to get existing items for editing prompts. Simpler than extra getDoc calls.
+ */
+async function getCurrentSnapshot(type) {
+  const mapping = {
+    proveedores: 'listaProveedores',
+    facturas: 'listaFacturas',
+    gastos: 'listaGastos',
+    servicios: 'listaServicios'
+  };
+  const tbodyId = mapping[type];
+  if (!tbodyId) return [];
+  const tbody = document.getElementById(tbodyId);
+  // Build array by reading DOM rows dataset (we store doc ids in action buttons)
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  // we'll map to objects by reading cell text — adequate for prefill in edit modal
+  return rows.map(r => {
+    const idBtn = r.querySelector('button[data-id]');
+    const id = idBtn ? idBtn.dataset.id : null;
+    const cells = Array.from(r.children).slice(0, -1).map(td => td.textContent);
+    // return generic object — specific fields will be retrieved in edit flow using Firestore if necessary
+    return { id, cells };
+  }).filter(x=>x.id);
 }
 
-window.cerrarSesion = cerrarSesion;
+/* ---------------------- Initialize initial view ---------------------- */
+document.getElementById('menu-reportes').click();
+
 
 
 
