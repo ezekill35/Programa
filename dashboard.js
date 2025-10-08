@@ -1,159 +1,176 @@
 import { db } from './firebase.js';
-import { collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
 
-// Navegación entre secciones
-const navBtns = document.querySelectorAll('.nav-btn');
-const sections = document.querySelectorAll('.content-section');
-navBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    navBtns.forEach(b => b.classList.remove('active'));
-    sections.forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.section).classList.add('active');
-  });
-});
+// ---------------- SERVICIOS ----------------
+const formServicio = document.getElementById('formServicio');
+const tablaServicios = document.getElementById('tablaServicios');
 
-// --- PROVEEDORES ---
-const formProv = document.getElementById('formProveedor');
-const tablaProv = document.getElementById('tablaProveedores');
-const msgProv = document.getElementById('msgProv');
-formProv.addEventListener('submit', async e => {
-  e.preventDefault();
-  const nombre = formProv.nombreProv.value.trim();
-  const producto = formProv.productoProv.value.trim();
-  const ruc = formProv.rucProv.value.trim();
-  const direccion = formProv.direccionProv.value.trim();
-  if (!nombre || !producto || !ruc) return msgProv.textContent = '⚠️ Todos los campos son obligatorios';
-  try {
-    await addDoc(collection(db, 'proveedores'), { nombre, producto, ruc, direccion });
-    msgProv.textContent = '✅ Proveedor guardado con éxito';
-    formProv.reset();
-  } catch {
-    msgProv.textContent = '❌ Error al guardar proveedor';
-  }
-});
-onSnapshot(collection(db, 'proveedores'), snapshot => {
-  tablaProv.innerHTML = '';
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    tablaProv.innerHTML += `
+async function cargarServicios() {
+  tablaServicios.innerHTML = '';
+  const querySnapshot = await getDocs(collection(db, "servicios"));
+  querySnapshot.forEach((documento) => {
+    const data = documento.data();
+    tablaServicios.innerHTML += `
       <tr>
-        <td>${d.nombre}</td><td>${d.producto}</td><td>${d.ruc}</td><td>${d.direccion}</td>
-        <td><button onclick="eliminar('${docu.id}','proveedores')">🗑️</button></td>
-      </tr>`;
+        <td>${data.nombre}</td>
+        <td>${data.precio}</td>
+        <td>${data.fecha}</td>
+        <td>${data.descripcion}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="eliminarServicio('${documento.id}')">Eliminar</button>
+        </td>
+      </tr>
+    `;
   });
-  document.getElementById('countProveedores').textContent = snapshot.size;
-});
+}
 
-// --- FACTURAS ---
-const formFactura = document.getElementById('formFactura');
-const tablaFactura = document.getElementById('tablaFacturas');
-const msgFactura = document.getElementById('msgFactura');
-formFactura.addEventListener('submit', async e => {
+formServicio.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const data = {
-    proveedor: formFactura.proveedorFactura.value.trim(),
-    tipo: formFactura.tipoFactura.value.trim(),
-    monto: parseFloat(formFactura.montoFactura.value),
-    fecha: formFactura.fechaFactura.value,
-    descripcion: formFactura.descFactura.value.trim()
-  };
-  try {
-    await addDoc(collection(db, 'facturas'), data);
-    msgFactura.textContent = '✅ Factura registrada';
-    formFactura.reset();
-  } catch {
-    msgFactura.textContent = '❌ Error al guardar factura';
-  }
-});
-onSnapshot(collection(db, 'facturas'), snapshot => {
-  tablaFactura.innerHTML = '';
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    tablaFactura.innerHTML += `
-      <tr>
-        <td>${d.proveedor}</td><td>${d.tipo}</td><td>${d.monto}</td><td>${d.fecha}</td><td>${d.descripcion}</td>
-        <td><button onclick="eliminar('${docu.id}','facturas')">🗑️</button></td>
-      </tr>`;
-  });
-  document.getElementById('countFacturas').textContent = snapshot.size;
+  const nombre = document.getElementById('nombreServ').value;
+  const precio = parseFloat(document.getElementById('precioServ').value) || 0;
+  const fecha = document.getElementById('fechaServ').value;
+  const descripcion = document.getElementById('descServ').value;
+
+  await addDoc(collection(db, "servicios"), { nombre, precio, fecha, descripcion });
+  formServicio.reset();
+  cargarServicios();
 });
 
-// --- GASTOS ---
-const formGasto = document.getElementById('formGasto');
-const tablaGasto = document.getElementById('tablaGastos');
-const msgGasto = document.getElementById('msgGasto');
-formGasto.addEventListener('submit', async e => {
-  e.preventDefault();
-  const data = {
-    nombre: formGasto.nombreGasto.value.trim(),
-    tipo: formGasto.tipoGasto.value.trim(),
-    monto: parseFloat(formGasto.montoGasto.value),
-    fecha: formGasto.fechaGasto.value
-  };
-  try {
-    await addDoc(collection(db, 'gastos'), data);
-    msgGasto.textContent = '✅ Gasto agregado';
-    formGasto.reset();
-  } catch {
-    msgGasto.textContent = '❌ Error al guardar gasto';
-  }
-});
-onSnapshot(collection(db, 'gastos'), snapshot => {
-  tablaGasto.innerHTML = '';
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    tablaGasto.innerHTML += `
-      <tr>
-        <td>${d.nombre}</td><td>${d.tipo}</td><td>${d.monto}</td><td>${d.fecha}</td>
-        <td><button onclick="eliminar('${docu.id}','gastos')">🗑️</button></td>
-      </tr>`;
-  });
-  document.getElementById('countGastos').textContent = snapshot.size;
-});
-
-// --- SERVICIOS ---
-const formServ = document.getElementById('formServicio');
-const tablaServ = document.getElementById('tablaServicios');
-const msgServ = document.getElementById('msgServ');
-formServ.addEventListener('submit', async e => {
-  e.preventDefault();
-  const data = {
-    nombre: formServ.nombreServ.value.trim(),
-    precio: parseFloat(formServ.precioServ.value),
-    fecha: formServ.fechaServ.value,
-    descripcion: formServ.descServ.value.trim()
-  };
-  try {
-    await addDoc(collection(db, 'servicios'), data);
-    msgServ.textContent = '✅ Servicio agregado';
-    formServ.reset();
-  } catch {
-    msgServ.textContent = '❌ Error al guardar servicio';
-  }
-});
-onSnapshot(collection(db, 'servicios'), snapshot => {
-  tablaServ.innerHTML = '';
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    tablaServ.innerHTML += `
-      <tr>
-        <td>${d.nombre}</td><td>${d.precio}</td><td>${d.fecha}</td><td>${d.descripcion}</td>
-        <td><button onclick="eliminar('${docu.id}','servicios')">🗑️</button></td>
-      </tr>`;
-  });
-  document.getElementById('countServicios').textContent = snapshot.size;
-});
-
-// Eliminar documento
-window.eliminar = async (id, coleccion) => {
-  await deleteDoc(doc(db, coleccion, id));
+window.eliminarServicio = async (id) => {
+  await deleteDoc(doc(db, "servicios", id));
+  cargarServicios();
 };
 
-// Cerrar sesión
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  window.location.href = 'index.html';
+// ---------------- PROVEEDORES ----------------
+const formProveedor = document.getElementById('formProveedor');
+const tablaProveedores = document.getElementById('tablaProveedores');
+
+async function cargarProveedores() {
+  tablaProveedores.innerHTML = '';
+  const querySnapshot = await getDocs(collection(db, "proveedores"));
+  querySnapshot.forEach((documento) => {
+    const data = documento.data();
+    tablaProveedores.innerHTML += `
+      <tr>
+        <td>${data.nombre}</td>
+        <td>${data.producto}</td>
+        <td>${data.ruc}</td>
+        <td>${data.direccion}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="eliminarProveedor('${documento.id}')">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+formProveedor.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById('nombreProv').value;
+  const producto = document.getElementById('productoProv').value;
+  const ruc = document.getElementById('rucProv').value;
+  const direccion = document.getElementById('direccionProv').value;
+
+  await addDoc(collection(db, "proveedores"), { nombre, producto, ruc, direccion });
+  formProveedor.reset();
+  cargarProveedores();
 });
+
+window.eliminarProveedor = async (id) => {
+  await deleteDoc(doc(db, "proveedores", id));
+  cargarProveedores();
+};
+
+// ---------------- FACTURAS ----------------
+const formFactura = document.getElementById('formFactura');
+const tablaFacturas = document.getElementById('tablaFacturas');
+
+async function cargarFacturas() {
+  tablaFacturas.innerHTML = '';
+  const querySnapshot = await getDocs(collection(db, "facturas"));
+  querySnapshot.forEach((documento) => {
+    const data = documento.data();
+    tablaFacturas.innerHTML += `
+      <tr>
+        <td>${data.proveedor}</td>
+        <td>${data.tipo}</td>
+        <td>${data.monto}</td>
+        <td>${data.fecha}</td>
+        <td>${data.descripcion}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="eliminarFactura('${documento.id}')">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+formFactura.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const proveedor = document.getElementById('proveedorFactura').value;
+  const tipo = document.getElementById('tipoFactura').value;
+  const monto = parseFloat(document.getElementById('montoFactura').value) || 0;
+  const fecha = document.getElementById('fechaFactura').value;
+  const descripcion = document.getElementById('descFactura').value;
+
+  await addDoc(collection(db, "facturas"), { proveedor, tipo, monto, fecha, descripcion });
+  formFactura.reset();
+  cargarFacturas();
+});
+
+window.eliminarFactura = async (id) => {
+  await deleteDoc(doc(db, "facturas", id));
+  cargarFacturas();
+};
+
+// ---------------- GASTOS ----------------
+const formGasto = document.getElementById('formGasto');
+const tablaGastos = document.getElementById('tablaGastos');
+
+async function cargarGastos() {
+  tablaGastos.innerHTML = '';
+  const querySnapshot = await getDocs(collection(db, "gastos"));
+  querySnapshot.forEach((documento) => {
+    const data = documento.data();
+    tablaGastos.innerHTML += `
+      <tr>
+        <td>${data.nombre}</td>
+        <td>${data.tipo}</td>
+        <td>${data.monto}</td>
+        <td>${data.fecha}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="eliminarGasto('${documento.id}')">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+formGasto.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById('nombreGasto').value;
+  const tipo = document.getElementById('tipoGasto').value;
+  const monto = parseFloat(document.getElementById('montoGasto').value) || 0;
+  const fecha = document.getElementById('fechaGasto').value;
+
+  await addDoc(collection(db, "gastos"), { nombre, tipo, monto, fecha });
+  formGasto.reset();
+  cargarGastos();
+});
+
+window.eliminarGasto = async (id) => {
+  await deleteDoc(doc(db, "gastos", id));
+  cargarGastos();
+};
+
+// ---------------- INICIALIZAR CARGA ----------------
+window.addEventListener('DOMContentLoaded', () => {
+  cargarServicios();
+  cargarProveedores();
+  cargarFacturas();
+  cargarGastos();
+});
+
 
 
 
