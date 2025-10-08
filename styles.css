@@ -1,146 +1,206 @@
-/* === Dashboard === */
-.dashboard-body {
-  display: flex;
-  background: #fff;
-  min-height: 100vh;
+/* ------------------ RESET ------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
+body {
+  display: flex;
+  min-height: 100vh;
+  background: #fff5fa;
+  color: #333;
+}
+
+/* ------------------ SIDEBAR ------------------ */
 .sidebar {
-  width: 240px;
-  background: linear-gradient(180deg, #ff4da6, #ff80bf);
+  width: 260px;
+  background: linear-gradient(180deg, #ff4da6, #ff80c0);
   color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 25px;
-  gap: 20px;
-  border-radius: 0 20px 20px 0;
+  justify-content: space-between;
+  padding: 25px 0;
+  box-shadow: 3px 0 10px rgba(0,0,0,0.1);
 }
 
-.sidebar h2 {
-  font-size: 1.3em;
-  margin-bottom: 10px;
+.logo {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-.nav-btn {
-  background: transparent;
+.logo .paw {
+  font-size: 2rem;
+}
+
+.logo h2 {
+  font-size: 1.4rem;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  background: none;
   color: #fff;
   border: none;
-  font-size: 1em;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 12px;
-  width: 100%;
   text-align: left;
+  padding: 15px 25px;
+  font-size: 16px;
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.nav-btn:hover,
-.nav-btn.active {
+.menu button:hover,
+.menu button.active {
   background: #fff;
   color: #ff4da6;
+  font-weight: bold;
 }
 
-.logout-btn {
-  margin-top: auto;
-  background: #fff;
-  color: #ff4da6;
+.logout {
+  background: #ff1a75;
   border: none;
-  padding: 10px 20px;
-  border-radius: 15px;
+  color: #fff;
+  padding: 12px;
+  width: 90%;
+  border-radius: 10px;
+  margin: 0 auto;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.logout:hover {
+  background: #e60073;
+}
+
+/* ------------------ MAIN CONTENT ------------------ */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+/* ------------------ SECCIONES ------------------ */
+.seccion {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.seccion.visible {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------ FORMULARIOS ------------------ */
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.formulario input,
+.formulario select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 150px;
+  transition: 0.3s;
+}
+
+.formulario input:focus,
+.formulario select:focus {
+  border-color: #ff4da6;
+  box-shadow: 0 0 5px #ff4da6;
+}
+
+.btn-agregar {
+  background: #ff4da6;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   transition: 0.3s;
 }
 
-.logout-btn:hover {
-  background: #ffe6f2;
+.btn-agregar:hover {
+  background: #ff1a75;
+  transform: translateY(-2px);
 }
 
-.main-content {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
+/* ------------------ TABLAS ------------------ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.content-section {
-  display: none;
-  animation: fadeIn 0.5s ease;
-}
-.content-section.active {
-  display: block;
+th {
+  background: #ff80c0;
+  color: #fff;
+  padding: 12px;
 }
 
-.cards {
-  display: flex;
+td {
+  padding: 10px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+tr:hover {
+  background: #fff0f7;
+}
+
+.btn-del {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ------------------ REPORTES ------------------ */
+.reportes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  flex-wrap: wrap;
   margin-top: 20px;
 }
 
 .card {
-  flex: 1;
-  min-width: 200px;
-  padding: 25px;
-  color: #fff;
+  background: #fff;
   border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   text-align: center;
-  font-size: 1.2em;
-}
-
-.card.pink { background: #ff4da6; }
-.card.purple { background: #b366ff; }
-.card.teal { background: #00bfa6; }
-.card.yellow { background: #ffcc00; }
-
-.formulario {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.formulario input,
-.formulario button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1.5px solid #ccc;
-}
-
-.formulario button {
-  background: #ff4da6;
-  color: #fff;
-  border: none;
-  cursor: pointer;
+  padding: 25px;
   transition: 0.3s;
 }
-.formulario button:hover { background: #ff80bf; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-table th, table td {
-  padding: 8px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-table th {
-  background: #ffccf2;
-}
-table button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1em;
+.card:hover {
+  transform: translateY(-5px);
 }
 
-.mensaje {
-  margin-bottom: 10px;
-  font-size: 0.9em;
-  color: #555;
+.card h3 {
+  color: #ff4da6;
 }
+
+.card p {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff1a75;
+}
+
 
 
 
