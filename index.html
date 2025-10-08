@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets - Login</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🐾 Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="login-body">
-  <div class="login-container">
-    <h1 class="login-title">🐾 Discovery Pets</h1>
+  <div class="login-card">
+    <div class="logo-box">
+      <div class="logo-emoji">🐾</div>
+      <h1 class="logo-title">Discovery Pets</h1>
+    </div>
 
-    <!-- Login -->
-    <form id="loginForm" class="form active">
-      <h2>Iniciar Sesión</h2>
-      <input type="email" id="loginEmail" placeholder="Correo electrónico">
-      <input type="password" id="loginPassword" placeholder="Contraseña">
-      <button type="button" id="btnLogin">Ingresar</button>
-      <p id="mensajeLogin" class="msg"></p>
-      <p>¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
+    <!-- LOGIN -->
+    <form id="loginForm" class="form-card active">
+      <h2>Iniciar sesión</h2>
+      <input id="loginEmail" type="email" placeholder="Correo electrónico" />
+      <input id="loginPassword" type="password" placeholder="Contraseña" />
+      <button id="btnLogin" type="button" class="btn btn-primary">Ingresar</button>
+      <p id="mensajeLogin" class="form-msg"></p>
+      <p class="muted">¿No tienes cuenta? <a id="showRegister" href="#">Regístrate</a></p>
     </form>
 
-    <!-- Registro -->
-    <form id="registerForm" class="form">
-      <h2>Crear Cuenta</h2>
-      <input type="email" id="registerEmail" placeholder="Correo electrónico">
-      <input type="password" id="registerPassword" placeholder="Contraseña">
-      <button type="button" id="btnRegister">Registrarse</button>
-      <p id="mensajeRegister" class="msg"></p>
-      <p>¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
+    <!-- REGISTER -->
+    <form id="registerForm" class="form-card d-none">
+      <h2>Crear cuenta</h2>
+      <input id="registerEmail" type="email" placeholder="Correo electrónico" />
+      <input id="registerPassword" type="password" placeholder="Contraseña (min 6)" />
+      <button id="btnRegister" type="button" class="btn btn-secondary">Registrarse</button>
+      <p id="mensajeRegister" class="form-msg"></p>
+      <p class="muted">¿Ya tienes cuenta? <a id="showLogin" href="#">Inicia sesión</a></p>
     </form>
   </div>
 
@@ -35,11 +38,6 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
 
 
 
