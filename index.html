@@ -3,31 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>🐾 Discovery Pets - Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="login-body d-flex justify-content-center align-items-center vh-100">
+<body class="login-body">
+  <div class="login-container">
+    <h1>🐾 Discovery Pets</h1>
 
-  <div class="login-card p-4 rounded-4 shadow-lg text-center">
-    <h1 class="fw-bold mb-3 text-gradient">🐾 Discovery Pets</h1>
-    <p class="text-muted mb-4">Sistema de gestión integral</p>
-
-    <!-- LOGIN -->
-    <form id="loginForm">
-      <input type="email" id="loginEmail" class="form-control mb-3" placeholder="Correo electrónico" required>
-      <input type="password" id="loginPassword" class="form-control mb-3" placeholder="Contraseña" required>
-      <button type="button" id="btnLogin" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
-      <p id="mensajeLogin" class="fw-bold small"></p>
-      <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
+    <!-- Login -->
+    <form id="loginForm" class="form active">
+      <h2>Iniciar Sesión</h2>
+      <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+      <button type="button" id="btnLogin">Ingresar</button>
+      <p id="mensajeLogin" class="mensaje"></p>
+      <p>¿No tienes cuenta? <span id="showRegister">Regístrate aquí</span></p>
     </form>
 
-    <!-- REGISTRO -->
-    <form id="registerForm" class="d-none">
-      <input type="email" id="registerEmail" class="form-control mb-3" placeholder="Correo electrónico" required>
-      <input type="password" id="registerPassword" class="form-control mb-3" placeholder="Contraseña" required>
-      <button type="button" id="btnRegister" class="btn btn-success w-100 mb-3">Registrarse</button>
-      <p id="mensajeRegister" class="fw-bold small"></p>
-      <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
+    <!-- Registro -->
+    <form id="registerForm" class="form">
+      <h2>Registro de Usuario</h2>
+      <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+      <input type="password" id="registerPassword" placeholder="Contraseña" required>
+      <button type="button" id="btnRegister">Registrar</button>
+      <p id="mensajeRegister" class="mensaje"></p>
+      <p>¿Ya tienes cuenta? <span id="showLogin">Inicia sesión</span></p>
     </form>
   </div>
 
@@ -35,8 +34,6 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
 
 
 
