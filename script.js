@@ -8,6 +8,8 @@ const showRegister = document.getElementById('showRegister');
 const showLogin = document.getElementById('showLogin');
 const mensajeLogin = document.getElementById('mensajeLogin');
 const mensajeRegister = document.getElementById('mensajeRegister');
+const btnLogin = document.getElementById('btnLogin');
+const btnRegister = document.getElementById('btnRegister');
 
 showRegister.addEventListener('click', (e) => {
   e.preventDefault();
@@ -15,6 +17,7 @@ showRegister.addEventListener('click', (e) => {
   registerForm.classList.remove('d-none');
   mensajeLogin.textContent = '';
 });
+
 showLogin.addEventListener('click', (e) => {
   e.preventDefault();
   registerForm.classList.add('d-none');
@@ -22,19 +25,19 @@ showLogin.addEventListener('click', (e) => {
   mensajeRegister.textContent = '';
 });
 
-// Register
-document.getElementById('btnRegister').addEventListener('click', async () => {
+// Registro
+btnRegister.addEventListener('click', async () => {
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value.trim();
   if (!email || !password) {
     mensajeRegister.style.color = 'red';
-    mensajeRegister.textContent = 'Completa todos los campos.';
+    mensajeRegister.textContent = 'Completa todos los campos';
     return;
   }
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     mensajeRegister.style.color = 'green';
-    mensajeRegister.textContent = 'Registro exitoso. Puedes iniciar sesión.';
+    mensajeRegister.textContent = 'Registro correcto. Ya puedes iniciar sesión.';
     registerForm.reset();
     setTimeout(() => {
       registerForm.classList.add('d-none');
@@ -48,12 +51,12 @@ document.getElementById('btnRegister').addEventListener('click', async () => {
 });
 
 // Login
-document.getElementById('btnLogin').addEventListener('click', async () => {
+btnLogin.addEventListener('click', async () => {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
   if (!email || !password) {
     mensajeLogin.style.color = 'red';
-    mensajeLogin.textContent = 'Completa todos los campos.';
+    mensajeLogin.textContent = 'Completa todos los campos';
     return;
   }
   try {
@@ -66,6 +69,7 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     mensajeLogin.textContent = err.message;
   }
 });
+
 
 
 
