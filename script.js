@@ -2,26 +2,27 @@ import { auth, db } from './firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 
-// Formularios
+// Formularios y mensajes
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const msgLogin = document.getElementById('msgLogin');
 const msgRegister = document.getElementById('msgRegister');
 
-// Cambiar entre login y registro
+// Cambiar de Login a Registro
 document.getElementById('showRegister').addEventListener('click', () => {
   loginForm.style.display = 'none';
   registerForm.style.display = 'flex';
   document.getElementById('formTitle').textContent = "Regístrate";
 });
 
+// Cambiar de Registro a Login
 document.getElementById('showLogin').addEventListener('click', () => {
-  loginForm.style.display = 'flex';
   registerForm.style.display = 'none';
+  loginForm.style.display = 'flex';
   document.getElementById('formTitle').textContent = "Inicia sesión";
 });
 
-// Login
+// LOGIN
 loginForm.addEventListener('submit', async e => {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
@@ -35,7 +36,7 @@ loginForm.addEventListener('submit', async e => {
   }
 });
 
-// Registro
+// REGISTRO
 registerForm.addEventListener('submit', async e => {
   e.preventDefault();
   const name = document.getElementById('registerName').value;
@@ -46,7 +47,7 @@ registerForm.addEventListener('submit', async e => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Guardar datos en Firestore
+    // Guardar usuario en Firestore
     await setDoc(doc(db, "usuarios", user.uid), {
       nombre: name,
       email: email,
