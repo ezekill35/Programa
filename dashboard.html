@@ -40,31 +40,42 @@
         <div class="card"><h3>Servicios</h3><p id="repServicios">0</p></div>
       </div>
     </section>
+<!-- 🏪 Registro de Proveedores -->
+<section id="proveedores" class="seccion" style="display:none;">
+  <h2>🏪 Registro de Proveedores</h2>
+  <form id="formProveedores" class="formulario">
+    <div class="campo">
+      <label for="rucProveedor">RUC (solo números)</label>
+      <input type="text" id="rucProveedor" maxlength="11" placeholder="Ej: 20123456789" required />
+    </div>
+    <div class="campo">
+      <label for="nombreProveedor">Nombre</label>
+      <input type="text" id="nombreProveedor" placeholder="Ej: Proveedor SAC" required />
+    </div>
+    <div class="campo">
+      <label for="productoProveedor">Producto</label>
+      <input type="text" id="productoProveedor" placeholder="Ej: Detergente" required />
+    </div>
+    <div class="campo">
+      <label for="direccionProveedor">Dirección</label>
+      <input type="text" id="direccionProveedor" placeholder="Ej: Av. Los Olivos 123" required />
+    </div>
+    <button type="submit" class="btn-agregar">➕ Agregar Proveedor</button>
+  </form>
 
-    <!-- 🏪 PROVEEDORES -->
-    <section id="proveedores" class="seccion">
-      <h2>🏪 Registro de Proveedores</h2>
-      <form id="formProveedores" class="formulario">
-        <input type="text" id="provNombre" placeholder="Nombre" required>
-        <input type="text" id="provProducto" placeholder="Producto" required>
-        <input type="text" id="provRUC" placeholder="RUC (solo números)" maxlength="11" required>
-        <input type="text" id="provDireccion" placeholder="Dirección" required>
-        <button type="submit" class="btn-agregar">➕ Agregar Proveedor</button>
-      </form>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Producto</th>
-            <th>RUC</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaProveedores"></tbody>
-      </table>
-    </section>
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>RUC</th>
+        <th>Nombre</th>
+        <th>Producto</th>
+        <th>Dirección</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaProveedores"></tbody>
+  </table>
+</section>
 
     <!-- 📑 FACTURAS -->
     <section id="facturas" class="seccion">
@@ -150,6 +161,7 @@
 
 </body>
 </html>
+
 
 
 
