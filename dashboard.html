@@ -10,115 +10,144 @@
 <body class="dashboard-body">
 
   <!-- Sidebar -->
-  <aside class="sidebar d-flex flex-column">
-    <h2>🐾 Discovery Pets</h2>
+  <aside class="sidebar d-flex flex-column p-3 bg-light" style="width:250px; min-height:100vh;">
+    <h2 class="text-center mb-4">🐾 Discovery Pets</h2>
     <nav class="flex-column mb-3">
-      <button class="nav-btn active mb-2" data-section="reportes">📊 Reportes</button>
-      <button class="nav-btn mb-2" data-section="proveedores">🏪 Proveedores</button>
-      <button class="nav-btn mb-2" data-section="facturas">📑 Facturas</button>
-      <button class="nav-btn mb-2" data-section="gastos">💰 Gastos</button>
-      <button class="nav-btn mb-2" data-section="servicios">🛠 Servicios</button>
+      <button class="nav-btn btn btn-outline-primary mb-2 active w-100" data-section="reportes">📊 Reportes</button>
+      <button class="nav-btn btn btn-outline-primary mb-2 w-100" data-section="proveedores">🏪 Proveedores</button>
+      <button class="nav-btn btn btn-outline-primary mb-2 w-100" data-section="facturas">📑 Facturas</button>
+      <button class="nav-btn btn btn-outline-primary mb-2 w-100" data-section="gastos">💰 Gastos</button>
+      <button class="nav-btn btn btn-outline-primary mb-2 w-100" data-section="servicios">🛠 Servicios</button>
     </nav>
-    <button class="logout-btn btn btn-danger mt-auto">🚪 Cerrar sesión</button>
+    <button class="logout-btn btn btn-danger mt-auto w-100">🚪 Cerrar sesión</button>
   </aside>
 
-  <!-- Main -->
-  <main class="main-content container-fluid">
-    <!-- Reportes -->
+  <!-- Main Content -->
+  <main class="main-content container-fluid ms-3">
+    <!-- REPORTES -->
     <section id="reportes" class="content-section active">
       <h1>📊 Reportes Generales</h1>
       <div class="row g-3 mt-3">
-        <div class="col-md-3 card bg-pink p-3 text-center"><h5>Proveedores</h5><p id="countProveedores">0</p></div>
-        <div class="col-md-3 card bg-purple p-3 text-center"><h5>Facturas</h5><p id="countFacturas">0</p></div>
-        <div class="col-md-3 card bg-teal p-3 text-center"><h5>Gastos</h5><p id="countGastos">0</p></div>
-        <div class="col-md-3 card bg-yellow p-3 text-center"><h5>Servicios</h5><p id="countServicios">0</p></div>
+        <div class="col-md-3 card p-3 text-center bg-pink"><h5>Proveedores</h5><p id="countProveedores">0</p></div>
+        <div class="col-md-3 card p-3 text-center bg-purple"><h5>Facturas</h5><p id="countFacturas">0</p></div>
+        <div class="col-md-3 card p-3 text-center bg-teal"><h5>Gastos</h5><p id="countGastos">0</p></div>
+        <div class="col-md-3 card p-3 text-center bg-yellow"><h5>Servicios</h5><p id="countServicios">0</p></div>
       </div>
     </section>
 
-    <!-- Proveedores -->
+    <!-- PROVEEDORES -->
     <section id="proveedores" class="content-section">
       <h1>🏪 Registro de Proveedores</h1>
       <form id="formProveedor" class="row g-2 mt-2">
-        <input class="col form-control" type="text" id="nombreProv" placeholder="Nombre">
-        <input class="col form-control" type="text" id="productoProv" placeholder="Producto">
-        <input class="col form-control" type="text" id="rucProv" placeholder="RUC">
-        <input class="col form-control" type="text" id="direccionProv" placeholder="Dirección">
+        <input class="col form-control" type="text" id="rucProv" placeholder="RUC" required pattern="[0-9]+">
+        <input class="col form-control" type="text" id="nombreProv" placeholder="Nombre" required>
+        <input class="col form-control" type="text" id="productoProv" placeholder="Producto" required>
+        <input class="col form-control" type="text" id="direccionProv" placeholder="Dirección" required>
         <button class="col btn btn-primary" type="submit">Agregar</button>
       </form>
       <p id="msgProv" class="text-danger mt-2"></p>
       <table class="table mt-3">
-        <thead><tr><th>Nombre</th><th>Producto</th><th>RUC</th><th>Dirección</th><th>Acciones</th></tr></thead>
+        <thead>
+          <tr>
+            <th>RUC</th>
+            <th>Nombre</th>
+            <th>Producto</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody id="tablaProveedores"></tbody>
       </table>
     </section>
 
-    <!-- Facturas -->
+    <!-- FACTURAS -->
     <section id="facturas" class="content-section">
       <h1>📑 Registro de Facturas</h1>
       <form id="formFactura" class="row g-2 mt-2">
-        <input class="col form-control" type="text" id="proveedorFactura" placeholder="Proveedor">
-        <input class="col form-control" type="text" id="tipoFactura" placeholder="Tipo">
-        <input class="col form-control" type="number" id="montoFactura" placeholder="Monto S/.">
-        <input class="col form-control" type="date" id="fechaFactura">
+        <input class="col form-control" type="text" id="proveedorFactura" placeholder="Proveedor" required>
+        <input class="col form-control" type="text" id="tipoFactura" placeholder="Tipo" required>
+        <input class="col form-control" type="number" id="montoFactura" placeholder="Monto S/." required>
+        <input class="col form-control" type="date" id="fechaFactura" required>
         <input class="col form-control" type="text" id="descFactura" placeholder="Descripción">
         <button class="col btn btn-primary" type="submit">Agregar</button>
       </form>
       <p id="msgFactura" class="text-danger mt-2"></p>
       <table class="table mt-3">
-        <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Proveedor</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody id="tablaFacturas"></tbody>
       </table>
     </section>
 
-    <!-- Gastos -->
+    <!-- GASTOS -->
     <section id="gastos" class="content-section">
       <h1>💰 Registro de Gastos</h1>
       <form id="formGasto" class="row g-2 mt-2">
-        <input class="col form-control" type="text" id="nombreGasto" placeholder="Nombre">
-        <input class="col form-control" type="text" id="tipoGasto" placeholder="Tipo">
-        <input class="col form-control" type="number" id="montoGasto" placeholder="Monto">
-        <input class="col form-control" type="date" id="fechaGasto">
+        <input class="col form-control" type="text" id="nombreGasto" placeholder="Nombre" required>
+        <input class="col form-control" type="text" id="tipoGasto" placeholder="Tipo" required>
+        <input class="col form-control" type="number" id="montoGasto" placeholder="Monto" required>
+        <input class="col form-control" type="date" id="fechaGasto" required>
         <button class="col btn btn-primary" type="submit">Agregar</button>
       </form>
       <p id="msgGasto" class="text-danger mt-2"></p>
       <table class="table mt-3">
-        <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody id="tablaGastos"></tbody>
       </table>
     </section>
 
-    <!-- Servicios -->
+    <!-- SERVICIOS -->
     <section id="servicios" class="content-section">
       <h1>🛠 Registro de Servicios</h1>
       <form id="formServicio" class="row g-2 mt-2">
-        <input class="col form-control" type="text" id="nombreServ" placeholder="Nombre">
-        <input class="col form-control" type="number" id="precioServ" placeholder="Precio">
-        <input class="col form-control" type="date" id="fechaServ">
+        <input class="col form-control" type="text" id="nombreServ" placeholder="Nombre" required>
+        <input class="col form-control" type="number" id="precioServ" placeholder="Precio" required>
+        <input class="col form-control" type="date" id="fechaServ" required>
         <input class="col form-control" type="text" id="descServ" placeholder="Descripción">
         <button class="col btn btn-primary" type="submit">Agregar</button>
       </form>
       <p id="msgServ" class="text-danger mt-2"></p>
       <table class="table mt-3">
-        <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody id="tablaServicios"></tbody>
       </table>
     </section>
 
   </main>
 
+  <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/10.2.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.2.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js"></script>
   <script src="dashboard.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
-
-
-
-
 
 
 
