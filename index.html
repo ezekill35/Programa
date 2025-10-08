@@ -9,31 +9,39 @@
 </head>
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
 
-  <div class="card shadow p-4 login-card">
+  <!-- CONTENEDOR LOGIN -->
+  <div id="containerLogin" class="card shadow p-4 login-card" style="display:block;">
     <div class="text-center mb-4">
       <h2 class="text-primary">🐾 Discovery Pets</h2>
-      <p id="formTitle">Inicia sesión</p>
+      <p>Inicia sesión</p>
     </div>
-
-    <!-- LOGIN -->
-    <form id="loginForm" style="display:block;" class="d-flex flex-column gap-3">
+    <form id="loginForm" class="d-flex flex-column gap-3">
       <input type="email" id="loginEmail" class="form-control" placeholder="Correo electrónico" required>
       <input type="password" id="loginPassword" class="form-control" placeholder="Contraseña" required>
       <button type="submit" class="btn btn-primary btn-login">Ingresar</button>
-      <p class="text-center mt-2">¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
-      <p id="msgLogin" class="text-danger text-center"></p>
     </form>
+    <p class="text-center mt-3">
+      ¿No tienes cuenta? <a href="#" id="goRegister">Regístrate</a>
+    </p>
+    <p id="msgLogin" class="text-danger text-center"></p>
+  </div>
 
-    <!-- REGISTRO -->
-    <form id="registerForm" style="display:none;" class="d-flex flex-column gap-3">
+  <!-- CONTENEDOR REGISTRO -->
+  <div id="containerRegister" class="card shadow p-4 login-card" style="display:none;">
+    <div class="text-center mb-4">
+      <h2 class="text-success">🐾 Discovery Pets</h2>
+      <p>Regístrate</p>
+    </div>
+    <form id="registerForm" class="d-flex flex-column gap-3">
       <input type="text" id="registerName" class="form-control" placeholder="Nombre completo" required>
       <input type="email" id="registerEmail" class="form-control" placeholder="Correo electrónico" required>
       <input type="password" id="registerPassword" class="form-control" placeholder="Contraseña" required>
       <button type="submit" class="btn btn-success btn-login">Registrarse</button>
-      <p class="text-center mt-2">¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
-      <p id="msgRegister" class="text-danger text-center"></p>
     </form>
-
+    <p class="text-center mt-3">
+      ¿Ya tienes cuenta? <a href="#" id="goLogin">Inicia sesión</a>
+    </p>
+    <p id="msgRegister" class="text-danger text-center"></p>
   </div>
 
   <script type="module" src="firebase.js"></script>
