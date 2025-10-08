@@ -3,31 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>🐾 Discovery Pets - Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="login-body">
+<body class="login-body d-flex justify-content-center align-items-center vh-100">
 
-  <div class="login-container shadow-lg p-5 rounded-4">
-    <h1 class="fw-bold mb-2 text-pink text-center">🐾 Discovery Pets</h1>
-    <p class="text-secondary text-center mb-4">Gestión integral de tu negocio</p>
+  <div class="login-card p-4 rounded-4 shadow-lg text-center">
+    <h1 class="fw-bold mb-3 text-gradient">🐾 Discovery Pets</h1>
+    <p class="text-muted mb-4">Sistema de gestión integral</p>
 
     <!-- LOGIN -->
-    <form id="loginForm" class="form-section">
+    <form id="loginForm">
       <input type="email" id="loginEmail" class="form-control mb-3" placeholder="Correo electrónico" required>
       <input type="password" id="loginPassword" class="form-control mb-3" placeholder="Contraseña" required>
-      <button type="button" id="btnLogin" class="btn btn-pink w-100 mb-2">Iniciar Sesión</button>
-      <p id="mensajeLogin" class="text-center small"></p>
-      <p class="text-center"><a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a></p>
+      <button type="button" id="btnLogin" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
+      <p id="mensajeLogin" class="fw-bold small"></p>
+      <a href="#" id="showRegister">¿No tienes cuenta? Regístrate</a>
     </form>
 
     <!-- REGISTRO -->
-    <form id="registerForm" class="form-section d-none">
+    <form id="registerForm" class="d-none">
       <input type="email" id="registerEmail" class="form-control mb-3" placeholder="Correo electrónico" required>
       <input type="password" id="registerPassword" class="form-control mb-3" placeholder="Contraseña" required>
-      <button type="button" id="btnRegister" class="btn btn-success w-100 mb-2">Registrarse</button>
-      <p id="mensajeRegister" class="text-center small"></p>
-      <p class="text-center"><a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a></p>
+      <button type="button" id="btnRegister" class="btn btn-success w-100 mb-3">Registrarse</button>
+      <p id="mensajeRegister" class="fw-bold small"></p>
+      <a href="#" id="showLogin">¿Ya tienes cuenta? Inicia sesión</a>
     </form>
   </div>
 
@@ -35,8 +35,6 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
 
 
 
