@@ -1,267 +1,160 @@
-// ===============================
-// 📦 Importar módulos de Firebase
-// ===============================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  deleteDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { db } from './firebase.js';
+import { collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ===============================
-// 🔥 Configuración de Firebase
-// ===============================
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "743510443727",
-  appId: "1:743510443727:web:b340b8e9c2ef63fb9c6542"
+// Navegación entre secciones
+const navBtns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.content-section');
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navBtns.forEach(b => b.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.section).classList.add('active');
+  });
+});
+
+// --- PROVEEDORES ---
+const formProv = document.getElementById('formProveedor');
+const tablaProv = document.getElementById('tablaProveedores');
+const msgProv = document.getElementById('msgProv');
+formProv.addEventListener('submit', async e => {
+  e.preventDefault();
+  const nombre = formProv.nombreProv.value.trim();
+  const producto = formProv.productoProv.value.trim();
+  const ruc = formProv.rucProv.value.trim();
+  const direccion = formProv.direccionProv.value.trim();
+  if (!nombre || !producto || !ruc) return msgProv.textContent = '⚠️ Todos los campos son obligatorios';
+  try {
+    await addDoc(collection(db, 'proveedores'), { nombre, producto, ruc, direccion });
+    msgProv.textContent = '✅ Proveedor guardado con éxito';
+    formProv.reset();
+  } catch {
+    msgProv.textContent = '❌ Error al guardar proveedor';
+  }
+});
+onSnapshot(collection(db, 'proveedores'), snapshot => {
+  tablaProv.innerHTML = '';
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    tablaProv.innerHTML += `
+      <tr>
+        <td>${d.nombre}</td><td>${d.producto}</td><td>${d.ruc}</td><td>${d.direccion}</td>
+        <td><button onclick="eliminar('${docu.id}','proveedores')">🗑️</button></td>
+      </tr>`;
+  });
+  document.getElementById('countProveedores').textContent = snapshot.size;
+});
+
+// --- FACTURAS ---
+const formFactura = document.getElementById('formFactura');
+const tablaFactura = document.getElementById('tablaFacturas');
+const msgFactura = document.getElementById('msgFactura');
+formFactura.addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    proveedor: formFactura.proveedorFactura.value.trim(),
+    tipo: formFactura.tipoFactura.value.trim(),
+    monto: parseFloat(formFactura.montoFactura.value),
+    fecha: formFactura.fechaFactura.value,
+    descripcion: formFactura.descFactura.value.trim()
+  };
+  try {
+    await addDoc(collection(db, 'facturas'), data);
+    msgFactura.textContent = '✅ Factura registrada';
+    formFactura.reset();
+  } catch {
+    msgFactura.textContent = '❌ Error al guardar factura';
+  }
+});
+onSnapshot(collection(db, 'facturas'), snapshot => {
+  tablaFactura.innerHTML = '';
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    tablaFactura.innerHTML += `
+      <tr>
+        <td>${d.proveedor}</td><td>${d.tipo}</td><td>${d.monto}</td><td>${d.fecha}</td><td>${d.descripcion}</td>
+        <td><button onclick="eliminar('${docu.id}','facturas')">🗑️</button></td>
+      </tr>`;
+  });
+  document.getElementById('countFacturas').textContent = snapshot.size;
+});
+
+// --- GASTOS ---
+const formGasto = document.getElementById('formGasto');
+const tablaGasto = document.getElementById('tablaGastos');
+const msgGasto = document.getElementById('msgGasto');
+formGasto.addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    nombre: formGasto.nombreGasto.value.trim(),
+    tipo: formGasto.tipoGasto.value.trim(),
+    monto: parseFloat(formGasto.montoGasto.value),
+    fecha: formGasto.fechaGasto.value
+  };
+  try {
+    await addDoc(collection(db, 'gastos'), data);
+    msgGasto.textContent = '✅ Gasto agregado';
+    formGasto.reset();
+  } catch {
+    msgGasto.textContent = '❌ Error al guardar gasto';
+  }
+});
+onSnapshot(collection(db, 'gastos'), snapshot => {
+  tablaGasto.innerHTML = '';
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    tablaGasto.innerHTML += `
+      <tr>
+        <td>${d.nombre}</td><td>${d.tipo}</td><td>${d.monto}</td><td>${d.fecha}</td>
+        <td><button onclick="eliminar('${docu.id}','gastos')">🗑️</button></td>
+      </tr>`;
+  });
+  document.getElementById('countGastos').textContent = snapshot.size;
+});
+
+// --- SERVICIOS ---
+const formServ = document.getElementById('formServicio');
+const tablaServ = document.getElementById('tablaServicios');
+const msgServ = document.getElementById('msgServ');
+formServ.addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    nombre: formServ.nombreServ.value.trim(),
+    precio: parseFloat(formServ.precioServ.value),
+    fecha: formServ.fechaServ.value,
+    descripcion: formServ.descServ.value.trim()
+  };
+  try {
+    await addDoc(collection(db, 'servicios'), data);
+    msgServ.textContent = '✅ Servicio agregado';
+    formServ.reset();
+  } catch {
+    msgServ.textContent = '❌ Error al guardar servicio';
+  }
+});
+onSnapshot(collection(db, 'servicios'), snapshot => {
+  tablaServ.innerHTML = '';
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    tablaServ.innerHTML += `
+      <tr>
+        <td>${d.nombre}</td><td>${d.precio}</td><td>${d.fecha}</td><td>${d.descripcion}</td>
+        <td><button onclick="eliminar('${docu.id}','servicios')">🗑️</button></td>
+      </tr>`;
+  });
+  document.getElementById('countServicios').textContent = snapshot.size;
+});
+
+// Eliminar documento
+window.eliminar = async (id, coleccion) => {
+  await deleteDoc(doc(db, coleccion, id));
 };
 
-// Inicializar Firebase y Firestore
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ===============================
-// 🎨 Menú lateral interactivo
-// ===============================
-const botonesMenu = document.querySelectorAll('.menu-btn');
-const secciones = document.querySelectorAll('.seccion');
-
-botonesMenu.forEach(btn => {
-  btn.addEventListener('click', () => {
-    botonesMenu.forEach(b => b.classList.remove('activo'));
-    btn.classList.add('activo');
-    secciones.forEach(sec => sec.style.display = 'none');
-    const target = document.getElementById(btn.dataset.target);
-    if (target) target.style.display = 'block';
-  });
-});
-
-// ===============================
-// 🏪 PROVEEDORES
-// ===============================
-const formProveedores = document.getElementById('formProveedores');
-const tablaProveedores = document.getElementById('tablaProveedores');
-
-formProveedores.addEventListener('submit', async e => {
-  e.preventDefault();
-  const ruc = document.getElementById('rucProveedor').value.trim();
-  const nombre = document.getElementById('nombreProveedor').value.trim();
-  const producto = document.getElementById('productoProveedor').value.trim();
-  const direccion = document.getElementById('direccionProveedor').value.trim();
-
-  if (!/^[0-9]{11}$/.test(ruc)) {
-    alert('⚠️ El RUC debe tener 11 dígitos numéricos.');
-    return;
-  }
-
-  try {
-    await addDoc(collection(db, 'proveedores'), { ruc, nombre, producto, direccion });
-    alert('✅ Proveedor guardado correctamente.');
-    formProveedores.reset();
-  } catch (error) {
-    console.error('Error al guardar proveedor:', error);
-  }
-});
-
-onSnapshot(collection(db, 'proveedores'), snapshot => {
-  tablaProveedores.innerHTML = '';
-  snapshot.forEach(docu => {
-    const p = docu.data();
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td>${p.ruc}</td>
-      <td>${p.nombre}</td>
-      <td>${p.producto}</td>
-      <td>${p.direccion}</td>
-      <td>
-        <button class="btn-eliminar" data-id="${docu.id}">🗑️</button>
-      </td>
-    `;
-    tablaProveedores.appendChild(fila);
-  });
-
-  tablaProveedores.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (confirm('¿Eliminar este proveedor?')) {
-        await deleteDoc(doc(db, 'proveedores', btn.dataset.id));
-      }
-    });
-  });
-});
-
-// ===============================
-// 🧾 FACTURAS
-// ===============================
-const formFacturas = document.getElementById('formFacturas');
-const tablaFacturas = document.getElementById('tablaFacturas');
-
-formFacturas.addEventListener('submit', async e => {
-  e.preventDefault();
-  const proveedor = document.getElementById('facturaProveedor').value;
-  const tipo = document.getElementById('facturaTipo').value;
-  const monto = parseFloat(document.getElementById('facturaMonto').value);
-  const fecha = document.getElementById('facturaFecha').value;
-  const descripcion = document.getElementById('facturaDescripcion').value.trim();
-
-  if (!proveedor || !tipo || !monto || !fecha) {
-    alert('⚠️ Complete todos los campos.');
-    return;
-  }
-
-  try {
-    await addDoc(collection(db, 'facturas'), { proveedor, tipo, monto, fecha, descripcion });
-    alert('✅ Factura agregada correctamente.');
-    formFacturas.reset();
-  } catch (error) {
-    console.error('Error al guardar factura:', error);
-  }
-});
-
-onSnapshot(collection(db, 'facturas'), snapshot => {
-  tablaFacturas.innerHTML = '';
-  snapshot.forEach(docu => {
-    const f = docu.data();
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td>${f.proveedor}</td>
-      <td>${f.tipo}</td>
-      <td>S/. ${f.monto.toFixed(2)}</td>
-      <td>${f.fecha}</td>
-      <td>${f.descripcion}</td>
-      <td>
-        <button class="btn-eliminar" data-id="${docu.id}">🗑️</button>
-      </td>
-    `;
-    tablaFacturas.appendChild(fila);
-  });
-
-  tablaFacturas.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (confirm('¿Eliminar esta factura?')) {
-        await deleteDoc(doc(db, 'facturas', btn.dataset.id));
-      }
-    });
-  });
-});
-
-// ===============================
-// 💰 GASTOS
-// ===============================
-const formGastos = document.getElementById('formGastos');
-const tablaGastos = document.getElementById('tablaGastos');
-
-formGastos.addEventListener('submit', async e => {
-  e.preventDefault();
-  const nombre = document.getElementById('gastoNombre').value.trim();
-  const tipo = document.getElementById('gastoTipo').value;
-  const monto = parseFloat(document.getElementById('gastoMonto').value);
-  const fecha = document.getElementById('gastoFecha').value;
-
-  if (!nombre || !tipo || !monto || !fecha) {
-    alert('⚠️ Complete todos los campos.');
-    return;
-  }
-
-  try {
-    await addDoc(collection(db, 'gastos'), { nombre, tipo, monto, fecha });
-    alert('✅ Gasto guardado correctamente.');
-    formGastos.reset();
-  } catch (error) {
-    console.error('Error al guardar gasto:', error);
-  }
-});
-
-onSnapshot(collection(db, 'gastos'), snapshot => {
-  tablaGastos.innerHTML = '';
-  snapshot.forEach(docu => {
-    const g = docu.data();
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td>${g.nombre}</td>
-      <td>${g.tipo}</td>
-      <td>S/. ${g.monto.toFixed(2)}</td>
-      <td>${g.fecha}</td>
-      <td><button class="btn-eliminar" data-id="${docu.id}">🗑️</button></td>
-    `;
-    tablaGastos.appendChild(fila);
-  });
-
-  tablaGastos.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (confirm('¿Eliminar este gasto?')) {
-        await deleteDoc(doc(db, 'gastos', btn.dataset.id));
-      }
-    });
-  });
-});
-
-// ===============================
-// 🛠 SERVICIOS
-// ===============================
-const formServicios = document.getElementById('formServicios');
-const tablaServicios = document.getElementById('tablaServicios');
-
-formServicios.addEventListener('submit', async e => {
-  e.preventDefault();
-  const nombre = document.getElementById('servicioNombre').value.trim();
-  const precio = parseFloat(document.getElementById('servicioPrecio').value);
-  const fecha = document.getElementById('servicioFecha').value;
-  const descripcion = document.getElementById('servicioDescripcion').value.trim();
-
-  if (!nombre || !precio || !fecha) {
-    alert('⚠️ Complete todos los campos.');
-    return;
-  }
-
-  try {
-    await addDoc(collection(db, 'servicios'), { nombre, precio, fecha, descripcion });
-    alert('✅ Servicio agregado correctamente.');
-    formServicios.reset();
-  } catch (error) {
-    console.error('Error al guardar servicio:', error);
-  }
-});
-
-onSnapshot(collection(db, 'servicios'), snapshot => {
-  tablaServicios.innerHTML = '';
-  snapshot.forEach(docu => {
-    const s = docu.data();
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td>${s.nombre}</td>
-      <td>S/. ${s.precio.toFixed(2)}</td>
-      <td>${s.fecha}</td>
-      <td>${s.descripcion}</td>
-      <td><button class="btn-eliminar" data-id="${docu.id}">🗑️</button></td>
-    `;
-    tablaServicios.appendChild(fila);
-  });
-
-  tablaServicios.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (confirm('¿Eliminar este servicio?')) {
-        await deleteDoc(doc(db, 'servicios', btn.dataset.id));
-      }
-    });
-  });
-});
-
-// ===============================
-// 🚪 Cerrar sesión (simple)
-const btnCerrar = document.createElement('button');
-btnCerrar.textContent = '🚪 Cerrar sesión';
-btnCerrar.classList.add('btn-cerrar');
-document.querySelector('.sidebar').appendChild(btnCerrar);
-btnCerrar.addEventListener('click', () => {
+// Cerrar sesión
+document.getElementById('logoutBtn').addEventListener('click', () => {
   window.location.href = 'index.html';
 });
+
 
 
 
