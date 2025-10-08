@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discovery Pets - Ingreso</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discovery Pets 🐾 | Login</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <div class="login-container">
-    <div class="login-box" id="loginBox">
-      <h1>Discovery Pets</h1>
-      <input type="email" id="loginEmail" placeholder="Correo electrónico" required />
-      <input type="password" id="loginPassword" placeholder="Contraseña" required />
-      <button id="loginBtn">Iniciar Sesión</button>
-      <span class="switch-link" id="showRegister">¿No tienes cuenta? Regístrate</span>
-    </div>
+<body class="login-body">
 
-    <div class="login-box" id="registerBox" style="display:none;">
-      <h1>Registro</h1>
-      <input type="email" id="registerEmail" placeholder="Correo electrónico" required />
-      <input type="password" id="registerPassword" placeholder="Contraseña" required />
-      <button id="registerBtn">Registrarse</button>
-      <span class="switch-link" id="showLogin">¿Ya tienes cuenta? Inicia sesión</span>
+  <div class="login-container">
+    <div class="login-card">
+      <h1>🐾 <span>Discovery Pets</span></h1>
+
+      <!-- Login -->
+      <form id="loginForm" class="form active">
+        <h2>Iniciar sesión</h2>
+        <input type="email" id="loginEmail" placeholder="Correo electrónico">
+        <input type="password" id="loginPassword" placeholder="Contraseña">
+        <button type="button" id="btnLogin">Iniciar sesión</button>
+        <p id="mensajeLogin" class="mensaje"></p>
+        <p class="toggle">¿No tienes cuenta? 
+          <a href="#" id="showRegister">Regístrate</a>
+        </p>
+      </form>
+
+      <!-- Registro -->
+      <form id="registerForm" class="form">
+        <h2>Crear cuenta</h2>
+        <input type="email" id="registerEmail" placeholder="Correo electrónico">
+        <input type="password" id="registerPassword" placeholder="Contraseña (min 6)">
+        <button type="button" id="btnRegister">Registrarse</button>
+        <p id="mensajeRegister" class="mensaje"></p>
+        <p class="toggle">¿Ya tienes cuenta? 
+          <a href="#" id="showLogin">Inicia sesión</a>
+        </p>
+      </form>
     </div>
   </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
-
 
 
 
