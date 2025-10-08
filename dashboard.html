@@ -1,101 +1,81 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
   <title>🐾 Discovery Pets - Dashboard</title>
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-
-  <style>
-    /* minimal local tweaks to ensure layout */
-    .main { margin-left: 250px; padding: 28px; }
-    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 250px; }
-    .nav-link.active { box-shadow: inset 0 0 0 3px rgba(255,255,255,0.06); }
-    .form-control, .form-select { border-radius: 10px; }
-    .btn-primary { background: linear-gradient(90deg,#cc33ff,#9933ff); border: none; }
-  </style>
 </head>
 <body>
+  <div class="container-fluid d-flex p-0">
+    <!-- Sidebar -->
+    <div class="sidebar p-3">
+      <h2 class="text-center mb-4">🐾 Discovery Pets</h2>
+      <ul class="nav flex-column">
+        <li id="menu-reportes" class="nav-item active">📊 Reportes</li>
+        <li id="menu-proveedores" class="nav-item">🏪 Proveedores</li>
+        <li id="menu-facturas" class="nav-item">📑 Facturas</li>
+        <li id="menu-gastos" class="nav-item">💰 Gastos</li>
+        <li id="menu-servicios" class="nav-item">🛠 Servicios</li>
+        <li id="menu-logout" class="nav-item text-danger">🚪 Cerrar Sesión</li>
+      </ul>
+    </div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar bg-gradient p-3 text-white d-flex flex-column">
-    <h3 class="text-center mb-3">🐾 Discovery Pets</h3>
-    <nav class="nav flex-column">
-      <a class="nav-link text-white active" id="menu-reportes" href="#">📊 Reportes</a>
-      <a class="nav-link text-white" id="menu-proveedores" href="#">🏪 Proveedores</a>
-      <a class="nav-link text-white" id="menu-facturas" href="#">📑 Facturas</a>
-      <a class="nav-link text-white" id="menu-gastos" href="#">💰 Gastos</a>
-      <a class="nav-link text-white" id="menu-servicios" href="#">🛠 Servicios</a>
-      <div class="mt-auto">
-        <a class="nav-link text-white" id="menu-logout" href="#">🚪 Cerrar Sesión</a>
-      </div>
-    </nav>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- Reportes -->
-    <section id="reportes" class="section">
-      <div class="row g-3 mb-4">
-        <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h4 id="total-proveedores">0</h4><small>Proveedores</small></div></div>
-        <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h4 id="total-facturas">0</h4><small>Facturas</small></div></div>
-        <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h4 id="total-gastos">0</h4><small>Gastos</small></div></div>
-        <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h4 id="total-servicios">0</h4><small>Servicios</small></div></div>
-      </div>
-    </section>
-
-    <!-- PROVEEDORES -->
-    <section id="proveedores" class="section" style="display:none;">
-      <h2>🏪 Proveedores</h2>
-
-      <form id="formProveedor" class="mb-3">
-        <div class="row g-2">
-          <div class="col-md-2"><input id="provRuc" class="form-control" placeholder="RUC (solo números)"></div>
-          <div class="col-md-3"><input id="provNombre" class="form-control" placeholder="Nombre"></div>
-          <div class="col-md-3"><input id="provDireccion" class="form-control" placeholder="Dirección"></div>
-          <div class="col-md-2"><input id="provTelefono" class="form-control" placeholder="Teléfono"></div>
-          <div class="col-md-2"><input id="provProducto" class="form-control" placeholder="Producto"></div>
+    <!-- Contenido -->
+    <div class="content flex-grow-1 p-4">
+      <!-- REPORTES -->
+      <section id="reportes" class="section active">
+        <h3>📊 Reportes</h3>
+        <div class="row text-center mt-4">
+          <div class="col-md-3">
+            <div class="card3d bg-primary text-white shadow p-3">
+              <h4 id="total-proveedores">0</h4><p>Proveedores</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card3d bg-success text-white shadow p-3">
+              <h4 id="total-facturas">0</h4><p>Facturas</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card3d bg-warning text-white shadow p-3">
+              <h4 id="total-gastos">0</h4><p>Gastos</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card3d bg-info text-white shadow p-3">
+              <h4 id="total-servicios">0</h4><p>Servicios</p>
+            </div>
+          </div>
         </div>
-        <div class="mt-2">
-          <button id="btnAgregarProveedor" type="button" class="btn btn-primary">Agregar proveedor</button>
-          <span id="mensajeProveedor" class="ms-3 text-success"></span>
-        </div>
-      </form>
+      </section>
 
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead class="table-dark">
-            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Producto</th><th>Acción</th></tr>
-          </thead>
+      <!-- PROVEEDORES -->
+      <section id="proveedores" class="section">
+        <h3>🏪 Proveedores</h3>
+        <form id="formProveedor" class="row g-3 mt-3">
+          <div class="col-md-2"><input type="text" id="provRuc" class="form-control" placeholder="RUC"></div>
+          <div class="col-md-2"><input type="text" id="provNombre" class="form-control" placeholder="Nombre"></div>
+          <div class="col-md-2"><input type="text" id="provDireccion" class="form-control" placeholder="Dirección"></div>
+          <div class="col-md-2"><input type="text" id="provTelefono" class="form-control" placeholder="Teléfono"></div>
+          <div class="col-md-2"><input type="text" id="provProducto" class="form-control" placeholder="Producto"></div>
+          <div class="col-md-2"><button type="button" id="btnAgregarProveedor" class="btn btn-primary w-100">Agregar</button></div>
+        </form>
+        <table class="table table-striped mt-4">
+          <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Producto</th><th>Acciones</th></tr></thead>
           <tbody id="listaProveedores"></tbody>
         </table>
-      </div>
-    </section>
+      </section>
 
-    <!-- FACTURAS -->
-    <section id="facturas" class="section" style="display:none;">
-      <h2>📑 Facturas</h2>
-
-      <form id="formFactura" class="mb-3">
-        <div class="row g-2">
-          <div class="col-md-3">
-            <select id="facProveedor" class="form-select">
-              <option value="">-- Selecciona proveedor --</option>
-            </select>
-          </div>
-          <div class="col-md-2"><input id="facTipo" class="form-control" placeholder="Tipo"></div>
-          <div class="col-md-3"><input id="facDescripcion" class="form-control" placeholder="Descripción"></div>
-          <div class="col-md-2"><input id="facFecha" type="date" class="form-control"></div>
-          <div class="col-md-1"><input id="facMonto" type="number" step="0.01" class="form-control" placeholder="0.00"></div>
+      <!-- FACTURAS -->
+      <section id="facturas" class="section">
+        <h3>📑 Facturas</h3>
+        <form id="formFactura" class="row g-3 mt-3">
+          <div class="col-md-2"><select id="facRucProveedor" class="form-select"><option value="">Proveedor</option></select></div>
+          <div class="col-md-2"><input type="text" id="facTipo" class="form-control" placeholder="Tipo"></div>
+          <div class="col-md-2"><input type="text" id="facDescripcion" class="form-control" placeholder="Descripción"></div>
+          <div class="col-md-2"><input type="date" id="facFecha" class="form-control"></div>
+          <div class="col-md-2"><input type="number" id="facMonto" class="form-control" placeholder="Monto"></div>
           <div class="col-md-1">
             <select id="facMoneda" class="form-select">
               <option value="S/.">S/.</option>
@@ -103,87 +83,52 @@
               <option value="€">€</option>
             </select>
           </div>
-        </div>
-        <div class="mt-2">
-          <button id="btnAgregarFactura" type="button" class="btn btn-primary">Agregar factura</button>
-          <span id="mensajeFactura" class="ms-3 text-success"></span>
-        </div>
-      </form>
-
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead class="table-dark">
-            <tr><th>Proveedor</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Monto</th><th>Acción</th></tr>
-          </thead>
+          <div class="col-md-1"><button type="button" id="btnAgregarFactura" class="btn btn-success w-100">Agregar</button></div>
+        </form>
+        <table class="table table-striped mt-4">
+          <thead><tr><th>Proveedor</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Monto</th><th>Acciones</th></tr></thead>
           <tbody id="listaFacturas"></tbody>
         </table>
-      </div>
-    </section>
+      </section>
 
-    <!-- GASTOS -->
-    <section id="gastos" class="section" style="display:none;">
-      <h2>💰 Gastos</h2>
-
-      <form id="formGasto" class="mb-3">
-        <div class="row g-2">
-          <div class="col-md-4"><input id="gastoNombre" class="form-control" placeholder="Nombre"></div>
-          <div class="col-md-4"><input id="gastoTipo" class="form-control" placeholder="Tipo"></div>
-          <div class="col-md-2"><input id="gastoMonto" type="number" step="0.01" class="form-control" placeholder="0.00"></div>
-          <div class="col-md-2"><input id="gastoFecha" type="date" class="form-control"></div>
-        </div>
-        <div class="mt-2">
-          <button id="btnAgregarGasto" type="button" class="btn btn-primary">Agregar gasto</button>
-          <span id="mensajeGasto" class="ms-3 text-success"></span>
-        </div>
-      </form>
-
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead class="table-dark">
-            <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acción</th></tr>
-          </thead>
+      <!-- GASTOS -->
+      <section id="gastos" class="section">
+        <h3>💰 Gastos</h3>
+        <form id="formGasto" class="row g-3 mt-3">
+          <div class="col-md-3"><input type="text" id="gastoNombre" class="form-control" placeholder="Nombre"></div>
+          <div class="col-md-3"><input type="text" id="gastoTipo" class="form-control" placeholder="Tipo"></div>
+          <div class="col-md-3"><input type="number" id="gastoMonto" class="form-control" placeholder="Monto"></div>
+          <div class="col-md-2"><input type="date" id="gastoFecha" class="form-control"></div>
+          <div class="col-md-1"><button type="button" id="btnAgregarGasto" class="btn btn-warning text-white w-100">Agregar</button></div>
+        </form>
+        <table class="table table-striped mt-4">
+          <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
           <tbody id="listaGastos"></tbody>
         </table>
-      </div>
-    </section>
+      </section>
 
-    <!-- SERVICIOS -->
-    <section id="servicios" class="section" style="display:none;">
-      <h2>🛠 Servicios</h2>
-
-      <form id="formServicio" class="mb-3">
-        <div class="row g-2">
-          <div class="col-md-4"><input id="servNombre" class="form-control" placeholder="Nombre"></div>
-          <div class="col-md-4"><input id="servDescripcion" class="form-control" placeholder="Descripción"></div>
-          <div class="col-md-2"><input id="servPrecio" type="number" step="0.01" class="form-control" placeholder="0.00"></div>
-          <div class="col-md-2"><input id="servFecha" type="date" class="form-control"></div>
-        </div>
-        <div class="mt-2">
-          <button id="btnAgregarServicio" type="button" class="btn btn-primary">Agregar servicio</button>
-          <span id="mensajeServicio" class="ms-3 text-success"></span>
-        </div>
-      </form>
-
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead class="table-dark">
-            <tr><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Fecha</th><th>Acción</th></tr>
-          </thead>
+      <!-- SERVICIOS -->
+      <section id="servicios" class="section">
+        <h3>🛠 Servicios</h3>
+        <form id="formServicio" class="row g-3 mt-3">
+          <div class="col-md-3"><input type="text" id="servNombre" class="form-control" placeholder="Nombre"></div>
+          <div class="col-md-3"><input type="text" id="servDescripcion" class="form-control" placeholder="Descripción"></div>
+          <div class="col-md-3"><input type="number" id="servPrecio" class="form-control" placeholder="Precio"></div>
+          <div class="col-md-2"><input type="date" id="servFecha" class="form-control"></div>
+          <div class="col-md-1"><button type="button" id="btnAgregarServicio" class="btn btn-info text-white w-100">Agregar</button></div>
+        </form>
+        <table class="table table-striped mt-4">
+          <thead><tr><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Fecha</th><th>Acciones</th></tr></thead>
           <tbody id="listaServicios"></tbody>
         </table>
-      </div>
-    </section>
+      </section>
+    </div>
+  </div>
 
-  </main>
-
-  <!-- Firebase + Dashboard JS -->
-  <script type="module" src="firebase.js"></script>
   <script type="module" src="dashboard.js"></script>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
 
 
