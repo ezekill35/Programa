@@ -1,240 +1,256 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Redirigir si no hay usuario logueado
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      window.location.href = 'index.html';
-    }
-  });
+// -------------------- Configuración Firestore --------------------
+const db = firebase.firestore();
 
-  // Logout
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    auth.signOut().then(() => window.location.href = 'index.html');
-  });
+// -------------------- Sidebar Navigation --------------------
+const navBtns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.content-section');
 
-  // Navegación de secciones
-  const navBtns = document.querySelectorAll('.nav-btn');
-  const sections = document.querySelectorAll('.content-section');
-  navBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      navBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const target = btn.dataset.section;
-      sections.forEach(sec => sec.classList.remove('active'));
-      document.getElementById(target).classList.add('active');
-    });
-  });
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 
-  // --- PROVEEDORES ---
-  const formProv = document.getElementById('formProveedor');
-  const tablaProveedores = document.getElementById('tablaProveedores');
-
-  formProv.addEventListener('submit', e => {
-    e.preventDefault();
-    const ruc = document.getElementById('rucProv').value;
-    const nombre = document.getElementById('nombreProv').value;
-    const producto = document.getElementById('productoProv').value;
-    const direccion = document.getElementById('direccionProv').value;
-
-    db.collection('proveedores').add({ ruc, nombre, producto, direccion });
-    formProv.reset();
-  });
-
-  function renderProveedor(doc) {
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-id', doc.id);
-    tr.innerHTML = `
-      <td>${doc.data().ruc}</td>
-      <td>${doc.data().nombre}</td>
-      <td>${doc.data().producto}</td>
-      <td>${doc.data().direccion}</td>
-      <td>
-        <button class="btn btn-warning btn-edit">Editar</button>
-        <button class="btn btn-danger btn-delete">Eliminar</button>
-      </td>
-    `;
-    tablaProveedores.appendChild(tr);
-
-    // Eliminar
-    tr.querySelector('.btn-delete').addEventListener('click', () => {
-      db.collection('proveedores').doc(doc.id).delete();
-    });
-
-    // Editar
-    tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const ruc = prompt('RUC:', doc.data().ruc);
-      const nombre = prompt('Nombre:', doc.data().nombre);
-      const producto = prompt('Producto:', doc.data().producto);
-      const direccion = prompt('Dirección:', doc.data().direccion);
-      db.collection('proveedores').doc(doc.id).update({ ruc, nombre, producto, direccion });
-    });
-  }
-
-  db.collection('proveedores').onSnapshot(snapshot => {
-    tablaProveedores.innerHTML = '';
-    snapshot.forEach(doc => renderProveedor(doc));
-    document.getElementById('countProveedores').innerText = snapshot.size;
-
-    // Actualizar select de proveedores en facturas
-    const provSelect = document.getElementById('proveedorFactura');
-    provSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
-    snapshot.forEach(doc => {
-      const opt = document.createElement('option');
-      opt.value = doc.data().nombre;
-      opt.textContent = doc.data().nombre;
-      provSelect.appendChild(opt);
-    });
-  });
-
-  // --- FACTURAS ---
-  const formFactura = document.getElementById('formFactura');
-  const tablaFacturas = document.getElementById('tablaFacturas');
-
-  formFactura.addEventListener('submit', e => {
-    e.preventDefault();
-    const proveedor = document.getElementById('proveedorFactura').value;
-    const tipo = document.getElementById('tipoFactura').value;
-    const monto = document.getElementById('montoFactura').value;
-    const moneda = document.getElementById('monedaFactura').value;
-    const fecha = document.getElementById('fechaFactura').value;
-    const desc = document.getElementById('descFactura').value;
-
-    db.collection('facturas').add({ proveedor, tipo, monto, moneda, fecha, desc });
-    formFactura.reset();
-  });
-
-  function renderFactura(doc) {
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-id', doc.id);
-    tr.innerHTML = `
-      <td>${doc.data().proveedor}</td>
-      <td>${doc.data().tipo}</td>
-      <td>${doc.data().moneda} ${doc.data().monto}</td>
-      <td>${doc.data().fecha}</td>
-      <td>${doc.data().desc}</td>
-      <td>
-        <button class="btn btn-warning btn-edit">Editar</button>
-        <button class="btn btn-danger btn-delete">Eliminar</button>
-      </td>
-    `;
-    tablaFacturas.appendChild(tr);
-
-    tr.querySelector('.btn-delete').addEventListener('click', () => {
-      db.collection('facturas').doc(doc.id).delete();
-    });
-
-    tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const proveedor = prompt('Proveedor:', doc.data().proveedor);
-      const tipo = prompt('Tipo:', doc.data().tipo);
-      const monto = prompt('Monto:', doc.data().monto);
-      const moneda = prompt('Moneda:', doc.data().moneda);
-      const fecha = prompt('Fecha:', doc.data().fecha);
-      const desc = prompt('Descripción:', doc.data().desc);
-      db.collection('facturas').doc(doc.id).update({ proveedor, tipo, monto, moneda, fecha, desc });
-    });
-  }
-
-  db.collection('facturas').onSnapshot(snapshot => {
-    tablaFacturas.innerHTML = '';
-    snapshot.forEach(doc => renderFactura(doc));
-    document.getElementById('countFacturas').innerText = snapshot.size;
-  });
-
-  // --- GASTOS ---
-  const formGasto = document.getElementById('formGasto');
-  const tablaGastos = document.getElementById('tablaGastos');
-
-  formGasto.addEventListener('submit', e => {
-    e.preventDefault();
-    const nombre = document.getElementById('nombreGasto').value;
-    const tipo = document.getElementById('tipoGasto').value;
-    const monto = document.getElementById('montoGasto').value;
-    const fecha = document.getElementById('fechaGasto').value;
-
-    db.collection('gastos').add({ nombre, tipo, monto, fecha });
-    formGasto.reset();
-  });
-
-  function renderGasto(doc) {
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-id', doc.id);
-    tr.innerHTML = `
-      <td>${doc.data().nombre}</td>
-      <td>${doc.data().tipo}</td>
-      <td>${doc.data().monto}</td>
-      <td>${doc.data().fecha}</td>
-      <td>
-        <button class="btn btn-warning btn-edit">Editar</button>
-        <button class="btn btn-danger btn-delete">Eliminar</button>
-      </td>
-    `;
-    tablaGastos.appendChild(tr);
-
-    tr.querySelector('.btn-delete').addEventListener('click', () => {
-      db.collection('gastos').doc(doc.id).delete();
-    });
-
-    tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const nombre = prompt('Nombre:', doc.data().nombre);
-      const tipo = prompt('Tipo:', doc.data().tipo);
-      const monto = prompt('Monto:', doc.data().monto);
-      const fecha = prompt('Fecha:', doc.data().fecha);
-      db.collection('gastos').doc(doc.id).update({ nombre, tipo, monto, fecha });
-    });
-  }
-
-  db.collection('gastos').onSnapshot(snapshot => {
-    tablaGastos.innerHTML = '';
-    snapshot.forEach(doc => renderGasto(doc));
-    document.getElementById('countGastos').innerText = snapshot.size;
-  });
-
-  // --- SERVICIOS ---
-  const formServ = document.getElementById('formServicio');
-  const tablaServicios = document.getElementById('tablaServicios');
-
-  formServ.addEventListener('submit', e => {
-    e.preventDefault();
-    const nombre = document.getElementById('nombreServ').value;
-    const precio = document.getElementById('precioServ').value;
-    const fecha = document.getElementById('fechaServ').value;
-    const desc = document.getElementById('descServ').value;
-
-    db.collection('servicios').add({ nombre, precio, fecha, desc });
-    formServ.reset();
-  });
-
-  function renderServicios(doc) {
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-id', doc.id);
-    tr.innerHTML = `
-      <td>${doc.data().nombre}</td>
-      <td>${doc.data().precio}</td>
-      <td>${doc.data().fecha}</td>
-      <td>${doc.data().desc}</td>
-      <td>
-        <button class="btn btn-warning btn-edit">Editar</button>
-        <button class="btn btn-danger btn-delete">Eliminar</button>
-      </td>
-    `;
-    tablaServicios.appendChild(tr);
-
-    tr.querySelector('.btn-delete').addEventListener('click', () => {
-      db.collection('servicios').doc(doc.id).delete();
-    });
-
-    tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const nombre = prompt("Nombre:", doc.data().nombre);
-      const precio = prompt("Precio:", doc.data().precio);
-      const fecha = prompt("Fecha:", doc.data().fecha);
-      const desc = prompt("Descripción:", doc.data().desc);
-      db.collection('servicios').doc(doc.id).update({ nombre, precio, fecha, desc });
-    });
-  }
-
-  db.collection('servicios').onSnapshot(snapshot => {
-    tablaServicios.innerHTML = '';
-    snapshot.forEach(doc => renderServicios(doc));
-    document.getElementById('countServicios').innerText = snapshot.size;
+    sections.forEach(sec => sec.style.display = 'none');
+    const sec = document.getElementById(btn.dataset.section);
+    sec.style.display = 'block';
   });
 });
+
+// -------------------- LOGOUT --------------------
+const logoutBtn = document.getElementById('logoutBtn');
+logoutBtn.addEventListener('click', () => {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "index.html";
+  });
+});
+
+// -------------------- PROVEEDORES --------------------
+const formProveedor = document.getElementById('formProveedor');
+const tablaProveedores = document.getElementById('tablaProveedores');
+
+function renderProveedores() {
+  tablaProveedores.innerHTML = '';
+  db.collection('proveedores').orderBy('rucProv').onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const p = doc.data();
+      tablaProveedores.innerHTML += `
+        <tr>
+          <td>${p.rucProv}</td>
+          <td>${p.nombreProv}</td>
+          <td>${p.productoProv}</td>
+          <td>${p.direccionProv}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarProveedor('${doc.id}')">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarProveedor('${doc.id}')">Eliminar</button>
+          </td>
+        </tr>
+      `;
+    });
+    actualizarSelectProveedores();
+  });
+}
+
+formProveedor.addEventListener('submit', e => {
+  e.preventDefault();
+  db.collection('proveedores').add({
+    rucProv: formProveedor.rucProv.value,
+    nombreProv: formProveedor.nombreProv.value,
+    productoProv: formProveedor.productoProv.value,
+    direccionProv: formProveedor.direccionProv.value
+  });
+  formProveedor.reset();
+});
+
+window.eliminarProveedor = function(id){
+  db.collection('proveedores').doc(id).delete();
+}
+
+window.editarProveedor = function(id){
+  const docRef = db.collection('proveedores').doc(id);
+  docRef.get().then(doc => {
+    const p = doc.data();
+    const ruc = prompt("RUC:", p.rucProv) || p.rucProv;
+    const nombre = prompt("Nombre:", p.nombreProv) || p.nombreProv;
+    const producto = prompt("Producto:", p.productoProv) || p.productoProv;
+    const direccion = prompt("Dirección:", p.direccionProv) || p.direccionProv;
+
+    docRef.update({ rucProv: ruc, nombreProv: nombre, productoProv: producto, direccionProv: direccion });
+  });
+}
+
+// -------------------- FACTURAS --------------------
+const formFactura = document.getElementById('formFactura');
+const tablaFacturas = document.getElementById('tablaFacturas');
+const proveedorFactura = document.getElementById('proveedorFactura');
+
+function actualizarSelectProveedores() {
+  proveedorFactura.innerHTML = '';
+  db.collection('proveedores').orderBy('nombreProv').get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const p = doc.data();
+      const option = document.createElement('option');
+      option.value = p.nombreProv;
+      option.textContent = `${p.nombreProv} (${p.rucProv})`;
+      proveedorFactura.appendChild(option);
+    });
+  });
+}
+
+function renderFacturas() {
+  tablaFacturas.innerHTML = '';
+  db.collection('facturas').onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const f = doc.data();
+      tablaFacturas.innerHTML += `
+        <tr>
+          <td>${f.proveedorFactura}</td>
+          <td>${f.tipoFactura}</td>
+          <td>${f.montoFactura} ${f.monedaFactura}</td>
+          <td>${f.fechaFactura}</td>
+          <td>${f.descFactura}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarFactura('${doc.id}')">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarFactura('${doc.id}')">Eliminar</button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+}
+
+formFactura.addEventListener('submit', e => {
+  e.preventDefault();
+  db.collection('facturas').add({
+    proveedorFactura: formFactura.proveedorFactura.value,
+    tipoFactura: formFactura.tipoFactura.value,
+    montoFactura: formFactura.montoFactura.value,
+    monedaFactura: formFactura.monedaFactura.value,
+    fechaFactura: formFactura.fechaFactura.value,
+    descFactura: formFactura.descFactura.value
+  });
+  formFactura.reset();
+});
+
+window.eliminarFactura = function(id) { db.collection('facturas').doc(id).delete(); }
+window.editarFactura = function(id) {
+  const docRef = db.collection('facturas').doc(id);
+  docRef.get().then(doc => {
+    const f = doc.data();
+    const proveedor = prompt("Proveedor:", f.proveedorFactura) || f.proveedorFactura;
+    const tipo = prompt("Tipo:", f.tipoFactura) || f.tipoFactura;
+    const monto = prompt("Monto:", f.montoFactura) || f.montoFactura;
+    const moneda = prompt("Moneda:", f.monedaFactura) || f.monedaFactura;
+    const fecha = prompt("Fecha:", f.fechaFactura) || f.fechaFactura;
+    const desc = prompt("Descripción:", f.descFactura) || f.descFactura;
+
+    docRef.update({ proveedorFactura: proveedor, tipoFactura: tipo, montoFactura: monto, monedaFactura: moneda, fechaFactura: fecha, descFactura: desc });
+  });
+}
+
+// -------------------- GASTOS --------------------
+const formGasto = document.getElementById('formGasto');
+const tablaGastos = document.getElementById('tablaGastos');
+
+formGasto.addEventListener('submit', e => {
+  e.preventDefault();
+  db.collection('gastos').add({
+    nombreGasto: formGasto.nombreGasto.value,
+    tipoGasto: formGasto.tipoGasto.value,
+    montoGasto: formGasto.montoGasto.value,
+    fechaGasto: formGasto.fechaGasto.value
+  });
+  formGasto.reset();
+});
+
+function renderGastos() {
+  tablaGastos.innerHTML = '';
+  db.collection('gastos').onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const g = doc.data();
+      tablaGastos.innerHTML += `
+        <tr>
+          <td>${g.nombreGasto}</td>
+          <td>${g.tipoGasto}</td>
+          <td>${g.montoGasto}</td>
+          <td>${g.fechaGasto}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarGasto('${doc.id}')">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarGasto('${doc.id}')">Eliminar</button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+}
+
+window.eliminarGasto = id => db.collection('gastos').doc(id).delete();
+window.editarGasto = id => {
+  const docRef = db.collection('gastos').doc(id);
+  docRef.get().then(doc => {
+    const g = doc.data();
+    const nombre = prompt("Nombre:", g.nombreGasto) || g.nombreGasto;
+    const tipo = prompt("Tipo:", g.tipoGasto) || g.tipoGasto;
+    const monto = prompt("Monto:", g.montoGasto) || g.montoGasto;
+    const fecha = prompt("Fecha:", g.fechaGasto) || g.fechaGasto;
+    docRef.update({ nombreGasto: nombre, tipoGasto: tipo, montoGasto: monto, fechaGasto: fecha });
+  });
+}
+
+// -------------------- SERVICIOS --------------------
+const formServicio = document.getElementById('formServicio');
+const tablaServicios = document.getElementById('tablaServicios');
+
+formServicio.addEventListener('submit', e => {
+  e.preventDefault();
+  db.collection('servicios').add({
+    nombreServ: formServicio.nombreServ.value,
+    precioServ: formServicio.precioServ.value,
+    fechaServ: formServicio.fechaServ.value,
+    descServ: formServicio.descServ.value
+  });
+  formServicio.reset();
+});
+
+function renderServicios() {
+  tablaServicios.innerHTML = '';
+  db.collection('servicios').onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const s = doc.data();
+      tablaServicios.innerHTML += `
+        <tr>
+          <td>${s.nombreServ}</td>
+          <td>${s.precioServ}</td>
+          <td>${s.fechaServ}</td>
+          <td>${s.descServ}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarServicio('${doc.id}')">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarServicio('${doc.id}')">Eliminar</button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+}
+
+window.eliminarServicio = id => db.collection('servicios').doc(id).delete();
+window.editarServicio = id => {
+  const docRef = db.collection('servicios').doc(id);
+  docRef.get().then(doc => {
+    const s = doc.data();
+    const nombre = prompt("Nombre:", s.nombreServ) || s.nombreServ;
+    const precio = prompt("Precio:", s.precioServ) || s.precioServ;
+    const fecha = prompt("Fecha:", s.fechaServ) || s.fechaServ;
+    const desc = prompt("Descripción:", s.descServ) || s.descServ;
+    docRef.update({ nombreServ: nombre, precioServ: precio, fechaServ: fecha, descServ: desc });
+  });
+}
+
+// -------------------- Inicialización --------------------
+document.addEventListener('DOMContentLoaded', () => {
+  renderProveedores();
+  renderFacturas();
+  renderGastos();
+  renderServicios();
+});
+
 
