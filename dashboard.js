@@ -1,31 +1,81 @@
 import { db } from "./firebase.js";
-import { collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js";
+import { collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-// Colecciones
+// ------------------ COLECCIONES ------------------
 const proveedoresCol = collection(db, 'proveedores');
 const facturasCol = collection(db, 'facturas');
+const gastosCol = collection(db, 'gastos');
+const serviciosCol = collection(db, 'servicios');
+
+// ------------------ ELEMENTOS ------------------
+const tablaProv = document.getElementById('tablaProveedores');
+const tablaFac = document.getElementById('tablaFacturas');
+const tablaGasto = document.getElementById('tablaGastos');
+const tablaServ = document.getElementById('tablaServicios');
+
+const formProv = document.getElementById('formProveedor');
+const formFac = document.getElementById('formFactura');
+const formGasto = document.getElementById('formGasto');
+const formServ = document.getElementById('formServicio');
 
 const proveedorSelect = document.getElementById('proveedorFactura');
-const formFac = document.getElementById('formFactura');
-const tablaFac = document.getElementById('tablaFacturas');
 
 // ------------------ CARGAR PROVEEDORES EN SELECT ------------------
 onSnapshot(proveedoresCol, (snapshot) => {
   proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(doc => {
-    const data = doc.data();
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
     const option = document.createElement('option');
-    option.value = doc.id; // ID del proveedor
+    option.value = docSnap.id;
     option.textContent = `${data.nombre} (${data.ruc})`;
     proveedorSelect.appendChild(option);
   });
 });
 
-// ------------------ AGREGAR FACTURA ------------------
-formFac.addEventListener('submit', async (e) => {
+// ------------------ CRUD PROVEEDORES ------------------
+formProv.addEventListener('submit', async e=>{
+  e.preventDefault();
+  await addDoc(proveedoresCol, {
+    ruc: formProv.rucProv.value,
+    nombre: formProv.nombreProv.value,
+    producto: formProv.productoProv.value,
+    direccion: formProv.direccionProv.value
+  });
+  formProv.reset();
+});
+
+onSnapshot(proveedoresCol, snapshot=>{
+  tablaProv.innerHTML = '';
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${data.ruc}</td>
+      <td>${data.nombre}</td>
+      <td>${data.producto}</td>
+      <td>${data.direccion}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editProv">Editar</button>
+        <button class="btn btn-sm btn-danger delProv">Eliminar</button>
+      </td>`;
+    tablaProv.appendChild(tr);
+
+    tr.querySelector('.delProv').addEventListener('click', ()=> deleteDoc(doc(db,'proveedores',docSnap.id)));
+    tr.querySelector('.editProv').addEventListener('click', async ()=>{
+      const r = prompt("RUC:", data.ruc);
+      const n = prompt("Nombre:", data.nombre);
+      const p = prompt("Producto:", data.producto);
+      const d = prompt("Dirección:", data.direccion);
+      if(r && n && p && d) await updateDoc(doc(db,'proveedores',docSnap.id), {ruc:r,nombre:n,producto:p,direccion:d});
+    });
+  });
+});
+
+// ------------------ CRUD FACTURAS ------------------
+formFac.addEventListener('submit', async e=>{
   e.preventDefault();
   const proveedorId = proveedorSelect.value;
-  if(!proveedorId) { alert("Seleccione un proveedor"); return; }
+  if(!proveedorId){ alert("Seleccione un proveedor"); return; }
 
   await addDoc(facturasCol, {
     proveedor: proveedorId,
@@ -35,25 +85,22 @@ formFac.addEventListener('submit', async (e) => {
     fecha: formFac.fechaFactura.value,
     descripcion: formFac.descFactura.value
   });
-
   formFac.reset();
 });
 
-// ------------------ MOSTRAR FACTURAS ------------------
-onSnapshot(facturasCol, async (snapshot) => {
-  tablaFac.innerHTML = '';
+onSnapshot(facturasCol, async snapshot=>{
+  tablaFac.innerHTML='';
   for(const docSnap of snapshot.docs){
     const data = docSnap.data();
-    // Obtener nombre del proveedor en tiempo real
-    const provDoc = await proveedoresCol.doc(data.proveedor).get(); // Si usas modular: usa getDoc()
-    const provNombre = provDoc.exists ? provDoc.data().nombre : "Desconocido";
-    const provRuc = provDoc.exists ? provDoc.data().ruc : "--";
+    const provDoc = await getDoc(doc(db,'proveedores',data.proveedor));
+    const provNombre = provDoc.exists() ? provDoc.data().nombre : "Desconocido";
+    const provRuc = provDoc.exists() ? provDoc.data().ruc : "--";
 
     const tr = document.createElement('tr');
-    tr.innerHTML = `
+    tr.innerHTML=`
       <td>${provNombre} (${provRuc})</td>
       <td>${data.tipo}</td>
-      <td>${data.monto.toLocaleString('es-PE', {style:'currency', currency:data.moneda})}</td>
+      <td>${data.monto.toLocaleString('es-PE',{style:'currency',currency:data.moneda})}</td>
       <td>${data.fecha}</td>
       <td>${data.descripcion}</td>
       <td>
@@ -62,10 +109,110 @@ onSnapshot(facturasCol, async (snapshot) => {
       </td>`;
     tablaFac.appendChild(tr);
 
-    tr.querySelector('.delFac').addEventListener('click', ()=> deleteDoc(doc(db, 'facturas', docSnap.id)));
+    tr.querySelector('.delFac').addEventListener('click', ()=> deleteDoc(doc(db,'facturas',docSnap.id)));
+    tr.querySelector('.editFac').addEventListener('click', async ()=>{
+      const t = prompt("Tipo:", data.tipo);
+      const m = prompt("Monto:", data.monto);
+      const mon = prompt("Moneda (PEN/USD):", data.moneda);
+      const f = prompt("Fecha:", data.fecha);
+      const d = prompt("Descripción:", data.descripcion);
+      const pId = prompt("Proveedor ID:", data.proveedor);
+      if(t && m && f && d && pId && mon) await updateDoc(doc(db,'facturas',docSnap.id), {
+        tipo: t,
+        monto: parseFloat(m),
+        moneda: mon,
+        fecha: f,
+        descripcion: d,
+        proveedor: pId
+      });
+    });
   }
 });
 
+// ------------------ CRUD GASTOS ------------------
+formGasto.addEventListener('submit', async e=>{
+  e.preventDefault();
+  await addDoc(gastosCol,{
+    nombre: formGasto.nombreGasto.value,
+    tipo: formGasto.tipoGasto.value,
+    monto: parseFloat(formGasto.montoGasto.value),
+    fecha: formGasto.fechaGasto.value
+  });
+  formGasto.reset();
+});
 
+onSnapshot(gastosCol, snapshot=>{
+  tablaGasto.innerHTML='';
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td>${data.nombre}</td>
+      <td>${data.tipo}</td>
+      <td>${data.monto.toLocaleString('es-PE',{style:'currency',currency:'PEN'})}</td>
+      <td>${data.fecha}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editGasto">Editar</button>
+        <button class="btn btn-sm btn-danger delGasto">Eliminar</button>
+      </td>`;
+    tablaGasto.appendChild(tr);
 
+    tr.querySelector('.delGasto').addEventListener('click', ()=> deleteDoc(doc(db,'gastos',docSnap.id)));
+    tr.querySelector('.editGasto').addEventListener('click', async ()=>{
+      const n = prompt("Nombre:", data.nombre);
+      const t = prompt("Tipo:", data.tipo);
+      const m = prompt("Monto:", data.monto);
+      const f = prompt("Fecha:", data.fecha);
+      if(n && t && m && f) await updateDoc(doc(db,'gastos',docSnap.id), {nombre:n,tipo:t,monto:parseFloat(m),fecha:f});
+    });
+  });
+});
+
+// ------------------ CRUD SERVICIOS ------------------
+formServ.addEventListener('submit', async e=>{
+  e.preventDefault();
+  await addDoc(serviciosCol,{
+    nombre: formServ.nombreServ.value,
+    precio: parseFloat(formServ.precioServ.value),
+    fecha: formServ.fechaServ.value,
+    descripcion: formServ.descServ.value
+  });
+  formServ.reset();
+});
+
+onSnapshot(serviciosCol, snapshot=>{
+  tablaServ.innerHTML='';
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td>${data.nombre}</td>
+      <td>${data.precio.toLocaleString('es-PE',{style:'currency',currency:'PEN'})}</td>
+      <td>${data.fecha}</td>
+      <td>${data.descripcion}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editServ">Editar</button>
+        <button class="btn btn-sm btn-danger delServ">Eliminar</button>
+      </td>`;
+    tablaServ.appendChild(tr);
+
+    tr.querySelector('.delServ').addEventListener('click', ()=> deleteDoc(doc(db,'servicios',docSnap.id)));
+    tr.querySelector('.editServ').addEventListener('click', async ()=>{
+      const n = prompt("Nombre:", data.nombre);
+      const p = prompt("Precio:", data.precio);
+      const f = prompt("Fecha:", data.fecha);
+      const d = prompt("Descripción:", data.descripcion);
+      if(n && p && f && d) await updateDoc(doc(db,'servicios',docSnap.id), {nombre:n,precio:parseFloat(p),fecha:f,descripcion:d});
+    });
+  });
+});
+
+// ------------------ CONTADORES ------------------
+function actualizarContadores(){
+  getDocs(proveedoresCol).then(s=> document.getElementById('countProveedores').textContent = s.size);
+  getDocs(facturasCol).then(s=> document.getElementById('countFacturas').textContent = s.size);
+  getDocs(gastosCol).then(s=> document.getElementById('countGastos').textContent = s.size);
+  getDocs(serviciosCol).then(s=> document.getElementById('countServicios').textContent = s.size);
+}
+setInterval(actualizarContadores, 1000);
 
