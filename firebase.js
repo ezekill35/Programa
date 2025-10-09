@@ -1,3 +1,8 @@
+// Importa Firebase como módulo
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-firestore.js";
+
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -9,18 +14,15 @@ const firebaseConfig = {
   measurementId: "G-0WMLRY8FGM"
 };
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
+// Inicializa Firebase
+const app = initializeApp(firebaseConfig);
 
-// Variables globales
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Autenticación y Firestore
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-
-
-
-
-
+// Exporta para usar en otros archivos
+export { auth, db };
 
 
 
