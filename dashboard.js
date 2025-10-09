@@ -1,245 +1,265 @@
-import { auth, db } from "./firebase.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// ============================
+// 📘 DASHBOARD.JS — DISCOVERY PETS
+// ============================
 
-// ========================
-// 🔒 Verificar sesión
-// ========================
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "index.html";
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ Dashboard Discovery Pets iniciado correctamente.");
+
+  // Referencias principales
+  const secciones = document.querySelectorAll(".seccion");
+  const botonesMenu = document.querySelectorAll(".menu-opcion");
+  const buscadorInput = document.getElementById("buscador");
+  const cerrarSesionBtn = document.getElementById("cerrarSesion");
+
+  // Mostrar sección inicial (Facturas)
+  mostrarSeccion("facturas");
+
+  // 🔹 Navegación entre secciones
+  botonesMenu.forEach((boton) => {
+    boton.addEventListener("click", (e) => {
+      e.preventDefault();
+      const seccion = boton.getAttribute("data-seccion");
+      mostrarSeccion(seccion);
+    });
+  });
+
+  function mostrarSeccion(nombre) {
+    secciones.forEach((sec) => {
+      sec.style.display = sec.id === nombre ? "block" : "none";
+    });
+  }
+
+  // ============================
+  // 🔍 Buscador Global
+  // ============================
+  if (buscadorInput) {
+    buscadorInput.addEventListener("input", (e) => {
+      const valor = e.target.value.toLowerCase();
+      filtrarRegistros(valor);
+    });
+  }
+
+  function filtrarRegistros(valor) {
+    const filas = document.querySelectorAll("table tbody tr");
+    filas.forEach((fila) => {
+      const texto = fila.textContent.toLowerCase();
+      fila.style.display = texto.includes(valor) ? "" : "none";
+    });
+  }
+
+  // ============================
+  // 🚪 Cerrar Sesión
+  // ============================
+  if (cerrarSesionBtn) {
+    cerrarSesionBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("usuarioActivo");
+      window.location.href = "index.html";
+    });
+  }
+
+  // ============================
+  // 🧾 REGISTRO DE FACTURAS
+  // ============================
+  const formFactura = document.getElementById("formFactura");
+  const tablaFacturas = document.querySelector(".tabla-facturas tbody");
+
+  if (formFactura && tablaFacturas) {
+    formFactura.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const numero = formFactura.numero.value.trim();
+      const proveedor = formFactura.proveedor.value.trim();
+      const producto = formFactura.producto.value.trim();
+      const monto = parseFloat(formFactura.monto.value.trim() || 0).toFixed(2);
+      const moneda = formFactura.moneda.value;
+      const tipo = formFactura.tipo.value;
+
+      if (!numero || !proveedor || !producto) {
+        alert("Por favor, complete todos los campos de la factura.");
+        return;
+      }
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${numero}</td>
+        <td>${proveedor}</td>
+        <td>${producto}</td>
+        <td>${monto} ${moneda}</td>
+        <td>${tipo}</td>
+        <td>
+          <button class="btn-editar">✏️</button>
+          <button class="btn-eliminar">🗑️</button>
+        </td>
+      `;
+      tablaFacturas.appendChild(fila);
+      formFactura.reset();
+    });
+
+    tablaFacturas.addEventListener("click", (e) => {
+      if (e.target.classList.contains("btn-eliminar")) {
+        e.target.closest("tr").remove();
+      } else if (e.target.classList.contains("btn-editar")) {
+        const fila = e.target.closest("tr");
+        const celdas = fila.querySelectorAll("td");
+
+        formFactura.numero.value = celdas[0].textContent;
+        formFactura.proveedor.value = celdas[1].textContent;
+        formFactura.producto.value = celdas[2].textContent;
+        formFactura.monto.value = parseFloat(celdas[3].textContent);
+        formFactura.tipo.value = celdas[4].textContent;
+
+        fila.remove();
+      }
+    });
+  }
+
+  // ============================
+  // 👷 REGISTRO DE PROVEEDORES
+  // ============================
+  const formProveedor = document.getElementById("formProveedor");
+  const tablaProveedores = document.querySelector(".tabla-proveedores tbody");
+
+  if (formProveedor && tablaProveedores) {
+    formProveedor.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const nombre = formProveedor.nombre.value.trim();
+      const ruc = formProveedor.ruc.value.trim();
+      const telefono = formProveedor.telefono.value.trim();
+
+      if (!nombre || !ruc || !telefono) {
+        alert("Por favor, complete todos los campos del proveedor.");
+        return;
+      }
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${nombre}</td>
+        <td>${ruc}</td>
+        <td>${telefono}</td>
+        <td>
+          <button class="btn-editar">✏️</button>
+          <button class="btn-eliminar">🗑️</button>
+        </td>
+      `;
+      tablaProveedores.appendChild(fila);
+      formProveedor.reset();
+    });
+
+    tablaProveedores.addEventListener("click", (e) => {
+      if (e.target.classList.contains("btn-eliminar")) {
+        e.target.closest("tr").remove();
+      } else if (e.target.classList.contains("btn-editar")) {
+        const fila = e.target.closest("tr");
+        const celdas = fila.querySelectorAll("td");
+        formProveedor.nombre.value = celdas[0].textContent;
+        formProveedor.ruc.value = celdas[1].textContent;
+        formProveedor.telefono.value = celdas[2].textContent;
+        fila.remove();
+      }
+    });
+  }
+
+  // ============================
+  // 📦 REGISTRO DE PRODUCTOS
+  // ============================
+  const formProducto = document.getElementById("formProducto");
+  const tablaProductos = document.querySelector(".tabla-productos tbody");
+
+  if (formProducto && tablaProductos) {
+    formProducto.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const nombre = formProducto.nombre.value.trim();
+      const descripcion = formProducto.descripcion.value.trim();
+      const cantidad = formProducto.cantidad.value.trim();
+      const unidad = formProducto.unidad.value.trim();
+      const valor = parseFloat(formProducto.valor.value.trim() || 0).toFixed(2);
+
+      if (!nombre || !descripcion || !cantidad || !unidad) {
+        alert("Por favor, complete todos los campos del producto.");
+        return;
+      }
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${nombre}</td>
+        <td>${descripcion}</td>
+        <td>${cantidad}</td>
+        <td>${unidad}</td>
+        <td>${valor}</td>
+        <td>
+          <button class="btn-editar">✏️</button>
+          <button class="btn-eliminar">🗑️</button>
+        </td>
+      `;
+      tablaProductos.appendChild(fila);
+      formProducto.reset();
+    });
+
+    tablaProductos.addEventListener("click", (e) => {
+      if (e.target.classList.contains("btn-eliminar")) {
+        e.target.closest("tr").remove();
+      } else if (e.target.classList.contains("btn-editar")) {
+        const fila = e.target.closest("tr");
+        const celdas = fila.querySelectorAll("td");
+
+        formProducto.nombre.value = celdas[0].textContent;
+        formProducto.descripcion.value = celdas[1].textContent;
+        formProducto.cantidad.value = celdas[2].textContent;
+        formProducto.unidad.value = celdas[3].textContent;
+        formProducto.valor.value = celdas[4].textContent;
+        fila.remove();
+      }
+    });
+  }
+
+  // ============================
+  // 💸 REGISTRO DE GASTOS
+  // ============================
+  const formGasto = document.getElementById("formGasto");
+  const tablaGastos = document.querySelector(".tabla-gastos tbody");
+
+  if (formGasto && tablaGastos) {
+    formGasto.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const descripcion = formGasto.descripcion.value.trim();
+      const monto = parseFloat(formGasto.monto.value.trim() || 0).toFixed(2);
+
+      if (!descripcion || !monto) {
+        alert("Por favor, complete los campos del gasto.");
+        return;
+      }
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${descripcion}</td>
+        <td>${monto}</td>
+        <td>
+          <button class="btn-eliminar">🗑️</button>
+        </td>
+      `;
+      tablaGastos.appendChild(fila);
+      formGasto.reset();
+    });
+
+    tablaGastos.addEventListener("click", (e) => {
+      if (e.target.classList.contains("btn-eliminar")) {
+        e.target.closest("tr").remove();
+      }
+    });
+  }
+
+  // ============================
+  // 📊 GENERAR REPORTE
+  // ============================
+  const btnGenerarReporte = document.getElementById("generarReporte");
+  if (btnGenerarReporte) {
+    btnGenerarReporte.addEventListener("click", () => {
+      alert("🧾 Reporte generado correctamente (ejemplo funcional).");
+    });
   }
 });
-
-// ========================
-// 🚪 Cerrar sesión
-// ========================
-const btnCerrarSesion = document.getElementById("btnCerrarSesion");
-if (btnCerrarSesion) {
-  btnCerrarSesion.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-  });
-}
-
-// ========================
-// 🌐 Navegación dinámica
-// ========================
-const secciones = {
-  btnProveedor: "tplProveedor",
-  btnFactura: "tplFactura",
-  btnProducto: "tplProducto",
-  btnGastos: "tplGastos",
-  btnReporte: "tplReporte",
-};
-
-const contenido = document.getElementById("contenido");
-
-// función para cargar plantilla sin recargar la página
-function cargarSeccion(idBoton) {
-  const templateId = secciones[idBoton];
-  const template = document.getElementById(templateId);
-  if (template && contenido) {
-    contenido.innerHTML = "";
-    contenido.appendChild(template.content.cloneNode(true));
-    inicializarEventos(templateId); // inicializa eventos según la sección
-  }
-}
-
-// asignar eventos a los botones de la barra lateral
-Object.keys(secciones).forEach(idBoton => {
-  const boton = document.getElementById(idBoton);
-  if (boton) {
-    boton.addEventListener("click", () => cargarSeccion(idBoton));
-  }
-});
-
-// ========================
-// 📋 Inicialización de formularios
-// ========================
-function inicializarEventos(templateId) {
-  switch (templateId) {
-    case "tplProveedor":
-      inicializarProveedor();
-      break;
-    case "tplFactura":
-      inicializarFactura();
-      break;
-    case "tplProducto":
-      inicializarProducto();
-      break;
-    case "tplGastos":
-      inicializarGasto();
-      break;
-    case "tplReporte":
-      inicializarReporte();
-      break;
-  }
-}
-
-// ========================
-// 👥 PROVEEDORES
-// ========================
-function inicializarProveedor() {
-  const form = document.getElementById("formProveedor");
-  const proveedoresRef = collection(db, "proveedores");
-
-  if (form) {
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      const data = {
-        nombre: form["provNombre"].value,
-        ruc: form["provRuc"].value,
-        telefono: form["provTelefono"].value
-      };
-      await addDoc(proveedoresRef, data);
-      alert("Proveedor guardado correctamente ✅");
-      form.reset();
-    });
-  }
-}
-
-// ========================
-// 🧾 FACTURAS
-// ========================
-function inicializarFactura() {
-  const form = document.getElementById("formFactura");
-  const facturasRef = collection(db, "facturas");
-  const proveedorSelect = document.getElementById("facturaProveedor");
-
-  // Cargar proveedores en el select
-  onSnapshot(collection(db, "proveedores"), snapshot => {
-    if (proveedorSelect) {
-      proveedorSelect.innerHTML = "<option value=''>Selecciona proveedor</option>";
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const option = document.createElement("option");
-        option.value = data.nombre;
-        option.textContent = data.nombre;
-        proveedorSelect.appendChild(option);
-      });
-    }
-  });
-
-  if (form) {
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      const data = {
-        numero: form["facturaNumero"].value,
-        proveedor: form["facturaProveedor"].value,
-        monto: parseFloat(form["facturaMonto"].value),
-        tipoMoneda: form["tipoMoneda"].value,
-        tipoFactura: form["tipoFactura"].value,
-        fecha: new Date().toISOString(),
-      };
-      await addDoc(facturasRef, data);
-      alert("Factura registrada correctamente ✅");
-      form.reset();
-    });
-  }
-}
-
-// ========================
-// 📦 PRODUCTOS
-// ========================
-function inicializarProducto() {
-  const form = document.getElementById("formProducto");
-  const productosRef = collection(db, "productos");
-
-  if (form) {
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      const data = {
-        nombre: form["prodNombre"].value,
-        descripcion: form["prodDescripcion"].value,
-        cantidad: parseFloat(form["prodCantidad"].value),
-        unidad: form["prodUnidad"].value,
-        valorUnitario: parseFloat(form["prodValor"].value)
-      };
-      await addDoc(productosRef, data);
-      alert("Producto registrado correctamente ✅");
-      form.reset();
-    });
-  }
-}
-
-// ========================
-// 💸 GASTOS
-// ========================
-function inicializarGasto() {
-  const form = document.getElementById("formGasto");
-  const gastosRef = collection(db, "gastos");
-
-  if (form) {
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      const data = {
-        descripcion: form["gastoDescripcion"].value,
-        monto: parseFloat(form["gastoMonto"].value),
-        fecha: form["gastoFecha"].value
-      };
-      await addDoc(gastosRef, data);
-      alert("Gasto registrado correctamente ✅");
-      form.reset();
-    });
-  }
-}
-
-// ========================
-// 📊 REPORTE
-// ========================
-async function inicializarReporte() {
-  const card = document.querySelector("#contenido .card");
-  if (!card) return;
-
-  const facturasSnap = await getDocs(collection(db, "facturas"));
-  const productosSnap = await getDocs(collection(db, "productos"));
-  const gastosSnap = await getDocs(collection(db, "gastos"));
-
-  let totalFacturas = 0, totalGastos = 0, totalProductos = 0;
-  facturasSnap.forEach(d => totalFacturas += parseFloat(d.data().monto || 0));
-  gastosSnap.forEach(d => totalGastos += parseFloat(d.data().monto || 0));
-  productosSnap.forEach(d => totalProductos += parseFloat(d.data().valorUnitario || 0) * (d.data().cantidad || 1));
-
-  const resumen = document.createElement("div");
-  resumen.classList.add("mt-3");
-  resumen.innerHTML = `
-    <h5>Resumen Financiero</h5>
-    <ul>
-      <li>Total Facturas: S/ ${totalFacturas.toFixed(2)}</li>
-      <li>Total Productos: S/ ${totalProductos.toFixed(2)}</li>
-      <li>Total Gastos: S/ ${totalGastos.toFixed(2)}</li>
-    </ul>
-  `;
-  card.appendChild(resumen);
-}
-
-// ========================
-// 🔍 BUSCADOR GLOBAL
-// ========================
-const buscador = document.getElementById("globalSearch");
-if (buscador) {
-  buscador.addEventListener("input", async e => {
-    const valor = e.target.value.toLowerCase().trim();
-    if (!valor) return;
-
-    const facturasSnap = await getDocs(collection(db, "facturas"));
-    const resultados = [];
-    facturasSnap.forEach(doc => {
-      const data = doc.data();
-      if (
-        data.numero?.toLowerCase().includes(valor) ||
-        data.proveedor?.toLowerCase().includes(valor)
-      ) resultados.push(data);
-    });
-
-    if (resultados.length > 0) {
-      contenido.innerHTML = `<div class="card"><h5>Resultados de búsqueda</h5><ul class="list-group mt-3">${
-        resultados.map(r => `<li class="list-group-item">Factura ${r.numero} - ${r.proveedor} - ${r.tipoMoneda} ${r.monto}</li>`).join("")
-      }</ul></div>`;
-    } else {
-      contenido.innerHTML = `<div class="card"><p>No se encontraron resultados.</p></div>`;
-    }
-  });
-}
 
