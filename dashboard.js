@@ -1,24 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // ---------- NAVEGACIÓN ----------
+  // Redirigir si no hay usuario logueado
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = 'index.html';
+    }
+  });
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    auth.signOut().then(() => window.location.href = 'index.html');
+  });
+
+  // Navegación de secciones
   const navBtns = document.querySelectorAll('.nav-btn');
   const sections = document.querySelectorAll('.content-section');
-
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       navBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      const target = btn.dataset.section;
       sections.forEach(sec => sec.classList.remove('active'));
-      document.getElementById(btn.dataset.section).classList.add('active');
+      document.getElementById(target).classList.add('active');
     });
   });
 
-  // ---------- CERRAR SESIÓN ----------
-  const logoutBtn = document.getElementById('logoutBtn');
-  logoutBtn.addEventListener('click', () => {
-    auth.signOut().then(() => window.location.href = 'index.html');
-  });
-
-  // ---------- PROVEEDORES ----------
+  // --- PROVEEDORES ---
   const formProv = document.getElementById('formProveedor');
   const tablaProveedores = document.getElementById('tablaProveedores');
 
@@ -33,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formProv.reset();
   });
 
-  function renderProveedores(doc) {
+  function renderProveedor(doc) {
     const tr = document.createElement('tr');
     tr.setAttribute('data-id', doc.id);
     tr.innerHTML = `
@@ -48,38 +54,38 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     tablaProveedores.appendChild(tr);
 
-    // ELIMINAR
+    // Eliminar
     tr.querySelector('.btn-delete').addEventListener('click', () => {
       db.collection('proveedores').doc(doc.id).delete();
     });
 
-    // EDITAR
+    // Editar
     tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const ruc = prompt("RUC:", doc.data().ruc);
-      const nombre = prompt("Nombre:", doc.data().nombre);
-      const producto = prompt("Producto:", doc.data().producto);
-      const direccion = prompt("Dirección:", doc.data().direccion);
+      const ruc = prompt('RUC:', doc.data().ruc);
+      const nombre = prompt('Nombre:', doc.data().nombre);
+      const producto = prompt('Producto:', doc.data().producto);
+      const direccion = prompt('Dirección:', doc.data().direccion);
       db.collection('proveedores').doc(doc.id).update({ ruc, nombre, producto, direccion });
     });
   }
 
-  // Firestore en tiempo real
   db.collection('proveedores').onSnapshot(snapshot => {
     tablaProveedores.innerHTML = '';
-    snapshot.forEach(doc => renderProveedores(doc));
+    snapshot.forEach(doc => renderProveedor(doc));
     document.getElementById('countProveedores').innerText = snapshot.size;
-    // Actualizar select proveedores en factura
-    const select = document.getElementById('proveedorFactura');
-    select.innerHTML = '<option value="">Seleccione proveedor</option>';
+
+    // Actualizar select de proveedores en facturas
+    const provSelect = document.getElementById('proveedorFactura');
+    provSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
     snapshot.forEach(doc => {
       const opt = document.createElement('option');
       opt.value = doc.data().nombre;
-      opt.textContent = `${doc.data().nombre} (${doc.data().ruc})`;
-      select.appendChild(opt);
+      opt.textContent = doc.data().nombre;
+      provSelect.appendChild(opt);
     });
   });
 
-  // ---------- FACTURAS ----------
+  // --- FACTURAS ---
   const formFactura = document.getElementById('formFactura');
   const tablaFacturas = document.getElementById('tablaFacturas');
 
@@ -96,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formFactura.reset();
   });
 
-  function renderFacturas(doc) {
+  function renderFactura(doc) {
     const tr = document.createElement('tr');
     tr.setAttribute('data-id', doc.id);
     tr.innerHTML = `
@@ -117,23 +123,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const proveedor = prompt("Proveedor:", doc.data().proveedor);
-      const tipo = prompt("Tipo:", doc.data().tipo);
-      const monto = prompt("Monto:", doc.data().monto);
-      const moneda = prompt("Moneda:", doc.data().moneda);
-      const fecha = prompt("Fecha:", doc.data().fecha);
-      const desc = prompt("Descripción:", doc.data().desc);
+      const proveedor = prompt('Proveedor:', doc.data().proveedor);
+      const tipo = prompt('Tipo:', doc.data().tipo);
+      const monto = prompt('Monto:', doc.data().monto);
+      const moneda = prompt('Moneda:', doc.data().moneda);
+      const fecha = prompt('Fecha:', doc.data().fecha);
+      const desc = prompt('Descripción:', doc.data().desc);
       db.collection('facturas').doc(doc.id).update({ proveedor, tipo, monto, moneda, fecha, desc });
     });
   }
 
   db.collection('facturas').onSnapshot(snapshot => {
     tablaFacturas.innerHTML = '';
-    snapshot.forEach(doc => renderFacturas(doc));
+    snapshot.forEach(doc => renderFactura(doc));
     document.getElementById('countFacturas').innerText = snapshot.size;
   });
 
-  // ---------- GASTOS ----------
+  // --- GASTOS ---
   const formGasto = document.getElementById('formGasto');
   const tablaGastos = document.getElementById('tablaGastos');
 
@@ -143,11 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const tipo = document.getElementById('tipoGasto').value;
     const monto = document.getElementById('montoGasto').value;
     const fecha = document.getElementById('fechaGasto').value;
+
     db.collection('gastos').add({ nombre, tipo, monto, fecha });
     formGasto.reset();
   });
 
-  function renderGastos(doc) {
+  function renderGasto(doc) {
     const tr = document.createElement('tr');
     tr.setAttribute('data-id', doc.id);
     tr.innerHTML = `
@@ -167,21 +174,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     tr.querySelector('.btn-edit').addEventListener('click', () => {
-      const nombre = prompt("Nombre:", doc.data().nombre);
-      const tipo = prompt("Tipo:", doc.data().tipo);
-      const monto = prompt("Monto:", doc.data().monto);
-      const fecha = prompt("Fecha:", doc.data().fecha);
+      const nombre = prompt('Nombre:', doc.data().nombre);
+      const tipo = prompt('Tipo:', doc.data().tipo);
+      const monto = prompt('Monto:', doc.data().monto);
+      const fecha = prompt('Fecha:', doc.data().fecha);
       db.collection('gastos').doc(doc.id).update({ nombre, tipo, monto, fecha });
     });
   }
 
   db.collection('gastos').onSnapshot(snapshot => {
     tablaGastos.innerHTML = '';
-    snapshot.forEach(doc => renderGastos(doc));
+    snapshot.forEach(doc => renderGasto(doc));
     document.getElementById('countGastos').innerText = snapshot.size;
   });
 
-  // ---------- SERVICIOS ----------
+  // --- SERVICIOS ---
   const formServ = document.getElementById('formServicio');
   const tablaServicios = document.getElementById('tablaServicios');
 
@@ -230,3 +237,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('countServicios').innerText = snapshot.size;
   });
 });
+
