@@ -1,182 +1,270 @@
 // script.js
-import { auth, db } from "./firebase.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { collection, addDoc, getDocs, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { auth, db } from './firebase.js';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// ----------------- Login y Registro -----------------
 document.addEventListener("DOMContentLoaded", () => {
-    const formLogin = document.getElementById("form-login");
-    const formRegister = document.getElementById("form-register");
 
-    // Mostrar registro
-    document.getElementById("showRegister").addEventListener("click", () => {
-        formLogin.style.display = "none";
-        formRegister.style.display = "block";
+  // -------------------- Login / Registro --------------------
+  const loginForm = document.getElementById("form-login");
+  const registerForm = document.getElementById("form-register");
+  const btnLogin = document.getElementById("btnLogin");
+  const btnRegister = document.getElementById("btnRegister");
+  const showRegister = document.getElementById("showRegister");
+  const showLogin = document.getElementById("showLogin");
+
+  if(showRegister) showRegister.addEventListener("click", () => {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+  });
+
+  if(showLogin) showLogin.addEventListener("click", () => {
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+  });
+
+  if(btnRegister){
+    btnRegister.addEventListener("click", async () => {
+      const email = document.getElementById("emailReg").value;
+      const password = document.getElementById("passReg").value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Registro exitoso, ahora inicia sesión");
+        registerForm.style.display = "none";
+        loginForm.style.display = "block";
+      } catch(e) {
+        alert("Error al registrar: " + e.message);
+      }
     });
+  }
 
-    // Mostrar login
-    document.getElementById("showLogin").addEventListener("click", () => {
-        formRegister.style.display = "none";
-        formLogin.style.display = "block";
+  if(btnLogin){
+    btnLogin.addEventListener("click", async () => {
+      const email = document.getElementById("emailLogin").value;
+      const password = document.getElementById("passLogin").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch(e) {
+        alert("Error al iniciar sesión: " + e.message);
+      }
     });
+  }
 
-    // Login
-    document.getElementById("btnLogin")?.addEventListener("click", async () => {
-        const email = document.getElementById("emailLogin").value;
-        const pass = document.getElementById("passLogin").value;
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            window.location.href = "dashboard.html";
-        } catch(e) {
-            alert("Error login: "+e.message);
-        }
-    });
-
-    // Registro
-    document.getElementById("btnRegister")?.addEventListener("click", async () => {
-        const email = document.getElementById("emailReg").value;
-        const pass = document.getElementById("passReg").value;
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            alert("Registro correcto! Ahora inicia sesión.");
-            formRegister.style.display = "none";
-            formLogin.style.display = "block";
-        } catch(e) {
-            alert("Error registro: "+e.message);
-        }
-    });
-});
-
-// ----------------- Dashboard -----------------
-onAuthStateChanged(auth, user => {
-    if(user && window.location.href.includes("dashboard.html")){
-        initDashboard();
-    } else if(!user && window.location.href.includes("dashboard.html")){
-        window.location.href = "index.html";
+  // -------------------- Redirección al Dashboard --------------------
+  onAuthStateChanged(auth, user => {
+    if(user && window.location.pathname.includes("index.html")) {
+      window.location.href = "dashboard.html";
     }
-});
+  });
 
-async function initDashboard() {
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-        await signOut(auth);
-        window.location.href = "index.html";
+  // -------------------- Logout --------------------
+  const logoutBtn = document.getElementById("logoutBtn");
+  if(logoutBtn){
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
     });
+  }
 
-    // Colecciones Firestore
-    const proveedoresCol = collection(db,"proveedores");
-    const facturasCol = collection(db,"facturas");
-    const gastosCol = collection(db,"gastos");
+  // -------------------- CRUD en Tiempo Real --------------------
+  if(window.location.pathname.includes("dashboard.html")){
 
-    // ----------------- CRUD Proveedores -----------------
-    const tablaProveedores = document.getElementById("tablaProveedores");
+    // Referencias a tablas y formularios
     const formProveedor = document.getElementById("formProveedor");
+    const tablaProveedores = document.getElementById("tablaProveedores");
 
-    formProveedor?.addEventListener("submit", async e=>{
+    const formFactura = document.getElementById("formFactura");
+    const tablaFacturas = document.getElementById("tablaFacturas");
+
+    const formGasto = document.getElementById("formGasto");
+    const tablaGastos = document.getElementById("tablaGastos");
+
+    const formServicio = document.getElementById("formServicio");
+    const tablaServicios = document.getElementById("tablaServicios");
+
+    // -------------------- Proveedores --------------------
+    if(formProveedor){
+      formProveedor.addEventListener("submit", async e => {
         e.preventDefault();
-        await addDoc(proveedoresCol,{
+        try {
+          await addDoc(collection(db, "proveedores"), {
             ruc: document.getElementById("rucProv").value,
             nombre: document.getElementById("nombreProv").value,
             producto: document.getElementById("productoProv").value,
             direccion: document.getElementById("direccionProv").value
+          });
+          formProveedor.reset();
+        } catch(e) {
+          alert("Error al agregar proveedor: " + e.message);
+        }
+      });
+
+      onSnapshot(collection(db, "proveedores"), snapshot => {
+        tablaProveedores.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${data.ruc}</td>
+            <td>${data.nombre}</td>
+            <td>${data.producto}</td>
+            <td>${data.direccion}</td>
+            <td>
+              <button class="edit-btn" onclick="editProveedor('${docSnap.id}', '${data.ruc}', '${data.nombre}', '${data.producto}', '${data.direccion}')">Editar</button>
+              <button class="delete-btn" onclick="deleteProveedor('${docSnap.id}')">Eliminar</button>
+            </td>
+          `;
+          tablaProveedores.appendChild(tr);
+        });
+      });
+    }
+
+    window.deleteProveedor = async (id) => {
+      await deleteDoc(doc(db, "proveedores", id));
+    }
+
+    window.editProveedor = async (id, ruc, nombre, producto, direccion) => {
+      document.getElementById("rucProv").value = ruc;
+      document.getElementById("nombreProv").value = nombre;
+      document.getElementById("productoProv").value = producto;
+      document.getElementById("direccionProv").value = direccion;
+
+      formProveedor.onsubmit = async e => {
+        e.preventDefault();
+        await updateDoc(doc(db, "proveedores", id), {
+          ruc: document.getElementById("rucProv").value,
+          nombre: document.getElementById("nombreProv").value,
+          producto: document.getElementById("productoProv").value,
+          direccion: document.getElementById("direccionProv").value
         });
         formProveedor.reset();
-    });
+        formProveedor.onsubmit = null; // Restablecer el submit normal
+      }
+    }
 
-    onSnapshot(proveedoresCol, snap => {
-        tablaProveedores.innerHTML = "";
-        snap.forEach(docu=>{
-            const d = docu.data();
-            tablaProveedores.innerHTML += `<tr>
-                <td>${d.ruc}</td><td>${d.nombre}</td><td>${d.producto}</td><td>${d.direccion}</td>
-                <td>
-                    <button onclick="editProv('${docu.id}')">✏️</button>
-                    <button onclick="delProv('${docu.id}')">🗑️</button>
-                </td>
-            </tr>`;
-        });
-    });
-
-    window.delProv = async id => { await deleteDoc(doc(db,"proveedores",id)); };
-    window.editProv = async id => {
-        const docRef = doc(db,"proveedores",id);
-        const docSnap = await getDocs(docRef);
-        const data = (await docRef.get()).data();
-        document.getElementById("nombreProv").value = data.nombre;
-        document.getElementById("productoProv").value = data.producto;
-        document.getElementById("rucProv").value = data.ruc;
-        document.getElementById("direccionProv").value = data.direccion;
-        await updateDoc(docRef,{
-            nombre: data.nombre,
-            producto: data.producto,
-            ruc: data.ruc,
-            direccion: data.direccion
-        });
-    };
-
-    // ----------------- CRUD Facturas -----------------
-    const tablaFacturas = document.getElementById("tablaFacturas");
-    const formFactura = document.getElementById("formFactura");
-
-    formFactura?.addEventListener("submit", async e=>{
+    // -------------------- Facturas --------------------
+    if(formFactura){
+      formFactura.addEventListener("submit", async e => {
         e.preventDefault();
-        await addDoc(facturasCol,{
+        try {
+          await addDoc(collection(db, "facturas"), {
             proveedor: document.getElementById("proveedorFactura").value,
             tipo: document.getElementById("tipoFactura").value,
-            monto: document.getElementById("montoFactura").value,
+            monto: parseFloat(document.getElementById("montoFactura").value),
+            moneda: document.getElementById("monedaFactura").value,
             fecha: document.getElementById("fechaFactura").value,
             descripcion: document.getElementById("descFactura").value
+          });
+          formFactura.reset();
+        } catch(e) { alert(e.message); }
+      });
+
+      onSnapshot(collection(db, "facturas"), snapshot => {
+        tablaFacturas.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${data.proveedor}</td>
+            <td>${data.tipo}</td>
+            <td>${data.monto}</td>
+            <td>${data.fecha}</td>
+            <td>${data.descripcion || ""}</td>
+            <td>
+              <button class="edit-btn">Editar</button>
+              <button class="delete-btn" onclick="deleteFactura('${docSnap.id}')">Eliminar</button>
+            </td>
+          `;
+          tablaFacturas.appendChild(tr);
         });
-        formFactura.reset();
-    });
+      });
+    }
 
-    onSnapshot(facturasCol, snap=>{
-        tablaFacturas.innerHTML="";
-        snap.forEach(docu=>{
-            const d = docu.data();
-            tablaFacturas.innerHTML += `<tr>
-                <td>${d.proveedor}</td><td>${d.tipo}</td><td>${d.monto}</td><td>${d.fecha}</td><td>${d.descripcion}</td>
-                <td>
-                    <button onclick="delFact('${docu.id}')">🗑️</button>
-                </td>
-            </tr>`;
-        });
-    });
+    window.deleteFactura = async (id) => {
+      await deleteDoc(doc(db, "facturas", id));
+    }
 
-    window.delFact = async id => { await deleteDoc(doc(db,"facturas",id)); };
-
-    // ----------------- CRUD Gastos -----------------
-    const tablaGastos = document.getElementById("tablaGastos");
-    const formGasto = document.getElementById("formGasto");
-
-    formGasto?.addEventListener("submit", async e=>{
+    // -------------------- Gastos --------------------
+    if(formGasto){
+      formGasto.addEventListener("submit", async e => {
         e.preventDefault();
-        await addDoc(gastosCol,{
+        try {
+          await addDoc(collection(db, "gastos"), {
             nombre: document.getElementById("nombreGasto").value,
             tipo: document.getElementById("tipoGasto").value,
-            monto: document.getElementById("montoGasto").value,
+            monto: parseFloat(document.getElementById("montoGasto").value),
             fecha: document.getElementById("fechaGasto").value
+          });
+          formGasto.reset();
+        } catch(e) { alert(e.message); }
+      });
+
+      onSnapshot(collection(db, "gastos"), snapshot => {
+        tablaGastos.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${data.nombre}</td>
+            <td>${data.tipo}</td>
+            <td>${data.monto}</td>
+            <td>${data.fecha}</td>
+            <td>
+              <button class="edit-btn">Editar</button>
+              <button class="delete-btn" onclick="deleteGasto('${docSnap.id}')">Eliminar</button>
+            </td>
+          `;
+          tablaGastos.appendChild(tr);
         });
-        formGasto.reset();
-    });
+      });
+    }
 
-    onSnapshot(gastosCol, snap=>{
-        tablaGastos.innerHTML="";
-        snap.forEach(docu=>{
-            const d = docu.data();
-            tablaGastos.innerHTML += `<tr>
-                <td>${d.nombre}</td><td>${d.tipo}</td><td>${d.monto}</td><td>${d.fecha}</td>
-                <td>
-                    <button onclick="delGasto('${docu.id}')">🗑️</button>
-                </td>
-            </tr>`;
+    window.deleteGasto = async (id) => {
+      await deleteDoc(doc(db, "gastos", id));
+    }
+
+    // -------------------- Servicios --------------------
+    if(formServicio){
+      formServicio.addEventListener("submit", async e => {
+        e.preventDefault();
+        try {
+          await addDoc(collection(db, "servicios"), {
+            nombre: document.getElementById("nombreServ").value,
+            precio: parseFloat(document.getElementById("precioServ").value),
+            fecha: document.getElementById("fechaServ").value,
+            descripcion: document.getElementById("descServ").value
+          });
+          formServicio.reset();
+        } catch(e) { alert(e.message); }
+      });
+
+      onSnapshot(collection(db, "servicios"), snapshot => {
+        tablaServicios.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${data.nombre}</td>
+            <td>${data.precio}</td>
+            <td>${data.fecha}</td>
+            <td>${data.descripcion || ""}</td>
+            <td>
+              <button class="edit-btn">Editar</button>
+              <button class="delete-btn" onclick="deleteServicio('${docSnap.id}')">Eliminar</button>
+            </td>
+          `;
+          tablaServicios.appendChild(tr);
         });
-    });
+      });
+    }
 
-    window.delGasto = async id => { await deleteDoc(doc(db,"gastos",id)); };
-}
+    window.deleteServicio = async (id) => {
+      await deleteDoc(doc(db, "servicios", id));
+    }
 
+  } // end dashboard check
 
+}); // end DOMContentLoaded
 
 
 
