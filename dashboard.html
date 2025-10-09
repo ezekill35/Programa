@@ -4,185 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discovery Pets - Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-/* ------------------- Estilo 3D y profesional ------------------- */
-body.dashboard-body {
-    min-height: 100vh;
-    display: flex;
-    background: linear-gradient(145deg, #ff66cc, #ff3399);
-    color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.sidebar {
-    width: 250px;
-    background: #fff;
-    border-radius: 20px;
-    margin: 20px;
-    padding: 20px;
-    box-shadow: 10px 10px 30px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #ff3399;
-}
-
-.nav-btn {
-    margin: 5px 0;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    background: #ff66cc;
-    color: #fff;
-    font-weight: 600;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
-    transition: 0.3s;
-}
-.nav-btn.active, .nav-btn:hover { background: #ff3399; }
-
-.logout-btn {
-    margin-top: auto;
-    padding: 12px;
-    border-radius: 12px;
-    background: #ff0033;
-    color: #fff;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.logout-btn:hover { background: #cc0029; }
-
-.main-content {
-    flex: 1;
-    margin: 20px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 10px 10px 30px rgba(0,0,0,0.2);
-    overflow-y: auto;
-}
-
-h2 { color: #ff3399; margin-bottom: 15px; }
-
-/* Formularios */
-form { 
-    margin-bottom: 25px;
-    padding: 15px;
-    border-radius: 15px;
-    background: #ffe6f2;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-}
-form input, form select, form button {
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: 1px solid #ff3399;
-    padding: 8px;
-    width: 100%;
-    font-size: 14px;
-}
-form button {
-    background: #ff3399;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-}
-form button:hover { background: #ff66cc; }
-
-/* Tablas */
-table { 
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 15px;
-    overflow: hidden;
-}
-table th, table td { padding: 12px; text-align: left; }
-table th { background: #ff66cc; color: #fff; }
-table tr:hover { background: #ffe6f2; }
-button.edit-btn { background: #3399ff; color: #fff; }
-button.delete-btn { background: #ff0033; color: #fff; }
-
-/* Reporte */
-#reporteContenido {
-    padding: 15px;
-    background: #ffe6f2;
-    border-radius: 15px;
-    box-shadow: inset 3px 3px 10px rgba(0,0,0,0.1);
-}
-
+body { min-height:100vh; background: linear-gradient(145deg,#ff66cc,#ff3399); font-family:Arial; }
+.dashboard-body { display:flex; min-height:100vh; }
+.sidebar { width:220px; background:#ff3399; color:#fff; display:flex; flex-direction:column; padding:20px; border-radius:0 20px 20px 0; box-shadow:5px 0 15px rgba(0,0,0,0.2);}
+.sidebar h2 { text-align:center; margin-bottom:30px; }
+.nav-btn { padding:12px; margin:5px 0; border-radius:8px; cursor:pointer; transition:0.3s; border:none; color:#fff; background:#ff3399; font-weight:600; }
+.nav-btn.active, .nav-btn:hover { background:#ff66cc; }
+.logout-btn { margin-top:auto; padding:12px; background:#e74c3c; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+.logout-btn:hover { background:#c0392b; }
+.main-content { flex:1; padding:25px 30px; overflow-y:auto; }
+.main-content h2 { color:#fff; margin-bottom:15px; text-shadow:1px 1px 5px rgba(0,0,0,0.5);}
+.content-section { display:none; }
+.content-section.active { display:block; }
+form { background:#fff; padding:20px; border-radius:12px; margin-bottom:25px; box-shadow:0 8px 25px rgba(0,0,0,0.2);}
+form input, form select { width:100%; padding:10px; margin-bottom:12px; border-radius:6px; border:1px solid #ccc; }
+form button { padding:10px 20px; background:#ff3399; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+form button:hover { background:#ff66cc; }
+table { width:100%; border-collapse: collapse; margin-top:15px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+table th, table td { padding:12px; text-align:left; border-bottom:1px solid #eee;}
+table th { background:#ff3399; color:#fff;}
+table tr:hover { background:#ffe6f2; }
+table button { padding:6px 10px; border-radius:6px; border:none; cursor:pointer; font-size:13px;}
+button.edit-btn { background:#3498db; color:#fff; }
+button.delete-btn { background:#e74c3c; color:#fff; }
+@media (max-width:900px) { .dashboard-body { flex-direction:column; } .sidebar { width:100%; flex-direction:row; overflow-x:auto; padding:10px;} .nav-btn { flex:1; margin:0 5px; text-align:center;} .logout-btn { margin:0 5px;} }
 </style>
 </head>
 <body class="dashboard-body">
 
 <div class="sidebar">
-    <h2>Discovery Pets</h2>
-    <button class="nav-btn active" data-section="proveedores">🏪 Proveedores</button>
-    <button class="nav-btn" data-section="facturas">📑 Facturas</button>
-    <button class="nav-btn" data-section="gastos">💰 Gastos</button>
-    <button class="nav-btn" data-section="servicios">🛠 Servicios</button>
-    <button class="nav-btn" data-section="reportes">📊 Reportes</button>
-    <div class="logout-btn" id="logoutBtn">Cerrar sesión</div>
+<h2>Discovery Pets</h2>
+<button class="nav-btn active" data-section="proveedores">🏪 Proveedores</button>
+<button class="nav-btn" data-section="facturas">📑 Facturas</button>
+<button class="nav-btn" data-section="gastos">💰 Gastos</button>
+<button class="nav-btn" data-section="servicios">🛠 Servicios</button>
+<button class="nav-btn" data-section="reporte">📊 Reporte</button>
+<button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
 </div>
 
-<div class="main-content">
-
-    <!-- Proveedores -->
+<main class="main-content">
+    <!-- PROVEEDORES -->
     <section id="proveedores" class="content-section active">
         <h2>Registro de Proveedores</h2>
         <form id="formProveedor">
-            <input id="rucProv" placeholder="RUC (solo números)" required>
+            <input id="rucProv" placeholder="RUC (solo números)" required pattern="\d+">
             <input id="nombreProv" placeholder="Nombre" required>
             <input id="productoProv" placeholder="Producto" required>
             <input id="direccionProv" placeholder="Dirección" required>
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead>
-                <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
-            </thead>
+            <thead><tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr></thead>
             <tbody id="tablaProveedores"></tbody>
         </table>
     </section>
 
-    <!-- Facturas -->
+    <!-- FACTURAS -->
     <section id="facturas" class="content-section">
         <h2>Registro de Facturas</h2>
         <form id="formFactura">
-            <select id="proveedorFactura" required>
-                <option value="">Seleccione proveedor</option>
-            </select>
+            <select id="proveedorFactura" required></select>
             <select id="tipoFactura" required>
-                <option value="">Seleccione tipo</option>
-                <option value="Factura electrónica">Factura electrónica</option>
+                <option value="">Tipo de factura</option>
                 <option value="Boleta">Boleta</option>
+                <option value="Factura electrónica">Factura electrónica</option>
             </select>
-            <input id="montoFactura" type="number" step="0.01" placeholder="Monto (0.00)" required>
-            <select id="monedaFactura" required>
-                <option value="S/.">Soles (S/.)</option>
-                <option value="USD">Dólares (USD)</option>
+            <input id="montoFactura" type="number" step="0.01" placeholder="Monto" required>
+            <select id="monedaFactura">
+                <option value="S/.">Soles</option>
+                <option value="$">Dólares</option>
             </select>
             <input id="fechaFactura" type="date" required>
             <input id="descFactura" placeholder="Descripción">
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead>
-                <tr>
-                    <th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Moneda</th>
-                    <th>Fecha</th><th>Descripción</th><th>Acciones</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Moneda</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
             <tbody id="tablaFacturas"></tbody>
         </table>
     </section>
 
-    <!-- Gastos -->
+    <!-- GASTOS -->
     <section id="gastos" class="content-section">
         <h2>Registro de Gastos</h2>
         <form id="formGasto">
@@ -193,14 +97,12 @@ button.delete-btn { background: #ff0033; color: #fff; }
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead>
-                <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
-            </thead>
+            <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
             <tbody id="tablaGastos"></tbody>
         </table>
     </section>
 
-    <!-- Servicios -->
+    <!-- SERVICIOS -->
     <section id="servicios" class="content-section">
         <h2>Registro de Servicios</h2>
         <form id="formServicio">
@@ -211,27 +113,23 @@ button.delete-btn { background: #ff0033; color: #fff; }
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead>
-                <tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
-            </thead>
+            <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
             <tbody id="tablaServicios"></tbody>
         </table>
     </section>
 
-    <!-- Reportes -->
-    <section id="reportes" class="content-section">
-        <h2>Generar Reporte</h2>
-        <button class="btn btn-primary mb-3" id="btnGenerarReporte">Generar Resumen</button>
+    <!-- REPORTE -->
+    <section id="reporte" class="content-section">
+        <h2>Reporte General</h2>
+        <button id="generarReporte" class="btn btn-light mb-3">Generar Reporte</button>
         <div id="reporteContenido"></div>
     </section>
 
-</div>
+</main>
 
-<script type="module" src="script.js"></script>
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
 
 
 
