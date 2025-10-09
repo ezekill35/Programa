@@ -1,7 +1,6 @@
 import { auth } from './firebase.js';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-auth.js";
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.16.5/firebase-auth.js";
 
-// Elementos
 const loginDiv = document.getElementById('loginDiv');
 const registerDiv = document.getElementById('registerDiv');
 
@@ -14,7 +13,6 @@ const registerForm = document.getElementById('registerForm');
 const loginMsg = document.getElementById('loginMsg');
 const registerMsg = document.getElementById('registerMsg');
 
-// Mostrar registro
 showRegister.addEventListener('click', e => {
   e.preventDefault();
   loginDiv.style.display = 'none';
@@ -23,7 +21,6 @@ showRegister.addEventListener('click', e => {
   registerMsg.textContent = '';
 });
 
-// Mostrar login
 showLogin.addEventListener('click', e => {
   e.preventDefault();
   loginDiv.style.display = 'block';
@@ -32,7 +29,7 @@ showLogin.addEventListener('click', e => {
   registerMsg.textContent = '';
 });
 
-// Registro de usuario
+// Registro
 registerForm.addEventListener('submit', async e => {
   e.preventDefault();
   const name = document.getElementById('registerName').value.trim();
@@ -70,15 +67,13 @@ loginForm.addEventListener('submit', async e => {
 
 // Mantener sesión activa
 onAuthStateChanged(auth, user => {
-  if(user) {
-    // Redirige al dashboard si ya está logueado
-    window.location.href = 'dashboard.html';
-  } else {
-    // Usuario no logueado, mostrar login
+  if(user) window.location.href = 'dashboard.html';
+  else {
     loginDiv.style.display = 'block';
     registerDiv.style.display = 'none';
   }
 });
+
 
 
 
