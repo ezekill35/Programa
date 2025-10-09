@@ -34,21 +34,28 @@
   </section>
 
   <!-- PROVEEDORES -->
-  <section id="proveedores" class="content-section">
-    <h1>🏪 Registro de Proveedores</h1>
-    <form id="formProveedor" class="formulario">
-      <input type="text" id="nombreProv" placeholder="Nombre" required>
-      <input type="text" id="productoProv" placeholder="Producto" required>
-      <input type="text" id="rucProv" placeholder="RUC" required pattern="[0-9]*">
-      <input type="text" id="direccionProv" placeholder="Dirección" required>
-      <button type="submit" class="btn btn-success">Agregar</button>
-    </form>
-    <table class="table table-hover">
-      <thead><tr><th>Nombre</th><th>Producto</th><th>RUC</th><th>Dirección</th><th>Acciones</th></tr></thead>
-      <tbody id="tablaProveedores"></tbody>
-    </table>
-  </section>
-
+<section id="proveedores" class="content-section">
+  <h1>🏪 Registro de Proveedores</h1>
+  <form id="formProveedor" class="formulario">
+    <input type="text" id="rucProv" placeholder="RUC" required pattern="[0-9]*">
+    <input type="text" id="nombreProv" placeholder="Nombre" required>
+    <input type="text" id="productoProv" placeholder="Producto" required>
+    <input type="text" id="direccionProv" placeholder="Dirección" required>
+    <button type="submit" class="btn btn-success">Agregar</button>
+  </form>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>RUC</th>
+        <th>Nombre</th>
+        <th>Producto</th>
+        <th>Dirección</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaProveedores"></tbody>
+  </table>
+</section>
   <!-- FACTURAS -->
   <section id="facturas" class="content-section">
     <h1>📑 Registro de Facturas</h1>
@@ -105,6 +112,7 @@
 <script src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
