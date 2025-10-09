@@ -1,19 +1,18 @@
-// ------------------ Firebase v7.20.0 ------------------
+
 var db = firebase.firestore();
 var auth = firebase.auth();
 
-// ------------------ Login y Registro ------------------
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const registerForm = document.getElementById("registerForm");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // Mantener sesión iniciada
+    
     auth.onAuthStateChanged(user => {
         if(user) {
             document.body.classList.remove("login-body");
             document.body.classList.add("dashboard-body");
-            // Mostrar dashboard
+           
             document.querySelector(".main-content").style.display = "block";
         } else {
             document.body.classList.remove("dashboard-body");
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Registro
+    
     if(registerForm){
         registerForm.addEventListener("submit", e => {
             e.preventDefault();
@@ -43,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Login
+    
     if(loginForm){
         loginForm.addEventListener("submit", e => {
             e.preventDefault();
@@ -56,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Cerrar sesión
+    
     if(logoutBtn){
         logoutBtn.addEventListener("click", () => {
             auth.signOut();
@@ -64,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ------------------ Dashboard: Cambio de secciones ------------------
+
 const navBtns = document.querySelectorAll(".nav-btn");
 const sections = document.querySelectorAll(".content-section");
 
@@ -78,7 +77,7 @@ navBtns.forEach(btn => {
     });
 });
 
-// ------------------ CRUD Proveedores ------------------
+
 const formProveedor = document.getElementById("formProveedor");
 const tablaProveedores = document.getElementById("tablaProveedores");
 
@@ -156,7 +155,7 @@ function addProveedorHandler(e){
 }
 formProveedor.addEventListener("submit", addProveedorHandler);
 
-// ------------------ CRUD Facturas ------------------
+
 const formFactura = document.getElementById("formFactura");
 const tablaFacturas = document.getElementById("tablaFacturas");
 const proveedorSelect = document.getElementById("proveedorFactura");
@@ -259,7 +258,6 @@ function addFacturaHandler(e){
 }
 formFactura.addEventListener("submit", addFacturaHandler);
 
-// ------------------ CRUD Gastos ------------------
 const formGasto = document.getElementById("formGasto");
 const tablaGastos = document.getElementById("tablaGastos");
 
@@ -302,7 +300,7 @@ window.eliminarGasto = function(id){
     db.collection("gastos").doc(id).delete();
 }
 
-// ------------------ CRUD Servicios ------------------
+
 const formServicio = document.getElementById("formServicio");
 const tablaServicios = document.getElementById("tablaServicios");
 
@@ -344,6 +342,7 @@ if(formServicio){
 window.eliminarServicio = function(id){
     db.collection("servicios").doc(id).delete();
 }
+
 
 
 
