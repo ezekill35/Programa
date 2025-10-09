@@ -1,58 +1,44 @@
-// Cambiar vistas
-const loginDiv = document.getElementById('loginDiv');
-const registerDiv = document.getElementById('registerDiv');
-
-document.getElementById('showRegister').addEventListener('click', e => {
+// Mostrar/ocultar login y registro
+document.getElementById('showRegister').addEventListener('click', e=>{
   e.preventDefault();
-  loginDiv.style.display = 'none';
-  registerDiv.style.display = 'block';
+  document.getElementById('loginDiv').style.display='none';
+  document.getElementById('registerDiv').style.display='block';
 });
 
-document.getElementById('showLogin').addEventListener('click', e => {
+document.getElementById('showLogin').addEventListener('click', e=>{
   e.preventDefault();
-  loginDiv.style.display = 'block';
-  registerDiv.style.display = 'none';
+  document.getElementById('loginDiv').style.display='block';
+  document.getElementById('registerDiv').style.display='none';
 });
 
-// Registrar usuario
-document.getElementById('registerForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const email = document.getElementById('regEmail').value;
-  const pass = document.getElementById('regPass').value;
-  const name = document.getElementById('regName').value;
-
-  auth.createUserWithEmailAndPassword(email, pass)
-    .then(userCred => {
-      // Guardar info adicional en Firestore
-      return db.collection('usuarios').doc(userCred.user.uid).set({ nombre: name, email });
-    })
-    .then(() => {
-      alert("Usuario registrado con éxito");
-      registerDiv.style.display = 'none';
-      loginDiv.style.display = 'block';
-    })
-    .catch(err => alert(err.message));
-});
-
-// Iniciar sesión
-document.getElementById('loginForm').addEventListener('submit', e => {
+// LOGIN
+document.getElementById('loginForm').addEventListener('submit', function(e){
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
   const pass = document.getElementById('loginPass').value;
 
   auth.signInWithEmailAndPassword(email, pass)
-    .then(() => {
-      window.location = 'dashboard.html';
-    })
-    .catch(err => alert(err.message));
+      .then(user => window.location = 'dashboard.html')
+      .catch(err => alert(err.message));
 });
 
-// Mantener sesión iniciada
-auth.onAuthStateChanged(user => {
-  if(user){
-    window.location = 'dashboard.html';
-  }
+// REGISTRO
+document.getElementById('registerForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPass').value;
+
+  auth.createUserWithEmailAndPassword(email, pass)
+      .then(user => {
+        db.collection('usuarios').doc(user.user.uid).set({ nombre: name });
+        alert("Usuario registrado");
+        document.getElementById('loginDiv').style.display='block';
+        document.getElementById('registerDiv').style.display='none';
+      })
+      .catch(err => alert(err.message));
 });
+
 
 
 
