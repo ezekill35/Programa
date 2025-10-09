@@ -1,12 +1,10 @@
-const db = firebase.firestore();
-
-// Colecciones
+// Firebase
 const proveedoresCol = db.collection('proveedores');
 const facturasCol = db.collection('facturas');
 const gastosCol = db.collection('gastos');
 const serviciosCol = db.collection('servicios');
 
-// Elementos
+// Elements
 const tablaProv = document.getElementById('tablaProveedores');
 const tablaFac = document.getElementById('tablaFacturas');
 const tablaGasto = document.getElementById('tablaGastos');
@@ -19,159 +17,219 @@ const formServ = document.getElementById('formServicio');
 
 const proveedorSelect = document.getElementById('proveedorFactura');
 
-// ---------------- Funciones ----------------
-function cargarProveedoresSelect(){
-  proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
-  proveedoresCol.get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const option = document.createElement('option');
-      option.value = doc.id;
-      option.textContent = `${data.ruc} - ${data.nombre}`;
-      proveedorSelect.appendChild(option);
-    });
-  });
-}
+// ---------------- Sidebar navigation ----------------
+const navBtns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.content-section');
 
-// Actualizar select en tiempo real
-cargarProveedoresSelect();
-proveedoresCol.onSnapshot(() => cargarProveedoresSelect());
-
-// ---------------- CRUD Proveedores ----------------
-formProv.addEventListener('submit', e => {
-  e.preventDefault();
-  proveedoresCol.add({
-    ruc: formProv.rucProv.value,
-    nombre: formProv.nombreProv.value,
-    producto: formProv.productoProv.value,
-    direccion: formProv.direccionProv.value
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    sections.forEach(sec => sec.style.display='none');
+    navBtns.forEach(b => b.classList.remove('active'));
+    document.getElementById(btn.dataset.section).style.display='block';
+    btn.classList.add('active');
   });
-  formProv.reset();
 });
 
+// ---------------- Logout ----------------
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  firebase.auth().signOut().then(()=> window.location='index.html');
+});
+
+// ---------------- Real-time render ----------------
+
+// Proveedores
 proveedoresCol.onSnapshot(snapshot => {
   tablaProv.innerHTML = '';
+  proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
   snapshot.forEach(doc => {
     const data = doc.data();
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    // Tabla
+    tablaProv.innerHTML += `<tr>
       <td>${data.ruc}</td>
       <td>${data.nombre}</td>
       <td>${data.producto}</td>
       <td>${data.direccion}</td>
       <td>
-        <button class="btn btn-warning editProv">Editar</button>
-        <button class="btn btn-danger delProv">Eliminar</button>
-      </td>`;
-    tablaProv.appendChild(tr);
-
-    tr.querySelector('.delProv').addEventListener('click', () => proveedoresCol.doc(doc.id).delete());
+        <button class="btn btn-warning btn-sm" onclick="editarProv('${doc.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarProv('${doc.id}')">Eliminar</button>
+      </td>
+    </tr>`;
+    // Select para facturas
+    proveedorSelect.innerHTML += `<option value="${data.nombre}">${data.nombre}</option>`;
   });
+  document.getElementById('countProveedores').innerText = snapshot.size;
 });
 
-// ---------------- CRUD Facturas ----------------
-formFac.addEventListener('submit', e => {
-  e.preventDefault();
-  const proveedorId = proveedorSelect.value;
-  if(!proveedorId){ alert("Seleccione proveedor"); return; }
-
-  facturasCol.add({
-    proveedor: proveedorId,
-    tipo: formFac.tipoFactura.value,
-    monto: parseFloat(formFac.montoFactura.value),
-    moneda: document.getElementById('monedaFactura').value,
-    fecha: formFac.fechaFactura.value,
-    descripcion: formFac.descFactura.value
-  });
-  formFac.reset();
-});
-
+// Facturas
 facturasCol.onSnapshot(snapshot => {
   tablaFac.innerHTML = '';
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    proveedoresCol.doc(data.proveedor).get().then(provDoc => {
-      const provNombre = provDoc.exists ? provDoc.data().nombre : "Desconocido";
-      const provRuc = provDoc.exists ? provDoc.data().ruc : "--";
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${provRuc} - ${provNombre}</td>
-        <td>${data.tipo}</td>
-        <td>${data.monto.toLocaleString('es-PE',{style:'currency', currency:data.moneda})}</td>
-        <td>${data.fecha}</td>
-        <td>${data.descripcion}</td>
-        <td>
-          <button class="btn btn-warning editFac">Editar</button>
-          <button class="btn btn-danger delFac">Eliminar</button>
-        </td>`;
-      tablaFac.appendChild(tr);
-
-      tr.querySelector('.delFac').addEventListener('click', () => facturasCol.doc(docSnap.id).delete());
-    });
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    tablaFac.innerHTML += `<tr>
+      <td>${data.proveedor}</td>
+      <td>${data.tipo}</td>
+      <td>${data.monto} ${data.moneda}</td>
+      <td>${data.fecha}</td>
+      <td>${data.descripcion}</td>
+      <td>
+        <button class="btn btn-warning btn-sm" onclick="editarFac('${doc.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarFac('${doc.id}')">Eliminar</button>
+      </td>
+    </tr>`;
   });
+  document.getElementById('countFacturas').innerText = snapshot.size;
 });
 
-// ---------------- CRUD Gastos ----------------
-formGasto.addEventListener('submit', e => {
-  e.preventDefault();
-  gastosCol.add({
-    nombre: formGasto.nombreGasto.value,
-    tipo: formGasto.tipoGasto.value,
-    monto: parseFloat(formGasto.montoGasto.value),
-    fecha: formGasto.fechaGasto.value
-  });
-  formGasto.reset();
-});
-
+// Gastos
 gastosCol.onSnapshot(snapshot => {
   tablaGasto.innerHTML = '';
   snapshot.forEach(doc => {
     const data = doc.data();
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    tablaGasto.innerHTML += `<tr>
       <td>${data.nombre}</td>
       <td>${data.tipo}</td>
       <td>${data.monto}</td>
       <td>${data.fecha}</td>
       <td>
-        <button class="btn btn-warning editGasto">Editar</button>
-        <button class="btn btn-danger delGasto">Eliminar</button>
-      </td>`;
-    tablaGasto.appendChild(tr);
-    tr.querySelector('.delGasto').addEventListener('click', () => gastosCol.doc(doc.id).delete());
+        <button class="btn btn-warning btn-sm" onclick="editarGasto('${doc.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarGasto('${doc.id}')">Eliminar</button>
+      </td>
+    </tr>`;
   });
+  document.getElementById('countGastos').innerText = snapshot.size;
 });
 
-// ---------------- CRUD Servicios ----------------
-formServ.addEventListener('submit', e => {
-  e.preventDefault();
-  serviciosCol.add({
-    nombre: formServ.nombreServ.value,
-    precio: parseFloat(formServ.precioServ.value),
-    fecha: formServ.fechaServ.value,
-    descripcion: formServ.descServ.value
-  });
-  formServ.reset();
-});
-
+// Servicios
 serviciosCol.onSnapshot(snapshot => {
   tablaServ.innerHTML = '';
   snapshot.forEach(doc => {
     const data = doc.data();
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    tablaServ.innerHTML += `<tr>
       <td>${data.nombre}</td>
       <td>${data.precio}</td>
       <td>${data.fecha}</td>
       <td>${data.descripcion}</td>
       <td>
-        <button class="btn btn-warning editServ">Editar</button>
-        <button class="btn btn-danger delServ">Eliminar</button>
-      </td>`;
-    tablaServ.appendChild(tr);
-    tr.querySelector('.delServ').addEventListener('click', () => serviciosCol.doc(doc.id).delete());
+        <button class="btn btn-warning btn-sm" onclick="editarServ('${doc.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarServ('${doc.id}')">Eliminar</button>
+      </td>
+    </tr>`;
   });
+  document.getElementById('countServicios').innerText = snapshot.size;
 });
+
+// ---------------- Form submissions ----------------
+
+// Proveedor
+formProv.addEventListener('submit', e => {
+  e.preventDefault();
+  proveedoresCol.add({
+    ruc: document.getElementById('rucProv').value,
+    nombre: document.getElementById('nombreProv').value,
+    producto: document.getElementById('productoProv').value,
+    direccion: document.getElementById('direccionProv').value
+  });
+  formProv.reset();
+});
+
+// Factura
+formFac.addEventListener('submit', e => {
+  e.preventDefault();
+  facturasCol.add({
+    proveedor: proveedorSelect.value,
+    tipo: document.getElementById('tipoFactura').value,
+    monto: document.getElementById('montoFactura').value,
+    moneda: document.getElementById('monedaFactura').value,
+    fecha: document.getElementById('fechaFactura').value,
+    descripcion: document.getElementById('descFactura').value
+  });
+  formFac.reset();
+});
+
+// Gasto
+formGasto.addEventListener('submit', e => {
+  e.preventDefault();
+  gastosCol.add({
+    nombre: document.getElementById('nombreGasto').value,
+    tipo: document.getElementById('tipoGasto').value,
+    monto: document.getElementById('montoGasto').value,
+    fecha: document.getElementById('fechaGasto').value
+  });
+  formGasto.reset();
+});
+
+// Servicio
+formServ.addEventListener('submit', e => {
+  e.preventDefault();
+  serviciosCol.add({
+    nombre: document.getElementById('nombreServ').value,
+    precio: document.getElementById('precioServ').value,
+    fecha: document.getElementById('fechaServ').value,
+    descripcion: document.getElementById('descServ').value
+  });
+  formServ.reset();
+});
+
+// ---------------- Eliminar ----------------
+function eliminarProv(id){ proveedoresCol.doc(id).delete(); }
+function eliminarFac(id){ facturasCol.doc(id).delete(); }
+function eliminarGasto(id){ gastosCol.doc(id).delete(); }
+function eliminarServ(id){ serviciosCol.doc(id).delete(); }
+
+// ---------------- Editar ----------------
+// Para simplificar, edición básica usando prompt
+function editarProv(id){
+  const docRef = proveedoresCol.doc(id);
+  docRef.get().then(doc => {
+    if(doc.exists){
+      const ruc = prompt('RUC', doc.data().ruc);
+      const nombre = prompt('Nombre', doc.data().nombre);
+      const producto = prompt('Producto', doc.data().producto);
+      const direccion = prompt('Dirección', doc.data().direccion);
+      docRef.update({ ruc, nombre, producto, direccion });
+    }
+  });
+}
+
+function editarFac(id){
+  const docRef = facturasCol.doc(id);
+  docRef.get().then(doc => {
+    if(doc.exists){
+      const proveedor = prompt('Proveedor', doc.data().proveedor);
+      const tipo = prompt('Tipo', doc.data().tipo);
+      const monto = prompt('Monto', doc.data().monto);
+      const moneda = prompt('Moneda', doc.data().moneda);
+      const fecha = prompt('Fecha', doc.data().fecha);
+      const descripcion = prompt('Descripción', doc.data().descripcion);
+      docRef.update({ proveedor, tipo, monto, moneda, fecha, descripcion });
+    }
+  });
+}
+
+function editarGasto(id){
+  const docRef = gastosCol.doc(id);
+  docRef.get().then(doc => {
+    if(doc.exists){
+      const nombre = prompt('Nombre', doc.data().nombre);
+      const tipo = prompt('Tipo', doc.data().tipo);
+      const monto = prompt('Monto', doc.data().monto);
+      const fecha = prompt('Fecha', doc.data().fecha);
+      docRef.update({ nombre, tipo, monto, fecha });
+    }
+  });
+}
+
+function editarServ(id){
+  const docRef = serviciosCol.doc(id);
+  docRef.get().then(doc => {
+    if(doc.exists){
+      const nombre = prompt('Nombre', doc.data().nombre);
+      const precio = prompt('Precio', doc.data().precio);
+      const fecha = prompt('Fecha', doc.data().fecha);
+      const descripcion = prompt('Descripción', doc.data().descripcion);
+      docRef.update({ nombre, precio, fecha, descripcion });
+    }
+  });
+}
 
 
