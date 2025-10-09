@@ -1,64 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const loginContainer = document.getElementById('login-container');
+  const registerContainer = document.getElementById('register-container');
 
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
   const showRegister = document.getElementById('showRegister');
   const showLogin = document.getElementById('showLogin');
-  const loginSection = document.getElementById('loginSection');
-  const registerSection = document.getElementById('registerSection');
 
-  // Cambiar entre login y registro
-  showRegister.addEventListener('click', e => {
-    e.preventDefault();
-    loginSection.style.display = 'none';
-    registerSection.style.display = 'block';
-  });
-  showLogin.addEventListener('click', e => {
-    e.preventDefault();
-    loginSection.style.display = 'block';
-    registerSection.style.display = 'none';
+  showRegister.addEventListener('click', () => {
+    loginContainer.style.display = 'none';
+    registerContainer.style.display = 'block';
   });
 
-  // Registro
-  registerForm.addEventListener('submit', e => {
+  showLogin.addEventListener('click', () => {
+    registerContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+  });
+
+  // REGISTRO
+  const registerForm = document.getElementById('registerForm');
+  registerForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('regName').value;
-    const email = document.getElementById('regEmail').value;
-    const pass = document.getElementById('regPass').value;
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const pass = document.getElementById('registerPass').value;
 
     auth.createUserWithEmailAndPassword(email, pass)
       .then(userCredential => {
-        db.collection('usuarios').doc(userCredential.user.uid).set({ name, email });
+        const user = userCredential.user;
+        // Guardar el nombre en Firestore
+        db.collection('usuarios').doc(user.uid).set({
+          nombre: name,
+          email: email
+        });
         alert('Usuario registrado correctamente');
         registerForm.reset();
-        registerSection.style.display = 'none';
-        loginSection.style.display = 'block';
+        registerContainer.style.display = 'none';
+        loginContainer.style.display = 'block';
       })
-      .catch(err => alert(err.message));
+      .catch(error => alert(error.message));
   });
 
-  // Login
-  loginForm.addEventListener('submit', e => {
+  // LOGIN
+  const loginForm = document.getElementById('loginForm');
+  loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const pass = document.getElementById('loginPass').value;
 
     auth.signInWithEmailAndPassword(email, pass)
-      .then(() => window.location = 'dashboard.html')
-      .catch(err => alert(err.message));
+      .then(() => {
+        window.location.href = 'dashboard.html';
+      })
+      .catch(error => alert(error.message));
   });
 
-  // Mantener sesión
+  // Mantener sesión iniciada
   auth.onAuthStateChanged(user => {
-    if (user && window.location.pathname.includes('index.html')) {
-      window.location = 'dashboard.html';
+    if (user && window.location.pathname.endsWith('dashboard.html')) {
+      console.log('Usuario logueado:', user.email);
+    } else if (!user && window.location.pathname.endsWith('dashboard.html')) {
+      window.location.href = 'index.html';
     }
   });
-
 });
-
-
-
 
 
 
