@@ -3,39 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets | Login</title>
+  <title>Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="login-container">
+<body>
+  <div class="login-container">
+    <!-- Login -->
+    <div id="loginBox" class="login-box">
+      <h2>Iniciar Sesión</h2>
+      <input type="email" id="loginEmail" placeholder="Correo electrónico">
+      <input type="password" id="loginPassword" placeholder="Contraseña">
+      <button id="loginBtn">Iniciar Sesión</button>
+      <p class="toggle-form" id="showRegister">¿No tienes cuenta? Regístrate</p>
+    </div>
 
-  <!-- LOGIN -->
-  <div class="login-box" id="loginBox">
-    <h2>Iniciar Sesión</h2>
-    <form id="loginForm">
-      <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-      <input type="password" id="loginPassword" placeholder="Contraseña" required>
-      <button type="submit">Iniciar Sesión</button>
-    </form>
-    <p>¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
-  </div>
-
-  <!-- REGISTRO -->
-  <div class="login-box" id="registerBox" style="display:none;">
-    <h2>Registro</h2>
-    <form id="registerForm">
-      <input type="text" id="registerName" placeholder="Nombre completo" required>
-      <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
-      <input type="password" id="registerPassword" placeholder="Contraseña" required>
-      <button type="submit">Registrar</button>
-    </form>
-    <p>¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
+    <!-- Registro -->
+    <div id="registerBox" class="login-box" style="display:none;">
+      <h2>Registro</h2>
+      <input type="text" id="registerName" placeholder="Nombre completo">
+      <input type="email" id="registerEmail" placeholder="Correo electrónico">
+      <input type="password" id="registerPassword" placeholder="Contraseña">
+      <button id="registerBtn">Registrarse</button>
+      <p class="toggle-form" id="showLogin">¿Ya tienes cuenta? Inicia sesión</p>
+    </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
-
 </body>
 </html>
+
 
 
 
