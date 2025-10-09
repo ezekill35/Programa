@@ -1,534 +1,258 @@
-// dashboard.js
-// Usa firebase.js que exporta `db` y `auth` (tu archivo existente)
-// Import funciones Firestore/Auth desde CDN
 import { db, auth } from './firebase.js';
 import {
-  collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, getDocs
+  collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-
-// ----------------------
-// Session: redirect if not logged in
-// ----------------------
+/* =============================
+   🔒 Control de Sesión
+============================= */
 onAuthStateChanged(auth, user => {
   if (!user) window.location.href = "index.html";
 });
 
-// Logout button (topbar & other)
-document.querySelectorAll('#logoutBtn').forEach(btn=>{
-  btn.addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
+/* =============================
+   🚪 Cerrar Sesión
+============================= */
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+});
+
+/* =============================
+   🧭 Navegación entre secciones
+============================= */
+const navBtns = document.querySelectorAll(".nav-btn");
+const sections = document.querySelectorAll(".content-section");
+
+navBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    navBtns.forEach(b => b.classList.remove("active"));
+    sections.forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.section).classList.add("active");
   });
 });
 
-// ----------------------
-// Navigation (sidebar buttons)
-// ----------------------
-const navBtns = document.querySelectorAll('.nav-btn');
-const sections = {
-  proveedores: document.getElementById('proveedores'),
-  productos: document.getElementById('productos'),
-  facturas: document.getElementById('facturas'),
-  gastos: document.getElementById('gastos'),
-  servicios: document.getElementById('servicios'),
-  reportes: document.getElementById('reportes')
-};
+/* =============================
+   👷 CRUD PROVEEDORES
+============================= */
+const formProveedor = document.getElementById("formProveedor");
+const tablaProveedores = document.getElementById("tablaProveedores");
+const proveedoresRef = collection(db, "proveedores");
 
-navBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    navBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    Object.values(sections).forEach(s=>s.style.display='none');
-    const sectionId = btn.dataset.section;
-    if(sections[sectionId]) sections[sectionId].style.display = 'block';
+formProveedor.addEventListener("submit", async e => {
+  e.preventDefault();
+  const ruc = document.getElementById("rucProv").value.trim();
+  if (!/^\d+$/.test(ruc)) return alert("El RUC debe contener solo números.");
+  await addDoc(proveedoresRef, {
+    ruc,
+    nombre: document.getElementById("nombreProv").value,
+    producto: document.getElementById("productoProv").value,
+    direccion: document.getElementById("direccionProv").value
   });
+  formProveedor.reset();
 });
 
-// ----------------------
-// References
-// ----------------------
-const proveedoresRef = collection(db, 'proveedores');
-const productosRef = collection(db, 'productos');
-const facturasRef = collection(db, 'facturas');
-const gastosRef = collection(db, 'gastos');
-const serviciosRef = collection(db, 'servicios');
-
-// ----------------------
-// Cached data
-// ----------------------
-let cachedFacturas = []; // [{id, ...data}]
-let cachedProveedores = [];
-let cachedProductos = [];
-
-// ----------------------
-// Helper: safe get element
-// ----------------------
-const $ = id => document.getElementById(id);
-
-// ----------------------
-// PROVEEDORES CRUD + realtime
-// ----------------------
-const formProveedor = $('formProveedor') || $('formProveedor') ; // form element by id
-// Because in HTML id is "formProveedor" as element, but earlier used element variable; safer to query by id from DOM
-const fp = document.getElementById('formProveedor');
-const tablaProveedores = $('tablaProveedores');
-
-if(fp){
-  fp.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    try{
-      await addDoc(proveedoresRef, {
-        ruc: $('#rucProv').value,
-        nombre: $('#nombreProv').value,
-        producto: $('#productoProv').value,
-        direccion: $('#direccionProv').value
-      });
-      fp.reset();
-    }catch(err){ console.error(err); alert('Error al agregar proveedor'); }
-  });
-}
-
-onSnapshot(proveedoresRef, snapshot=>{
-  tablaProveedores.innerHTML = '';
-  cachedProveedores = [];
-  snapshot.forEach(docu=>{
+onSnapshot(proveedoresRef, snapshot => {
+  tablaProveedores.querySelector("tbody").innerHTML = "";
+  snapshot.forEach(docu => {
     const p = docu.data();
-    p.id = docu.id;
-    cachedProveedores.push(p);
-    const tr = document.createElement('tr');
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${p.ruc}</td>
       <td>${p.nombre}</td>
       <td>${p.producto}</td>
       <td>${p.direccion}</td>
       <td>
-        <button class="btn btn-sm btn-primary" data-id="${p.id}" data-type="editProv">Editar</button>
-        <button class="btn btn-sm btn-danger" data-id="${p.id}" data-type="delProv">Eliminar</button>
+        <button class="btn btn-sm btn-warning" onclick="editarProveedor('${docu.id}','${p.ruc}','${p.nombre}','${p.producto}','${p.direccion}')"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarProveedor('${docu.id}')"><i class="bi bi-trash"></i></button>
       </td>`;
-    tablaProveedores.appendChild(tr);
+    tablaProveedores.querySelector("tbody").appendChild(tr);
   });
-  attachProveedorButtons();
-  fillProveedorSelect();
 });
 
-function attachProveedorButtons(){
-  document.querySelectorAll('[data-type="delProv"]').forEach(btn=>{
-    btn.onclick = async ()=> {
-      const id = btn.dataset.id;
-      if(confirm('Eliminar proveedor?')) await deleteDoc(doc(db,'proveedores',id));
-    };
-  });
-  document.querySelectorAll('[data-type="editProv"]').forEach(btn=>{
-    btn.onclick = async ()=> {
-      const id = btn.dataset.id;
-      const p = cachedProveedores.find(x=>x.id===id);
-      if(!p) return alert('Proveedor no encontrado');
-      // Load into form for editing: reuse form fields and on submit update doc
-      $('#rucProv').value = p.ruc || '';
-      $('#nombreProv').value = p.nombre || '';
-      $('#productoProv').value = p.producto || '';
-      $('#direccionProv').value = p.direccion || '';
-      // override submit temporarily
-      fp.onsubmit = async (ev)=>{
-        ev.preventDefault();
-        await updateDoc(doc(db,'proveedores',id), {
-          ruc: $('#rucProv').value,
-          nombre: $('#nombreProv').value,
-          producto: $('#productoProv').value,
-          direccion: $('#direccionProv').value
-        });
-        fp.reset();
-        fp.onsubmit = null; // remove override (next submissions will create new)
-      };
-    };
-  });
-}
-
-function fillProveedorSelect(){
-  const sel = $('proveedorFactura');
-  const editSel = $('editProveedor');
-  if(!sel || !editSel) return;
-  sel.innerHTML = '<option value="">Selecciona proveedor</option>';
-  editSel.innerHTML = '<option value="">Selecciona proveedor</option>';
-  cachedProveedores.forEach(p=>{
-    const o = document.createElement('option'); o.value = p.nombre; o.textContent = p.nombre;
-    sel.appendChild(o);
-    const oe = o.cloneNode(true);
-    editSel.appendChild(oe);
-  });
-}
-
-// ----------------------
-// PRODUCTOS CRUD + realtime
-// ----------------------
-const fpd = document.getElementById('formProducto');
-const tablaProductos = $('tablaProductos');
-
-if(fpd){
-  fpd.addEventListener('submit', async (e)=>{
+window.eliminarProveedor = async id => await deleteDoc(doc(db, "proveedores", id));
+window.editarProveedor = (id, ruc, nombre, producto, direccion) => {
+  document.getElementById("rucProv").value = ruc;
+  document.getElementById("nombreProv").value = nombre;
+  document.getElementById("productoProv").value = producto;
+  document.getElementById("direccionProv").value = direccion;
+  formProveedor.onsubmit = async e => {
     e.preventDefault();
-    try{
-      await addDoc(productosRef, {
-        nombre: $('#nombreProd').value,
-        descripcion: $('#descProd').value,
-        cantidad: Number($('#cantidadProd').value||0),
-        unidad: $('#unidadProd').value||'',
-        valorUnitario: Number($('#valorUnitProd').value||0)
-      });
-      fpd.reset();
-    }catch(err){ console.error(err); alert('Error al agregar producto'); }
-  });
-}
+    await updateDoc(doc(db, "proveedores", id), {
+      ruc: document.getElementById("rucProv").value,
+      nombre: document.getElementById("nombreProv").value,
+      producto: document.getElementById("productoProv").value,
+      direccion: document.getElementById("direccionProv").value
+    });
+    formProveedor.reset();
+    formProveedor.onsubmit = submitProveedorOriginal;
+  };
+};
+const submitProveedorOriginal = formProveedor.onsubmit;
 
-onSnapshot(productosRef, snapshot=>{
-  tablaProductos.innerHTML = '';
-  cachedProductos = [];
-  snapshot.forEach(docu=>{
+/* =============================
+   📦 CRUD PRODUCTOS
+============================= */
+const formProducto = document.getElementById("formProducto");
+const tablaProductos = document.getElementById("tablaProductos");
+const productosRef = collection(db, "productos");
+
+formProducto.addEventListener("submit", async e => {
+  e.preventDefault();
+  await addDoc(productosRef, {
+    nombre: document.getElementById("nombreProd").value,
+    desc: document.getElementById("descProd").value,
+    cantidad: parseInt(document.getElementById("cantProd").value),
+    unidad: document.getElementById("unidadProd").value,
+    valor: parseFloat(document.getElementById("valorUnitProd").value)
+  });
+  formProducto.reset();
+});
+
+onSnapshot(productosRef, snapshot => {
+  tablaProductos.querySelector("tbody").innerHTML = "";
+  snapshot.forEach(docu => {
     const p = docu.data();
-    p.id = docu.id;
-    cachedProductos.push(p);
-    const tr = document.createElement('tr');
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${p.nombre}</td>
-      <td>${p.descripcion||''}</td>
-      <td>${p.cantidad??0}</td>
-      <td>${p.unidad||''}</td>
-      <td>${Number(p.valorUnitario||0).toFixed(2)}</td>
+      <td>${p.desc}</td>
+      <td>${p.cantidad}</td>
+      <td>${p.unidad}</td>
+      <td>${p.valor.toFixed(2)}</td>
       <td>
-        <button class="btn btn-sm btn-primary" data-id="${p.id}" data-type="editProd">Editar</button>
-        <button class="btn btn-sm btn-danger" data-id="${p.id}" data-type="delProd">Eliminar</button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarProducto('${docu.id}')"><i class="bi bi-trash"></i></button>
       </td>`;
-    tablaProductos.appendChild(tr);
-  });
-  attachProductoButtons();
-  fillProductoSelect();
-});
-
-function attachProductoButtons(){
-  document.querySelectorAll('[data-type="delProd"]').forEach(btn=>{
-    btn.onclick = async ()=> {
-      const id = btn.dataset.id;
-      if(confirm('Eliminar producto?')) await deleteDoc(doc(db,'productos',id));
-    };
-  });
-  document.querySelectorAll('[data-type="editProd"]').forEach(btn=>{
-    btn.onclick = async ()=> {
-      const id = btn.dataset.id;
-      const p = cachedProductos.find(x=>x.id===id);
-      if(!p) return alert('Producto no encontrado');
-      $('#nombreProd').value = p.nombre||'';
-      $('#descProd').value = p.descripcion||'';
-      $('#cantidadProd').value = p.cantidad||0;
-      $('#unidadProd').value = p.unidad||'';
-      $('#valorUnitProd').value = p.valorUnitario||0;
-      // override submit
-      fpd.onsubmit = async (ev)=>{
-        ev.preventDefault();
-        await updateDoc(doc(db,'productos',id), {
-          nombre: $('#nombreProd').value,
-          descripcion: $('#descProd').value,
-          cantidad: Number($('#cantidadProd').value||0),
-          unidad: $('#unidadProd').value,
-          valorUnitario: Number($('#valorUnitProd').value||0)
-        });
-        fpd.reset();
-        fpd.onsubmit = null;
-      };
-    };
-  });
-}
-
-function fillProductoSelect(){
-  const sel = $('productoFactura');
-  const editSel = $('editProducto');
-  if(!sel || !editSel) return;
-  sel.innerHTML = '<option value="">Selecciona producto</option>';
-  editSel.innerHTML = '<option value="">Selecciona producto</option>';
-  cachedProductos.forEach(p=>{
-    const o = document.createElement('option'); o.value = p.nombre; o.textContent = p.nombre;
-    sel.appendChild(o);
-    const oe = o.cloneNode(true);
-    editSel.appendChild(oe);
-  });
-}
-
-// ----------------------
-// FACTURAS CRUD + realtime
-// ----------------------
-const fform = document.getElementById('formFactura');
-const tablaFacturas = $('tablaFacturas');
-
-if(fform){
-  fform.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    try{
-      await addDoc(facturasRef, {
-        proveedor: $('#proveedorFactura').value,
-        producto: $('#productoFactura').value,
-        tipo: $('#tipoFactura').value,
-        monto: Number($('#montoFactura').value||0),
-        moneda: $('#monedaFactura').value,
-        fecha: $('#fechaFactura').value,
-        desc: $('#descFactura').value || ''
-      });
-      fform.reset();
-    }catch(err){ console.error(err); alert('Error al agregar factura'); }
-  });
-}
-
-onSnapshot(facturasRef, snapshot=>{
-  cachedFacturas = [];
-  snapshot.forEach(docu=>{
-    const f = docu.data();
-    f.id = docu.id;
-    cachedFacturas.push(f);
-  });
-  renderFacturasTable(cachedFacturas);
-});
-
-function renderFacturasTable(list){
-  if(!tablaFacturas) return;
-  tablaFacturas.innerHTML = '';
-  list.forEach(f=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${f.proveedor}</td>
-      <td>${f.producto}</td>
-      <td>${f.tipo}</td>
-      <td>${f.moneda} ${Number(f.monto||0).toFixed(2)}</td>
-      <td>${f.fecha}</td>
-      <td>${f.desc||''}</td>
-      <td>
-        <button class="btn btn-sm btn-info" data-id="${f.id}" data-action="view">Ver</button>
-        <button class="btn btn-sm btn-danger" data-id="${f.id}" data-action="del">Eliminar</button>
-      </td>`;
-    tablaFacturas.appendChild(tr);
-  });
-  // attach actions
-  tablaFacturas.querySelectorAll('[data-action="del"]').forEach(b=>{
-    b.onclick = async ()=> {
-      const id = b.dataset.id;
-      if(confirm('Eliminar factura?')) await deleteDoc(doc(db,'facturas',id));
-    };
-  });
-  tablaFacturas.querySelectorAll('[data-action="view"]').forEach(b=>{
-    b.onclick = ()=> openEditModal(b.dataset.id);
-  });
-}
-
-// ----------------------
-// GASTOS & SERVICIOS (basic CRUD)
-// ----------------------
-const fg = document.getElementById('formGasto');
-const tablaGastos = $('tablaGastos');
-if(fg){
-  fg.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    await addDoc(gastosRef, {
-      nombre: $('#nombreGasto').value,
-      tipo: $('#tipoGasto').value,
-      monto: Number($('#montoGasto').value||0),
-      fecha: $('#fechaGasto').value
-    });
-    fg.reset();
-  });
-}
-onSnapshot(gastosRef, snap=>{
-  if(!tablaGastos) return;
-  tablaGastos.innerHTML = '';
-  snap.forEach(d=>{
-    const g = d.data();
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${g.nombre}</td><td>${g.tipo}</td><td>${Number(g.monto||0).toFixed(2)}</td><td>${g.fecha}</td><td><button class="btn btn-sm btn-danger" data-id="${d.id}">Eliminar</button></td>`;
-    tablaGastos.appendChild(tr);
-  });
-  tablaGastos.querySelectorAll('button').forEach(b=>{
-    b.onclick = async ()=> { if(confirm('Eliminar gasto?')) await deleteDoc(doc(db,'gastos', b.dataset.id)); };
+    tablaProductos.querySelector("tbody").appendChild(tr);
   });
 });
 
-const fsrv = document.getElementById('formServicio');
-const tablaServicios = $('tablaServicios');
-if(fsrv){
-  fsrv.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    await addDoc(serviciosRef, {
-      nombre: $('#nombreServ').value,
-      precio: Number($('#precioServ').value||0),
-      fecha: $('#fechaServ').value,
-      desc: $('#descServ').value||''
-    });
-    fsrv.reset();
-  });
-}
-onSnapshot(serviciosRef, snap=>{
-  if(!tablaServicios) return;
-  tablaServicios.innerHTML = '';
-  snap.forEach(d=>{
-    const s = d.data();
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.nombre}</td><td>${Number(s.precio||0).toFixed(2)}</td><td>${s.fecha}</td><td>${s.desc||''}</td><td><button class="btn btn-sm btn-danger" data-id="${d.id}">Eliminar</button></td>`;
-    tablaServicios.appendChild(tr);
-  });
-  tablaServicios.querySelectorAll('button').forEach(b=>{
-    b.onclick = async ()=> { if(confirm('Eliminar servicio?')) await deleteDoc(doc(db,'servicios', b.dataset.id)); };
-  });
-});
+window.eliminarProducto = async id => await deleteDoc(doc(db, "productos", id));
 
-// ----------------------
-// GLOBAL SEARCH (top-right) -> results modal
-// ----------------------
-const globalSearch = $('globalSearch');
-const btnSearch = document.getElementById('btnSearch');
-const modalResults = new bootstrap.Modal(document.getElementById('modalResults'));
-const resultsBody = $('resultsBody');
-const searchInfo = $('searchInfo');
+/* =============================
+   🔍 BUSCADOR GLOBAL 3D
+============================= */
+const buscador = document.getElementById("buscadorGlobal");
+const modal = document.createElement("div");
+modal.style.cssText = `
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+  background: #fff; padding: 25px; border-radius: 15px; width: 80%; max-width: 600px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease-in-out; z-index: 1000;
+`;
+document.body.appendChild(modal);
 
-async function performSearch(term){
-  if(!term || !term.trim()) return;
-  const q = term.trim().toLowerCase();
-  // use cachedFacturas for speed, if empty fetch once
-  if(!cachedFacturas || cachedFacturas.length===0){
-    // initial fetch (should normally be populated by realtime onSnapshot)
-    const snap = await getDocs(facturasRef);
-    cachedFacturas = snap.docs.map(d=> ({ id:d.id, ...d.data() }) );
-  }
-  // filter by id (number or partial), proveedor, producto, tipo, desc
-  const results = cachedFacturas.filter(f=>{
-    const idMatch = (f.id||'').toLowerCase().includes(q);
-    const prov = String(f.proveedor||'').toLowerCase();
-    const prod = String(f.producto||'').toLowerCase();
-    const tipo = String(f.tipo||'').toLowerCase();
-    const desc = String(f.desc||'').toLowerCase();
-    const monto = String(f.monto||'').toLowerCase();
-    return idMatch || prov.includes(q) || prod.includes(q) || tipo.includes(q) || desc.includes(q) || monto.includes(q);
-  });
-  // render results in modal
-  resultsBody.innerHTML = '';
-  if(results.length===0){
-    searchInfo.textContent = `No se encontraron facturas para "${term}"`;
-  }else{
-    searchInfo.textContent = `Mostrando ${results.length} resultado(s) para "${term}"`;
-  }
-  results.forEach(r=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r.id}</td>
-      <td>${r.proveedor}</td>
-      <td>${r.producto}</td>
-      <td>${r.tipo}</td>
-      <td>${r.moneda} ${Number(r.monto||0).toFixed(2)}</td>
-      <td>${r.fecha}</td>
-      <td>${r.desc||''}</td>
-      <td>
-        <button class="btn btn-sm btn-primary" data-id="${r.id}" data-action="open">Ver / Editar</button>
-      </td>
-    `;
-    resultsBody.appendChild(tr);
-  });
+const showModal = (content) => {
+  modal.innerHTML = `<div class="text-end"><button id="closeModal" class="btn btn-sm btn-danger">X</button></div>${content}`;
+  modal.style.transform = "translate(-50%, -50%) scale(1)";
+  document.getElementById("closeModal").onclick = () => {
+    modal.style.transform = "translate(-50%, -50%) scale(0)";
+  };
+};
 
-  // attach open handlers
-  resultsBody.querySelectorAll('[data-action="open"]').forEach(b=>{
-    b.onclick = ()=> {
-      const id = b.dataset.id;
-      modalResults.hide();
-      openEditModal(id); // open second modal for edit
-    };
-  });
+buscador.addEventListener("input", async () => {
+  const query = buscador.value.toLowerCase().trim();
+  if (!query) return;
 
-  modalResults.show();
-}
+  let resultados = [];
 
-// key / button handlers
-btnSearch.addEventListener('click', ()=> performSearch(globalSearch.value));
-globalSearch.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter') { e.preventDefault(); performSearch(globalSearch.value); }
-});
-
-// ----------------------
-// Edit modal functions (open, save, delete)
-// ----------------------
-const modalEdit = new bootstrap.Modal(document.getElementById('modalEdit'));
-const editId = $('editFacturaId');
-const editProveedor = $('editProveedor');
-const editProducto = $('editProducto');
-const editTipo = $('editTipo');
-const editMoneda = $('editMoneda');
-const editMonto = $('editMonto');
-const editFecha = $('editFecha');
-const editDesc = $('editDesc');
-const btnSaveFactura = $('btnSaveFactura');
-const btnDeleteFactura = $('btnDeleteFactura');
-
-async function openEditModal(id){
-  // find factura in cachedFacturas
-  const f = cachedFacturas.find(x=>x.id===id);
-  if(!f) {
-    alert('Factura no encontrada');
-    return;
-  }
-  // make sure selects are filled
-  fillProveedorSelect(); fillProductoSelect();
-
-  editId.value = f.id;
-  editProveedor.value = f.proveedor||'';
-  editProducto.value = f.producto||'';
-  editTipo.value = f.tipo||'Factura electrónica';
-  editMoneda.value = f.moneda||'S/.';
-  editMonto.value = Number(f.monto||0);
-  editFecha.value = f.fecha||'';
-  editDesc.value = f.desc||'';
-  modalEdit.show();
-}
-
-btnSaveFactura.addEventListener('click', async ()=>{
-  const id = editId.value;
-  if(!id) return;
-  try{
-    await updateDoc(doc(db,'facturas',id), {
-      proveedor: editProveedor.value,
-      producto: editProducto.value,
-      tipo: editTipo.value,
-      moneda: editMoneda.value,
-      monto: Number(editMonto.value||0),
-      fecha: editFecha.value,
-      desc: editDesc.value
-    });
-    modalEdit.hide();
-  }catch(err){ console.error(err); alert('Error guardando factura'); }
-});
-
-btnDeleteFactura.addEventListener('click', async ()=>{
-  const id = editId.value;
-  if(!id) return;
-  if(!confirm('Eliminar factura?')) return;
-  try{
-    await deleteDoc(doc(db,'facturas',id));
-    modalEdit.hide();
-  }catch(err){ console.error(err); alert('Error eliminando factura'); }
-});
-
-// ----------------------
-// REPORT: simple counts
-// ----------------------
-$('generarReporte')?.addEventListener('click', async ()=>{
-  const [pSnap, prodSnap, fSnap, gSnap, sSnap] = await Promise.all([
-    getDocs(proveedoresRef),
+  const [factSnap, prodSnap, provSnap] = await Promise.all([
+    getDocs(collection(db, "facturas")),
     getDocs(productosRef),
-    getDocs(facturasRef),
-    getDocs(gastosRef),
-    getDocs(serviciosRef)
+    getDocs(proveedoresRef)
   ]);
-  $('reporteContenido').innerHTML = `
-    <div class="p-3" style="background:#fff;border-radius:10px">
-      <p><strong>Proveedores:</strong> ${pSnap.size}</p>
-      <p><strong>Productos:</strong> ${prodSnap.size}</p>
-      <p><strong>Facturas:</strong> ${fSnap.size}</p>
-      <p><strong>Gastos:</strong> ${gSnap.size}</p>
-      <p><strong>Servicios:</strong> ${sSnap.size}</p>
-    </div>
-  `;
+
+  factSnap.forEach(f => {
+    const d = f.data();
+    if (
+      d.proveedor?.toLowerCase().includes(query) ||
+      d.numFactura?.toLowerCase().includes(query) ||
+      d.producto?.toLowerCase().includes(query)
+    ) {
+      resultados.push({ tipo: "Factura", id: f.id, ...d });
+    }
+  });
+
+  prodSnap.forEach(p => {
+    const d = p.data();
+    if (d.nombre?.toLowerCase().includes(query) || d.desc?.toLowerCase().includes(query)) {
+      resultados.push({ tipo: "Producto", id: p.id, ...d });
+    }
+  });
+
+  provSnap.forEach(p => {
+    const d = p.data();
+    if (d.nombre?.toLowerCase().includes(query) || d.producto?.toLowerCase().includes(query)) {
+      resultados.push({ tipo: "Proveedor", id: p.id, ...d });
+    }
+  });
+
+  if (resultados.length === 0) {
+    showModal(`<h5>No se encontraron resultados</h5>`);
+  } else {
+    let content = `<h4>Resultados</h4><ul class="list-group">`;
+    resultados.forEach(r => {
+      content += `<li class="list-group-item d-flex justify-content-between align-items-center">
+        <span><strong>${r.tipo}:</strong> ${r.nombre || r.proveedor || r.numFactura}</span>
+        <button class="btn btn-sm btn-primary" onclick="abrirDetalle('${r.tipo}','${r.id}')">Ver</button>
+      </li>`;
+    });
+    content += "</ul>";
+    showModal(content);
+  }
+});
+
+/* =============================
+   🪟 Abrir Detalle y Editar Factura
+============================= */
+window.abrirDetalle = async (tipo, id) => {
+  if (tipo === "Factura") {
+    const docRef = await getDocs(collection(db, "facturas"));
+    let factura;
+    docRef.forEach(d => { if (d.id === id) factura = d.data(); });
+
+    if (factura) {
+      showModal(`
+        <h5>Editar Factura</h5>
+        <input id="editMonto" class="form-control mb-2" value="${factura.monto}">
+        <input id="editDesc" class="form-control mb-2" value="${factura.desc}">
+        <button class="btn btn-success" id="saveFactura">Guardar</button>
+      `);
+      document.getElementById("saveFactura").onclick = async () => {
+        await updateDoc(doc(db, "facturas", id), {
+          monto: parseFloat(document.getElementById("editMonto").value),
+          desc: document.getElementById("editDesc").value
+        });
+        modal.style.transform = "translate(-50%, -50%) scale(0)";
+      };
+    }
+  }
+};
+
+/* =============================
+   📊 Reporte General
+============================= */
+document.getElementById("generarReporte").addEventListener("click", async () => {
+  const reporteDiv = document.getElementById("reporteContenido");
+  let totalFacturas = 0, totalProductos = 0, totalProveedores = 0;
+
+  const factSnap = await getDocs(collection(db, "facturas"));
+  factSnap.forEach(f => totalFacturas += parseFloat(f.data().monto || 0));
+
+  const prodSnap = await getDocs(productosRef);
+  totalProductos = prodSnap.size;
+
+  const provSnap = await getDocs(proveedoresRef);
+  totalProveedores = provSnap.size;
+
+  reporteDiv.innerHTML = `
+    <div class="p-4 bg-light rounded shadow-lg">
+      <h5>Resumen General</h5>
+      <p><strong>Total Facturas:</strong> S/. ${totalFacturas.toFixed(2)}</p>
+      <p><strong>Total Productos:</strong> ${totalProductos}</p>
+      <p><strong>Total Proveedores:</strong> ${totalProveedores}</p>
+    </div>`;
 });
 
