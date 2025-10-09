@@ -1,12 +1,12 @@
-// Inicializar Firestore
+
 const db = firebase.firestore();
 
-// Elementos del DOM
+
 const navBtns = document.querySelectorAll('.nav-btn');
 const sections = document.querySelectorAll('.content-section');
 const logoutBtn = document.getElementById('logoutBtn');
 
-// Cambiar secciones
+
 navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         navBtns.forEach(b => b.classList.remove('active'));
@@ -16,14 +16,14 @@ navBtns.forEach(btn => {
     });
 });
 
-// Cerrar sesión
+
 logoutBtn.addEventListener('click', () => {
     firebase.auth().signOut().then(() => {
         window.location.href = "index.html";
     });
 });
 
-/* ====================== PROVEEDORES ====================== */
+
 const formProveedor = document.getElementById('formProveedor');
 const tablaProveedores = document.getElementById('tablaProveedores');
 const countProveedores = document.getElementById('countProveedores');
@@ -64,7 +64,7 @@ function renderProveedores() {
     });
 }
 
-// Agregar proveedor
+
 formProveedor.addEventListener('submit', e => {
     e.preventDefault();
     const ruc = document.getElementById('rucProv').value;
@@ -75,13 +75,13 @@ formProveedor.addEventListener('submit', e => {
     formProveedor.reset();
 });
 
-/* ====================== FACTURAS ====================== */
+
 const formFactura = document.getElementById('formFactura');
 const tablaFacturas = document.getElementById('tablaFacturas');
 const countFacturas = document.getElementById('countFacturas');
 const proveedorSelect = document.getElementById('proveedorFactura');
 
-// Actualizar select de proveedores en tiempo real
+
 db.collection('proveedores').onSnapshot(snapshot => {
     proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
     snapshot.forEach(doc => {
@@ -93,7 +93,7 @@ db.collection('proveedores').onSnapshot(snapshot => {
     });
 });
 
-// Renderizar facturas
+
 function renderFacturas() {
     db.collection('facturas').onSnapshot(snapshot => {
         tablaFacturas.innerHTML = '';
@@ -131,7 +131,7 @@ function renderFacturas() {
     });
 }
 
-// Agregar factura
+
 formFactura.addEventListener('submit', e => {
     e.preventDefault();
     const proveedor = proveedorSelect.value;
@@ -144,7 +144,7 @@ formFactura.addEventListener('submit', e => {
     formFactura.reset();
 });
 
-/* ====================== GASTOS ====================== */
+
 const formGasto = document.getElementById('formGasto');
 const tablaGastos = document.getElementById('tablaGastos');
 const countGastos = document.getElementById('countGastos');
@@ -183,7 +183,7 @@ function renderGastos() {
     });
 }
 
-// Agregar gasto
+
 formGasto.addEventListener('submit', e => {
     e.preventDefault();
     const nombre = document.getElementById('nombreGasto').value;
@@ -194,7 +194,7 @@ formGasto.addEventListener('submit', e => {
     formGasto.reset();
 });
 
-/* ====================== SERVICIOS ====================== */
+
 const formServicio = document.getElementById('formServicio');
 const tablaServicios = document.getElementById('tablaServicios');
 const countServicios = document.getElementById('countServicios');
@@ -233,7 +233,7 @@ function renderServicios() {
     });
 }
 
-// Agregar servicio
+
 formServicio.addEventListener('submit', e => {
     e.preventDefault();
     const nombre = document.getElementById('nombreServ').value;
@@ -244,7 +244,7 @@ formServicio.addEventListener('submit', e => {
     formServicio.reset();
 });
 
-// Inicializar render de todo
+
 renderProveedores();
 renderFacturas();
 renderGastos();
