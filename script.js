@@ -1,125 +1,215 @@
-import { auth, db } from './firebase.js';
-import { 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    signOut, 
-    onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { 
-    collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc 
+// script.js
+import { db, auth } from './firebase.js';
+import {
+    collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, getDocs, query
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-// --- LOGIN / REGISTER ---
-const formLogin = document.getElementById("form-login");
-const formRegister = document.getElementById("form-register");
-const showRegister = document.getElementById("showRegister");
-const showLogin = document.getElementById("showLogin");
-
-showRegister.addEventListener("click", ()=>{formLogin.style.display="none";formRegister.style.display="block";});
-showLogin.addEventListener("click", ()=>{formRegister.style.display="none";formLogin.style.display="block";});
-
-// Registro
-formRegister.addEventListener("submit", async e=>{
-    e.preventDefault();
-    const email = document.getElementById("emailReg").value;
-    const pass = document.getElementById("passReg").value;
-    try{ await createUserWithEmailAndPassword(auth,email,pass);
-        alert("Registro exitoso, inicia sesión"); formRegister.style.display="none"; formLogin.style.display="block";
-    }catch(err){ alert(err.message); }
+// --------------------- LOGOUT ---------------------
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+    await signOut(auth);
+    window.location.href = "index.html";
 });
 
-// Login
-formLogin.addEventListener("submit", async e=>{
-    e.preventDefault();
-    const email = document.getElementById("emailLogin").value;
-    const pass = document.getElementById("passLogin").value;
-    try{ await signInWithEmailAndPassword(auth,email,pass);
-        window.location.href="dashboard.html";
-    }catch(err){ alert(err.message); }
-});
-
-// Redirigir si ya hay sesión
-onAuthStateChanged(auth,user=>{
-    if(user && window.location.pathname.endsWith("index.html")) window.location.href="dashboard.html";
-});
-
-// --- DASHBOARD ---
-onAuthStateChanged(auth,user=>{
-    if(window.location.pathname.endsWith("dashboard.html") && !user){
-        window.location.href="index.html";
-    }
-});
-
-// Logout
-const logoutBtn = document.getElementById("logoutBtn");
-if(logoutBtn){
-    logoutBtn.addEventListener("click", async ()=>{
-        await signOut(auth);
-        window.location.href="index.html";
-    });
-}
-
-// Navegación secciones
-const navBtns = document.querySelectorAll(".nav-btn");
-const sections = document.querySelectorAll(".content-section");
-navBtns.forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        navBtns.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const sec = btn.dataset.section;
-        sections.forEach(s=>s.classList.remove("active"));
-        document.getElementById(sec).classList.add("active");
-    });
-});
-
-// --- CRUD Firestore ---
+// --------------------- PROVEEDORES ---------------------
 const proveedoresCol = collection(db,"proveedores");
 const tablaProveedores = document.getElementById("tablaProveedores");
-
 const formProveedor = document.getElementById("formProveedor");
+
 formProveedor.addEventListener("submit", async e=>{
     e.preventDefault();
-    const data = {
-        ruc: document.getElementById("rucProv").value,
-        nombre: document.getElementById("nombreProv").value,
-        producto: document.getElementById("productoProv").value,
-        direccion: document.getElementById("direccionProv").value
-    };
-    await addDoc(proveedoresCol,data);
+    await addDoc(proveedoresCol,{
+        ruc: formProveedor.rucProv.value,
+        nombre: formProveedor.nombreProv.value,
+        producto: formProveedor.productoProv.value,
+        direccion: formProveedor.direccionProv.value
+    });
     formProveedor.reset();
 });
 
-// Mostrar en tiempo real
+// Listener en tiempo real
 onSnapshot(proveedoresCol, snapshot=>{
-    tablaProveedores.innerHTML="";
-    snapshot.forEach(docu=>{
-        const d = docu.data();
-        tablaProveedores.innerHTML += `
-        <tr>
-            <td>${d.ruc}</td>
-            <td>${d.nombre}</td>
-            <td>${d.producto}</td>
-            <td>${d.direccion}</td>
+    tablaProveedores.innerHTML = "";
+    snapshot.forEach(docSnap=>{
+        const data = docSnap.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${data.ruc}</td>
+            <td>${data.nombre}</td>
+            <td>${data.producto}</td>
+            <td>${data.direccion}</td>
             <td>
-                <button class="edit-btn" onclick="editProv('${docu.id}','${d.ruc}','${d.nombre}','${d.producto}','${d.direccion}')">Editar</button>
-                <button class="delete-btn" onclick="deleteProv('${docu.id}')">Eliminar</button>
+                <button class="edit-btn" onclick="editarProveedor('${docSnap.id}')">Editar</button>
+                <button class="delete-btn" onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button>
             </td>
-        </tr>
         `;
+        tablaProveedores.appendChild(tr);
     });
 });
 
-// Funciones edit / delete
-window.deleteProv = async id=>{ await deleteDoc(doc(db,"proveedores",id)); }
-window.editProv = async (id,ruc,nombre,producto,direccion)=>{
-    const newRuc = prompt("RUC",ruc);
-    const newNom = prompt("Nombre",nombre);
-    const newProd = prompt("Producto",producto);
-    const newDir = prompt("Dirección",direccion);
-    await updateDoc(doc(db,"proveedores",id),{
-        ruc:newRuc,nombre:newNom,producto:newProd,direccion:newDir
+// Funciones editar/eliminar
+window.eliminarProveedor = async (id)=>{ await deleteDoc(doc(db,"proveedores",id)); }
+
+window.editarProveedor = async (id)=>{
+    const docRef = doc(db,"proveedores",id);
+    const docSnap = await getDocs(query(proveedoresCol));
+    const newNombre = prompt("Nuevo nombre:");
+    if(newNombre) await updateDoc(docRef,{ nombre: newNombre });
+}
+
+// --------------------- FACTURAS ---------------------
+const facturasCol = collection(db,"facturas");
+const tablaFacturas = document.getElementById("tablaFacturas");
+const formFactura = document.getElementById("formFactura");
+
+formFactura.addEventListener("submit", async e=>{
+    e.preventDefault();
+    await addDoc(facturasCol,{
+        proveedor: formFactura.proveedorFactura.value,
+        tipo: formFactura.tipoFactura.value,
+        monto: Number(formFactura.montoFactura.value),
+        moneda: formFactura.monedaFactura.value,
+        fecha: formFactura.fechaFactura.value,
+        descripcion: formFactura.descFactura.value
     });
-};
+    formFactura.reset();
+});
+
+onSnapshot(facturasCol, snapshot=>{
+    tablaFacturas.innerHTML = "";
+    snapshot.forEach(docSnap=>{
+        const data = docSnap.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${data.proveedor}</td>
+            <td>${data.tipo}</td>
+            <td>${data.monto}</td>
+            <td>${data.fecha}</td>
+            <td>${data.descripcion}</td>
+            <td>
+                <button class="edit-btn" onclick="editarFactura('${docSnap.id}')">Editar</button>
+                <button class="delete-btn" onclick="eliminarFactura('${docSnap.id}')">Eliminar</button>
+            </td>
+        `;
+        tablaFacturas.appendChild(tr);
+    });
+});
+
+window.eliminarFactura = async (id)=>{ await deleteDoc(doc(db,"facturas",id)); }
+window.editarFactura = async (id)=>{
+    const docRef = doc(db,"facturas",id);
+    const newMonto = prompt("Nuevo monto:");
+    if(newMonto) await updateDoc(docRef,{ monto: Number(newMonto) });
+}
+
+// --------------------- GASTOS ---------------------
+const gastosCol = collection(db,"gastos");
+const tablaGastos = document.getElementById("tablaGastos");
+const formGasto = document.getElementById("formGasto");
+
+formGasto.addEventListener("submit", async e=>{
+    e.preventDefault();
+    await addDoc(gastosCol,{
+        nombre: formGasto.nombreGasto.value,
+        tipo: formGasto.tipoGasto.value,
+        monto: Number(formGasto.montoGasto.value),
+        fecha: formGasto.fechaGasto.value
+    });
+    formGasto.reset();
+});
+
+onSnapshot(gastosCol, snapshot=>{
+    tablaGastos.innerHTML = "";
+    snapshot.forEach(docSnap=>{
+        const data = docSnap.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${data.nombre}</td>
+            <td>${data.tipo}</td>
+            <td>${data.monto}</td>
+            <td>${data.fecha}</td>
+            <td>
+                <button class="edit-btn" onclick="editarGasto('${docSnap.id}')">Editar</button>
+                <button class="delete-btn" onclick="eliminarGasto('${docSnap.id}')">Eliminar</button>
+            </td>
+        `;
+        tablaGastos.appendChild(tr);
+    });
+});
+
+window.eliminarGasto = async (id)=>{ await deleteDoc(doc(db,"gastos",id)); }
+window.editarGasto = async (id)=>{
+    const docRef = doc(db,"gastos",id);
+    const newMonto = prompt("Nuevo monto:");
+    if(newMonto) await updateDoc(docRef,{ monto: Number(newMonto) });
+}
+
+// --------------------- SERVICIOS ---------------------
+const serviciosCol = collection(db,"servicios");
+const tablaServicios = document.getElementById("tablaServicios");
+const formServicio = document.getElementById("formServicio");
+
+formServicio.addEventListener("submit", async e=>{
+    e.preventDefault();
+    await addDoc(serviciosCol,{
+        nombre: formServicio.nombreServ.value,
+        precio: Number(formServicio.precioServ.value),
+        fecha: formServicio.fechaServ.value,
+        descripcion: formServicio.descServ.value
+    });
+    formServicio.reset();
+});
+
+onSnapshot(serviciosCol, snapshot=>{
+    tablaServicios.innerHTML = "";
+    snapshot.forEach(docSnap=>{
+        const data = docSnap.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${data.nombre}</td>
+            <td>${data.precio}</td>
+            <td>${data.fecha}</td>
+            <td>${data.descripcion}</td>
+            <td>
+                <button class="edit-btn" onclick="editarServicio('${docSnap.id}')">Editar</button>
+                <button class="delete-btn" onclick="eliminarServicio('${docSnap.id}')">Eliminar</button>
+            </td>
+        `;
+        tablaServicios.appendChild(tr);
+    });
+});
+
+window.eliminarServicio = async (id)=>{ await deleteDoc(doc(db,"servicios",id)); }
+window.editarServicio = async (id)=>{
+    const docRef = doc(db,"servicios",id);
+    const newPrecio = prompt("Nuevo precio:");
+    if(newPrecio) await updateDoc(docRef,{ precio: Number(newPrecio) });
+}
+
+// --------------------- REPORTES ---------------------
+document.getElementById("btnGenerarReporte").addEventListener("click", async ()=>{
+    const reporteDiv = document.getElementById("reporteContenido");
+    reporteDiv.innerHTML = "<h4>Generando resumen...</h4>";
+
+    const [provSnap, factSnap, gastoSnap, servSnap] = await Promise.all([
+        getDocs(proveedoresCol), getDocs(facturasCol), getDocs(gastosCol), getDocs(serviciosCol)
+    ]);
+
+    let totalProveedores = provSnap.size;
+    let totalFacturas = factSnap.docs.reduce((acc,d)=>acc + d.data().monto,0);
+    let totalGastos = gastoSnap.docs.reduce((acc,d)=>acc + d.data().monto,0);
+    let totalServicios = servSnap.docs.reduce((acc,d)=>acc + d.data().precio,0);
+
+    reporteDiv.innerHTML = `
+        <ul>
+            <li>Total Proveedores: ${totalProveedores}</li>
+            <li>Total Facturas: S/. ${totalFacturas}</li>
+            <li>Total Gastos: S/. ${totalGastos}</li>
+            <li>Total Servicios: S/. ${totalServicios}</li>
+        </ul>
+    `;
+});
+
 
 
 
