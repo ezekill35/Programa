@@ -1,279 +1,84 @@
-import { db, auth } from './firebase.js'; // Asegúrate que firebase.js exporte db y auth
+import { auth } from './firebase.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.16.2/firebase-auth.js";
 
-// ---------------- Navegación ----------------
-const navButtons = document.querySelectorAll('.nav-btn');
-const sections = document.querySelectorAll('.content-section');
+// Elementos
+const loginDiv = document.getElementById('loginDiv');
+const registerDiv = document.getElementById('registerDiv');
 
-navButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    sections.forEach(s => s.classList.remove('active'));
-    document.getElementById(btn.dataset.section).classList.add('active');
-    navButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
+const showRegister = document.getElementById('showRegister');
+const showLogin = document.getElementById('showLogin');
 
-// Logout
-document.querySelector('.logout-btn').addEventListener('click', () => {
-  auth.signOut().then(() => window.location.href = 'index.html');
-});
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
 
-// ---------------- GLOBAL DELETE ----------------
-window.deleteDoc = function(collection, id) {
-  if(confirm("¿Seguro quieres eliminar este registro?")) {
-    db.collection(collection).doc(id).delete();
-  }
-}
+const loginMsg = document.getElementById('loginMsg');
+const registerMsg = document.getElementById('registerMsg');
 
-// ---------------- PROVEEDORES ----------------
-const tablaProveedores = document.getElementById('tablaProveedores');
-const msgProv = document.getElementById('msgProv');
-const formProveedor = document.getElementById('formProveedor');
-let editProveedorId = null;
-
-const proveedorFacturaSelect = document.getElementById('proveedorFactura');
-
-formProveedor.addEventListener('submit', async e => {
+// Mostrar registro
+showRegister.addEventListener('click', e => {
   e.preventDefault();
-  const ruc = document.getElementById('rucProv').value.trim();
-  const nombre = document.getElementById('nombreProv').value.trim();
-  const producto = document.getElementById('productoProv').value.trim();
-  const direccion = document.getElementById('direccionProv').value.trim();
+  loginDiv.style.display = 'none';
+  registerDiv.style.display = 'block';
+  loginMsg.textContent = '';
+  registerMsg.textContent = '';
+});
 
-  if (!/^[0-9]+$/.test(ruc)) {
-    msgProv.textContent = "El RUC debe contener solo números";
-    return;
-  }
+// Mostrar login
+showLogin.addEventListener('click', e => {
+  e.preventDefault();
+  loginDiv.style.display = 'block';
+  registerDiv.style.display = 'none';
+  loginMsg.textContent = '';
+  registerMsg.textContent = '';
+});
+
+// Registro de usuario
+registerForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = document.getElementById('registerName').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value;
 
   try {
-    if(editProveedorId) {
-      await db.collection('proveedores').doc(editProveedorId).update({ ruc, nombre, producto, direccion });
-      editProveedorId = null;
-      formProveedor.querySelector('button').textContent = "Agregar";
-    } else {
-      await db.collection('proveedores').add({ ruc, nombre, producto, direccion });
-    }
-    formProveedor.reset();
-    msgProv.textContent = '';
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(userCredential.user, { displayName: name });
+    registerMsg.style.color = 'green';
+    registerMsg.textContent = 'Registrado correctamente. Redirigiendo...';
+    registerForm.reset();
   } catch(err) {
-    msgProv.textContent = err.message;
+    registerMsg.style.color = 'red';
+    registerMsg.textContent = err.message;
   }
 });
 
-// Actualizar tabla y select en tiempo real
-db.collection('proveedores').onSnapshot(snapshot => {
-  tablaProveedores.innerHTML = '';
-  proveedorFacturaSelect.innerHTML = '<option value="">Selecciona un proveedor</option>';
-
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    // Tabla
-    tablaProveedores.innerHTML += `
-      <tr>
-        <td>${data.ruc}</td>
-        <td>${data.nombre}</td>
-        <td>${data.producto}</td>
-        <td>${data.direccion}</td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editProveedor('${doc.id}','${data.ruc}','${data.nombre}','${data.producto}','${data.direccion}')">Editar</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDoc('proveedores','${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-    // Select de proveedores
-    proveedorFacturaSelect.innerHTML += `<option value="${data.nombre}">${data.nombre} (RUC: ${data.ruc})</option>`;
-  });
-
-  // Actualizar contador
-  document.getElementById('countProveedores').textContent = snapshot.size;
-});
-
-window.editProveedor = function(id, ruc, nombre, producto, direccion) {
-  document.getElementById('rucProv').value = ruc;
-  document.getElementById('nombreProv').value = nombre;
-  document.getElementById('productoProv').value = producto;
-  document.getElementById('direccionProv').value = direccion;
-  editProveedorId = id;
-  formProveedor.querySelector('button').textContent = "Actualizar";
-}
-
-// ---------------- FACTURAS ----------------
-const tablaFacturas = document.getElementById('tablaFacturas');
-const formFactura = document.getElementById('formFactura');
-let editFacturaId = null;
-
-formFactura.addEventListener('submit', async e => {
+// Login
+loginForm.addEventListener('submit', async e => {
   e.preventDefault();
-  const proveedor = proveedorFacturaSelect.value;
-  const tipo = document.getElementById('tipoFactura').value.trim();
-  const monto = parseFloat(document.getElementById('montoFactura').value);
-  const fecha = document.getElementById('fechaFactura').value;
-  const desc = document.getElementById('descFactura').value.trim();
-
-  if(!proveedor) {
-    document.getElementById('msgFactura').textContent = "Selecciona un proveedor";
-    return;
-  }
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
 
   try {
-    if(editFacturaId) {
-      await db.collection('facturas').doc(editFacturaId).update({ proveedor, tipo, monto, fecha, desc });
-      editFacturaId = null;
-      formFactura.querySelector('button').textContent = "Agregar";
-    } else {
-      await db.collection('facturas').add({ proveedor, tipo, monto, fecha, desc });
-    }
-    formFactura.reset();
-    document.getElementById('msgFactura').textContent = '';
+    await signInWithEmailAndPassword(auth, email, password);
+    loginMsg.style.color = 'green';
+    loginMsg.textContent = 'Inicio de sesión exitoso. Redirigiendo...';
+    loginForm.reset();
   } catch(err) {
-    document.getElementById('msgFactura').textContent = err.message;
+    loginMsg.style.color = 'red';
+    loginMsg.textContent = err.message;
   }
 });
 
-db.collection('facturas').onSnapshot(snapshot => {
-  tablaFacturas.innerHTML = '';
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    tablaFacturas.innerHTML += `
-      <tr>
-        <td>${data.proveedor}</td>
-        <td>${data.tipo}</td>
-        <td>${data.monto}</td>
-        <td>${data.fecha}</td>
-        <td>${data.desc}</td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editFactura('${doc.id}','${data.proveedor}','${data.tipo}','${data.monto}','${data.fecha}','${data.desc}')">Editar</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDoc('facturas','${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-  document.getElementById('countFacturas').textContent = snapshot.size;
-});
-
-window.editFactura = function(id, proveedor, tipo, monto, fecha, desc) {
-  proveedorFacturaSelect.value = proveedor;
-  document.getElementById('tipoFactura').value = tipo;
-  document.getElementById('montoFactura').value = monto;
-  document.getElementById('fechaFactura').value = fecha;
-  document.getElementById('descFactura').value = desc;
-  editFacturaId = id;
-  formFactura.querySelector('button').textContent = "Actualizar";
-}
-
-// ---------------- GASTOS ----------------
-const tablaGastos = document.getElementById('tablaGastos');
-const formGasto = document.getElementById('formGasto');
-let editGastoId = null;
-
-formGasto.addEventListener('submit', async e => {
-  e.preventDefault();
-  const nombre = document.getElementById('nombreGasto').value.trim();
-  const tipo = document.getElementById('tipoGasto').value.trim();
-  const monto = parseFloat(document.getElementById('montoGasto').value);
-  const fecha = document.getElementById('fechaGasto').value;
-
-  try {
-    if(editGastoId) {
-      await db.collection('gastos').doc(editGastoId).update({ nombre, tipo, monto, fecha });
-      editGastoId = null;
-      formGasto.querySelector('button').textContent = "Agregar";
-    } else {
-      await db.collection('gastos').add({ nombre, tipo, monto, fecha });
-    }
-    formGasto.reset();
-    document.getElementById('msgGasto').textContent = '';
-  } catch(err) {
-    document.getElementById('msgGasto').textContent = err.message;
+// Mantener sesión activa
+onAuthStateChanged(auth, user => {
+  if(user) {
+    // Redirige al dashboard si ya está logueado
+    window.location.href = 'dashboard.html';
+  } else {
+    // Usuario no logueado, mostrar login
+    loginDiv.style.display = 'block';
+    registerDiv.style.display = 'none';
   }
 });
-
-db.collection('gastos').onSnapshot(snapshot => {
-  tablaGastos.innerHTML = '';
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    tablaGastos.innerHTML += `
-      <tr>
-        <td>${data.nombre}</td>
-        <td>${data.tipo}</td>
-        <td>${data.monto}</td>
-        <td>${data.fecha}</td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editGasto('${doc.id}','${data.nombre}','${data.tipo}','${data.monto}','${data.fecha}')">Editar</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDoc('gastos','${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-  document.getElementById('countGastos').textContent = snapshot.size;
-});
-
-window.editGasto = function(id, nombre, tipo, monto, fecha) {
-  document.getElementById('nombreGasto').value = nombre;
-  document.getElementById('tipoGasto').value = tipo;
-  document.getElementById('montoGasto').value = monto;
-  document.getElementById('fechaGasto').value = fecha;
-  editGastoId = id;
-  formGasto.querySelector('button').textContent = "Actualizar";
-}
-
-// ---------------- SERVICIOS ----------------
-const tablaServicios = document.getElementById('tablaServicios');
-const formServicio = document.getElementById('formServicio');
-let editServicioId = null;
-
-formServicio.addEventListener('submit', async e => {
-  e.preventDefault();
-  const nombre = document.getElementById('nombreServ').value.trim();
-  const precio = parseFloat(document.getElementById('precioServ').value);
-  const fecha = document.getElementById('fechaServ').value;
-  const desc = document.getElementById('descServ').value.trim();
-
-  try {
-    if(editServicioId) {
-      await db.collection('servicios').doc(editServicioId).update({ nombre, precio, fecha, desc });
-      editServicioId = null;
-      formServicio.querySelector('button').textContent = "Agregar";
-    } else {
-      await db.collection('servicios').add({ nombre, precio, fecha, desc });
-    }
-    formServicio.reset();
-    document.getElementById('msgServ').textContent = '';
-  } catch(err) {
-    document.getElementById('msgServ').textContent = err.message;
-  }
-});
-
-db.collection('servicios').onSnapshot(snapshot => {
-  tablaServicios.innerHTML = '';
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    tablaServicios.innerHTML += `
-      <tr>
-        <td>${data.nombre}</td>
-        <td>${data.precio}</td>
-        <td>${data.fecha}</td>
-        <td>${data.desc}</td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editServicio('${doc.id}','${data.nombre}','${data.precio}','${data.fecha}','${data.desc}')">Editar</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDoc('servicios','${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-  document.getElementById('countServicios').textContent = snapshot.size;
-});
-
-window.editServicio = function(id, nombre, precio, fecha, desc) {
-  document.getElementById('nombreServ').value = nombre;
-  document.getElementById('precioServ').value = precio;
-  document.getElementById('fechaServ').value = fecha;
-  document.getElementById('descServ').value = desc;
-  editServicioId = id;
-  formServicio.querySelector('button').textContent = "Actualizar";
-}
-
-
-
-
-
-
 
 
 
