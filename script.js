@@ -1,52 +1,63 @@
-// Cambiar vistas
-document.getElementById('showRegister').addEventListener('click', function(){
-  document.getElementById('loginDiv').style.display='none';
-  document.getElementById('registerDiv').style.display='block';
-});
-document.getElementById('showLogin').addEventListener('click', function(){
-  document.getElementById('registerDiv').style.display='none';
-  document.getElementById('loginDiv').style.display='block';
-});
+// Referencias DOM
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const showRegister = document.getElementById('showRegister');
+const showLogin = document.getElementById('showLogin');
+const loginSection = document.getElementById('loginSection');
+const registerSection = document.getElementById('registerSection');
 
-// Registro
-document.getElementById('registerBtn').addEventListener('click', function(){
-  var name = document.getElementById('regName').value;
-  var email = document.getElementById('regEmail').value;
-  var pass = document.getElementById('regPass').value;
-
-  if(name && email && pass){
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(userCred=>{
-        db.collection('usuarios').doc(userCred.user.uid).set({nombre:name, email:email});
-        alert('Usuario registrado!');
-        document.getElementById('registerDiv').style.display='none';
-        document.getElementById('loginDiv').style.display='block';
-      })
-      .catch(err=> alert(err.message));
-  } else alert('Complete todos los campos');
+// Cambiar entre login y registro
+showRegister.addEventListener('click', e => {
+  e.preventDefault();
+  loginSection.style.display = 'none';
+  registerSection.style.display = 'block';
 });
 
-// Login
-document.getElementById('loginBtn').addEventListener('click', function(){
-  var email = document.getElementById('loginEmail').value;
-  var pass = document.getElementById('loginPass').value;
-
-  if(email && pass){
-    auth.signInWithEmailAndPassword(email, pass)
-      .then(()=> window.location='dashboard.html')
-      .catch(err=> alert(err.message));
-  } else alert('Complete todos los campos');
+showLogin.addEventListener('click', e => {
+  e.preventDefault();
+  loginSection.style.display = 'block';
+  registerSection.style.display = 'none';
 });
 
-// Mantener sesión activa
-auth.onAuthStateChanged(user=>{
-  if(user && window.location.pathname.endsWith('index.html')){
-    window.location='dashboard.html';
+// --- Registro ---
+registerForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPass').value;
+
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(userCredential => {
+      // Guardar nombre en Firestore
+      db.collection('usuarios').doc(userCredential.user.uid).set({ name, email });
+      alert('Usuario registrado correctamente');
+      registerForm.reset();
+      registerSection.style.display = 'none';
+      loginSection.style.display = 'block';
+    })
+    .catch(err => alert(err.message));
+});
+
+// --- Login ---
+loginForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => {
+      window.location = 'dashboard.html';
+    })
+    .catch(err => alert(err.message));
+});
+
+// --- Mantener sesión activa ---
+auth.onAuthStateChanged(user => {
+  if (user && window.location.pathname.includes('index.html')) {
+    // Si ya está logueado, ir al dashboard
+    window.location = 'dashboard.html';
   }
 });
-
-
-
 
 
 
