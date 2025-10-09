@@ -27,7 +27,9 @@ table th, table td { padding:12px 15px; text-align:left; border-bottom:1px solid
 table th { background:#1abc9c; color:#fff; }
 table tr:hover { background:#f1f9f8;}
 button.edit-btn { background:#3498db; color:#fff; }
-button.delete-btn { background:#e74c3c; color:#fff; }
+button.delete-btn { background:#e74c3c; color:#fff;}
+.buscar-container { display:flex; justify-content:flex-end; margin-bottom:10px; }
+.buscar-container input { width:250px; padding:8px; border-radius:6px; border:1px solid #ccc;}
 </style>
 </head>
 <body class="dashboard-body">
@@ -53,11 +55,10 @@ button.delete-btn { background:#e74c3c; color:#fff; }
         <form id="formProveedor">
             <input id="rucProv" placeholder="RUC" required>
             <input id="nombreProv" placeholder="Nombre" required>
-            <input id="productoProv" placeholder="Producto" required>
+            <input id="productoProv" placeholder="Producto principal" required>
             <input id="direccionProv" placeholder="Dirección" required>
             <button type="submit">Agregar</button>
         </form>
-        <input id="buscarProveedor" placeholder="Buscar proveedor..." style="margin-bottom:12px; padding:8px; width:100%;">
         <table>
             <thead>
                 <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
@@ -70,14 +71,16 @@ button.delete-btn { background:#e74c3c; color:#fff; }
     <section id="productos" class="content-section">
         <h2>Registro de Productos</h2>
         <form id="formProducto">
-            <input id="nombreProducto" placeholder="Nombre del Producto" required>
-            <input id="descProducto" placeholder="Descripción del Producto">
+            <input id="nombreProd" placeholder="Nombre del producto" required>
+            <input id="descProd" placeholder="Descripción" required>
+            <input id="cantidadProd" type="number" step="1" placeholder="Cantidad" required>
+            <input id="unidadProd" placeholder="Unidad de medida" required>
+            <input id="valorUnitProd" type="number" step="0.01" placeholder="Valor unitario" required>
             <button type="submit">Agregar</button>
         </form>
-        <input id="buscarProducto" placeholder="Buscar producto..." style="margin-bottom:12px; padding:8px; width:100%;">
         <table>
             <thead>
-                <tr><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr>
+                <tr><th>Nombre</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Valor unitario</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaProductos"></tbody>
         </table>
@@ -89,7 +92,6 @@ button.delete-btn { background:#e74c3c; color:#fff; }
         <form id="formFactura">
             <select id="proveedorFactura" required></select>
             <select id="productoFactura" required></select>
-
             <div style="display:flex; gap:10px; margin-bottom:12px;">
                 <input id="montoFactura" type="number" step="0.01" placeholder="Monto" required style="flex:2;">
                 <select id="monedaFactura" style="flex:1;">
@@ -97,21 +99,23 @@ button.delete-btn { background:#e74c3c; color:#fff; }
                     <option value="$">Dólares</option>
                 </select>
             </div>
-
             <select id="tipoFactura" required>
                 <option value="">Selecciona tipo</option>
                 <option value="Factura electrónica">Factura electrónica</option>
                 <option value="Boleta">Boleta</option>
             </select>
-
             <input id="fechaFactura" type="date" required>
             <input id="descFactura" placeholder="Descripción">
             <button type="submit">Agregar</button>
         </form>
-        <input id="buscarFactura" placeholder="Buscar factura por proveedor o producto..." style="margin-bottom:12px; padding:8px; width:100%;">
+
+        <div class="buscar-container">
+            <input id="buscarFactura" placeholder="Buscar factura por número, proveedor o producto">
+        </div>
+
         <table>
             <thead>
-                <tr><th>Proveedor</th><th>Producto</th><th>Tipo</th><th>Monto</th><th>Moneda</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
+                <tr><th>Proveedor</th><th>Producto</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaFacturas"></tbody>
         </table>
