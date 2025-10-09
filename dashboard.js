@@ -1,5 +1,7 @@
-// Inicializa las referencias a las colecciones
+// ---------------- FIRESTORE ----------------
 const db = firebase.firestore();
+
+// ---------------- COLECCIONES ----------------
 const proveedoresCol = db.collection('proveedores');
 const facturasCol = db.collection('facturas');
 const gastosCol = db.collection('gastos');
@@ -18,16 +20,23 @@ const formServ = document.getElementById('formServicio');
 
 const proveedorSelect = document.getElementById('proveedorFactura');
 
-// ---------------- CARGAR PROVEEDORES EN SELECT ----------------
-proveedoresCol.onSnapshot(snapshot => {
+// ---------------- FUNCIONES ----------------
+function cargarProveedoresSelect() {
   proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const option = document.createElement('option');
-    option.value = doc.id;
-    option.textContent = `${data.nombre} (${data.ruc})`;
-    proveedorSelect.appendChild(option);
+  proveedoresCol.get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const option = document.createElement('option');
+      option.value = doc.id; // ID del proveedor
+      option.textContent = `${data.nombre} (${data.ruc})`; // Mostrar nombre + RUC
+      proveedorSelect.appendChild(option);
+    });
   });
+}
+
+// ---------------- CARGAR PROVEEDORES EN SELECT EN TIEMPO REAL ----------------
+proveedoresCol.onSnapshot(() => {
+  cargarProveedoresSelect();
 });
 
 // ---------------- CRUD PROVEEDORES ----------------
@@ -59,14 +68,12 @@ proveedoresCol.onSnapshot(snapshot => {
     tablaProv.appendChild(tr);
 
     tr.querySelector('.delProv').addEventListener('click', () => proveedoresCol.doc(doc.id).delete());
-    tr.querySelector('.editProv').addEventListener('click', async () => {
+    tr.querySelector('.editProv').addEventListener('click', () => {
       const r = prompt("RUC:", data.ruc);
       const n = prompt("Nombre:", data.nombre);
       const p = prompt("Producto:", data.producto);
       const d = prompt("Dirección:", data.direccion);
-      if (r && n && p && d) {
-        proveedoresCol.doc(doc.id).update({ ruc: r, nombre: n, producto: p, direccion: d });
-      }
+      if (r && n && p && d) proveedoresCol.doc(doc.id).update({ ruc: r, nombre: n, producto: p, direccion: d });
     });
   });
 });
@@ -90,43 +97,37 @@ formFac.addEventListener('submit', e => {
 
 facturasCol.onSnapshot(snapshot => {
   tablaFac.innerHTML = '';
-  snapshot.forEach(async docSnap => {
+  snapshot.forEach(docSnap => {
     const data = docSnap.data();
-    const provDoc = await proveedoresCol.doc(data.proveedor).get();
-    const provNombre = provDoc.exists ? provDoc.data().nombre : "Desconocido";
-    const provRuc = provDoc.exists ? provDoc.data().ruc : "--";
+    proveedoresCol.doc(data.proveedor).get().then(provDoc => {
+      const provNombre = provDoc.exists ? provDoc.data().nombre : "Desconocido";
+      const provRuc = provDoc.exists ? provDoc.data().ruc : "--";
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${provNombre} (${provRuc})</td>
-      <td>${data.tipo}</td>
-      <td>${data.monto.toLocaleString('es-PE',{style:'currency', currency:data.moneda})}</td>
-      <td>${data.fecha}</td>
-      <td>${data.descripcion}</td>
-      <td>
-        <button class="btn btn-sm btn-warning editFac">Editar</button>
-        <button class="btn btn-sm btn-danger delFac">Eliminar</button>
-      </td>`;
-    tablaFac.appendChild(tr);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${provNombre} (${provRuc})</td>
+        <td>${data.tipo}</td>
+        <td>${data.monto.toLocaleString('es-PE',{style:'currency', currency:data.moneda})}</td>
+        <td>${data.fecha}</td>
+        <td>${data.descripcion}</td>
+        <td>
+          <button class="btn btn-sm btn-warning editFac">Editar</button>
+          <button class="btn btn-sm btn-danger delFac">Eliminar</button>
+        </td>`;
+      tablaFac.appendChild(tr);
 
-    tr.querySelector('.delFac').addEventListener('click', () => facturasCol.doc(docSnap.id).delete());
-    tr.querySelector('.editFac').addEventListener('click', async () => {
-      const t = prompt("Tipo:", data.tipo);
-      const m = prompt("Monto:", data.monto);
-      const mon = prompt("Moneda (PEN/USD):", data.moneda);
-      const f = prompt("Fecha:", data.fecha);
-      const d = prompt("Descripción:", data.descripcion);
-      const pId = prompt("Proveedor ID:", data.proveedor);
-      if(t && m && f && d && pId && mon){
-        facturasCol.doc(docSnap.id).update({
-          tipo: t,
-          monto: parseFloat(m),
-          moneda: mon,
-          fecha: f,
-          descripcion: d,
-          proveedor: pId
-        });
-      }
+      tr.querySelector('.delFac').addEventListener('click', () => facturasCol.doc(docSnap.id).delete());
+      tr.querySelector('.editFac').addEventListener('click', () => {
+        const t = prompt("Tipo:", data.tipo);
+        const m = prompt("Monto:", data.monto);
+        const mon = prompt("Moneda (PEN/USD):", data.moneda);
+        const f = prompt("Fecha:", data.fecha);
+        const d = prompt("Descripción:", data.descripcion);
+        const pId = prompt("Proveedor ID:", data.proveedor);
+        if(t && m && f && d && pId && mon){
+          facturasCol.doc(docSnap.id).update({ tipo:t, monto:parseFloat(m), moneda:mon, fecha:f, descripcion:d, proveedor:pId });
+        }
+      });
     });
   });
 });
@@ -165,7 +166,7 @@ gastosCol.onSnapshot(snapshot => {
       const t = prompt("Tipo:", data.tipo);
       const m = prompt("Monto:", data.monto);
       const f = prompt("Fecha:", data.fecha);
-      if(n && t && m && f) gastosCol.doc(doc.id).update({ nombre: n, tipo: t, monto: parseFloat(m), fecha: f });
+      if(n && t && m && f) gastosCol.doc(doc.id).update({ nombre:n, tipo:t, monto:parseFloat(m), fecha:f });
     });
   });
 });
@@ -204,7 +205,7 @@ serviciosCol.onSnapshot(snapshot => {
       const p = prompt("Precio:", data.precio);
       const f = prompt("Fecha:", data.fecha);
       const d = prompt("Descripción:", data.descripcion);
-      if(n && p && f && d) serviciosCol.doc(doc.id).update({ nombre: n, precio: parseFloat(p), fecha: f, descripcion: d });
+      if(n && p && f && d) serviciosCol.doc(doc.id).update({ nombre:n, precio:parseFloat(p), fecha:f, descripcion:d });
     });
   });
 });
