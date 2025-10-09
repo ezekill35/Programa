@@ -1,7 +1,7 @@
-// Importa Firebase como módulo
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.16.0/firebase-firestore.js";
+// Firebase como módulo desde CDN oficial
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.16.2/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.16.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.16.2/firebase-firestore.js";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -16,13 +16,11 @@ const firebaseConfig = {
 
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
-
-// Autenticación y Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Exporta para usar en otros archivos
 export { auth, db };
+
 
 
 
