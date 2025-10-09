@@ -1,10 +1,5 @@
-// Importar Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js";
-
 // Configuración Firebase
-const firebaseConfig = {
+var firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
   projectId: "discovery-pets",
@@ -15,9 +10,10 @@ const firebaseConfig = {
 };
 
 // Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 
 
 
