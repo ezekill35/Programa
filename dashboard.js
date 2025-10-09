@@ -1,4 +1,4 @@
-// Navegación entre secciones
+// ---------------- Navegación ----------------
 const navButtons = document.querySelectorAll('.nav-btn');
 const sections = document.querySelectorAll('.content-section');
 
@@ -16,19 +16,11 @@ document.querySelector('.logout-btn').addEventListener('click', () => {
   auth.signOut().then(() => window.location.href = 'index.html');
 });
 
-// Helper para actualizar conteos
-function updateCounts() {
-  db.collection('proveedores').get().then(snap => document.getElementById('countProveedores').textContent = snap.size);
-  db.collection('facturas').get().then(snap => document.getElementById('countFacturas').textContent = snap.size);
-  db.collection('gastos').get().then(snap => document.getElementById('countGastos').textContent = snap.size);
-  db.collection('servicios').get().then(snap => document.getElementById('countServicios').textContent = snap.size);
-}
-updateCounts();
-
 // ---------------- PROVEEDORES ----------------
-const formProveedor = document.getElementById('formProveedor');
 const tablaProveedores = document.getElementById('tablaProveedores');
 const msgProv = document.getElementById('msgProv');
+const formProveedor = document.getElementById('formProveedor');
+let editProveedorId = null;
 
 formProveedor.addEventListener('submit', async e => {
   e.preventDefault();
@@ -43,36 +35,51 @@ formProveedor.addEventListener('submit', async e => {
   }
 
   try {
-    await db.collection('proveedores').add({ ruc, nombre, producto, direccion });
+    if(editProveedorId) {
+      await db.collection('proveedores').doc(editProveedorId).update({ ruc, nombre, producto, direccion });
+      editProveedorId = null;
+      formProveedor.querySelector('button').textContent = "Agregar";
+    } else {
+      await db.collection('proveedores').add({ ruc, nombre, producto, direccion });
+    }
     formProveedor.reset();
     msgProv.textContent = '';
-    updateCounts();
-    loadProveedores();
-  } catch(err) { msgProv.textContent = err.message; }
+  } catch(err) {
+    msgProv.textContent = err.message;
+  }
 });
 
-function loadProveedores() {
+db.collection('proveedores').onSnapshot(snapshot => {
   tablaProveedores.innerHTML = '';
-  db.collection('proveedores').get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      tablaProveedores.innerHTML += `
-        <tr>
-          <td>${data.ruc}</td>
-          <td>${data.nombre}</td>
-          <td>${data.producto}</td>
-          <td>${data.direccion}</td>
-          <td>
-            <button class="btn btn-sm btn-danger" onclick="deleteDoc('proveedores','${doc.id}')">Eliminar</button>
-          </td>
-        </tr>`;
-    });
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    tablaProveedores.innerHTML += `
+      <tr>
+        <td>${data.ruc}</td>
+        <td>${data.nombre}</td>
+        <td>${data.producto}</td>
+        <td>${data.direccion}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" onclick="editProveedor('${doc.id}','${data.ruc}','${data.nombre}','${data.producto}','${data.direccion}')">Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDoc('proveedores','${doc.id}')">Eliminar</button>
+        </td>
+      </tr>`;
   });
+});
+
+function editProveedor(id, ruc, nombre, producto, direccion) {
+  document.getElementById('rucProv').value = ruc;
+  document.getElementById('nombreProv').value = nombre;
+  document.getElementById('productoProv').value = producto;
+  document.getElementById('direccionProv').value = direccion;
+  editProveedorId = id;
+  formProveedor.querySelector('button').textContent = "Actualizar";
 }
 
 // ---------------- FACTURAS ----------------
-const formFactura = document.getElementById('formFactura');
 const tablaFacturas = document.getElementById('tablaFacturas');
+const formFactura = document.getElementById('formFactura');
+let editFacturaId = null;
 
 formFactura.addEventListener('submit', async e => {
   e.preventDefault();
@@ -83,34 +90,52 @@ formFactura.addEventListener('submit', async e => {
   const desc = document.getElementById('descFactura').value.trim();
 
   try {
-    await db.collection('facturas').add({ proveedor, tipo, monto, fecha, desc });
+    if(editFacturaId) {
+      await db.collection('facturas').doc(editFacturaId).update({ proveedor, tipo, monto, fecha, desc });
+      editFacturaId = null;
+      formFactura.querySelector('button').textContent = "Agregar";
+    } else {
+      await db.collection('facturas').add({ proveedor, tipo, monto, fecha, desc });
+    }
     formFactura.reset();
-    updateCounts();
-    loadFacturas();
-  } catch(err) { document.getElementById('msgFactura').textContent = err.message; }
+  } catch(err) {
+    document.getElementById('msgFactura').textContent = err.message;
+  }
 });
 
-function loadFacturas() {
+db.collection('facturas').onSnapshot(snapshot => {
   tablaFacturas.innerHTML = '';
-  db.collection('facturas').get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      tablaFacturas.innerHTML += `
-        <tr>
-          <td>${data.proveedor}</td>
-          <td>${data.tipo}</td>
-          <td>${data.monto}</td>
-          <td>${data.fecha}</td>
-          <td>${data.desc}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="deleteDoc('facturas','${doc.id}')">Eliminar</button></td>
-        </tr>`;
-    });
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    tablaFacturas.innerHTML += `
+      <tr>
+        <td>${data.proveedor}</td>
+        <td>${data.tipo}</td>
+        <td>${data.monto}</td>
+        <td>${data.fecha}</td>
+        <td>${data.desc}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" onclick="editFactura('${doc.id}','${data.proveedor}','${data.tipo}','${data.monto}','${data.fecha}','${data.desc}')">Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDoc('facturas','${doc.id}')">Eliminar</button>
+        </td>
+      </tr>`;
   });
+});
+
+function editFactura(id, proveedor, tipo, monto, fecha, desc) {
+  document.getElementById('proveedorFactura').value = proveedor;
+  document.getElementById('tipoFactura').value = tipo;
+  document.getElementById('montoFactura').value = monto;
+  document.getElementById('fechaFactura').value = fecha;
+  document.getElementById('descFactura').value = desc;
+  editFacturaId = id;
+  formFactura.querySelector('button').textContent = "Actualizar";
 }
 
 // ---------------- GASTOS ----------------
-const formGasto = document.getElementById('formGasto');
 const tablaGastos = document.getElementById('tablaGastos');
+const formGasto = document.getElementById('formGasto');
+let editGastoId = null;
 
 formGasto.addEventListener('submit', async e => {
   e.preventDefault();
@@ -120,33 +145,50 @@ formGasto.addEventListener('submit', async e => {
   const fecha = document.getElementById('fechaGasto').value;
 
   try {
-    await db.collection('gastos').add({ nombre, tipo, monto, fecha });
+    if(editGastoId) {
+      await db.collection('gastos').doc(editGastoId).update({ nombre, tipo, monto, fecha });
+      editGastoId = null;
+      formGasto.querySelector('button').textContent = "Agregar";
+    } else {
+      await db.collection('gastos').add({ nombre, tipo, monto, fecha });
+    }
     formGasto.reset();
-    updateCounts();
-    loadGastos();
-  } catch(err) { document.getElementById('msgGasto').textContent = err.message; }
+  } catch(err) {
+    document.getElementById('msgGasto').textContent = err.message;
+  }
 });
 
-function loadGastos() {
+db.collection('gastos').onSnapshot(snapshot => {
   tablaGastos.innerHTML = '';
-  db.collection('gastos').get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      tablaGastos.innerHTML += `
-        <tr>
-          <td>${data.nombre}</td>
-          <td>${data.tipo}</td>
-          <td>${data.monto}</td>
-          <td>${data.fecha}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="deleteDoc('gastos','${doc.id}')">Eliminar</button></td>
-        </tr>`;
-    });
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    tablaGastos.innerHTML += `
+      <tr>
+        <td>${data.nombre}</td>
+        <td>${data.tipo}</td>
+        <td>${data.monto}</td>
+        <td>${data.fecha}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" onclick="editGasto('${doc.id}','${data.nombre}','${data.tipo}','${data.monto}','${data.fecha}')">Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDoc('gastos','${doc.id}')">Eliminar</button>
+        </td>
+      </tr>`;
   });
+});
+
+function editGasto(id, nombre, tipo, monto, fecha) {
+  document.getElementById('nombreGasto').value = nombre;
+  document.getElementById('tipoGasto').value = tipo;
+  document.getElementById('montoGasto').value = monto;
+  document.getElementById('fechaGasto').value = fecha;
+  editGastoId = id;
+  formGasto.querySelector('button').textContent = "Actualizar";
 }
 
 // ---------------- SERVICIOS ----------------
-const formServicio = document.getElementById('formServicio');
 const tablaServicios = document.getElementById('tablaServicios');
+const formServicio = document.getElementById('formServicio');
+let editServicioId = null;
 
 formServicio.addEventListener('submit', async e => {
   e.preventDefault();
@@ -156,40 +198,52 @@ formServicio.addEventListener('submit', async e => {
   const desc = document.getElementById('descServ').value.trim();
 
   try {
-    await db.collection('servicios').add({ nombre, precio, fecha, desc });
+    if(editServicioId) {
+      await db.collection('servicios').doc(editServicioId).update({ nombre, precio, fecha, desc });
+      editServicioId = null;
+      formServicio.querySelector('button').textContent = "Agregar";
+    } else {
+      await db.collection('servicios').add({ nombre, precio, fecha, desc });
+    }
     formServicio.reset();
-    updateCounts();
-    loadServicios();
-  } catch(err) { document.getElementById('msgServ').textContent = err.message; }
+  } catch(err) {
+    document.getElementById('msgServ').textContent = err.message;
+  }
 });
 
-function loadServicios() {
+db.collection('servicios').onSnapshot(snapshot => {
   tablaServicios.innerHTML = '';
-  db.collection('servicios').get().then(snapshot => {
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      tablaServicios.innerHTML += `
-        <tr>
-          <td>${data.nombre}</td>
-          <td>${data.precio}</td>
-          <td>${data.fecha}</td>
-          <td>${data.desc}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="deleteDoc('servicios','${doc.id}')">Eliminar</button></td>
-        </tr>`;
-    });
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    tablaServicios.innerHTML += `
+      <tr>
+        <td>${data.nombre}</td>
+        <td>${data.precio}</td>
+        <td>${data.fecha}</td>
+        <td>${data.desc}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" onclick="editServicio('${doc.id}','${data.nombre}','${data.precio}','${data.fecha}','${data.desc}')">Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDoc('servicios','${doc.id}')">Eliminar</button>
+        </td>
+      </tr>`;
   });
+});
+
+function editServicio(id, nombre, precio, fecha, desc) {
+  document.getElementById('nombreServ').value = nombre;
+  document.getElementById('precioServ').value = precio;
+  document.getElementById('fechaServ').value = fecha;
+  document.getElementById('descServ').value = desc;
+  editServicioId = id;
+  formServicio.querySelector('button').textContent = "Actualizar";
 }
 
 // ---------------- DELETE ----------------
 function deleteDoc(collection, id) {
-  db.collection(collection).doc(id).delete().then(() => updateCounts());
+  if(confirm("¿Seguro quieres eliminar este registro?")) {
+    db.collection(collection).doc(id).delete();
+  }
 }
-
-// Cargar todo al iniciar
-loadProveedores();
-loadFacturas();
-loadGastos();
-loadServicios();
 
 
 
