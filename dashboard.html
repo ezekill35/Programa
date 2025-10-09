@@ -57,21 +57,45 @@
   </table>
 </section>
   <!-- FACTURAS -->
-  <section id="facturas" class="content-section">
-    <h1>📑 Registro de Facturas</h1>
-    <form id="formFactura" class="formulario">
-      <select id="proveedorFactura" required></select>
-      <input type="text" id="tipoFactura" placeholder="Tipo" required>
-      <input type="number" id="montoFactura" placeholder="Monto S/." required>
-      <input type="date" id="fechaFactura" required>
-      <input type="text" id="descFactura" placeholder="Descripción" required>
-      <button type="submit" class="btn btn-success">Agregar</button>
-    </form>
-    <table class="table table-hover">
-      <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
-      <tbody id="tablaFacturas"></tbody>
-    </table>
-  </section>
+<section id="facturas" class="content-section">
+  <h1>📑 Registro de Facturas</h1>
+  <form id="formFactura" class="formulario">
+    <select id="proveedorFactura" required></select>
+    <select id="tipoFactura" required class="form-control">
+      <option value="">Seleccione tipo de factura</option>
+      <option value="Factura Electrónica">Factura Electrónica</option>
+      <option value="Boleta">Boleta</option>
+      <option value="Nota de Crédito">Nota de Crédito</option>
+      <option value="Nota de Débito">Nota de Débito</option>
+    </select>
+
+    <div class="d-flex align-items-center gap-2">
+      <input type="number" id="montoFactura" placeholder="Monto" required class="form-control">
+      <select id="monedaFactura" required class="form-control">
+        <option value="PEN">S/.</option>
+        <option value="USD">USD</option>
+      </select>
+    </div>
+
+    <input type="date" id="fechaFactura" required>
+    <input type="text" id="descFactura" placeholder="Descripción" required>
+    <button type="submit" class="btn btn-success">Agregar</button>
+  </form>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Proveedor</th>
+        <th>Tipo</th>
+        <th>Monto</th>
+        <th>Fecha</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaFacturas"></tbody>
+  </table>
+</section>
 
   <!-- GASTOS -->
   <section id="gastos" class="content-section">
@@ -112,6 +136,7 @@
 <script src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
