@@ -1,26 +1,26 @@
-// Configuración de Firebase
-var firebaseConfig = {
+<!-- Firebase 7.20.0 -->
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+
+<script>
+  // Configuración de Firebase
+  var firebaseConfig = {
     apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
     authDomain: "discovery-pets.firebaseapp.com",
-    databaseURL: "https://discovery-pets.firebaseio.com",
     projectId: "discovery-pets",
     storageBucket: "discovery-pets.appspot.com",
     messagingSenderId: "481355972999",
     appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
     measurementId: "G-0WMLRY8FGM"
-};
+  };
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Inicializar servicios
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// Exportar para otros scripts (si usas modules)
-export { auth, db };
-
-
+  // Referencias globales
+  var auth = firebase.auth();
+  var db = firebase.firestore();
+</script>
 
 
 
