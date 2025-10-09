@@ -1,268 +1,342 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Discovery Pets</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Discovery Pets - Dashboard</title>
 
-  <!-- Iconos -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <style>
-    /* Fondo general */
-    body {
-      background: linear-gradient(145deg, #d0e9ff, #ffffff);
-      min-height: 100vh;
-      font-family: 'Segoe UI', sans-serif;
-    }
+<!-- Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    /* Navbar */
-    .navbar {
-      backdrop-filter: blur(10px);
-      background: rgba(0, 81, 255, 0.75) !important;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    }
+<style>
+  /* Base */
+  :root{
+    --accent:#1abc9c;
+    --accent-dark:#16a085;
+    --card-bg: rgba(255,255,255,0.85);
+    --glass: rgba(255,255,255,0.6);
+  }
+  body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height:100vh;
+    background: linear-gradient(135deg,#e8fdf8 0%, #f4fcff 40%, #f7fbff 100%);
+    margin:0;
+  }
 
-    /* Sidebar */
-    .list-group-item {
-      border: none;
-      background: rgba(255,255,255,0.4);
-      margin-bottom: 6px;
-      border-radius: 10px;
-      font-weight: 500;
-      transition: all 0.2s ease-in-out;
-      color: #004aad;
-    }
+  /* Navbar */
+  .topbar{
+    background: linear-gradient(90deg, rgba(26,188,156,0.95), rgba(22,160,133,0.95));
+    color:#fff;
+    box-shadow: 0 8px 30px rgba(15,15,15,0.12);
+    backdrop-filter: blur(6px);
+  }
+  .brand {
+    font-weight:700;
+    letter-spacing: .2px;
+  }
+  .global-search {
+    width:320px;
+    max-width:40vw;
+    border-radius:28px;
+    padding:8px 14px;
+    border: none;
+    outline: none;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+  }
 
-    .list-group-item.active,
-    .list-group-item:hover {
-      background: linear-gradient(145deg, #007bff, #0056d2);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
+  /* Layout */
+  .dashboard-body { display:flex; gap:24px; padding:24px; }
+  .sidebar {
+    width:240px;
+    min-height: calc(100vh - 96px);
+    background: linear-gradient(180deg, rgba(26,188,156,0.06), rgba(26,188,156,0.02));
+    border-radius:16px;
+    padding:18px;
+    box-shadow: 0 10px 30px rgba(15,15,15,0.06);
+  }
+  .sidebar h2{ color:var(--accent-dark); text-align:center; margin-bottom:12px; }
+  .list-group-item{
+    border:none;
+    border-radius:10px;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#054a42;
+    background: linear-gradient(180deg, #ffffff, #f7fffd);
+    box-shadow: 0 6px 18px rgba(15,15,15,0.03);
+  }
+  .list-group-item.active {
+    background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+    color:white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(26,188,156,0.18);
+  }
 
-    /* Contenedor principal */
-    .content-section {
-      display: none;
-      animation: fadeIn 0.4s ease-in-out;
-    }
+  .content {
+    flex:1;
+    min-height: calc(100vh - 96px);
+  }
+  section.card-section{
+    background: var(--card-bg);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow: 0 10px 30px rgba(10,10,10,0.06);
+    transform: perspective(900px) translateZ(0);
+    transition: transform .22s ease;
+  }
+  section.card-section:hover{ transform: perspective(900px) translateY(-6px); }
 
-    .content-section.active {
-      display: block;
-    }
+  form .form-control, form .form-select, form textarea{
+    border-radius:10px;
+    box-shadow: none;
+    border:1px solid rgba(0,0,0,0.08);
+  }
 
-    /* Efecto de entrada */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+  table {
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow: 0 8px 24px rgba(10,10,10,0.03);
+  }
+  table thead th {
+    background: linear-gradient(90deg,var(--accent),var(--accent-dark));
+    color:#fff;
+    border:none;
+  }
 
-    /* Tarjeta secciones */
-    section {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      backdrop-filter: blur(8px);
-      margin-bottom: 30px;
-      transform: perspective(800px) rotateX(1deg);
-      transition: all 0.3s ease;
-    }
+  /* Modal 3D glass */
+  .modal-glass .modal-content {
+    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75));
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(10,10,10,0.18);
+    border: 1px solid rgba(255,255,255,0.6);
+    backdrop-filter: blur(8px);
+  }
+  .modal-glass .modal-header { border-bottom: none; }
+  .btn-edit { background: linear-gradient(90deg,#3b82f6,#2563eb); color:#fff; }
+  .btn-delete { background: linear-gradient(90deg,#ef4444,#dc2626); color:#fff; }
 
-    section:hover {
-      transform: perspective(800px) rotateX(0deg) translateY(-5px);
-    }
-
-    /* Formularios */
-    input, select, textarea {
-      border-radius: 10px !important;
-      border: 1px solid #ccc !important;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    button {
-      border-radius: 10px !important;
-      font-weight: 500;
-    }
-
-    /* Tablas */
-    table {
-      border-radius: 12px;
-      overflow: hidden;
-      background: #fff;
-    }
-
-    th {
-      background: #004aad;
-      color: #fff;
-    }
-
-    td, th {
-      vertical-align: middle !important;
-    }
-
-    /* Reporte */
-    #reporteContenido {
-      background: rgba(255,255,255,0.85);
-      border-radius: 16px;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.15);
-      padding: 20px;
-    }
-
-    /* Buscador */
-    #buscarFactura {
-      border-radius: 20px;
-      border: 1px solid #007bff;
-      padding: 5px 15px;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-  </style>
+  /* responsive */
+  @media(max-width:980px){
+    .sidebar{ display:none; }
+    .dashboard-body{ padding:12px; }
+    .global-search{ width:65vw; }
+  }
+</style>
 </head>
-
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark p-3">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold fs-4" href="#"><i class="bi bi-droplet-half me-2"></i>Lavandería AQUA</a>
-      <button id="logoutBtn" class="btn btn-danger ms-auto px-4"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</button>
+  <!-- TOPBAR -->
+  <nav class="topbar d-flex align-items-center justify-content-between px-4 py-3">
+    <div class="d-flex align-items-center gap-3">
+      <img src="" alt="" style="width:36px; height:36px; border-radius:8px; background:rgba(0,0,0,0.06)">
+      <div class="brand fs-5">🐾 Discovery Pets</div>
+    </div>
+
+    <!-- Global search (fixed top-right) -->
+    <div class="d-flex align-items-center gap-2">
+      <input id="globalSearch" class="global-search" type="search" placeholder="Buscar facturas por número / proveedor / producto — presiona Enter" />
+      <button id="btnSearch" class="btn btn-light" title="Buscar"><i class="bi bi-search"></i></button>
+      <button id="logoutBtn" class="btn btn-outline-light">Cerrar sesión</button>
     </div>
   </nav>
 
-  <!-- CONTENEDOR -->
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <!-- Sidebar -->
-      <div class="col-md-3 col-lg-2">
-        <div class="list-group shadow-sm">
-          <button class="list-group-item nav-btn active" data-section="seccionProveedores"><i class="bi bi-people me-2"></i>Proveedores</button>
-          <button class="list-group-item nav-btn" data-section="seccionProductos"><i class="bi bi-box-seam me-2"></i>Productos</button>
-          <button class="list-group-item nav-btn" data-section="seccionFacturas"><i class="bi bi-file-earmark-text me-2"></i>Facturas</button>
-          <button class="list-group-item nav-btn" data-section="seccionGastos"><i class="bi bi-cash-coin me-2"></i>Gastos</button>
-          <button class="list-group-item nav-btn" data-section="seccionServicios"><i class="bi bi-tools me-2"></i>Servicios</button>
-          <button class="list-group-item nav-btn" data-section="seccionReportes"><i class="bi bi-graph-up-arrow me-2"></i>Reportes</button>
-        </div>
+  <div class="dashboard-body container-fluid">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h2>Discovery Pets</h2>
+      <div class="list-group">
+        <button class="list-group-item list-group-item-action nav-btn active" data-section="proveedores">🏪 Proveedores</button>
+        <button class="list-group-item list-group-item-action nav-btn" data-section="productos">📦 Productos</button>
+        <button class="list-group-item list-group-item-action nav-btn" data-section="facturas">📑 Facturas</button>
+        <button class="list-group-item list-group-item-action nav-btn" data-section="gastos">💰 Gastos</button>
+        <button class="list-group-item list-group-item-action nav-btn" data-section="servicios">🛠 Servicios</button>
+        <button class="list-group-item list-group-item-action nav-btn" data-section="reportes">📊 Reportes</button>
       </div>
+    </aside>
 
-      <!-- CONTENIDO -->
-      <div class="col-md-9 col-lg-10">
-        
-        <!-- === PROVEEDORES === -->
-        <section id="seccionProveedores" class="content-section active">
-          <h3 class="fw-bold text-primary mb-3"><i class="bi bi-truck me-2"></i>Gestión de Proveedores</h3>
-          <form id="formProveedor" class="row g-3">
-            <div class="col-md-3"><input type="number" id="rucProv" class="form-control" placeholder="RUC" required></div>
-            <div class="col-md-3"><input type="text" id="nombreProv" class="form-control" placeholder="Nombre del proveedor" required></div>
-            <div class="col-md-3"><input type="text" id="productoProv" class="form-control" placeholder="Producto" required></div>
-            <div class="col-md-3"><input type="text" id="direccionProv" class="form-control" placeholder="Dirección" required></div>
-            <div class="col-md-12"><button class="btn btn-success w-100"><i class="bi bi-plus-circle me-2"></i>Guardar</button></div>
-          </form>
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <!-- PROVEEDORES -->
+      <section id="proveedores" class="card-section">
+        <h4>Registro de Proveedores</h4>
+        <form id="formProveedor" class="row g-2 mt-2">
+          <div class="col-md-2"><input id="rucProv" class="form-control" placeholder="RUC" type="number" required></div>
+          <div class="col-md-3"><input id="nombreProv" class="form-control" placeholder="Nombre" required></div>
+          <div class="col-md-3"><input id="productoProv" class="form-control" placeholder="Producto principal" required></div>
+          <div class="col-md-4"><input id="direccionProv" class="form-control" placeholder="Dirección" required></div>
+          <div class="col-12"><button class="btn btn-success mt-2">Agregar proveedor</button></div>
+        </form>
 
-          <div class="d-flex justify-content-end mt-3">
-            <input type="text" id="buscarProveedor" class="form-control w-25" placeholder="🔍 Buscar proveedor...">
-          </div>
-
-          <table class="table table-striped mt-3 text-center">
+        <div class="mt-3">
+          <table class="table table-hover">
             <thead><tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr></thead>
             <tbody id="tablaProveedores"></tbody>
           </table>
-        </section>
+        </div>
+      </section>
 
-        <!-- === PRODUCTOS === -->
-        <section id="seccionProductos" class="content-section">
-          <h3 class="fw-bold text-primary mb-3"><i class="bi bi-box2-heart me-2"></i>Gestión de Productos</h3>
-          <form id="formProducto" class="row g-3">
-            <div class="col-md-3"><input type="text" id="nombreProd" class="form-control" placeholder="Nombre del producto" required></div>
-            <div class="col-md-3"><input type="text" id="descProd" class="form-control" placeholder="Descripción" required></div>
-            <div class="col-md-2"><input type="number" id="cantidadProd" class="form-control" placeholder="Cantidad" required></div>
-            <div class="col-md-2"><input type="text" id="unidadProd" class="form-control" placeholder="Unidad de medida" required></div>
-            <div class="col-md-2"><input type="number" step="0.01" id="valorUnitProd" class="form-control" placeholder="Valor unitario" required></div>
-            <div class="col-md-12"><button class="btn btn-success w-100"><i class="bi bi-plus-circle me-2"></i>Guardar</button></div>
-          </form>
+      <!-- PRODUCTOS -->
+      <section id="productos" class="card-section" style="display:none">
+        <h4>Registro de Productos</h4>
+        <form id="formProducto" class="row g-2 mt-2">
+          <div class="col-md-3"><input id="nombreProd" class="form-control" placeholder="Nombre producto" required></div>
+          <div class="col-md-3"><input id="descProd" class="form-control" placeholder="Descripción"></div>
+          <div class="col-md-2"><input id="cantidadProd" class="form-control" type="number" placeholder="Cantidad" required></div>
+          <div class="col-md-2"><input id="unidadProd" class="form-control" placeholder="Unidad (ej. unid, kg)"></div>
+          <div class="col-md-2"><input id="valorUnitProd" class="form-control" type="number" step="0.01" placeholder="Valor unitario"></div>
+          <div class="col-12"><button class="btn btn-success mt-2">Agregar producto</button></div>
+        </form>
 
-          <div class="d-flex justify-content-end mt-3">
-            <input type="text" id="buscarProducto" class="form-control w-25" placeholder="🔍 Buscar producto...">
-          </div>
-
-          <table class="table table-striped mt-3 text-center">
-            <thead><tr><th>Nombre</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Valor Unitario</th><th>Acción</th></tr></thead>
+        <div class="mt-3">
+          <table class="table table-hover">
+            <thead><tr><th>Nombre</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Valor unit.</th><th>Acciones</th></tr></thead>
             <tbody id="tablaProductos"></tbody>
           </table>
-        </section>
+        </div>
+      </section>
 
-        <!-- === FACTURAS === -->
-        <section id="seccionFacturas" class="content-section">
-          <div class="d-flex justify-content-between align-items-center">
-            <h3 class="fw-bold text-primary"><i class="bi bi-receipt me-2"></i>Gestión de Facturas</h3>
-            <input type="text" id="buscarFactura" class="form-control w-25" placeholder="🔍 Buscar factura...">
+      <!-- FACTURAS -->
+      <section id="facturas" class="card-section" style="display:none">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4>Registro de Facturas</h4>
+          <small class="text-muted">Moneda al lado del monto</small>
+        </div>
+
+        <form id="formFactura" class="row g-2 mt-2">
+          <div class="col-md-3"><select id="proveedorFactura" class="form-select" required></select></div>
+          <div class="col-md-3"><select id="productoFactura" class="form-select" required></select></div>
+          <div class="col-md-2"><select id="tipoFactura" class="form-select" required><option value="Factura electrónica">Factura electrónica</option><option value="Boleta">Boleta</option></select></div>
+          <div class="col-md-2 d-flex">
+            <select id="monedaFactura" class="form-select me-2" style="width:110px;">
+              <option value="S/.">S/.</option>
+              <option value="$">$</option>
+            </select>
+            <input id="montoFactura" class="form-control" type="number" step="0.01" placeholder="Monto" required>
           </div>
-          <form id="formFactura" class="row g-3 mt-2">
-            <div class="col-md-3"><select id="proveedorFactura" class="form-select" required></select></div>
-            <div class="col-md-3"><select id="productoFactura" class="form-select" required></select></div>
-            <div class="col-md-2"><select id="tipoFactura" class="form-select"><option>Factura electrónica</option><option>Boleta</option></select></div>
-            <div class="col-md-2 d-flex">
-              <input type="number" step="0.01" id="montoFactura" class="form-control" placeholder="Monto" required>
-              <select id="monedaFactura" class="form-select ms-2"><option>Soles</option><option>Dólares</option></select>
-            </div>
-            <div class="col-md-2"><input type="date" id="fechaFactura" class="form-control" required></div>
-            <div class="col-md-12"><textarea id="descFactura" class="form-control" placeholder="Descripción o nota" rows="2"></textarea></div>
-            <div class="col-md-12"><button class="btn btn-success w-100"><i class="bi bi-plus-circle me-2"></i>Guardar Factura</button></div>
-          </form>
-          <table class="table table-striped mt-3 text-center">
+          <div class="col-md-2"><input id="fechaFactura" class="form-control" type="date" required></div>
+          <div class="col-12"><input id="descFactura" class="form-control" placeholder="Descripción"></div>
+          <div class="col-12"><button class="btn btn-success mt-2">Agregar factura</button></div>
+        </form>
+
+        <div class="mt-3">
+          <table class="table table-hover">
             <thead><tr><th>Proveedor</th><th>Producto</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acción</th></tr></thead>
             <tbody id="tablaFacturas"></tbody>
           </table>
-        </section>
+        </div>
+      </section>
 
-        <!-- === GASTOS === -->
-        <section id="seccionGastos" class="content-section">
-          <h3 class="fw-bold text-primary mb-3"><i class="bi bi-wallet2 me-2"></i>Gestión de Gastos</h3>
-          <form id="formGasto" class="row g-3">
-            <div class="col-md-3"><input type="text" id="nombreGasto" class="form-control" placeholder="Nombre del gasto" required></div>
-            <div class="col-md-3"><input type="text" id="tipoGasto" class="form-control" placeholder="Tipo de gasto" required></div>
-            <div class="col-md-3"><input type="number" step="0.01" id="montoGasto" class="form-control" placeholder="Monto" required></div>
-            <div class="col-md-3"><input type="date" id="fechaGasto" class="form-control" required></div>
-            <div class="col-md-12"><button class="btn btn-success w-100"><i class="bi bi-plus-circle me-2"></i>Guardar</button></div>
-          </form>
-          <table class="table table-striped mt-3 text-center">
+      <!-- GASTOS -->
+      <section id="gastos" class="card-section" style="display:none">
+        <h4>Registro de Gastos</h4>
+        <form id="formGasto" class="row g-2 mt-2">
+          <div class="col-md-3"><input id="nombreGasto" class="form-control" placeholder="Nombre gasto" required></div>
+          <div class="col-md-3"><input id="tipoGasto" class="form-control" placeholder="Tipo" required></div>
+          <div class="col-md-3"><input id="montoGasto" class="form-control" type="number" step="0.01" placeholder="Monto" required></div>
+          <div class="col-md-3"><input id="fechaGasto" class="form-control" type="date" required></div>
+          <div class="col-12"><button class="btn btn-success mt-2">Agregar gasto</button></div>
+        </form>
+        <div class="mt-3">
+          <table class="table table-hover">
             <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acción</th></tr></thead>
             <tbody id="tablaGastos"></tbody>
           </table>
-        </section>
+        </div>
+      </section>
 
-        <!-- === SERVICIOS === -->
-        <section id="seccionServicios" class="content-section">
-          <h3 class="fw-bold text-primary mb-3"><i class="bi bi-hammer me-2"></i>Gestión de Servicios</h3>
-          <form id="formServicio" class="row g-3">
-            <div class="col-md-3"><input type="text" id="nombreServ" class="form-control" placeholder="Nombre del servicio" required></div>
-            <div class="col-md-3"><input type="number" step="0.01" id="precioServ" class="form-control" placeholder="Precio" required></div>
-            <div class="col-md-3"><input type="date" id="fechaServ" class="form-control" required></div>
-            <div class="col-md-3"><input type="text" id="descServ" class="form-control" placeholder="Descripción"></div>
-            <div class="col-md-12"><button class="btn btn-success w-100"><i class="bi bi-plus-circle me-2"></i>Guardar</button></div>
-          </form>
-          <table class="table table-striped mt-3 text-center">
+      <!-- SERVICIOS -->
+      <section id="servicios" class="card-section" style="display:none">
+        <h4>Registro de Servicios</h4>
+        <form id="formServicio" class="row g-2 mt-2">
+          <div class="col-md-4"><input id="nombreServ" class="form-control" placeholder="Nombre servicio" required></div>
+          <div class="col-md-4"><input id="precioServ" class="form-control" type="number" step="0.01" placeholder="Precio" required></div>
+          <div class="col-md-4"><input id="fechaServ" class="form-control" type="date" required></div>
+          <div class="col-12 mt-2"><input id="descServ" class="form-control" placeholder="Descripción"></div>
+          <div class="col-12"><button class="btn btn-success mt-2">Agregar servicio</button></div>
+        </form>
+        <div class="mt-3">
+          <table class="table table-hover">
             <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acción</th></tr></thead>
             <tbody id="tablaServicios"></tbody>
           </table>
-        </section>
+        </div>
+      </section>
 
-        <!-- === REPORTES === -->
-        <section id="seccionReportes" class="content-section">
-          <h3 class="fw-bold text-primary"><i class="bi bi-clipboard-data me-2"></i>Generar Reporte General</h3>
-          <button id="generarReporte" class="btn btn-primary mt-3"><i class="bi bi-bar-chart-line-fill me-2"></i>Generar Reporte</button>
-          <div id="reporteContenido" class="mt-4"></div>
-        </section>
+      <!-- REPORTES -->
+      <section id="reportes" class="card-section" style="display:none">
+        <h4>Reportes</h4>
+        <button id="generarReporte" class="btn btn-primary mt-2">Generar Reporte</button>
+        <div id="reporteContenido" class="mt-3"></div>
+      </section>
+    </main>
+  </div>
 
+  <!-- Modal: Search Results -->
+  <div class="modal fade modal-glass" id="modalResults" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Resultados de búsqueda</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p id="searchInfo" class="text-muted small">Resultados...</p>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr><th>#ID</th><th>Proveedor</th><th>Producto</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acción</th></tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <script type="module" src="dashboard.js"></script>
+  <!-- Modal: Edit Invoice -->
+  <div class="modal fade modal-glass" id="modalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ver / Editar Factura</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editFacturaForm" class="row g-2">
+            <input type="hidden" id="editFacturaId">
+            <div class="col-md-6"><select id="editProveedor" class="form-select"></select></div>
+            <div class="col-md-6"><select id="editProducto" class="form-select"></select></div>
+            <div class="col-md-4"><select id="editTipo" class="form-select"><option>Factura electrónica</option><option>Boleta</option></select></div>
+            <div class="col-md-4 d-flex">
+              <select id="editMoneda" class="form-select me-2" style="width:110px;"><option value="S/.">S/.</option><option value="$">$</option></select>
+              <input id="editMonto" class="form-control" type="number" step="0.01">
+            </div>
+            <div class="col-md-4"><input id="editFecha" class="form-control" type="date"></div>
+            <div class="col-12"><input id="editDesc" class="form-control" placeholder="Descripción"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button id="btnDeleteFactura" class="btn btn-delete">Eliminar</button>
+          <button id="btnSaveFactura" class="btn btn-edit">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Dashboard logic -->
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
