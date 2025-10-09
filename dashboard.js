@@ -1,5 +1,5 @@
 import { db, auth } from './firebase.js';
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 // Mantener sesión activa o redirigir al login
@@ -118,8 +118,7 @@ onSnapshot(facturasRef, snapshot => {
         tr.innerHTML = `
         <td>${f.proveedor}</td>
         <td>${f.tipo}</td>
-        <td>${f.monto.toFixed(2)}</td>
-        <td>${f.moneda}</td>
+        <td>${f.moneda} ${f.monto.toFixed(2)}</td>
         <td>${f.fecha}</td>
         <td>${f.desc}</td>
         <td>
@@ -142,6 +141,7 @@ formGasto.addEventListener("submit", async e => {
         nombre: document.getElementById("nombreGasto").value,
         tipo: document.getElementById("tipoGasto").value,
         monto: parseFloat(document.getElementById("montoGasto").value),
+        moneda: document.getElementById("monedaGasto").value,
         fecha: document.getElementById("fechaGasto").value
     });
     formGasto.reset();
@@ -155,7 +155,7 @@ onSnapshot(gastosRef, snapshot => {
         tr.innerHTML = `
         <td>${g.nombre}</td>
         <td>${g.tipo}</td>
-        <td>${g.monto.toFixed(2)}</td>
+        <td>${g.moneda} ${g.monto.toFixed(2)}</td>
         <td>${g.fecha}</td>
         <td>
             <button class="delete-btn" onclick="eliminarGasto('${docu.id}')">Eliminar</button>
@@ -204,13 +204,21 @@ window.eliminarServicio = async id => await deleteDoc(doc(db, "servicios", id));
 // --- REPORTE ---
 document.getElementById("generarReporte").addEventListener("click", async () => {
     const reporteDiv = document.getElementById("reporteContenido");
-    let totalFacturas = 0, totalGastos = 0, totalServicios = 0;
+    let totalFacturasSoles = 0, totalFacturasDolares = 0;
+    let totalGastosSoles = 0, totalGastosDolares = 0;
+    let totalServicios = 0;
 
     const factSnap = await getDocs(facturasRef);
-    factSnap.forEach(f => totalFacturas += parseFloat(f.data().monto));
+    factSnap.forEach(f => {
+        if(f.data().moneda === "S/.") totalFacturasSoles += parseFloat(f.data().monto);
+        else totalFacturasDolares += parseFloat(f.data().monto);
+    });
 
     const gastoSnap = await getDocs(gastosRef);
-    gastoSnap.forEach(g => totalGastos += parseFloat(g.data().monto));
+    gastoSnap.forEach(g => {
+        if(g.data().moneda === "S/.") totalGastosSoles += parseFloat(g.data().monto);
+        else totalGastosDolares += parseFloat(g.data().monto);
+    });
 
     const servSnap = await getDocs(serviciosRef);
     servSnap.forEach(s => totalServicios += parseFloat(s.data().precio));
@@ -218,8 +226,8 @@ document.getElementById("generarReporte").addEventListener("click", async () => 
     reporteDiv.innerHTML = `
     <div style="background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,0.2);">
         <h3>Reporte General</h3>
-        <p><strong>Total Facturas:</strong> S/. ${totalFacturas.toFixed(2)}</p>
-        <p><strong>Total Gastos:</strong> S/. ${totalGastos.toFixed(2)}</p>
+        <p><strong>Total Facturas:</strong> S/. ${totalFacturasSoles.toFixed(2)} | $ ${totalFacturasDolares.toFixed(2)}</p>
+        <p><strong>Total Gastos:</strong> S/. ${totalGastosSoles.toFixed(2)} | $ ${totalGastosDolares.toFixed(2)}</p>
         <p><strong>Total Servicios:</strong> S/. ${totalServicios.toFixed(2)}</p>
     </div>`;
 });
