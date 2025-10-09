@@ -16,6 +16,13 @@ document.querySelector('.logout-btn').addEventListener('click', () => {
   auth.signOut().then(() => window.location.href = 'index.html');
 });
 
+// ---------------- GLOBAL DELETE ----------------
+window.deleteDoc = function(collection, id) {
+  if(confirm("¿Seguro quieres eliminar este registro?")) {
+    db.collection(collection).doc(id).delete();
+  }
+}
+
 // ---------------- PROVEEDORES ----------------
 const tablaProveedores = document.getElementById('tablaProveedores');
 const msgProv = document.getElementById('msgProv');
@@ -51,8 +58,11 @@ formProveedor.addEventListener('submit', async e => {
 
 db.collection('proveedores').onSnapshot(snapshot => {
   tablaProveedores.innerHTML = '';
+  proveedorFacturaSelect.innerHTML = '<option value="">Selecciona un proveedor</option>'; // Para facturas
   snapshot.forEach(doc => {
     const data = doc.data();
+
+    // Tabla proveedores
     tablaProveedores.innerHTML += `
       <tr>
         <td>${data.ruc}</td>
@@ -64,6 +74,9 @@ db.collection('proveedores').onSnapshot(snapshot => {
           <button class="btn btn-sm btn-danger" onclick="deleteDoc('proveedores','${doc.id}')">Eliminar</button>
         </td>
       </tr>`;
+
+    // Select de proveedores para facturas
+    proveedorFacturaSelect.innerHTML += `<option value="${data.nombre}">${data.nombre} (RUC: ${data.ruc})</option>`;
   });
 });
 
@@ -80,14 +93,20 @@ function editProveedor(id, ruc, nombre, producto, direccion) {
 const tablaFacturas = document.getElementById('tablaFacturas');
 const formFactura = document.getElementById('formFactura');
 let editFacturaId = null;
+const proveedorFacturaSelect = document.getElementById('proveedorFactura');
 
 formFactura.addEventListener('submit', async e => {
   e.preventDefault();
-  const proveedor = document.getElementById('proveedorFactura').value.trim();
+  const proveedor = proveedorFacturaSelect.value;
   const tipo = document.getElementById('tipoFactura').value.trim();
   const monto = parseFloat(document.getElementById('montoFactura').value);
   const fecha = document.getElementById('fechaFactura').value;
   const desc = document.getElementById('descFactura').value.trim();
+
+  if(!proveedor) {
+    document.getElementById('msgFactura').textContent = "Selecciona un proveedor";
+    return;
+  }
 
   try {
     if(editFacturaId) {
@@ -98,6 +117,7 @@ formFactura.addEventListener('submit', async e => {
       await db.collection('facturas').add({ proveedor, tipo, monto, fecha, desc });
     }
     formFactura.reset();
+    document.getElementById('msgFactura').textContent = '';
   } catch(err) {
     document.getElementById('msgFactura').textContent = err.message;
   }
@@ -123,7 +143,7 @@ db.collection('facturas').onSnapshot(snapshot => {
 });
 
 function editFactura(id, proveedor, tipo, monto, fecha, desc) {
-  document.getElementById('proveedorFactura').value = proveedor;
+  proveedorFacturaSelect.value = proveedor;
   document.getElementById('tipoFactura').value = tipo;
   document.getElementById('montoFactura').value = monto;
   document.getElementById('fechaFactura').value = fecha;
@@ -153,6 +173,7 @@ formGasto.addEventListener('submit', async e => {
       await db.collection('gastos').add({ nombre, tipo, monto, fecha });
     }
     formGasto.reset();
+    document.getElementById('msgGasto').textContent = '';
   } catch(err) {
     document.getElementById('msgGasto').textContent = err.message;
   }
@@ -206,6 +227,7 @@ formServicio.addEventListener('submit', async e => {
       await db.collection('servicios').add({ nombre, precio, fecha, desc });
     }
     formServicio.reset();
+    document.getElementById('msgServ').textContent = '';
   } catch(err) {
     document.getElementById('msgServ').textContent = err.message;
   }
@@ -236,13 +258,6 @@ function editServicio(id, nombre, precio, fecha, desc) {
   document.getElementById('descServ').value = desc;
   editServicioId = id;
   formServicio.querySelector('button').textContent = "Actualizar";
-}
-
-// ---------------- DELETE ----------------
-function deleteDoc(collection, id) {
-  if(confirm("¿Seguro quieres eliminar este registro?")) {
-    db.collection(collection).doc(id).delete();
-  }
 }
 
 
