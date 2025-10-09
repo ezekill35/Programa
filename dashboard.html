@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discovery Pets - Dashboard</title>
 </head>
 <body style="margin:0; font-family:Poppins, sans-serif; background:linear-gradient(135deg,#e3f2fd,#bbdefb); color:#333;">
 
   <div style="display:flex; height:100vh;">
 
-    <!-- Sidebar -->
-    <aside style="width:250px; background:linear-gradient(180deg,#1e88e5,#1565c0); color:#fff; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 0 25px rgba(0,0,0,0.3);">
+    <!-- SIDEBAR -->
+    <aside style="width:250px; background:linear-gradient(180deg,#1e88e5,#1565c0); color:white; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 0 25px rgba(0,0,0,0.3);">
       <div>
-        <h2 style="text-align:center; padding:20px 0; font-weight:700; letter-spacing:1px;">Discovery Pets</h2>
+        <h2 style="text-align:center; padding:20px 0; font-weight:700;">Discovery Pets</h2>
         <ul style="list-style:none; padding:0;">
           <li><button onclick="mostrarSeccion('proveedor')" style="width:100%; background:none; color:white; border:none; padding:15px; cursor:pointer; text-align:left;">📦 Proveedores</button></li>
           <li><button onclick="mostrarSeccion('producto')" style="width:100%; background:none; color:white; border:none; padding:15px; cursor:pointer; text-align:left;">🐾 Productos</button></li>
@@ -23,14 +23,14 @@
       <button onclick="cerrarSesion()" style="background:#0d47a1; color:#fff; border:none; margin:20px; padding:12px; border-radius:10px; cursor:pointer;">Cerrar sesión</button>
     </aside>
 
-    <!-- Contenido principal -->
+    <!-- CONTENIDO -->
     <main style="flex:1; padding:25px; overflow:auto;">
       <header style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:20px;">
-        <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, producto o proveedor..." 
-               style="padding:10px 15px; border-radius:25px; border:1px solid #90caf9; box-shadow:inset 0 2px 5px rgba(0,0,0,0.1); width:300px; outline:none;">
+        <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, producto o proveedor..."
+          style="padding:10px 15px; border-radius:25px; border:1px solid #90caf9; box-shadow:inset 0 2px 5px rgba(0,0,0,0.1); width:300px; outline:none;">
       </header>
 
-      <!-- Sección Proveedor -->
+      <!-- PROVEEDORES -->
       <section id="proveedor" class="seccion">
         <h3>Registrar Proveedor</h3>
         <form id="formProveedor" style="display:flex; flex-wrap:wrap; gap:10px;">
@@ -42,21 +42,21 @@
         <div id="listaProveedores" style="margin-top:15px;"></div>
       </section>
 
-      <!-- Sección Producto -->
+      <!-- PRODUCTOS -->
       <section id="producto" class="seccion" style="display:none;">
         <h3>Registrar Producto</h3>
         <form id="formProducto" style="display:flex; flex-wrap:wrap; gap:10px;">
           <input type="text" id="nombreProducto" placeholder="Nombre del Producto" required>
           <input type="text" id="descripcionProducto" placeholder="Descripción" required>
           <input type="number" id="cantidadProducto" placeholder="Cantidad" required>
-          <input type="text" id="unidadProducto" placeholder="Unidad (kg, unidad...)" required>
+          <input type="text" id="unidadProducto" placeholder="Unidad de medida (kg, unidad...)" required>
           <input type="number" id="valorUnitario" placeholder="Valor Unitario" step="0.01" required>
           <button type="submit">Guardar Producto</button>
         </form>
         <div id="listaProductos" style="margin-top:15px;"></div>
       </section>
 
-      <!-- Sección Factura -->
+      <!-- FACTURAS -->
       <section id="factura" class="seccion" style="display:none;">
         <h3>Registrar Factura</h3>
         <form id="formFactura" style="display:flex; flex-wrap:wrap; gap:10px;">
@@ -79,7 +79,7 @@
         <div id="listaFacturas" style="margin-top:15px;"></div>
       </section>
 
-      <!-- Sección Reporte -->
+      <!-- REPORTES -->
       <section id="reporte" class="seccion" style="display:none;">
         <h3>Generar Reporte</h3>
         <button onclick="generarReporte()" style="padding:10px 15px; border:none; border-radius:8px; background:#42a5f5; color:white; cursor:pointer;">Generar Reporte</button>
@@ -88,9 +88,9 @@
     </main>
   </div>
 
-  <!-- Modal Edición 3D -->
+  <!-- MODAL 3D -->
   <div id="modalEdicion" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(5px);">
-    <div style="background:white; border-radius:15px; padding:25px; width:350px; margin:10% auto; box-shadow:0 10px 30px rgba(0,0,0,0.3); transform:perspective(600px) rotateY(0deg); transition:transform 0.5s;">
+    <div style="background:white; border-radius:15px; padding:25px; width:350px; margin:10% auto; box-shadow:0 10px 30px rgba(0,0,0,0.3); transform:perspective(800px) rotateY(0deg); transition:transform 0.5s;">
       <h3 style="text-align:center; color:#1565c0;">Editar Factura</h3>
       <input type="text" id="editarNumero" readonly style="width:100%; margin:8px 0; padding:8px;">
       <input type="number" id="editarMonto" step="0.01" style="width:100%; margin:8px 0; padding:8px;">
@@ -101,7 +101,6 @@
     </div>
   </div>
 
-  <script src="firebase.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>
