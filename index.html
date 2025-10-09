@@ -3,49 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets | Login</title>
+  <title>Discovery Pets - Login</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Bootstrap 4 CSS CDN -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="login-body">
 
-  <div class="login-container">
-    <!-- Login -->
-    <div id="login-section" class="login-card">
-      <h2>Inicia Sesión</h2>
+  <div class="login-container container">
+    <div id="login-box" class="card p-4 shadow">
+      <h2 class="text-center mb-4">Iniciar Sesión</h2>
       <form id="loginForm">
-        <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-        <input type="password" id="loginPassword" placeholder="Contraseña" required>
-        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+        <input type="email" id="loginEmail" placeholder="Correo electrónico" required class="form-control mb-3">
+        <input type="password" id="loginPassword" placeholder="Contraseña" required class="form-control mb-3">
+        <button type="submit" class="btn btn-primary w-100 mb-2">Iniciar Sesión</button>
       </form>
-      <p>¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
-      <p id="loginMsg" class="text-danger"></p>
+      <p class="text-center">¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
     </div>
 
-    <!-- Registro -->
-    <div id="register-section" class="login-card d-none">
-      <h2>Registro</h2>
+    <div id="register-box" class="card p-4 shadow" style="display:none;">
+      <h2 class="text-center mb-4">Registro</h2>
       <form id="registerForm">
-        <input type="text" id="registerName" placeholder="Nombre completo" required>
-        <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
-        <input type="password" id="registerPassword" placeholder="Contraseña" required>
-        <button type="submit" class="btn btn-success btn-block">Registrarse</button>
+        <input type="text" id="registerName" placeholder="Nombre completo" required class="form-control mb-3">
+        <input type="email" id="registerEmail" placeholder="Correo electrónico" required class="form-control mb-3">
+        <input type="password" id="registerPassword" placeholder="Contraseña" required class="form-control mb-3">
+        <button type="submit" class="btn btn-success w-100 mb-2">Registrarse</button>
       </form>
-      <p>¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
-      <p id="registerMsg" class="text-danger"></p>
+      <p class="text-center">¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
     </div>
   </div>
 
-  <!-- Firebase 7.20.0 UMD -->
+  <!-- Firebase UMD -->
   <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
-
+  
   <script src="firebase.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
