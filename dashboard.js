@@ -21,23 +21,24 @@ const formServ = document.getElementById('formServicio');
 const proveedorSelect = document.getElementById('proveedorFactura');
 
 // ---------------- FUNCIONES ----------------
-function cargarProveedoresSelect() {
+
+// Función para llenar select de proveedores
+function actualizarProveedorSelect() {
   proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
   proveedoresCol.get().then(snapshot => {
     snapshot.forEach(doc => {
       const data = doc.data();
       const option = document.createElement('option');
       option.value = doc.id; // ID del proveedor
-      option.textContent = `${data.nombre} (${data.ruc})`; // Mostrar nombre + RUC
+      option.textContent = `${data.ruc} - ${data.nombre}`; // Mostrar RUC primero
       proveedorSelect.appendChild(option);
     });
   });
 }
 
-// ---------------- CARGAR PROVEEDORES EN SELECT EN TIEMPO REAL ----------------
-proveedoresCol.onSnapshot(() => {
-  cargarProveedoresSelect();
-});
+// Llamar al iniciar y cada cambio en proveedores
+actualizarProveedorSelect();
+proveedoresCol.onSnapshot(() => actualizarProveedorSelect());
 
 // ---------------- CRUD PROVEEDORES ----------------
 formProv.addEventListener('submit', e => {
@@ -82,7 +83,7 @@ proveedoresCol.onSnapshot(snapshot => {
 formFac.addEventListener('submit', e => {
   e.preventDefault();
   const proveedorId = proveedorSelect.value;
-  if(!proveedorId){ alert("Seleccione un proveedor"); return; }
+  if (!proveedorId) { alert("Seleccione un proveedor"); return; }
 
   facturasCol.add({
     proveedor: proveedorId,
@@ -105,7 +106,7 @@ facturasCol.onSnapshot(snapshot => {
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${provNombre} (${provRuc})</td>
+        <td>${provRuc} - ${provNombre}</td>
         <td>${data.tipo}</td>
         <td>${data.monto.toLocaleString('es-PE',{style:'currency', currency:data.moneda})}</td>
         <td>${data.fecha}</td>
@@ -124,7 +125,7 @@ facturasCol.onSnapshot(snapshot => {
         const f = prompt("Fecha:", data.fecha);
         const d = prompt("Descripción:", data.descripcion);
         const pId = prompt("Proveedor ID:", data.proveedor);
-        if(t && m && f && d && pId && mon){
+        if(t && m && mon && f && d && pId){
           facturasCol.doc(docSnap.id).update({ tipo:t, monto:parseFloat(m), moneda:mon, fecha:f, descripcion:d, proveedor:pId });
         }
       });
