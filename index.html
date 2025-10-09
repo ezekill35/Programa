@@ -5,40 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discovery Pets - Login</title>
 <style>
-body { font-family: 'Segoe UI', sans-serif; background:#ff00ff; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;}
-.container { background:#fff; padding:30px; border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.2); width:350px; text-align:center;}
-.container h1 { color:#1abc9c; margin-bottom:20px;}
-.container input { width:100%; padding:12px; margin:8px 0; border-radius:6px; border:1px solid #ccc;}
-.container button { width:100%; padding:12px; border:none; border-radius:6px; background:#1abc9c; color:#fff; font-size:16px; cursor:pointer; margin:5px 0;}
-.container button:hover{background:#16a085;}
-.switch { font-size:13px; color:#666; cursor:pointer; margin-top:10px; display:block;}
+body { display:flex; justify-content:center; align-items:center; min-height:100vh; background:#ff66cc; font-family:Arial; }
+.container { background:#fff; padding:30px; border-radius:15px; width:350px; box-shadow:10px 10px 30px rgba(0,0,0,0.2); text-align:center; }
+.container h1 { color:#ff3399; margin-bottom:20px; }
+.container input { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; }
+.container button { width:100%; padding:12px; background:#ff3399; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+.container button:hover { background:#ff66cc; }
+.switch { margin-top:10px; cursor:pointer; color:#666; font-size:13px; }
+#mensaje { margin-top:10px; }
 </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>🐾 Discovery Pets</h1>
+    <h1>Discovery Pets</h1>
 
-    <!-- LOGIN -->
-    <form id="form-login">
-        <input id="emailLogin" type="email" placeholder="Correo">
-        <input id="passLogin" type="password" placeholder="Contraseña">
-        <button id="btnLogin" type="submit">Iniciar Sesión</button>
-        <span id="showRegister" class="switch">¿No tienes cuenta? Regístrate</span>
-    </form>
+    <div id="formLogin">
+        <input id="emailLogin" type="email" placeholder="Correo" required>
+        <input id="passLogin" type="password" placeholder="Contraseña" required>
+        <button id="btnLogin">Iniciar sesión</button>
+        <p class="switch" id="toRegister">¿No tienes cuenta? Regístrate</p>
+    </div>
 
-    <!-- REGISTER -->
-    <form id="form-register" style="display:none;">
-        <input id="emailReg" type="email" placeholder="Correo">
-        <input id="passReg" type="password" placeholder="Contraseña">
-        <button id="btnRegister" type="submit">Registrar</button>
-        <span id="showLogin" class="switch">¿Ya tienes cuenta? Inicia sesión</span>
-    </form>
+    <div id="formRegister" style="display:none">
+        <input id="emailReg" type="email" placeholder="Correo" required>
+        <input id="passReg" type="password" placeholder="Contraseña" required>
+        <button id="btnRegister">Registrarse</button>
+        <p class="switch" id="toLogin">¿Ya tienes cuenta? Inicia sesión</p>
+    </div>
+
+    <p id="mensaje" style="color:red;"></p>
 </div>
-
 <script type="module" src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
