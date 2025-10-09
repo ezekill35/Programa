@@ -62,18 +62,29 @@ document.addEventListener("DOMContentLoaded", () => {
         if(!email||!password)return alert("Completa todos los campos");
         try{
           await signInWithEmailAndPassword(auth,email,password);
+          // Redirige inmediatamente al dashboard
+          window.location.href = "dashboard.html";
         }catch(e){ alert(e.message); }
       });
     }
 
     // Redirigir si ya está logueado
-    onAuthStateChanged(auth,user=>{
-      if(user) window.location.href="dashboard.html";
+    onAuthStateChanged(auth, user => {
+        if(user){
+            window.location.href = "dashboard.html";
+        }
     });
   }
 
   // ---------------- DASHBOARD ----------------
   if(window.location.pathname.includes("dashboard.html")){
+    // Redirigir si no hay usuario
+    onAuthStateChanged(auth, user => {
+      if(!user){
+          window.location.href = "index.html";
+      }
+    });
+
     const logoutBtn = document.getElementById("logoutBtn");
     if(logoutBtn) logoutBtn.addEventListener("click", async()=>{
       await signOut(auth);
@@ -139,6 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
+
 
 
 
