@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets | Dashboard</title>
+  <title>Dashboard | Discovery Pets 🐾</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dashboard-body">
 
-  <!-- SIDEBAR -->
+  <!-- Sidebar -->
   <aside class="sidebar">
     <h2>🐾 Discovery Pets</h2>
     <nav>
@@ -21,10 +21,10 @@
     <button class="logout-btn" id="logoutBtn">🚪 Cerrar sesión</button>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- Main content -->
   <main class="main-content">
-
-    <!-- REPORTES -->
+    
+    <!-- Reportes -->
     <section id="reportes" class="content-section active">
       <h1>📊 Reportes Generales</h1>
       <div class="cards">
@@ -35,7 +35,7 @@
       </div>
     </section>
 
-    <!-- PROVEEDORES -->
+    <!-- Proveedores -->
     <section id="proveedores" class="content-section">
       <h1>🏪 Registro de Proveedores</h1>
       <form id="formProveedor" class="formulario">
@@ -45,16 +45,13 @@
         <input type="text" id="direccionProv" placeholder="Dirección" required>
         <button type="submit">Agregar</button>
       </form>
-      <p id="msgProv" class="mensaje"></p>
       <table>
-        <thead>
-          <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr></thead>
         <tbody id="tablaProveedores"></tbody>
       </table>
     </section>
 
-    <!-- FACTURAS -->
+    <!-- Facturas -->
     <section id="facturas" class="content-section">
       <h1>📑 Registro de Facturas</h1>
       <form id="formFactura" class="formulario">
@@ -66,26 +63,22 @@
           <option value="Nota de Crédito">Nota de Crédito</option>
           <option value="Nota de Débito">Nota de Débito</option>
         </select>
-        <div class="d-flex gap-2">
-          <input type="number" id="montoFactura" placeholder="Monto" required>
-          <select id="monedaFactura">
-            <option value="PEN">S/.</option>
-            <option value="USD">USD</option>
-          </select>
-        </div>
+        <input type="number" id="montoFactura" placeholder="Monto" required>
+        <select id="monedaFactura">
+          <option value="PEN">S/.</option>
+          <option value="USD">USD</option>
+        </select>
         <input type="date" id="fechaFactura" required>
         <input type="text" id="descFactura" placeholder="Descripción" required>
         <button type="submit">Agregar</button>
       </form>
       <table>
-        <thead>
-          <tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
         <tbody id="tablaFacturas"></tbody>
       </table>
     </section>
 
-    <!-- GASTOS -->
+    <!-- Gastos -->
     <section id="gastos" class="content-section">
       <h1>💰 Registro de Gastos</h1>
       <form id="formGasto" class="formulario">
@@ -96,14 +89,12 @@
         <button type="submit">Agregar</button>
       </form>
       <table>
-        <thead>
-          <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
         <tbody id="tablaGastos"></tbody>
       </table>
     </section>
 
-    <!-- SERVICIOS -->
+    <!-- Servicios -->
     <section id="servicios" class="content-section">
       <h1>🛠 Registro de Servicios</h1>
       <form id="formServicio" class="formulario">
@@ -114,9 +105,7 @@
         <button type="submit">Agregar</button>
       </form>
       <table>
-        <thead>
-          <tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
         <tbody id="tablaServicios"></tbody>
       </table>
     </section>
@@ -127,9 +116,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
 
 
 
