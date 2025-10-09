@@ -36,6 +36,7 @@ button.delete-btn { background:#e74c3c; color:#fff; }
 <div class="sidebar">
     <h2>🐾 Discovery Pets</h2>
     <button class="nav-btn active" data-section="proveedores">🏪 Proveedores</button>
+    <button class="nav-btn" data-section="productos">📦 Productos</button>
     <button class="nav-btn" data-section="facturas">📑 Facturas</button>
     <button class="nav-btn" data-section="gastos">💰 Gastos</button>
     <button class="nav-btn" data-section="servicios">🛠 Servicios</button>
@@ -56,6 +57,7 @@ button.delete-btn { background:#e74c3c; color:#fff; }
             <input id="direccionProv" placeholder="Dirección" required>
             <button type="submit">Agregar</button>
         </form>
+        <input id="buscarProveedor" placeholder="Buscar proveedor..." style="margin-bottom:12px; padding:8px; width:100%;">
         <table>
             <thead>
                 <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
@@ -64,19 +66,36 @@ button.delete-btn { background:#e74c3c; color:#fff; }
         </table>
     </section>
 
+    <!-- Productos -->
+    <section id="productos" class="content-section">
+        <h2>Registro de Productos</h2>
+        <form id="formProducto">
+            <input id="nombreProducto" placeholder="Nombre del Producto" required>
+            <input id="descProducto" placeholder="Descripción del Producto">
+            <button type="submit">Agregar</button>
+        </form>
+        <input id="buscarProducto" placeholder="Buscar producto..." style="margin-bottom:12px; padding:8px; width:100%;">
+        <table>
+            <thead>
+                <tr><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="tablaProductos"></tbody>
+        </table>
+    </section>
+
     <!-- Facturas -->
     <section id="facturas" class="content-section">
         <h2>Registro de Facturas</h2>
         <form id="formFactura">
             <select id="proveedorFactura" required></select>
+            <select id="productoFactura" required></select>
 
-            <!-- Moneda primero, monto después -->
-            <div style="display:flex; gap:5px; margin-bottom:12px; align-items:center;">
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <input id="montoFactura" type="number" step="0.01" placeholder="Monto" required style="flex:2;">
                 <select id="monedaFactura" style="flex:1;">
                     <option value="S/.">Soles</option>
                     <option value="$">Dólares</option>
                 </select>
-                <input id="montoFactura" type="number" step="0.01" placeholder="Monto" required style="flex:2;">
             </div>
 
             <select id="tipoFactura" required>
@@ -89,9 +108,10 @@ button.delete-btn { background:#e74c3c; color:#fff; }
             <input id="descFactura" placeholder="Descripción">
             <button type="submit">Agregar</button>
         </form>
+        <input id="buscarFactura" placeholder="Buscar factura por proveedor o producto..." style="margin-bottom:12px; padding:8px; width:100%;">
         <table>
             <thead>
-                <tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Moneda</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
+                <tr><th>Proveedor</th><th>Producto</th><th>Tipo</th><th>Monto</th><th>Moneda</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaFacturas"></tbody>
         </table>
@@ -103,22 +123,13 @@ button.delete-btn { background:#e74c3c; color:#fff; }
         <form id="formGasto">
             <input id="nombreGasto" placeholder="Nombre" required>
             <input id="tipoGasto" placeholder="Tipo" required>
-
-            <!-- Moneda primero, monto después -->
-            <div style="display:flex; gap:5px; margin-bottom:12px; align-items:center;">
-                <select id="monedaGasto" style="flex:1;">
-                    <option value="S/.">Soles</option>
-                    <option value="$">Dólares</option>
-                </select>
-                <input id="montoGasto" type="number" step="0.01" placeholder="Monto" required style="flex:2;">
-            </div>
-
+            <input id="montoGasto" type="number" step="0.01" placeholder="Monto" required>
             <input id="fechaGasto" type="date" required>
             <button type="submit">Agregar</button>
         </form>
         <table>
             <thead>
-                <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Moneda</th><th>Fecha</th><th>Acciones</th></tr>
+                <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaGastos"></tbody>
         </table>
@@ -154,6 +165,7 @@ button.delete-btn { background:#e74c3c; color:#fff; }
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
