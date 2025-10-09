@@ -3,7 +3,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.16.5/fireba
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.16.5/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.16.5/firebase-firestore.js";
 
-// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -14,12 +13,12 @@ const firebaseConfig = {
   measurementId: "G-0WMLRY8FGM"
 };
 
-// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 export { auth, db };
+
 
 
 
