@@ -1,47 +1,47 @@
-// script.js
-import { auth } from "./firebase.js";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
-const loginSection = document.getElementById("login-section");
-const registerSection = document.getElementById("register-section");
-
-document.getElementById("showRegister").addEventListener("click", () => {
-  loginSection.classList.remove("active");
-  registerSection.classList.add("active");
+// Mostrar registro/login
+document.getElementById('showRegister').addEventListener('click',()=>{
+  document.getElementById('login-box').style.display = 'none';
+  document.getElementById('register-box').style.display = 'block';
+});
+document.getElementById('showLogin').addEventListener('click',()=>{
+  document.getElementById('login-box').style.display = 'block';
+  document.getElementById('register-box').style.display = 'none';
 });
 
-document.getElementById("showLogin").addEventListener("click", () => {
-  registerSection.classList.remove("active");
-  loginSection.classList.add("active");
-});
-
-// LOGIN
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+// Registro
+document.getElementById('registerForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  const name = document.getElementById('registerName').value;
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    alert("Error al iniciar sesión: " + error.message);
-  }
+  auth.createUserWithEmailAndPassword(email,password)
+    .then(userCredential=>{
+      var user = userCredential.user;
+      db.collection('usuarios').doc(user.uid).set({name,email});
+      alert('Usuario registrado correctamente');
+      document.getElementById('registerForm').reset();
+      document.getElementById('login-box').style.display='block';
+      document.getElementById('register-box').style.display='none';
+    })
+    .catch(err=>alert(err.message));
 });
 
-// REGISTRO
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
+// Login
+document.getElementById('loginForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const email = document.getElementById("registerEmail").value;
-  const password = document.getElementById("registerPassword").value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
 
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("Usuario registrado correctamente!");
-    registerSection.classList.remove("active");
-    loginSection.classList.add("active");
-  } catch (error) {
-    alert("Error al registrar: " + error.message);
+  auth.signInWithEmailAndPassword(email,password)
+    .then(()=>window.location.href='dashboard.html')
+    .catch(err=>alert(err.message));
+});
+
+// Mantener sesión
+auth.onAuthStateChanged(user=>{
+  if(user && window.location.pathname.includes('index.html')){
+    window.location.href='dashboard.html';
   }
 });
 
