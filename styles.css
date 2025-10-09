@@ -1,75 +1,54 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f5f7fa;
+/* Reset y box-sizing */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body.login-body {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
 }
 
-.auth-container {
+.login-container {
   width: 350px;
+}
+
+.login-card {
   background: #fff;
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-.auth-section {
-  display: none;
-}
-
-.auth-section.active {
-  display: block;
-}
-
-.auth-section h2 {
-  text-align: center;
-  color: #1e2a38;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   margin-bottom: 20px;
-}
-
-.auth-section form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.auth-section input {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 0.95rem;
-}
-
-.auth-section button {
-  padding: 12px;
-  background: #1e2a38;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.auth-section button:hover {
-  background: #f9a826;
-  color: #1e2a38;
-}
-
-.auth-section p {
   text-align: center;
-  margin-top: 10px;
-  font-size: 0.9rem;
 }
 
-.auth-section span {
-  color: #f9a826;
-  cursor: pointer;
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #333;
 }
 
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.login-card button {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.login-card a {
+  color: #2193b0;
+  text-decoration: none;
+}
 
 
 
