@@ -1,9 +1,9 @@
-// --- Logout ---
+// Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
   auth.signOut().then(() => window.location = 'index.html');
 });
 
-// --- Navegación Sidebar ---
+// Navegación sidebar
 const navBtns = document.querySelectorAll('.nav-btn');
 const sections = document.querySelectorAll('.content-section');
 
@@ -16,7 +16,7 @@ navBtns.forEach(btn => {
   });
 });
 
-// -------------------- PROVEEDORES --------------------
+// ---------- PROVEEDORES ----------
 const formProv = document.getElementById('formProveedor');
 const tablaProv = document.getElementById('tablaProveedores');
 
@@ -31,7 +31,7 @@ formProv.addEventListener('submit', e => {
     .then(() => formProv.reset());
 });
 
-// Render proveedores en tiempo real y llenar select de facturas
+// Render proveedores + llenar select facturas
 db.collection('proveedores').orderBy('ruc').onSnapshot(snapshot => {
   tablaProv.innerHTML = '';
   const sel = document.getElementById('proveedorFactura');
@@ -52,6 +52,8 @@ db.collection('proveedores').orderBy('ruc').onSnapshot(snapshot => {
       </tr>`;
     sel.innerHTML += `<option value="${doc.id}">${d.nombre}</option>`;
   });
+
+  document.getElementById('countProveedores').innerText = snapshot.size;
 });
 
 window.eliminarProv = id => db.collection('proveedores').doc(id).delete();
@@ -79,7 +81,7 @@ window.editarProv = id => {
   });
 };
 
-// -------------------- FACTURAS --------------------
+// ---------- FACTURAS ----------
 const formFac = document.getElementById('formFactura');
 const tablaFac = document.getElementById('tablaFacturas');
 
@@ -119,6 +121,8 @@ db.collection('facturas').onSnapshot(snapshot => {
         </tr>`;
     });
   });
+
+  document.getElementById('countFacturas').innerText = snapshot.size;
 });
 
 window.eliminarFac = id => db.collection('facturas').doc(id).delete();
