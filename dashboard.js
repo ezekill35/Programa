@@ -1,133 +1,258 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const secciones = document.querySelectorAll(".seccion");
-  const buscador = document.getElementById("buscadorGlobal");
-  const listaFacturas = document.getElementById("listaFacturas");
+// ==========================
+// 🔥 Inicialización Firebase
+// ==========================
+const firebaseConfig = {
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:demo1234567890"
+};
 
-  // Mostrar secciones
-  window.mostrarSeccion = (id) => {
-    secciones.forEach(s => s.style.display = "none");
-    document.getElementById(id).style.display = "block";
+// ✅ Cargar Firebase como script normal (no import)
+if (typeof firebase === "undefined") {
+  const script = document.createElement("script");
+  script.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js";
+  document.head.appendChild(script);
+
+  const dbScript = document.createElement("script");
+  dbScript.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js";
+  document.head.appendChild(dbScript);
+
+  dbScript.onload = () => {
+    inicializarFirebase();
   };
+} else {
+  inicializarFirebase();
+}
 
-  // Cerrar sesión
-  window.cerrarSesion = () => {
-    alert("Sesión cerrada correctamente");
-    window.location.href = "index.html";
-  };
+let db;
 
-  const proveedores = [];
-  const productos = [];
-  const facturas = [];
+function inicializarFirebase() {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  console.log("✅ Firebase conectado correctamente.");
+}
 
-  // === PROVEEDORES ===
-  document.getElementById("formProveedor").addEventListener("submit", e => {
-    e.preventDefault();
-    const nombre = nombreProveedor.value.trim();
-    const ruc = rucProveedor.value.trim();
-    const telefono = telefonoProveedor.value.trim();
-    proveedores.push({ nombre, ruc, telefono });
-    actualizarSelects();
-    listarProveedores();
-    e.target.reset();
-  });
+// ==========================
+// 🌐 Navegación de secciones
+// ==========================
+function mostrarSeccion(idSeccion) {
+  document.querySelectorAll(".seccion").forEach(sec => sec.style.display = "none");
+  document.getElementById(idSeccion).style.display = "block";
 
-  function listarProveedores() {
-    listaProveedores.innerHTML = proveedores.map(p => `<p>${p.nombre} - ${p.ruc}</p>`).join("");
-  }
+  document.querySelectorAll(".sidebar button").forEach(btn => btn.classList.remove("active"));
+  const btnActivo = Array.from(document.querySelectorAll(".sidebar button"))
+    .find(btn => btn.getAttribute("onclick").includes(idSeccion));
+  if (btnActivo) btnActivo.classList.add("active");
+}
 
-  // === PRODUCTOS ===
-  document.getElementById("formProducto").addEventListener("submit", e => {
-    e.preventDefault();
-    const prod = {
-      nombre: nombreProducto.value.trim(),
-      descripcion: descripcionProducto.value.trim(),
-      cantidad: cantidadProducto.value,
-      unidad: unidadProducto.value.trim(),
-      valor: valorUnitario.value
-    };
-    productos.push(prod);
-    actualizarSelects();
-    listarProductos();
-    e.target.reset();
-  });
+// ==========================
+// 👥 CRUD - PROVEEDORES
+// ==========================
+document.getElementById("formProveedor").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById("nombreProveedor").value.trim();
+  const ruc = document.getElementById("rucProveedor").value.trim();
+  const telefono = document.getElementById("telefonoProveedor").value.trim();
 
-  function listarProductos() {
-    listaProductos.innerHTML = productos.map(p => `<p>${p.nombre} - ${p.descripcion}</p>`).join("");
-  }
+  if (!nombre || !ruc || !telefono) return alert("Completa todos los campos.");
 
-  // Actualizar selects
-  function actualizarSelects() {
-    proveedorFactura.innerHTML = proveedores.map(p => `<option>${p.nombre}</option>`).join("");
-    productoFactura.innerHTML = productos.map(p => `<option>${p.nombre}</option>`).join("");
-  }
-
-  // === FACTURAS ===
-  document.getElementById("formFactura").addEventListener("submit", e => {
-    e.preventDefault();
-    const f = {
-      numero: numeroFactura.value,
-      proveedor: proveedorFactura.value,
-      producto: productoFactura.value,
-      monto: montoFactura.value,
-      moneda: tipoMoneda.value,
-      tipo: tipoFactura.value
-    };
-    facturas.push(f);
-    listarFacturas();
-    e.target.reset();
-  });
-
-  function listarFacturas() {
-    listaFacturas.innerHTML = facturas.map(f => `
-      <p style="cursor:pointer;" onclick="abrirEdicion('${f.numero}')">
-        ${f.numero} - ${f.proveedor} - ${f.producto} - ${f.monto} ${f.moneda}
-      </p>
-    `).join("");
-  }
-
-  // === BUSCADOR GLOBAL ===
-  buscador.addEventListener("input", e => {
-    const q = e.target.value.toLowerCase();
-    const resultados = facturas.filter(f =>
-      f.numero.toLowerCase().includes(q) ||
-      f.proveedor.toLowerCase().includes(q) ||
-      f.producto.toLowerCase().includes(q)
-    );
-    listaFacturas.innerHTML = resultados.map(f => `
-      <p style="cursor:pointer;" onclick="abrirEdicion('${f.numero}')">
-        ${f.numero} - ${f.proveedor} - ${f.producto} - ${f.monto} ${f.moneda}
-      </p>
-    `).join("");
-  });
-
-  // === MODAL DE EDICIÓN ===
-  window.abrirEdicion = (numero) => {
-    const f = facturas.find(x => x.numero === numero);
-    if (!f) return;
-    document.getElementById("editarNumero").value = f.numero;
-    document.getElementById("editarMonto").value = f.monto;
-    document.getElementById("modalEdicion").style.display = "block";
-  };
-
-  window.cerrarModal = () => {
-    document.getElementById("modalEdicion").style.display = "none";
-  };
-
-  window.guardarEdicion = () => {
-    const num = document.getElementById("editarNumero").value;
-    const nuevoMonto = document.getElementById("editarMonto").value;
-    const f = facturas.find(x => x.numero === num);
-    if (f) f.monto = nuevoMonto;
-    listarFacturas();
-    cerrarModal();
-  };
-
-  // === REPORTE ===
-  window.generarReporte = () => {
-    const cont = document.getElementById("contenidoReporte");
-    cont.innerHTML = facturas.map(f => `
-      <div>${f.numero} - ${f.proveedor} - ${f.producto} - ${f.monto} ${f.moneda}</div>
-    `).join("");
-  };
+  await db.collection("proveedores").add({ nombre, ruc, telefono });
+  alert("Proveedor registrado ✅");
+  e.target.reset();
+  cargarProveedores();
 });
+
+async function cargarProveedores() {
+  const lista = document.getElementById("listaProveedores");
+  lista.innerHTML = "";
+  const snap = await db.collection("proveedores").get();
+  snap.forEach(doc => {
+    const p = doc.data();
+    lista.innerHTML += `
+      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
+        <div><b>${p.nombre}</b><br><small>RUC: ${p.ruc}</small><br><small>Tel: ${p.telefono}</small></div>
+        <button class="btn btn-sm btn-danger" onclick="eliminarProveedor('${doc.id}')">🗑</button>
+      </div>`;
+  });
+  actualizarSelectores();
+}
+
+async function eliminarProveedor(id) {
+  await db.collection("proveedores").doc(id).delete();
+  cargarProveedores();
+}
+
+// ==========================
+// 📦 CRUD - PRODUCTOS
+// ==========================
+document.getElementById("formProducto").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = {
+    nombre: document.getElementById("nombreProducto").value.trim(),
+    descripcion: document.getElementById("descripcionProducto").value.trim(),
+    cantidad: parseInt(document.getElementById("cantidadProducto").value),
+    unidad: document.getElementById("unidadProducto").value.trim(),
+    valor: parseFloat(document.getElementById("valorUnitario").value)
+  };
+  if (!data.nombre || !data.descripcion) return alert("Completa todos los campos.");
+
+  await db.collection("productos").add(data);
+  alert("Producto registrado ✅");
+  e.target.reset();
+  cargarProductos();
+});
+
+async function cargarProductos() {
+  const lista = document.getElementById("listaProductos");
+  lista.innerHTML = "";
+  const snap = await db.collection("productos").get();
+  snap.forEach(doc => {
+    const p = doc.data();
+    lista.innerHTML += `
+      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
+        <div><b>${p.nombre}</b><br><small>${p.descripcion}</small><br><small>${p.cantidad} ${p.unidad} - S/ ${p.valor.toFixed(2)}</small></div>
+        <button class="btn btn-sm btn-danger" onclick="eliminarProducto('${doc.id}')">🗑</button>
+      </div>`;
+  });
+  actualizarSelectores();
+}
+
+async function eliminarProducto(id) {
+  await db.collection("productos").doc(id).delete();
+  cargarProductos();
+}
+
+// ==========================
+// 🧾 CRUD - FACTURAS
+// ==========================
+document.getElementById("formFactura").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = {
+    numero: document.getElementById("numeroFactura").value.trim(),
+    proveedor: document.getElementById("proveedorFactura").value,
+    producto: document.getElementById("productoFactura").value,
+    monto: parseFloat(document.getElementById("montoFactura").value),
+    moneda: document.getElementById("tipoMoneda").value,
+    tipo: document.getElementById("tipoFactura").value,
+    fecha: new Date().toISOString()
+  };
+
+  if (!data.numero || !data.proveedor || !data.producto) return alert("Completa todos los campos.");
+
+  await db.collection("facturas").add(data);
+  alert("Factura guardada ✅");
+  e.target.reset();
+  cargarFacturas();
+});
+
+async function cargarFacturas() {
+  const lista = document.getElementById("listaFacturas");
+  lista.innerHTML = "";
+  const snap = await db.collection("facturas").get();
+  snap.forEach(doc => {
+    const f = doc.data();
+    lista.innerHTML += `
+      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
+        <div><b>${f.numero}</b><br>
+        <small>${f.proveedor} - ${f.producto}</small><br>
+        <small>${f.tipo} | ${f.moneda} ${f.monto.toFixed(2)}</small></div>
+        <div>
+          <button class="btn btn-sm btn-warning me-2" onclick="abrirModal('${doc.id}', ${f.monto})">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminarFactura('${doc.id}')">🗑</button>
+        </div>
+      </div>`;
+  });
+}
+
+async function eliminarFactura(id) {
+  await db.collection("facturas").doc(id).delete();
+  cargarFacturas();
+}
+
+// ==========================
+// ✏️ Modal edición factura
+// ==========================
+let facturaEditando = null;
+
+function abrirModal(id, monto) {
+  facturaEditando = id;
+  document.getElementById("editarMonto").value = monto;
+  document.getElementById("modalEdicion").style.display = "flex";
+  document.getElementById("modalEdicion").classList.add("show");
+}
+
+function cerrarModal() {
+  document.getElementById("modalEdicion").style.display = "none";
+  document.getElementById("modalEdicion").classList.remove("show");
+}
+
+async function guardarEdicion() {
+  const nuevoMonto = parseFloat(document.getElementById("editarMonto").value);
+  if (isNaN(nuevoMonto)) return alert("Monto inválido.");
+  await db.collection("facturas").doc(facturaEditando).update({ monto: nuevoMonto });
+  cerrarModal();
+  cargarFacturas();
+}
+
+// ==========================
+// 📊 Reporte
+// ==========================
+async function generarReporte() {
+  const cont = document.getElementById("contenidoReporte");
+  cont.innerHTML = "<p>Generando reporte...</p>";
+
+  const snap = await db.collection("facturas").get();
+  let total = 0;
+  snap.forEach(doc => total += doc.data().monto);
+
+  cont.innerHTML = `
+    <h5>📋 Reporte General</h5>
+    <p>Total de facturas: ${snap.size}</p>
+    <p>Monto total: <b>S/ ${total.toFixed(2)}</b></p>`;
+}
+
+// ==========================
+// 🔍 Buscador global
+// ==========================
+document.getElementById("buscadorGlobal").addEventListener("input", (e) => {
+  const texto = e.target.value.toLowerCase();
+  document.querySelectorAll("#listaFacturas div, #listaProveedores div, #listaProductos div").forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(texto) ? "" : "none";
+  });
+});
+
+// ==========================
+// 🔁 Select dinámico
+// ==========================
+async function actualizarSelectores() {
+  const proveedorSelect = document.getElementById("proveedorFactura");
+  const productoSelect = document.getElementById("productoFactura");
+  proveedorSelect.innerHTML = "<option value=''>Seleccione proveedor</option>";
+  productoSelect.innerHTML = "<option value=''>Seleccione producto</option>";
+
+  const provSnap = await db.collection("proveedores").get();
+  provSnap.forEach(d => proveedorSelect.innerHTML += `<option>${d.data().nombre}</option>`);
+
+  const prodSnap = await db.collection("productos").get();
+  prodSnap.forEach(d => productoSelect.innerHTML += `<option>${d.data().nombre}</option>`);
+}
+
+// ==========================
+// 🚪 Cerrar sesión
+// ==========================
+function cerrarSesion() {
+  if (confirm("¿Deseas cerrar sesión?")) window.location.href = "index.html";
+}
+
+// ==========================
+// 🚀 Cargar inicial
+// ==========================
+setTimeout(() => {
+  cargarProveedores();
+  cargarProductos();
+  cargarFacturas();
+}, 2500);
 
