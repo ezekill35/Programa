@@ -1,63 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discovery Pets - Login</title>
-    <link rel="stylesheet" href="styles.css">
-    <script type="module" src="firebase.js"></script>
-    <script type="module" src="script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery Pets - Login</title>
+<style>
+  /* ---------------- Reset básico ---------------- */
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+  body { min-height:100vh; background: linear-gradient(135deg, #ff0080, #ff8c00); display:flex; justify-content:center; align-items:center; }
+  .login-container { background:#fff; padding:40px; border-radius:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width:350px; text-align:center; transform: perspective(1000px) rotateX(3deg); }
+  .login-container h1 { color:#ff0080; margin-bottom:25px; }
+  .login-container input { width:100%; padding:12px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc; font-size:14px; }
+  .login-container button { width:100%; padding:12px; background:#ff0080; color:#fff; font-size:16px; border:none; border-radius:6px; cursor:pointer; transition:0.3s; }
+  .login-container button:hover { background:#e60073; }
+  .form-switch { margin-top:10px; font-size:13px; color:#666; cursor:pointer; }
+</style>
 </head>
 <body class="login-body">
-
-    <div class="container">
-
-        <!-- -------------------- LOGIN -------------------- -->
-        <section id="login-section" class="auth-section active">
-            <h2>Iniciar Sesión</h2>
-            <form id="loginForm" class="formulario">
-                <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-                <input type="password" id="loginPassword" placeholder="Contraseña" required>
-                <button type="submit">Ingresar</button>
-            </form>
-            <p>¿No tienes cuenta? <span id="showRegister">Regístrate aquí</span></p>
-        </section>
-
-        <!-- -------------------- REGISTRO -------------------- -->
-        <section id="register-section" class="auth-section">
-            <h2>Registro</h2>
-            <form id="registerForm" class="formulario">
-                <input type="text" id="regNombre" placeholder="Nombre completo" required>
-                <input type="email" id="regEmail" placeholder="Correo electrónico" required>
-                <input type="password" id="regPassword" placeholder="Contraseña" required>
-                <button type="submit">Registrarse</button>
-            </form>
-            <p>¿Ya tienes cuenta? <span id="showLogin">Inicia sesión aquí</span></p>
-        </section>
-
-    </div>
-
-    <script>
-        // Toggle entre login y registro
-        const loginSection = document.getElementById("login-section");
-        const registerSection = document.getElementById("register-section");
-        const showRegister = document.getElementById("showRegister");
-        const showLogin = document.getElementById("showLogin");
-
-        showRegister.addEventListener("click", () => {
-            loginSection.classList.remove("active");
-            registerSection.classList.add("active");
-        });
-
-        showLogin.addEventListener("click", () => {
-            registerSection.classList.remove("active");
-            loginSection.classList.add("active");
-        });
-    </script>
-
+  <div class="login-container">
+    <h1>🐾 Discovery Pets</h1>
+    <input type="email" id="email" placeholder="Correo" required>
+    <input type="password" id="password" placeholder="Contraseña" required>
+    <button id="loginBtn">Iniciar Sesión</button>
+    <div class="form-switch" id="showRegister">¿No tienes cuenta? Regístrate</div>
+  </div>
+<script type="module" src="script.js"></script>
 </body>
 </html>
-
 
 
 
