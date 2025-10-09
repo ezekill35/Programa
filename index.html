@@ -5,103 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discovery Pets - Login</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="script.js"></script>
 </head>
 <body class="login-body">
-    <div class="login-container">
-        <h1>Discovery Pets</h1>
 
-        <!-- Login Form -->
-        <form id="loginForm" class="formulario">
+    <div class="container">
+
+        <!-- -------------------- LOGIN -------------------- -->
+        <section id="login-section" class="auth-section active">
             <h2>Iniciar Sesión</h2>
-            <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-            <input type="password" id="loginPassword" placeholder="Contraseña" required>
-            <button type="submit">Ingresar</button>
-        </form>
+            <form id="loginForm" class="formulario">
+                <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                <button type="submit">Ingresar</button>
+            </form>
+            <p>¿No tienes cuenta? <span id="showRegister">Regístrate aquí</span></p>
+        </section>
 
-        <!-- Register Form -->
-        <form id="registerForm" class="formulario">
-            <h2>Registrarse</h2>
-            <input type="text" id="regNombre" placeholder="Nombre completo" required>
-            <input type="email" id="regEmail" placeholder="Correo electrónico" required>
-            <input type="password" id="regPassword" placeholder="Contraseña" required>
-            <button type="submit">Registrar</button>
-        </form>
+        <!-- -------------------- REGISTRO -------------------- -->
+        <section id="register-section" class="auth-section">
+            <h2>Registro</h2>
+            <form id="registerForm" class="formulario">
+                <input type="text" id="regNombre" placeholder="Nombre completo" required>
+                <input type="email" id="regEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="regPassword" placeholder="Contraseña" required>
+                <button type="submit">Registrarse</button>
+            </form>
+            <p>¿Ya tienes cuenta? <span id="showLogin">Inicia sesión aquí</span></p>
+        </section>
+
     </div>
 
-    <!-- Main Dashboard -->
-    <div class="main-content" style="display:none;">
-        <header>
-            <h1>Dashboard Discovery Pets</h1>
-            <button id="logoutBtn">Cerrar Sesión</button>
-        </header>
+    <script>
+        // Toggle entre login y registro
+        const loginSection = document.getElementById("login-section");
+        const registerSection = document.getElementById("register-section");
+        const showRegister = document.getElementById("showRegister");
+        const showLogin = document.getElementById("showLogin");
 
-        <nav class="sidebar">
-            <button class="nav-btn active" data-section="proveedoresSection">Proveedores</button>
-            <button class="nav-btn" data-section="facturasSection">Facturas</button>
-            <button class="nav-btn" data-section="gastosSection">Gastos</button>
-            <button class="nav-btn" data-section="serviciosSection">Servicios</button>
-        </nav>
+        showRegister.addEventListener("click", () => {
+            loginSection.classList.remove("active");
+            registerSection.classList.add("active");
+        });
 
-        <section id="proveedoresSection" class="content-section active">
-            <h2>Proveedores</h2>
-            <form id="formProveedor" class="formulario">
-                <input type="text" id="rucProv" placeholder="RUC" required>
-                <input type="text" id="nombreProv" placeholder="Nombre" required>
-                <input type="text" id="productoProv" placeholder="Producto" required>
-                <input type="text" id="direccionProv" placeholder="Dirección" required>
-                <button type="submit">Agregar / Editar</button>
-            </form>
-            <table id="tablaProveedores"></table>
-        </section>
+        showLogin.addEventListener("click", () => {
+            registerSection.classList.remove("active");
+            loginSection.classList.add("active");
+        });
+    </script>
 
-        <section id="facturasSection" class="content-section">
-            <h2>Facturas</h2>
-            <form id="formFactura" class="formulario">
-                <select id="proveedorFactura" required></select>
-                <input type="text" id="tipoFactura" placeholder="Tipo de factura" required>
-                <input type="number" id="montoFactura" placeholder="Monto" required>
-                <select id="monedaFactura" required>
-                    <option value="S/." selected>S/.</option>
-                    <option value="$">$</option>
-                </select>
-                <input type="date" id="fechaFactura" required>
-                <input type="text" id="descFactura" placeholder="Descripción">
-                <button type="submit">Agregar / Editar</button>
-            </form>
-            <table id="tablaFacturas"></table>
-        </section>
-
-        <section id="gastosSection" class="content-section">
-            <h2>Gastos</h2>
-            <form id="formGasto" class="formulario">
-                <input type="text" id="nombreGasto" placeholder="Nombre del gasto" required>
-                <input type="text" id="tipoGasto" placeholder="Tipo" required>
-                <input type="number" id="montoGasto" placeholder="Monto" required>
-                <input type="date" id="fechaGasto" required>
-                <button type="submit">Agregar / Editar</button>
-            </form>
-            <table id="tablaGastos"></table>
-        </section>
-
-        <section id="serviciosSection" class="content-section">
-            <h2>Servicios</h2>
-            <form id="formServicio" class="formulario">
-                <input type="text" id="nombreServ" placeholder="Nombre del servicio" required>
-                <input type="number" id="precioServ" placeholder="Precio" required>
-                <input type="date" id="fechaServ" required>
-                <input type="text" id="descServ" placeholder="Descripción">
-                <button type="submit">Agregar / Editar</button>
-            </form>
-            <table id="tablaServicios"></table>
-        </section>
-    </div>
-
-    <!-- Firebase 9+ Modular -->
-    <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
 
 
 
