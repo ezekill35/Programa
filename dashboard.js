@@ -1,5 +1,5 @@
 import { db } from "./firebase.js";
-import { collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js";
 
 // Colecciones
 const proveedoresCol = collection(db, 'proveedores');
