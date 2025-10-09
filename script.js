@@ -1,7 +1,19 @@
 // script.js
 import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut 
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+import { 
+  collection, 
+  addDoc, 
+  deleteDoc, 
+  doc, 
+  onSnapshot 
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -14,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const showRegister = document.getElementById("showRegister");
     const showLogin = document.getElementById("showLogin");
 
+    // Cambiar entre login y registro
     if(showRegister) showRegister.addEventListener("click", () => {
       if(loginForm) loginForm.style.display="none";
       if(registerForm) registerForm.style.display="block";
@@ -24,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if(registerForm) registerForm.style.display="none";
     });
 
+    // Registro
     if(btnRegister){
       btnRegister.addEventListener("click", async e=>{
         e.preventDefault();
@@ -39,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Login
     if(btnLogin){
       btnLogin.addEventListener("click", async e=>{
         e.preventDefault();
@@ -51,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Redirigir si ya está logueado
     onAuthStateChanged(auth,user=>{
       if(user) window.location.href="dashboard.html";
     });
@@ -84,17 +100,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const table=document.getElementById(tableId);
       if(!form||!table) return;
 
+      // Agregar documento
       form.addEventListener("submit", async e=>{
         e.preventDefault();
         const inputs=form.querySelectorAll("input, select");
         const data={};
-        inputs.forEach(i=>{ if(i.id) data[i.id.replace(/(Prov|Factura|Gasto|Serv)/,"")]=i.value; });
+        inputs.forEach(i=>{ 
+          if(i.id) data[i.id.replace(/(Prov|Factura|Gasto|Serv)/,"")]=i.value; 
+        });
         try{
           await addDoc(collection(db,collectionName),data);
           form.reset();
         }catch(err){ alert(err.message); }
       });
 
+      // Leer en tiempo real
       onSnapshot(collection(db,collectionName), snapshot=>{
         table.innerHTML="";
         snapshot.forEach(docSnap=>{
@@ -111,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Configurar CRUD para cada colección
     setupCRUD("formProveedor","proveedores","tablaProveedores");
     setupCRUD("formFactura","facturas","tablaFacturas");
     setupCRUD("formGasto","gastos","tablaGastos");
@@ -118,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 
 
 
