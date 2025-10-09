@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets | Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <!-- Firebase 7.20.0 -->
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
-  <script src="firebase.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discovery Pets | Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
+<body class="login-body">
 
-  <!-- Login -->
-  <div id="login-container" class="card p-4 shadow" style="width: 350px;">
-    <h3 class="text-center mb-3">Inicia Sesión</h3>
-    <form id="loginForm">
-      <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Correo electrónico" required>
-      <input type="password" id="loginPass" class="form-control mb-2" placeholder="Contraseña" required>
-      <button type="submit" class="btn btn-primary w-100 mb-2">Iniciar Sesión</button>
-    </form>
-    <p class="text-center">¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
-  </div>
+<div class="container">
+    <div id="loginDiv" class="auth-box">
+        <h2>Inicia sesión</h2>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Correo electrónico" required class="form-control mb-2">
+            <input type="password" id="loginPassword" placeholder="Contraseña" required class="form-control mb-2">
+            <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+        </form>
+        <p class="mt-2">¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a></p>
+    </div>
 
-  <!-- Registro -->
-  <div id="register-container" class="card p-4 shadow" style="width: 350px; display:none;">
-    <h3 class="text-center mb-3">Regístrate</h3>
-    <form id="registerForm">
-      <input type="text" id="registerName" class="form-control mb-2" placeholder="Nombre completo" required>
-      <input type="email" id="registerEmail" class="form-control mb-2" placeholder="Correo electrónico" required>
-      <input type="password" id="registerPass" class="form-control mb-2" placeholder="Contraseña" required>
-      <button type="submit" class="btn btn-success w-100 mb-2">Registrar</button>
-    </form>
-    <p class="text-center">¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
-  </div>
+    <div id="registerDiv" class="auth-box" style="display:none;">
+        <h2>Regístrate</h2>
+        <form id="registerForm">
+            <input type="text" id="registerName" placeholder="Nombre completo" required class="form-control mb-2">
+            <input type="email" id="registerEmail" placeholder="Correo electrónico" required class="form-control mb-2">
+            <input type="password" id="registerPassword" placeholder="Contraseña" required class="form-control mb-2">
+            <button type="submit" class="btn btn-success btn-block">Registrarse</button>
+        </form>
+        <p class="mt-2">¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a></p>
+    </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
