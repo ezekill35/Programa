@@ -1,258 +1,250 @@
-// ==========================
-// 🔥 Inicialización Firebase
-// ==========================
-const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:demo1234567890"
-};
-
-// ✅ Cargar Firebase como script normal (no import)
-if (typeof firebase === "undefined") {
-  const script = document.createElement("script");
-  script.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js";
-  document.head.appendChild(script);
-
-  const dbScript = document.createElement("script");
-  dbScript.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js";
-  document.head.appendChild(dbScript);
-
-  dbScript.onload = () => {
-    inicializarFirebase();
-  };
-} else {
-  inicializarFirebase();
-}
-
-let db;
-
-function inicializarFirebase() {
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
-  console.log("✅ Firebase conectado correctamente.");
-}
-
-// ==========================
-// 🌐 Navegación de secciones
-// ==========================
-function mostrarSeccion(idSeccion) {
-  document.querySelectorAll(".seccion").forEach(sec => sec.style.display = "none");
-  document.getElementById(idSeccion).style.display = "block";
-
-  document.querySelectorAll(".sidebar button").forEach(btn => btn.classList.remove("active"));
-  const btnActivo = Array.from(document.querySelectorAll(".sidebar button"))
-    .find(btn => btn.getAttribute("onclick").includes(idSeccion));
-  if (btnActivo) btnActivo.classList.add("active");
-}
-
-// ==========================
-// 👥 CRUD - PROVEEDORES
-// ==========================
-document.getElementById("formProveedor").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const nombre = document.getElementById("nombreProveedor").value.trim();
-  const ruc = document.getElementById("rucProveedor").value.trim();
-  const telefono = document.getElementById("telefonoProveedor").value.trim();
-
-  if (!nombre || !ruc || !telefono) return alert("Completa todos los campos.");
-
-  await db.collection("proveedores").add({ nombre, ruc, telefono });
-  alert("Proveedor registrado ✅");
-  e.target.reset();
-  cargarProveedores();
+// =============================
+// 🔐 Verificar sesión activa
+// =============================
+document.addEventListener("DOMContentLoaded", () => {
+  const user = localStorage.getItem("user");
+  if (!user) {
+    window.location.href = "index.html";
+  }
 });
 
-async function cargarProveedores() {
-  const lista = document.getElementById("listaProveedores");
-  lista.innerHTML = "";
-  const snap = await db.collection("proveedores").get();
-  snap.forEach(doc => {
-    const p = doc.data();
-    lista.innerHTML += `
-      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
-        <div><b>${p.nombre}</b><br><small>RUC: ${p.ruc}</small><br><small>Tel: ${p.telefono}</small></div>
-        <button class="btn btn-sm btn-danger" onclick="eliminarProveedor('${doc.id}')">🗑</button>
-      </div>`;
-  });
-  actualizarSelectores();
-}
+// =============================
+// 📦 Referencias del DOM
+// =============================
+const logoutBtn = document.getElementById("logoutBtn");
+const menuItems = document.querySelectorAll(".menu-item");
+const sectionTitle = document.getElementById("section-title");
+const sectionContent = document.getElementById("section-content");
+const searchInput = document.getElementById("searchInput");
 
-async function eliminarProveedor(id) {
-  await db.collection("proveedores").doc(id).delete();
-  cargarProveedores();
-}
+// Datos simulados (puedes conectar a Firebase después)
+let facturas = [];
+let proveedores = [];
+let productos = [];
 
-// ==========================
-// 📦 CRUD - PRODUCTOS
-// ==========================
-document.getElementById("formProducto").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const data = {
-    nombre: document.getElementById("nombreProducto").value.trim(),
-    descripcion: document.getElementById("descripcionProducto").value.trim(),
-    cantidad: parseInt(document.getElementById("cantidadProducto").value),
-    unidad: document.getElementById("unidadProducto").value.trim(),
-    valor: parseFloat(document.getElementById("valorUnitario").value)
-  };
-  if (!data.nombre || !data.descripcion) return alert("Completa todos los campos.");
-
-  await db.collection("productos").add(data);
-  alert("Producto registrado ✅");
-  e.target.reset();
-  cargarProductos();
-});
-
-async function cargarProductos() {
-  const lista = document.getElementById("listaProductos");
-  lista.innerHTML = "";
-  const snap = await db.collection("productos").get();
-  snap.forEach(doc => {
-    const p = doc.data();
-    lista.innerHTML += `
-      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
-        <div><b>${p.nombre}</b><br><small>${p.descripcion}</small><br><small>${p.cantidad} ${p.unidad} - S/ ${p.valor.toFixed(2)}</small></div>
-        <button class="btn btn-sm btn-danger" onclick="eliminarProducto('${doc.id}')">🗑</button>
-      </div>`;
-  });
-  actualizarSelectores();
-}
-
-async function eliminarProducto(id) {
-  await db.collection("productos").doc(id).delete();
-  cargarProductos();
-}
-
-// ==========================
-// 🧾 CRUD - FACTURAS
-// ==========================
-document.getElementById("formFactura").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const data = {
-    numero: document.getElementById("numeroFactura").value.trim(),
-    proveedor: document.getElementById("proveedorFactura").value,
-    producto: document.getElementById("productoFactura").value,
-    monto: parseFloat(document.getElementById("montoFactura").value),
-    moneda: document.getElementById("tipoMoneda").value,
-    tipo: document.getElementById("tipoFactura").value,
-    fecha: new Date().toISOString()
-  };
-
-  if (!data.numero || !data.proveedor || !data.producto) return alert("Completa todos los campos.");
-
-  await db.collection("facturas").add(data);
-  alert("Factura guardada ✅");
-  e.target.reset();
-  cargarFacturas();
-});
-
-async function cargarFacturas() {
-  const lista = document.getElementById("listaFacturas");
-  lista.innerHTML = "";
-  const snap = await db.collection("facturas").get();
-  snap.forEach(doc => {
-    const f = doc.data();
-    lista.innerHTML += `
-      <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
-        <div><b>${f.numero}</b><br>
-        <small>${f.proveedor} - ${f.producto}</small><br>
-        <small>${f.tipo} | ${f.moneda} ${f.monto.toFixed(2)}</small></div>
-        <div>
-          <button class="btn btn-sm btn-warning me-2" onclick="abrirModal('${doc.id}', ${f.monto})">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="eliminarFactura('${doc.id}')">🗑</button>
-        </div>
-      </div>`;
-  });
-}
-
-async function eliminarFactura(id) {
-  await db.collection("facturas").doc(id).delete();
-  cargarFacturas();
-}
-
-// ==========================
-// ✏️ Modal edición factura
-// ==========================
-let facturaEditando = null;
-
-function abrirModal(id, monto) {
-  facturaEditando = id;
-  document.getElementById("editarMonto").value = monto;
-  document.getElementById("modalEdicion").style.display = "flex";
-  document.getElementById("modalEdicion").classList.add("show");
-}
-
-function cerrarModal() {
-  document.getElementById("modalEdicion").style.display = "none";
-  document.getElementById("modalEdicion").classList.remove("show");
-}
-
-async function guardarEdicion() {
-  const nuevoMonto = parseFloat(document.getElementById("editarMonto").value);
-  if (isNaN(nuevoMonto)) return alert("Monto inválido.");
-  await db.collection("facturas").doc(facturaEditando).update({ monto: nuevoMonto });
-  cerrarModal();
-  cargarFacturas();
-}
-
-// ==========================
-// 📊 Reporte
-// ==========================
-async function generarReporte() {
-  const cont = document.getElementById("contenidoReporte");
-  cont.innerHTML = "<p>Generando reporte...</p>";
-
-  const snap = await db.collection("facturas").get();
-  let total = 0;
-  snap.forEach(doc => total += doc.data().monto);
-
-  cont.innerHTML = `
-    <h5>📋 Reporte General</h5>
-    <p>Total de facturas: ${snap.size}</p>
-    <p>Monto total: <b>S/ ${total.toFixed(2)}</b></p>`;
-}
-
-// ==========================
-// 🔍 Buscador global
-// ==========================
-document.getElementById("buscadorGlobal").addEventListener("input", (e) => {
-  const texto = e.target.value.toLowerCase();
-  document.querySelectorAll("#listaFacturas div, #listaProveedores div, #listaProductos div").forEach(el => {
-    el.style.display = el.textContent.toLowerCase().includes(texto) ? "" : "none";
-  });
-});
-
-// ==========================
-// 🔁 Select dinámico
-// ==========================
-async function actualizarSelectores() {
-  const proveedorSelect = document.getElementById("proveedorFactura");
-  const productoSelect = document.getElementById("productoFactura");
-  proveedorSelect.innerHTML = "<option value=''>Seleccione proveedor</option>";
-  productoSelect.innerHTML = "<option value=''>Seleccione producto</option>";
-
-  const provSnap = await db.collection("proveedores").get();
-  provSnap.forEach(d => proveedorSelect.innerHTML += `<option>${d.data().nombre}</option>`);
-
-  const prodSnap = await db.collection("productos").get();
-  prodSnap.forEach(d => productoSelect.innerHTML += `<option>${d.data().nombre}</option>`);
-}
-
-// ==========================
+// =============================
 // 🚪 Cerrar sesión
-// ==========================
-function cerrarSesion() {
-  if (confirm("¿Deseas cerrar sesión?")) window.location.href = "index.html";
+// =============================
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+});
+
+// =============================
+// 📋 Función para cambiar secciones
+// =============================
+menuItems.forEach(item => {
+  item.addEventListener("click", () => {
+    const section = item.dataset.section;
+    sectionTitle.textContent = section.charAt(0).toUpperCase() + section.slice(1);
+    mostrarSeccion(section);
+  });
+});
+
+// =============================
+// 🔎 Buscador global
+// =============================
+searchInput.addEventListener("input", e => {
+  const query = e.target.value.toLowerCase();
+  mostrarResultados(query);
+});
+
+function mostrarResultados(query) {
+  let resultados = facturas.filter(f =>
+    f.numero.toLowerCase().includes(query) ||
+    f.proveedor.toLowerCase().includes(query) ||
+    f.producto.toLowerCase().includes(query)
+  );
+
+  sectionTitle.textContent = "Resultados de búsqueda";
+  sectionContent.innerHTML = `
+    <h3>Facturas encontradas</h3>
+    <ul>
+      ${resultados
+        .map(
+          f => `
+          <li>
+            <strong>N°:</strong> ${f.numero} |
+            <strong>Proveedor:</strong> ${f.proveedor} |
+            <strong>Producto:</strong> ${f.producto} |
+            <strong>Monto:</strong> ${f.monto} ${f.moneda}
+            <button class="btn btn-warning btn-sm" onclick="editarFactura('${f.numero}')">Editar</button>
+          </li>
+        `
+        )
+        .join("")}
+    </ul>
+  `;
 }
 
-// ==========================
-// 🚀 Cargar inicial
-// ==========================
-setTimeout(() => {
-  cargarProveedores();
-  cargarProductos();
-  cargarFacturas();
-}, 2500);
+// =============================
+// 🧾 Mostrar secciones dinámicas
+// =============================
+function mostrarSeccion(seccion) {
+  switch (seccion) {
+    case "factura":
+      sectionContent.innerHTML = `
+        <h3>Registrar Factura</h3>
+        <form id="facturaForm">
+          <input type="text" id="numeroFactura" placeholder="Número de Factura" required><br>
+          <input type="text" id="proveedorFactura" placeholder="Proveedor" required><br>
+          <input type="text" id="productoFactura" placeholder="Producto" required><br>
+          <div style="display:flex; gap:8px;">
+            <select id="monedaFactura">
+              <option value="PEN">Soles (PEN)</option>
+              <option value="USD">Dólares (USD)</option>
+            </select>
+            <input type="number" id="montoFactura" placeholder="Monto" step="0.01" required>
+          </div><br>
+          <button type="submit">Guardar Factura</button>
+        </form>
+      `;
 
+      document
+        .getElementById("facturaForm")
+        .addEventListener("submit", e => {
+          e.preventDefault();
+          const numero = document.getElementById("numeroFactura").value;
+          const proveedor = document.getElementById("proveedorFactura").value;
+          const producto = document.getElementById("productoFactura").value;
+          const monto = document.getElementById("montoFactura").value;
+          const moneda = document.getElementById("monedaFactura").value;
+
+          facturas.push({ numero, proveedor, producto, monto, moneda });
+          alert("Factura registrada correctamente");
+          e.target.reset();
+        });
+      break;
+
+    case "proveedor":
+      sectionContent.innerHTML = `
+        <h3>Registrar Proveedor</h3>
+        <form id="proveedorForm">
+          <input type="text" id="nombreProveedor" placeholder="Nombre del Proveedor" required><br>
+          <input type="text" id="rucProveedor" placeholder="RUC (solo números)" required pattern="\\d*"><br>
+          <input type="text" id="telefonoProveedor" placeholder="Teléfono (solo números)" pattern="\\d*"><br>
+          <button type="submit">Guardar Proveedor</button>
+        </form>
+      `;
+
+      document
+        .getElementById("proveedorForm")
+        .addEventListener("submit", e => {
+          e.preventDefault();
+          const nombre = document.getElementById("nombreProveedor").value;
+          const ruc = document.getElementById("rucProveedor").value;
+          const telefono = document.getElementById("telefonoProveedor").value;
+
+          proveedores.push({ nombre, ruc, telefono });
+          alert("Proveedor registrado correctamente");
+          e.target.reset();
+        });
+      break;
+
+    case "producto":
+      sectionContent.innerHTML = `
+        <h3>Registrar Producto</h3>
+        <form id="productoForm">
+          <input type="text" id="nombreProducto" placeholder="Nombre del Producto" required><br>
+          <textarea id="descripcionProducto" placeholder="Descripción"></textarea><br>
+          <input type="number" id="cantidadProducto" placeholder="Cantidad" required><br>
+          <input type="text" id="unidadProducto" placeholder="Unidad de Medida" required><br>
+          <input type="number" id="valorProducto" placeholder="Valor Unitario" step="0.01" required><br>
+          <button type="submit">Guardar Producto</button>
+        </form>
+      `;
+
+      document
+        .getElementById("productoForm")
+        .addEventListener("submit", e => {
+          e.preventDefault();
+          const nombre = document.getElementById("nombreProducto").value;
+          const descripcion = document.getElementById("descripcionProducto").value;
+          const cantidad = document.getElementById("cantidadProducto").value;
+          const unidad = document.getElementById("unidadProducto").value;
+          const valor = document.getElementById("valorProducto").value;
+
+          productos.push({ nombre, descripcion, cantidad, unidad, valor });
+          alert("Producto registrado correctamente");
+          e.target.reset();
+        });
+      break;
+
+    case "reporte":
+      sectionContent.innerHTML = `
+        <h3>📊 Generar Reporte</h3>
+        <button onclick="generarReporte()">Generar Reporte de Facturas</button>
+        <div id="reporteResultados"></div>
+      `;
+      break;
+
+    default:
+      sectionContent.innerHTML = `<p>Selecciona una opción del menú</p>`;
+  }
+}
+
+// =============================
+// 🧾 Editar factura desde búsqueda
+// =============================
+function editarFactura(numeroFactura) {
+  const factura = facturas.find(f => f.numero === numeroFactura);
+  if (!factura) return alert("Factura no encontrada");
+
+  sectionTitle.textContent = "Editar Factura";
+  sectionContent.innerHTML = `
+    <h3>Editando Factura ${factura.numero}</h3>
+    <form id="editarFacturaForm">
+      <input type="text" id="editProveedor" value="${factura.proveedor}" required><br>
+      <input type="text" id="editProducto" value="${factura.producto}" required><br>
+      <div style="display:flex; gap:8px;">
+        <select id="editMoneda">
+          <option value="PEN" ${factura.moneda === "PEN" ? "selected" : ""}>Soles (PEN)</option>
+          <option value="USD" ${factura.moneda === "USD" ? "selected" : ""}>Dólares (USD)</option>
+        </select>
+        <input type="number" id="editMonto" value="${factura.monto}" step="0.01" required>
+      </div><br>
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  `;
+
+  document
+    .getElementById("editarFacturaForm")
+    .addEventListener("submit", e => {
+      e.preventDefault();
+      factura.proveedor = document.getElementById("editProveedor").value;
+      factura.producto = document.getElementById("editProducto").value;
+      factura.monto = document.getElementById("editMonto").value;
+      factura.moneda = document.getElementById("editMoneda").value;
+      alert("Factura actualizada correctamente");
+      mostrarResultados("");
+    });
+}
+
+// =============================
+// 📊 Generar Reporte
+// =============================
+function generarReporte() {
+  const reporteDiv = document.getElementById("reporteResultados");
+  if (facturas.length === 0) {
+    reporteDiv.innerHTML = `<p>No hay facturas registradas.</p>`;
+    return;
+  }
+
+  let total = facturas.reduce(
+    (sum, f) => sum + parseFloat(f.monto),
+    0
+  );
+
+  reporteDiv.innerHTML = `
+    <h4>Resumen de Facturas</h4>
+    <p>Total de facturas: ${facturas.length}</p>
+    <p>Monto total (Soles): S/. ${total.toFixed(2)}</p>
+    <ul>
+      ${facturas
+        .map(
+          f => `<li>${f.numero} - ${f.proveedor} - ${f.producto} - ${f.monto} ${f.moneda}</li>`
+        )
+        .join("")}
+    </ul>
+  `;
+}
