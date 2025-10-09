@@ -1,4 +1,4 @@
-/* ---------------- Reset básico ---------------- */
+/* ------------------ Reset y base ------------------ */
 * {
   margin: 0;
   padding: 0;
@@ -6,183 +6,196 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ---------------- Body ---------------- */
 body {
-  background-color: #f5f5f5;
+  background: #f0f2f5;
+  color: #333;
 }
 
-/* ---------------- Login / Registro ---------------- */
-.login-card {
-  width: 350px;
+/* ------------------ Card y formularios 3D ------------------ */
+.card, .content-section {
   border-radius: 15px;
-  background: #ffffff;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-  padding: 30px;
-  transition: transform 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
-.login-card:hover {
+
+.card:hover, .content-section:hover {
   transform: translateY(-5px);
-}
-.login-card h2 {
-  font-weight: 700;
-}
-.login-card p {
-  margin-bottom: 15px;
-}
-.btn-login {
-  border-radius: 50px;
-  padding: 10px 20px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-.btn-login:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
 }
 
-/* ---------------- Dashboard ---------------- */
-.dashboard-body {
+.cards {
   display: flex;
-  min-height: 100vh;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-/* Sidebar */
+.card h3 {
+  color: #fff;
+}
+
+.card.pink { background: #ff6b81; }
+.card.purple { background: #6a5acd; }
+.card.teal { background: #20c997; }
+.card.yellow { background: #ffc107; }
+
+.card p {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ------------------ Sidebar ------------------ */
 .sidebar {
   width: 220px;
+  background-color: #111;
   min-height: 100vh;
-  background: #343a40;
-  color: white;
-  padding: 20px 10px;
+  padding: 20px;
+  color: #fff;
   display: flex;
   flex-direction: column;
 }
+
 .sidebar h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 1.5rem;
+  margin-bottom: 40px;
+  font-size: 22px;
+  color: #00ffff;
 }
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.nav-btn {
+
+.sidebar .nav-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  text-align: left;
   border: none;
+  background: transparent;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
   border-radius: 8px;
-  padding: 10px;
-  font-weight: 600;
-  transition: 0.3s ease;
-  background: #495057;
-  color: white;
+  transition: all 0.3s;
 }
-.nav-btn.active {
-  background: #0d6efd;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+
+.sidebar .nav-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #ffcc00;
 }
-.nav-btn:hover {
-  background: #0d6efd;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+
+.sidebar .nav-btn.active {
+  background: #00ffff;
+  color: #111;
 }
+
 .logout-btn {
   margin-top: auto;
   padding: 10px;
+  border: none;
+  background: #ff4b5c;
+  color: #fff;
   border-radius: 8px;
-  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-/* Main Content */
+.logout-btn:hover {
+  background: #ff1c3b;
+}
+
+/* ------------------ Main content ------------------ */
 .main-content {
-  flex-grow: 1;
+  flex: 1;
   padding: 30px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ---------------- Secciones ---------------- */
 .content-section {
   display: none;
 }
+
 .content-section.active {
   display: block;
 }
 
-/* Cards reportes */
-.row .card {
-  border-radius: 15px;
-  padding: 20px;
-  color: white;
-  font-weight: 600;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.row .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-/* Colores de reportes */
-.bg-pink { background-color:#ff6b81; }
-.bg-purple { background-color:#6f42c1; }
-.bg-teal { background-color:#20c997; }
-.bg-yellow { background-color:#ffc107; color: #333; }
-
-/* Formularios */
-form .form-control {
-  border-radius: 10px;
-  padding: 10px;
-  border: 1px solid #ced4da;
-  transition: 0.3s ease;
-}
-form .form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 5px rgba(13,110,253,0.5);
-}
-
-/* Botones de formularios */
-form button {
-  border-radius: 50px;
-  padding: 8px 15px;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
-form button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
 }
-table thead tr {
-  background-color: #0d6efd;
-  color: white;
-}
+
 table th, table td {
   padding: 10px;
+  border-bottom: 1px solid #ddd;
   text-align: left;
-  border-bottom: 1px solid #dee2e6;
 }
+
+table th {
+  background-color: #f8f9fa;
+}
+
 table tr:hover {
   background-color: #f1f1f1;
-  transition: background-color 0.3s ease;
 }
 
-/* Mensajes de error / success */
-.text-danger { font-weight: 600; }
-.text-success { font-weight: 600; }
+/* ------------------ Formularios ------------------ */
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
-/* Responsive */
+.formulario input, .formulario button {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.formulario button {
+  background-color: #20c997;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.formulario button:hover {
+  background-color: #17a589;
+}
+
+/* ------------------ Login y registro ------------------ */
+body > .card {
+  max-width: 400px;
+}
+
+#loginDiv, #registerDiv {
+  transition: all 0.3s;
+}
+
+/* Mensajes */
+.mensaje, #loginMsg, #registerMsg {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* ------------------ Responsive ------------------ */
 @media (max-width: 768px) {
-  .dashboard-body { flex-direction: column; }
-  .sidebar { width: 100%; min-height: auto; display: flex; flex-direction: row; overflow-x: auto; }
-  .sidebar nav { flex-direction: row; gap: 5px; }
-  .main-content { padding: 15px; }
-  form .col { margin-bottom: 10px; }
+  .cards {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  .main-content {
+    padding: 15px;
+  }
 }
+
 
 
