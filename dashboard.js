@@ -1,250 +1,123 @@
-// =============================
-// 🔐 Verificar sesión activa
-// =============================
-document.addEventListener("DOMContentLoaded", () => {
-  const user = localStorage.getItem("user");
-  if (!user) {
+// dashboard.js
+
+// 🔹 Inicializar Firebase (ya configurado en firebase.js)
+import { auth, db } from './firebase.js';
+import {
+  onAuthStateChanged,
+  signOut
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+// ✅ Controlar acceso al dashboard
+let redirecting = false;
+
+onAuthStateChanged(auth, (user) => {
+  if (!user && !redirecting) {
+    redirecting = true;
     window.location.href = "index.html";
+  } else if (user) {
+    console.log("Usuario autenticado:", user.email);
   }
 });
 
-// =============================
-// 📦 Referencias del DOM
-// =============================
+// 🔹 Botón cerrar sesión
 const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.replace("index.html"); // ✅ Reemplaza en el historial
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  });
+}
+
+// 🔹 Cambiar entre secciones del menú
 const menuItems = document.querySelectorAll(".menu-item");
-const sectionTitle = document.getElementById("section-title");
-const sectionContent = document.getElementById("section-content");
-const searchInput = document.getElementById("searchInput");
+const sections = document.querySelectorAll(".section");
 
-// Datos simulados (puedes conectar a Firebase después)
-let facturas = [];
-let proveedores = [];
-let productos = [];
-
-// =============================
-// 🚪 Cerrar sesión
-// =============================
-logoutBtn.addEventListener("click", () => {
-  localStorage.removeItem("user");
-  window.location.href = "index.html";
-});
-
-// =============================
-// 📋 Función para cambiar secciones
-// =============================
 menuItems.forEach(item => {
   item.addEventListener("click", () => {
-    const section = item.dataset.section;
-    sectionTitle.textContent = section.charAt(0).toUpperCase() + section.slice(1);
-    mostrarSeccion(section);
+    // Quitar la clase activa de todos
+    menuItems.forEach(i => i.classList.remove("active"));
+    sections.forEach(s => s.style.display = "none");
+
+    // Activar el seleccionado
+    item.classList.add("active");
+    const target = item.getAttribute("data-target");
+    document.getElementById(target).style.display = "block";
   });
 });
 
-// =============================
-// 🔎 Buscador global
-// =============================
-searchInput.addEventListener("input", e => {
-  const query = e.target.value.toLowerCase();
-  mostrarResultados(query);
+// 🔹 Funcionalidad de buscador general
+const buscador = document.getElementById("buscador");
+const listaFacturas = document.getElementById("listaFacturas");
+
+if (buscador) {
+  buscador.addEventListener("input", async (e) => {
+    const query = e.target.value.toLowerCase();
+    listaFacturas.innerHTML = "";
+
+    const q = await db.collection("facturas").get();
+    q.forEach(doc => {
+      const data = doc.data();
+      if (
+        data.proveedor?.toLowerCase().includes(query) ||
+        data.producto?.toLowerCase().includes(query) ||
+        data.numeroFactura?.toLowerCase().includes(query)
+      ) {
+        const item = document.createElement("div");
+        item.classList.add("factura-item");
+        item.innerHTML = `
+          <strong>${data.numeroFactura}</strong> - 
+          ${data.producto || "Sin producto"} (${data.proveedor})
+          <button class="editarFactura" data-id="${doc.id}">✏️ Editar</button>
+        `;
+        listaFacturas.appendChild(item);
+      }
+    });
+  });
+}
+
+// 🔹 Editar factura desde el buscador
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("editarFactura")) {
+    const id = e.target.dataset.id;
+    abrirVentanaEdicion(id);
+  }
 });
 
-function mostrarResultados(query) {
-  let resultados = facturas.filter(f =>
-    f.numero.toLowerCase().includes(query) ||
-    f.proveedor.toLowerCase().includes(query) ||
-    f.producto.toLowerCase().includes(query)
-  );
-
-  sectionTitle.textContent = "Resultados de búsqueda";
-  sectionContent.innerHTML = `
-    <h3>Facturas encontradas</h3>
-    <ul>
-      ${resultados
-        .map(
-          f => `
-          <li>
-            <strong>N°:</strong> ${f.numero} |
-            <strong>Proveedor:</strong> ${f.proveedor} |
-            <strong>Producto:</strong> ${f.producto} |
-            <strong>Monto:</strong> ${f.monto} ${f.moneda}
-            <button class="btn btn-warning btn-sm" onclick="editarFactura('${f.numero}')">Editar</button>
-          </li>
-        `
-        )
-        .join("")}
-    </ul>
+// 🔹 Ventana de edición emergente 3D
+function abrirVentanaEdicion(id) {
+  const overlay = document.createElement("div");
+  overlay.className = "overlay-3d";
+  overlay.innerHTML = `
+    <div class="ventana-edicion">
+      <h3>Editar Factura</h3>
+      <form id="formEditar">
+        <input type="text" id="editProducto" placeholder="Producto">
+        <input type="text" id="editProveedor" placeholder="Proveedor">
+        <input type="number" id="editMonto" placeholder="Monto">
+        <button type="submit">Guardar</button>
+        <button type="button" id="cerrarVentana">Cancelar</button>
+      </form>
+    </div>
   `;
-}
+  document.body.appendChild(overlay);
 
-// =============================
-// 🧾 Mostrar secciones dinámicas
-// =============================
-function mostrarSeccion(seccion) {
-  switch (seccion) {
-    case "factura":
-      sectionContent.innerHTML = `
-        <h3>Registrar Factura</h3>
-        <form id="facturaForm">
-          <input type="text" id="numeroFactura" placeholder="Número de Factura" required><br>
-          <input type="text" id="proveedorFactura" placeholder="Proveedor" required><br>
-          <input type="text" id="productoFactura" placeholder="Producto" required><br>
-          <div style="display:flex; gap:8px;">
-            <select id="monedaFactura">
-              <option value="PEN">Soles (PEN)</option>
-              <option value="USD">Dólares (USD)</option>
-            </select>
-            <input type="number" id="montoFactura" placeholder="Monto" step="0.01" required>
-          </div><br>
-          <button type="submit">Guardar Factura</button>
-        </form>
-      `;
+  document.getElementById("cerrarVentana").onclick = () => overlay.remove();
 
-      document
-        .getElementById("facturaForm")
-        .addEventListener("submit", e => {
-          e.preventDefault();
-          const numero = document.getElementById("numeroFactura").value;
-          const proveedor = document.getElementById("proveedorFactura").value;
-          const producto = document.getElementById("productoFactura").value;
-          const monto = document.getElementById("montoFactura").value;
-          const moneda = document.getElementById("monedaFactura").value;
+  document.getElementById("formEditar").onsubmit = async (e) => {
+    e.preventDefault();
+    const producto = document.getElementById("editProducto").value;
+    const proveedor = document.getElementById("editProveedor").value;
+    const monto = parseFloat(document.getElementById("editMonto").value);
 
-          facturas.push({ numero, proveedor, producto, monto, moneda });
-          alert("Factura registrada correctamente");
-          e.target.reset();
-        });
-      break;
-
-    case "proveedor":
-      sectionContent.innerHTML = `
-        <h3>Registrar Proveedor</h3>
-        <form id="proveedorForm">
-          <input type="text" id="nombreProveedor" placeholder="Nombre del Proveedor" required><br>
-          <input type="text" id="rucProveedor" placeholder="RUC (solo números)" required pattern="\\d*"><br>
-          <input type="text" id="telefonoProveedor" placeholder="Teléfono (solo números)" pattern="\\d*"><br>
-          <button type="submit">Guardar Proveedor</button>
-        </form>
-      `;
-
-      document
-        .getElementById("proveedorForm")
-        .addEventListener("submit", e => {
-          e.preventDefault();
-          const nombre = document.getElementById("nombreProveedor").value;
-          const ruc = document.getElementById("rucProveedor").value;
-          const telefono = document.getElementById("telefonoProveedor").value;
-
-          proveedores.push({ nombre, ruc, telefono });
-          alert("Proveedor registrado correctamente");
-          e.target.reset();
-        });
-      break;
-
-    case "producto":
-      sectionContent.innerHTML = `
-        <h3>Registrar Producto</h3>
-        <form id="productoForm">
-          <input type="text" id="nombreProducto" placeholder="Nombre del Producto" required><br>
-          <textarea id="descripcionProducto" placeholder="Descripción"></textarea><br>
-          <input type="number" id="cantidadProducto" placeholder="Cantidad" required><br>
-          <input type="text" id="unidadProducto" placeholder="Unidad de Medida" required><br>
-          <input type="number" id="valorProducto" placeholder="Valor Unitario" step="0.01" required><br>
-          <button type="submit">Guardar Producto</button>
-        </form>
-      `;
-
-      document
-        .getElementById("productoForm")
-        .addEventListener("submit", e => {
-          e.preventDefault();
-          const nombre = document.getElementById("nombreProducto").value;
-          const descripcion = document.getElementById("descripcionProducto").value;
-          const cantidad = document.getElementById("cantidadProducto").value;
-          const unidad = document.getElementById("unidadProducto").value;
-          const valor = document.getElementById("valorProducto").value;
-
-          productos.push({ nombre, descripcion, cantidad, unidad, valor });
-          alert("Producto registrado correctamente");
-          e.target.reset();
-        });
-      break;
-
-    case "reporte":
-      sectionContent.innerHTML = `
-        <h3>📊 Generar Reporte</h3>
-        <button onclick="generarReporte()">Generar Reporte de Facturas</button>
-        <div id="reporteResultados"></div>
-      `;
-      break;
-
-    default:
-      sectionContent.innerHTML = `<p>Selecciona una opción del menú</p>`;
-  }
-}
-
-// =============================
-// 🧾 Editar factura desde búsqueda
-// =============================
-function editarFactura(numeroFactura) {
-  const factura = facturas.find(f => f.numero === numeroFactura);
-  if (!factura) return alert("Factura no encontrada");
-
-  sectionTitle.textContent = "Editar Factura";
-  sectionContent.innerHTML = `
-    <h3>Editando Factura ${factura.numero}</h3>
-    <form id="editarFacturaForm">
-      <input type="text" id="editProveedor" value="${factura.proveedor}" required><br>
-      <input type="text" id="editProducto" value="${factura.producto}" required><br>
-      <div style="display:flex; gap:8px;">
-        <select id="editMoneda">
-          <option value="PEN" ${factura.moneda === "PEN" ? "selected" : ""}>Soles (PEN)</option>
-          <option value="USD" ${factura.moneda === "USD" ? "selected" : ""}>Dólares (USD)</option>
-        </select>
-        <input type="number" id="editMonto" value="${factura.monto}" step="0.01" required>
-      </div><br>
-      <button type="submit">Guardar Cambios</button>
-    </form>
-  `;
-
-  document
-    .getElementById("editarFacturaForm")
-    .addEventListener("submit", e => {
-      e.preventDefault();
-      factura.proveedor = document.getElementById("editProveedor").value;
-      factura.producto = document.getElementById("editProducto").value;
-      factura.monto = document.getElementById("editMonto").value;
-      factura.moneda = document.getElementById("editMoneda").value;
-      alert("Factura actualizada correctamente");
-      mostrarResultados("");
+    await db.collection("facturas").doc(id).update({
+      producto, proveedor, monto
     });
+    overlay.remove();
+    alert("Factura actualizada correctamente ✅");
+  };
 }
 
-// =============================
-// 📊 Generar Reporte
-// =============================
-function generarReporte() {
-  const reporteDiv = document.getElementById("reporteResultados");
-  if (facturas.length === 0) {
-    reporteDiv.innerHTML = `<p>No hay facturas registradas.</p>`;
-    return;
-  }
-
-  let total = facturas.reduce(
-    (sum, f) => sum + parseFloat(f.monto),
-    0
-  );
-
-  reporteDiv.innerHTML = `
-    <h4>Resumen de Facturas</h4>
-    <p>Total de facturas: ${facturas.length}</p>
-    <p>Monto total (Soles): S/. ${total.toFixed(2)}</p>
-    <ul>
-      ${facturas
-        .map(
-          f => `<li>${f.numero} - ${f.proveedor} - ${f.producto} - ${f.monto} ${f.moneda}</li>`
-        )
-        .join("")}
-    </ul>
-  `;
-}
