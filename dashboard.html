@@ -4,59 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Discovery Pets 🐾</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="dashboard-body">
 
-  <aside class="sidebar p-3 bg-light">
+  <!-- Sidebar -->
+  <aside class="sidebar">
     <h2>🐾 Discovery Pets</h2>
-    <nav class="d-flex flex-column gap-2 mt-3">
-      <button class="nav-btn btn btn-outline-primary active" data-section="reportes">📊 Reportes</button>
-      <button class="nav-btn btn btn-outline-primary" data-section="proveedores">🏪 Proveedores</button>
-      <button class="nav-btn btn btn-outline-primary" data-section="facturas">📑 Facturas</button>
-      <button class="nav-btn btn btn-outline-primary" data-section="gastos">💰 Gastos</button>
-      <button class="nav-btn btn btn-outline-primary" data-section="servicios">🛠 Servicios</button>
+    <nav>
+      <button class="nav-btn active" data-section="reportes">📊 Reportes</button>
+      <button class="nav-btn" data-section="proveedores">🏪 Proveedores</button>
+      <button class="nav-btn" data-section="facturas">📑 Facturas</button>
+      <button class="nav-btn" data-section="gastos">💰 Gastos</button>
+      <button class="nav-btn" data-section="servicios">🛠 Servicios</button>
     </nav>
-    <button class="logout-btn btn btn-danger mt-3" id="logoutBtn">🚪 Cerrar sesión</button>
+    <button class="logout-btn btn btn-danger mt-auto" id="logoutBtn">🚪 Cerrar sesión</button>
   </aside>
 
-  <main class="main-content container mt-3">
+  <!-- Main Content -->
+  <main class="main-content">
     <!-- REPORTES -->
     <section id="reportes" class="content-section active">
       <h1>📊 Reportes Generales</h1>
-      <div class="row">
-        <div class="col-md-3"><div class="card bg-primary text-white p-3 mb-3"><h5>Proveedores</h5><p id="countProveedores">0</p></div></div>
-        <div class="col-md-3"><div class="card bg-success text-white p-3 mb-3"><h5>Facturas</h5><p id="countFacturas">0</p></div></div>
-        <div class="col-md-3"><div class="card bg-warning text-dark p-3 mb-3"><h5>Gastos</h5><p id="countGastos">0</p></div></div>
-        <div class="col-md-3"><div class="card bg-info text-white p-3 mb-3"><h5>Servicios</h5><p id="countServicios">0</p></div></div>
+      <div class="cards">
+        <div class="card bg-primary"><h3>Proveedores</h3><p id="countProveedores">0</p></div>
+        <div class="card bg-success"><h3>Facturas</h3><p id="countFacturas">0</p></div>
+        <div class="card bg-warning"><h3>Gastos</h3><p id="countGastos">0</p></div>
+        <div class="card bg-info"><h3>Servicios</h3><p id="countServicios">0</p></div>
       </div>
     </section>
 
     <!-- PROVEEDORES -->
-    <section id="proveedores" class="content-section" style="display:none;">
+    <section id="proveedores" class="content-section">
       <h1>🏪 Registro de Proveedores</h1>
-      <form id="formProveedor" class="mb-3 d-flex flex-wrap gap-2">
-        <input type="text" id="rucProv" placeholder="RUC" pattern="[0-9]*" required class="form-control">
-        <input type="text" id="nombreProv" placeholder="Nombre" required class="form-control">
-        <input type="text" id="productoProv" placeholder="Producto" required class="form-control">
-        <input type="text" id="direccionProv" placeholder="Dirección" required class="form-control">
+      <form id="formProveedor" class="formulario">
+        <input type="text" id="rucProv" placeholder="RUC" required>
+        <input type="text" id="nombreProv" placeholder="Nombre" required>
+        <input type="text" id="productoProv" placeholder="Producto" required>
+        <input type="text" id="direccionProv" placeholder="Dirección" required>
         <button type="submit" class="btn btn-success">Agregar</button>
       </form>
       <table class="table table-hover">
-        <thead>
-          <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr></thead>
         <tbody id="tablaProveedores"></tbody>
       </table>
     </section>
 
     <!-- FACTURAS -->
-    <section id="facturas" class="content-section" style="display:none;">
+    <section id="facturas" class="content-section">
       <h1>📑 Registro de Facturas</h1>
-      <form id="formFactura" class="mb-3 d-flex flex-wrap gap-2">
-        <select id="proveedorFactura" required class="form-control"></select>
-        <select id="tipoFactura" required class="form-control">
+      <form id="formFactura" class="formulario">
+        <select id="proveedorFactura" required class="form-control mb-2"></select>
+        <select id="tipoFactura" required class="form-control mb-2">
           <option value="">Seleccione tipo de factura</option>
           <option value="Factura Electrónica">Factura Electrónica</option>
           <option value="Boleta">Boleta</option>
@@ -64,7 +64,7 @@
           <option value="Nota de Débito">Nota de Débito</option>
         </select>
 
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 mb-2">
           <input type="number" id="montoFactura" placeholder="Monto" required class="form-control">
           <select id="monedaFactura" required class="form-control">
             <option value="PEN">S/.</option>
@@ -72,20 +72,14 @@
           </select>
         </div>
 
-        <input type="date" id="fechaFactura" required class="form-control">
-        <input type="text" id="descFactura" placeholder="Descripción" required class="form-control">
+        <input type="date" id="fechaFactura" required class="form-control mb-2">
+        <input type="text" id="descFactura" placeholder="Descripción" required class="form-control mb-2">
         <button type="submit" class="btn btn-success">Agregar</button>
       </form>
-
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>Proveedor</th>
-            <th>Tipo</th>
-            <th>Monto</th>
-            <th>Fecha</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
+            <th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th>
           </tr>
         </thead>
         <tbody id="tablaFacturas"></tbody>
@@ -93,37 +87,33 @@
     </section>
 
     <!-- GASTOS -->
-    <section id="gastos" class="content-section" style="display:none;">
+    <section id="gastos" class="content-section">
       <h1>💰 Registro de Gastos</h1>
-      <form id="formGasto" class="mb-3 d-flex flex-wrap gap-2">
-        <input type="text" id="nombreGasto" placeholder="Nombre" required class="form-control">
-        <input type="text" id="tipoGasto" placeholder="Tipo" required class="form-control">
-        <input type="number" id="montoGasto" placeholder="Monto" required class="form-control">
-        <input type="date" id="fechaGasto" required class="form-control">
+      <form id="formGasto" class="formulario">
+        <input type="text" id="nombreGasto" placeholder="Nombre" required class="form-control mb-2">
+        <input type="text" id="tipoGasto" placeholder="Tipo" required class="form-control mb-2">
+        <input type="number" id="montoGasto" placeholder="Monto" required class="form-control mb-2">
+        <input type="date" id="fechaGasto" required class="form-control mb-2">
         <button type="submit" class="btn btn-success">Agregar</button>
       </form>
       <table class="table table-hover">
-        <thead>
-          <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
         <tbody id="tablaGastos"></tbody>
       </table>
     </section>
 
     <!-- SERVICIOS -->
-    <section id="servicios" class="content-section" style="display:none;">
+    <section id="servicios" class="content-section">
       <h1>🛠 Registro de Servicios</h1>
-      <form id="formServicio" class="mb-3 d-flex flex-wrap gap-2">
-        <input type="text" id="nombreServ" placeholder="Nombre" required class="form-control">
-        <input type="number" id="precioServ" placeholder="Precio" required class="form-control">
-        <input type="date" id="fechaServ" required class="form-control">
-        <input type="text" id="descServ" placeholder="Descripción" required class="form-control">
+      <form id="formServicio" class="formulario">
+        <input type="text" id="nombreServ" placeholder="Nombre" required class="form-control mb-2">
+        <input type="number" id="precioServ" placeholder="Precio" required class="form-control mb-2">
+        <input type="date" id="fechaServ" required class="form-control mb-2">
+        <input type="text" id="descServ" placeholder="Descripción" required class="form-control mb-2">
         <button type="submit" class="btn btn-success">Agregar</button>
       </form>
       <table class="table table-hover">
-        <thead>
-          <tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
-        </thead>
+        <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
         <tbody id="tablaServicios"></tbody>
       </table>
     </section>
@@ -137,10 +127,6 @@
   <script src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
 
 
 
