@@ -1,3 +1,5 @@
+import { db, auth } from './firebase.js'; // Asegúrate que firebase.js exporte db y auth
+
 // ---------------- Navegación ----------------
 const navButtons = document.querySelectorAll('.nav-btn');
 const sections = document.querySelectorAll('.content-section');
@@ -29,6 +31,8 @@ const msgProv = document.getElementById('msgProv');
 const formProveedor = document.getElementById('formProveedor');
 let editProveedorId = null;
 
+const proveedorFacturaSelect = document.getElementById('proveedorFactura');
+
 formProveedor.addEventListener('submit', async e => {
   e.preventDefault();
   const ruc = document.getElementById('rucProv').value.trim();
@@ -56,13 +60,14 @@ formProveedor.addEventListener('submit', async e => {
   }
 });
 
+// Actualizar tabla y select en tiempo real
 db.collection('proveedores').onSnapshot(snapshot => {
   tablaProveedores.innerHTML = '';
-  proveedorFacturaSelect.innerHTML = '<option value="">Selecciona un proveedor</option>'; // Para facturas
+  proveedorFacturaSelect.innerHTML = '<option value="">Selecciona un proveedor</option>';
+
   snapshot.forEach(doc => {
     const data = doc.data();
-
-    // Tabla proveedores
+    // Tabla
     tablaProveedores.innerHTML += `
       <tr>
         <td>${data.ruc}</td>
@@ -74,13 +79,15 @@ db.collection('proveedores').onSnapshot(snapshot => {
           <button class="btn btn-sm btn-danger" onclick="deleteDoc('proveedores','${doc.id}')">Eliminar</button>
         </td>
       </tr>`;
-
-    // Select de proveedores para facturas
+    // Select de proveedores
     proveedorFacturaSelect.innerHTML += `<option value="${data.nombre}">${data.nombre} (RUC: ${data.ruc})</option>`;
   });
+
+  // Actualizar contador
+  document.getElementById('countProveedores').textContent = snapshot.size;
 });
 
-function editProveedor(id, ruc, nombre, producto, direccion) {
+window.editProveedor = function(id, ruc, nombre, producto, direccion) {
   document.getElementById('rucProv').value = ruc;
   document.getElementById('nombreProv').value = nombre;
   document.getElementById('productoProv').value = producto;
@@ -93,7 +100,6 @@ function editProveedor(id, ruc, nombre, producto, direccion) {
 const tablaFacturas = document.getElementById('tablaFacturas');
 const formFactura = document.getElementById('formFactura');
 let editFacturaId = null;
-const proveedorFacturaSelect = document.getElementById('proveedorFactura');
 
 formFactura.addEventListener('submit', async e => {
   e.preventDefault();
@@ -140,9 +146,10 @@ db.collection('facturas').onSnapshot(snapshot => {
         </td>
       </tr>`;
   });
+  document.getElementById('countFacturas').textContent = snapshot.size;
 });
 
-function editFactura(id, proveedor, tipo, monto, fecha, desc) {
+window.editFactura = function(id, proveedor, tipo, monto, fecha, desc) {
   proveedorFacturaSelect.value = proveedor;
   document.getElementById('tipoFactura').value = tipo;
   document.getElementById('montoFactura').value = monto;
@@ -195,9 +202,10 @@ db.collection('gastos').onSnapshot(snapshot => {
         </td>
       </tr>`;
   });
+  document.getElementById('countGastos').textContent = snapshot.size;
 });
 
-function editGasto(id, nombre, tipo, monto, fecha) {
+window.editGasto = function(id, nombre, tipo, monto, fecha) {
   document.getElementById('nombreGasto').value = nombre;
   document.getElementById('tipoGasto').value = tipo;
   document.getElementById('montoGasto').value = monto;
@@ -249,9 +257,10 @@ db.collection('servicios').onSnapshot(snapshot => {
         </td>
       </tr>`;
   });
+  document.getElementById('countServicios').textContent = snapshot.size;
 });
 
-function editServicio(id, nombre, precio, fecha, desc) {
+window.editServicio = function(id, nombre, precio, fecha, desc) {
   document.getElementById('nombreServ').value = nombre;
   document.getElementById('precioServ').value = precio;
   document.getElementById('fechaServ').value = fecha;
