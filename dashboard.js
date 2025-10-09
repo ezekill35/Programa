@@ -5,35 +5,36 @@ var firebaseConfig = {
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-  measurementId: "G-0WMLRY8FGM"
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
 };
 firebase.initializeApp(firebaseConfig);
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-// ---------------- Navegación entre secciones ----------------
-const navBtns = document.querySelectorAll('.nav-btn');
-const sections = document.querySelectorAll('.content-section');
-navBtns.forEach(btn=>{
+// Redirigir si no está logueado
+auth.onAuthStateChanged(user=>{
+  if(!user) window.location.href="index.html";
+});
+
+// Cerrar sesión
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  auth.signOut().then(()=> window.location.href="index.html");
+});
+
+// Navegación
+document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    navBtns.forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    sections.forEach(s=>s.style.display='none');
-    document.getElementById(btn.dataset.section).style.display='block';
+    document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(btn.dataset.section).classList.add('active');
   });
 });
 
-// ---------------- Cerrar sesión ----------------
-document.getElementById('logoutBtn').addEventListener('click', ()=>{
-  auth.signOut().then(()=> window.location.href='index.html');
-});
-
-// ------------------ CRUD Proveedores ------------------
-const proveedoresCol = db.collection('proveedores');
-const formProv = document.getElementById('formProveedor');
-const tablaProv = document.getElementById('tablaProveedores');
-const proveedorSelect = document.getElementById('proveedorFactura');
+// ------------------ CRUD PROVEEDORES ------------------
+var proveedoresCol = db.collection('proveedores');
+var tablaProv = document.getElementById('tablaProveedores');
+var formProv = document.getElementById('formProveedor');
 
 formProv.addEventListener('submit', e=>{
   e.preventDefault();
@@ -46,12 +47,10 @@ formProv.addEventListener('submit', e=>{
   formProv.reset();
 });
 
-// Actualizar tabla y select en tiempo real
 proveedoresCol.onSnapshot(snapshot=>{
   tablaProv.innerHTML='';
-  proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(docu=>{
-    const data = docu.data();
+  snapshot.forEach(doc=>{
+    const data = doc.data();
     const tr = document.createElement('tr');
     tr.innerHTML=`
       <td>${data.nombre}</td>
@@ -64,84 +63,80 @@ proveedoresCol.onSnapshot(snapshot=>{
       </td>`;
     tablaProv.appendChild(tr);
 
-    // Select proveedores para facturas
-    const option = document.createElement('option');
-    option.value = docu.id;
-    option.textContent = data.nombre;
-    proveedorSelect.appendChild(option);
-
-    tr.querySelector('.delProv').addEventListener('click', ()=> proveedoresCol.doc(docu.id).delete());
+    tr.querySelector('.delProv').addEventListener('click', ()=> proveedoresCol.doc(doc.id).delete());
     tr.querySelector('.editProv').addEventListener('click', ()=>{
-      const newNombre = prompt("Nombre:", data.nombre);
-      const newProducto = prompt("Producto:", data.producto);
-      const newRuc = prompt("RUC:", data.ruc);
-      const newDireccion = prompt("Dirección:", data.direccion);
-      if(newNombre && newProducto && newRuc && newDireccion){
-        proveedoresCol.doc(docu.id).update({nombre:newNombre, producto:newProducto, ruc:newRuc, direccion:newDireccion});
-      }
+      const n = prompt("Nombre:", data.nombre);
+      const p = prompt("Producto:", data.producto);
+      const r = prompt("RUC:", data.ruc);
+      const d = prompt("Dirección:", data.direccion);
+      if(n && p && r && d) proveedoresCol.doc(doc.id).update({nombre:n,producto:p,ruc:r,direccion:d});
     });
   });
 });
 
-// ------------------ CRUD Facturas ------------------
-const facturasCol = db.collection('facturas');
-const formFactura = document.getElementById('formFactura');
-const tablaFactura = document.getElementById('tablaFacturas');
+// ------------------ CRUD FACTURAS ------------------
+var facturasCol = db.collection('facturas');
+var tablaFac = document.getElementById('tablaFacturas');
+var formFac = document.getElementById('formFactura');
+var proveedorSelect = document.getElementById('proveedorFactura');
 
-formFactura.addEventListener('submit', e=>{
+// Poblar select de proveedores en tiempo real
+proveedoresCol.onSnapshot(snapshot=>{
+  proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
+  snapshot.forEach(doc=>{
+    proveedorSelect.innerHTML += `<option value="${doc.id}">${doc.data().nombre}</option>`;
+  });
+});
+
+formFac.addEventListener('submit', e=>{
   e.preventDefault();
   facturasCol.add({
     proveedor: proveedorSelect.value,
-    tipo: formFactura.tipoFactura.value,
-    monto: parseFloat(formFactura.montoFactura.value),
-    fecha: formFactura.fechaFactura.value,
-    descripcion: formFactura.descFactura.value
+    tipo: formFac.tipoFactura.value,
+    monto: parseFloat(formFac.montoFactura.value),
+    fecha: formFac.fechaFactura.value,
+    descripcion: formFac.descFactura.value
   });
-  formFactura.reset();
+  formFac.reset();
 });
 
 facturasCol.onSnapshot(snapshot=>{
-  tablaFactura.innerHTML='';
-  snapshot.forEach(docu=>{
-    const data = docu.data();
-    const proveedorNombre = proveedorSelect.querySelector(`option[value="${data.proveedor}"]`)?.textContent || "Desconocido";
-    const tr = document.createElement('tr');
-    tr.innerHTML=`
-      <td>${proveedorNombre}</td>
-      <td>${data.tipo}</td>
-      <td>${data.monto}</td>
-      <td>${data.fecha}</td>
-      <td>${data.descripcion}</td>
-      <td>
-        <button class="btn btn-sm btn-warning editFac">Editar</button>
-        <button class="btn btn-sm btn-danger delFac">Eliminar</button>
-      </td>`;
-    tablaFactura.appendChild(tr);
+  tablaFac.innerHTML='';
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    var provNombre = "Desconocido";
+    proveedoresCol.doc(data.proveedor).get().then(p=>{
+      provNombre = p.exists?p.data().nombre:"Desconocido";
+      const tr = document.createElement('tr');
+      tr.innerHTML=`
+        <td>${provNombre}</td>
+        <td>${data.tipo}</td>
+        <td>${data.monto}</td>
+        <td>${data.fecha}</td>
+        <td>${data.descripcion}</td>
+        <td>
+          <button class="btn btn-sm btn-warning editFac">Editar</button>
+          <button class="btn btn-sm btn-danger delFac">Eliminar</button>
+        </td>`;
+      tablaFac.appendChild(tr);
 
-    tr.querySelector('.delFac').addEventListener('click', ()=> facturasCol.doc(docu.id).delete());
-    tr.querySelector('.editFac').addEventListener('click', ()=>{
-      const newTipo = prompt("Tipo:", data.tipo);
-      const newMonto = prompt("Monto:", data.monto);
-      const newFecha = prompt("Fecha:", data.fecha);
-      const newDesc = prompt("Descripción:", data.descripcion);
-      const newProveedor = prompt("Proveedor (ID):", data.proveedor);
-      if(newTipo && newMonto && newFecha && newDesc && newProveedor){
-        facturasCol.doc(docu.id).update({
-          tipo:newTipo,
-          monto:parseFloat(newMonto),
-          fecha:newFecha,
-          descripcion:newDesc,
-          proveedor:newProveedor
-        });
-      }
+      tr.querySelector('.delFac').addEventListener('click', ()=> facturasCol.doc(doc.id).delete());
+      tr.querySelector('.editFac').addEventListener('click', ()=>{
+        const t = prompt("Tipo:", data.tipo);
+        const m = prompt("Monto:", data.monto);
+        const f = prompt("Fecha:", data.fecha);
+        const d = prompt("Descripción:", data.descripcion);
+        const p = prompt("Proveedor ID:", data.proveedor);
+        if(t && m && f && d && p) facturasCol.doc(doc.id).update({tipo:t,monto:parseFloat(m),fecha:f,descripcion:d,proveedor:p});
+      });
     });
   });
 });
 
-// ------------------ CRUD Gastos ------------------
-const gastosCol = db.collection('gastos');
-const formGasto = document.getElementById('formGasto');
-const tablaGasto = document.getElementById('tablaGastos');
+// ------------------ CRUD GASTOS ------------------
+var gastosCol = db.collection('gastos');
+var tablaGasto = document.getElementById('tablaGastos');
+var formGasto = document.getElementById('formGasto');
 
 formGasto.addEventListener('submit', e=>{
   e.preventDefault();
@@ -156,8 +151,8 @@ formGasto.addEventListener('submit', e=>{
 
 gastosCol.onSnapshot(snapshot=>{
   tablaGasto.innerHTML='';
-  snapshot.forEach(docu=>{
-    const data = docu.data();
+  snapshot.forEach(doc=>{
+    const data = doc.data();
     const tr = document.createElement('tr');
     tr.innerHTML=`
       <td>${data.nombre}</td>
@@ -170,23 +165,21 @@ gastosCol.onSnapshot(snapshot=>{
       </td>`;
     tablaGasto.appendChild(tr);
 
-    tr.querySelector('.delGasto').addEventListener('click', ()=> gastosCol.doc(docu.id).delete());
+    tr.querySelector('.delGasto').addEventListener('click', ()=> gastosCol.doc(doc.id).delete());
     tr.querySelector('.editGasto').addEventListener('click', ()=>{
-      const newNombre = prompt("Nombre:", data.nombre);
-      const newTipo = prompt("Tipo:", data.tipo);
-      const newMonto = prompt("Monto:", data.monto);
-      const newFecha = prompt("Fecha:", data.fecha);
-      if(newNombre && newTipo && newMonto && newFecha){
-        gastosCol.doc(docu.id).update({nombre:newNombre,tipo:newTipo,monto:parseFloat(newMonto),fecha:newFecha});
-      }
+      const n = prompt("Nombre:", data.nombre);
+      const t = prompt("Tipo:", data.tipo);
+      const m = prompt("Monto:", data.monto);
+      const f = prompt("Fecha:", data.fecha);
+      if(n && t && m && f) gastosCol.doc(doc.id).update({nombre:n,tipo:t,monto:parseFloat(m),fecha:f});
     });
   });
 });
 
-// ------------------ CRUD Servicios ------------------
-const serviciosCol = db.collection('servicios');
-const formServ = document.getElementById('formServicio');
-const tablaServ = document.getElementById('tablaServicios');
+// ------------------ CRUD SERVICIOS ------------------
+var serviciosCol = db.collection('servicios');
+var tablaServ = document.getElementById('tablaServicios');
+var formServ = document.getElementById('formServicio');
 
 formServ.addEventListener('submit', e=>{
   e.preventDefault();
@@ -201,8 +194,8 @@ formServ.addEventListener('submit', e=>{
 
 serviciosCol.onSnapshot(snapshot=>{
   tablaServ.innerHTML='';
-  snapshot.forEach(docu=>{
-    const data = docu.data();
+  snapshot.forEach(doc=>{
+    const data = doc.data();
     const tr = document.createElement('tr');
     tr.innerHTML=`
       <td>${data.nombre}</td>
@@ -215,29 +208,28 @@ serviciosCol.onSnapshot(snapshot=>{
       </td>`;
     tablaServ.appendChild(tr);
 
-    tr.querySelector('.delServ').addEventListener('click', ()=> serviciosCol.doc(docu.id).delete());
+    tr.querySelector('.delServ').addEventListener('click', ()=> serviciosCol.doc(doc.id).delete());
     tr.querySelector('.editServ').addEventListener('click', ()=>{
-      const newNombre = prompt("Nombre:", data.nombre);
-      const newPrecio = prompt("Precio:", data.precio);
-      const newFecha = prompt("Fecha:", data.fecha);
-      const newDesc = prompt("Descripción:", data.descripcion);
-      if(newNombre && newPrecio && newFecha && newDesc){
-        serviciosCol.doc(docu.id).update({nombre:newNombre,precio:parseFloat(newPrecio),fecha:newFecha,descripcion:newDesc});
-      }
+      const n = prompt("Nombre:", data.nombre);
+      const p = prompt("Precio:", data.precio);
+      const f = prompt("Fecha:", data.fecha);
+      const d = prompt("Descripción:", data.descripcion);
+      if(n && p && f && d) serviciosCol.doc(doc.id).update({nombre:n,precio:parseFloat(p),fecha:f,descripcion:d});
     });
   });
 });
 
 // ------------------ Reportes ------------------
-const countProveedores = document.getElementById('countProveedores');
-const countFacturas = document.getElementById('countFacturas');
-const countGastos = document.getElementById('countGastos');
-const countServicios = document.getElementById('countServicios');
+document.getElementById('countProveedores').textContent=0;
+document.getElementById('countFacturas').textContent=0;
+document.getElementById('countGastos').textContent=0;
+document.getElementById('countServicios').textContent=0;
 
-proveedoresCol.onSnapshot(snap=>countProveedores.textContent = snap.size);
-facturasCol.onSnapshot(snap=>countFacturas.textContent = snap.size);
-gastosCol.onSnapshot(snap=>countGastos.textContent = snap.size);
-serviciosCol.onSnapshot(snap=>countServicios.textContent = snap.size);
+proveedoresCol.onSnapshot(snap=>document.getElementById('countProveedores').textContent = snap.size);
+facturasCol.onSnapshot(snap=>document.getElementById('countFacturas').textContent = snap.size);
+gastosCol.onSnapshot(snap=>document.getElementById('countGastos').textContent = snap.size);
+serviciosCol.onSnapshot(snap=>document.getElementById('countServicios').textContent = snap.size);
+
 
 
 
