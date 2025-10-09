@@ -3,149 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discovery Pets - Dashboard 3D</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Discovery Pets - Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
+/* ------------------- Estilo 3D y profesional ------------------- */
+body.dashboard-body {
     min-height: 100vh;
-    background: linear-gradient(135deg,#ff00ff,#ff66ff);
     display: flex;
+    background: linear-gradient(145deg, #ff66cc, #ff3399);
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .sidebar {
     width: 250px;
-    background: linear-gradient(180deg,#1abc9c,#16a085);
-    color: #fff;
+    background: #fff;
+    border-radius: 20px;
+    margin: 20px;
+    padding: 20px;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.3);
-    border-radius: 0 20px 20px 0;
-    visibility:hidden;
 }
+
 .sidebar h2 {
-    text-align:center;
-    margin-bottom:30px;
-    font-size:26px;
-    text-shadow:2px 2px 5px rgba(0,0,0,0.3);
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ff3399;
 }
+
 .nav-btn {
+    margin: 5px 0;
     padding: 12px;
-    margin: 8px 0;
     border-radius: 12px;
-    cursor: pointer;
     border: none;
-    background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    background: #ff66cc;
     color: #fff;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-weight: 600;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
 }
-.nav-btn:hover,
-.nav-btn.active {
-    background: rgba(255,255,255,0.3);
-    transform: translateX(5px);
-}
+.nav-btn.active, .nav-btn:hover { background: #ff3399; }
+
 .logout-btn {
     margin-top: auto;
     padding: 12px;
-    background:#e74c3c;
-    text-align:center;
     border-radius: 12px;
-    cursor:pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    background: #ff0033;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
 }
-.logout-btn:hover { background:#c0392b; transform: translateY(-2px); }
+.logout-btn:hover { background: #cc0029; }
 
 .main-content {
-    flex:1;
-    padding: 25px;
-    overflow-y:auto;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(8px);
-    visibility:hidden;
+    flex: 1;
+    margin: 20px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.2);
+    overflow-y: auto;
 }
-.content-section { display:none; }
-.content-section.active { display:block; }
+
+h2 { color: #ff3399; margin-bottom: 15px; }
 
 /* Formularios */
-form {
-    background:#fff;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:25px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+form { 
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 15px;
+    background: #ffe6f2;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
 }
-form input, form select {
-    width:100%;
-    padding:10px;
-    margin-bottom:12px;
-    border-radius:8px;
-    border:1px solid #ccc;
+form input, form select, form button {
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid #ff3399;
+    padding: 8px;
+    width: 100%;
+    font-size: 14px;
 }
 form button {
-    padding:10px 20px;
-    background:#1abc9c;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    background: #ff3399;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
 }
-form button:hover { background:#16a085; transform: translateY(-2px); }
+form button:hover { background: #ff66cc; }
 
 /* Tablas */
-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:15px;
-    background:#fff;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+table { 
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 15px;
+    overflow: hidden;
 }
-table th, table td { padding:12px; text-align:left; border-bottom:1px solid #eee; }
-table th { background:#1abc9c; color:#fff; }
-button.edit-btn { background:#3498db;color:#fff;padding:5px 10px;border:none;border-radius:8px;cursor:pointer; }
-button.delete-btn { background:#e74c3c;color:#fff;padding:5px 10px;border:none;border-radius:8px;cursor:pointer; }
-button.edit-btn:hover, button.delete-btn:hover { opacity:0.8; transform: translateY(-2px); }
+table th, table td { padding: 12px; text-align: left; }
+table th { background: #ff66cc; color: #fff; }
+table tr:hover { background: #ffe6f2; }
+button.edit-btn { background: #3399ff; color: #fff; }
+button.delete-btn { background: #ff0033; color: #fff; }
 
-/* Responsive */
-@media(max-width:900px){
-    .sidebar { width:100%; flex-direction:row; overflow-x:auto; border-radius:0; }
-    .nav-btn { flex:1; margin:0 5px; text-align:center; }
-    .logout-btn { margin:0 5px; }
+/* Reporte */
+#reporteContenido {
+    padding: 15px;
+    background: #ffe6f2;
+    border-radius: 15px;
+    box-shadow: inset 3px 3px 10px rgba(0,0,0,0.1);
 }
+
 </style>
 </head>
-<body>
+<body class="dashboard-body">
 
-<div class="sidebar" id="sidebar">
-    <h2>🐾 Discovery Pets</h2>
-    <button class="nav-btn active" data-section="proveedores">Proveedores</button>
-    <button class="nav-btn" data-section="facturas">Facturas</button>
-    <button class="nav-btn" data-section="gastos">Gastos</button>
-    <button class="nav-btn" data-section="servicios">Servicios</button>
-    <button class="nav-btn" data-section="reportes">Reportes</button>
-    <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
+<div class="sidebar">
+    <h2>Discovery Pets</h2>
+    <button class="nav-btn active" data-section="proveedores">🏪 Proveedores</button>
+    <button class="nav-btn" data-section="facturas">📑 Facturas</button>
+    <button class="nav-btn" data-section="gastos">💰 Gastos</button>
+    <button class="nav-btn" data-section="servicios">🛠 Servicios</button>
+    <button class="nav-btn" data-section="reportes">📊 Reportes</button>
+    <div class="logout-btn" id="logoutBtn">Cerrar sesión</div>
 </div>
 
-<main class="main-content" id="mainContent">
+<div class="main-content">
 
     <!-- Proveedores -->
     <section id="proveedores" class="content-section active">
         <h2>Registro de Proveedores</h2>
         <form id="formProveedor">
-            <input id="rucProv" placeholder="RUC" required>
+            <input id="rucProv" placeholder="RUC (solo números)" required>
             <input id="nombreProv" placeholder="Nombre" required>
             <input id="productoProv" placeholder="Producto" required>
             <input id="direccionProv" placeholder="Dirección" required>
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead><tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr></thead>
+            <thead>
+                <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
+            </thead>
             <tbody id="tablaProveedores"></tbody>
         </table>
     </section>
@@ -154,16 +154,30 @@ button.edit-btn:hover, button.delete-btn:hover { opacity:0.8; transform: transla
     <section id="facturas" class="content-section">
         <h2>Registro de Facturas</h2>
         <form id="formFactura">
-            <input id="proveedorFactura" placeholder="Proveedor" required>
-            <input id="tipoFactura" placeholder="Tipo de factura" required>
-            <input id="montoFactura" type="number" placeholder="Monto" required>
-            <input id="monedaFactura" placeholder="Moneda" value="S/." required>
+            <select id="proveedorFactura" required>
+                <option value="">Seleccione proveedor</option>
+            </select>
+            <select id="tipoFactura" required>
+                <option value="">Seleccione tipo</option>
+                <option value="Factura electrónica">Factura electrónica</option>
+                <option value="Boleta">Boleta</option>
+            </select>
+            <input id="montoFactura" type="number" step="0.01" placeholder="Monto (0.00)" required>
+            <select id="monedaFactura" required>
+                <option value="S/.">Soles (S/.)</option>
+                <option value="USD">Dólares (USD)</option>
+            </select>
             <input id="fechaFactura" type="date" required>
             <input id="descFactura" placeholder="Descripción">
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Moneda</th>
+                    <th>Fecha</th><th>Descripción</th><th>Acciones</th>
+                </tr>
+            </thead>
             <tbody id="tablaFacturas"></tbody>
         </table>
     </section>
@@ -174,12 +188,14 @@ button.edit-btn:hover, button.delete-btn:hover { opacity:0.8; transform: transla
         <form id="formGasto">
             <input id="nombreGasto" placeholder="Nombre" required>
             <input id="tipoGasto" placeholder="Tipo" required>
-            <input id="montoGasto" type="number" placeholder="Monto" required>
+            <input id="montoGasto" type="number" step="0.01" placeholder="Monto" required>
             <input id="fechaGasto" type="date" required>
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <thead>
+                <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
+            </thead>
             <tbody id="tablaGastos"></tbody>
         </table>
     </section>
@@ -189,63 +205,31 @@ button.edit-btn:hover, button.delete-btn:hover { opacity:0.8; transform: transla
         <h2>Registro de Servicios</h2>
         <form id="formServicio">
             <input id="nombreServ" placeholder="Nombre" required>
-            <input id="precioServ" type="number" placeholder="Precio" required>
+            <input id="precioServ" type="number" step="0.01" placeholder="Precio" required>
             <input id="fechaServ" type="date" required>
             <input id="descServ" placeholder="Descripción">
             <button type="submit">Agregar</button>
         </form>
         <table>
-            <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+            <thead>
+                <tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
+            </thead>
             <tbody id="tablaServicios"></tbody>
         </table>
     </section>
 
     <!-- Reportes -->
     <section id="reportes" class="content-section">
-        <h2>Reportes</h2>
-        <button id="btnGenerarReporte" class="btn btn-primary">Generar Resumen</button>
-        <div id="reporteContenido" style="margin-top:15px;"></div>
+        <h2>Generar Reporte</h2>
+        <button class="btn btn-primary mb-3" id="btnGenerarReporte">Generar Resumen</button>
+        <div id="reporteContenido"></div>
     </section>
 
-</main>
+</div>
 
 <script type="module" src="script.js"></script>
-<script type="module">
-import { auth } from './firebase.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-
-const sidebar = document.getElementById("sidebar");
-const mainContent = document.getElementById("mainContent");
-
-onAuthStateChanged(auth,user=>{
-    if(user){
-        sidebar.style.visibility = "visible";
-        mainContent.style.visibility = "visible";
-    }else{
-        window.location.href="index.html";
-    }
-});
-
-// Navegación
-const navBtns = document.querySelectorAll(".nav-btn");
-const sections = document.querySelectorAll(".content-section");
-navBtns.forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        navBtns.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const sec = btn.dataset.section;
-        sections.forEach(s=>s.classList.remove("active"));
-        document.getElementById(sec)?.classList.add("active");
-    });
-});
-</script>
-
 </body>
 </html>
-
-
-
-
 
 
 
