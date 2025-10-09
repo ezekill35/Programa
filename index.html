@@ -1,59 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets | Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery Pets | Login</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100 bg-light">
 
-  <div class="card p-4 shadow" style="width: 350px;">
-    <!-- LOGIN -->
-    <div id="loginDiv">
-      <h3 class="text-center mb-3">Inicia sesión</h3>
-      <form id="loginForm">
-        <div class="mb-2">
-          <input type="email" id="loginEmail" class="form-control" placeholder="Correo electrónico" required>
-        </div>
-        <div class="mb-2">
-          <input type="password" id="loginPassword" class="form-control" placeholder="Contraseña" required>
-        </div>
-        <button class="btn btn-primary w-100" type="submit">Iniciar sesión</button>
-      </form>
-      <p class="text-center mt-2">
-        ¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a>
-      </p>
-      <p id="loginMsg" class="text-danger text-center"></p>
-    </div>
-
-    <!-- REGISTRO -->
-    <div id="registerDiv" style="display:none;">
-      <h3 class="text-center mb-3">Regístrate</h3>
-      <form id="registerForm">
-        <div class="mb-2">
-          <input type="text" id="registerName" class="form-control" placeholder="Nombre completo" required>
-        </div>
-        <div class="mb-2">
-          <input type="email" id="registerEmail" class="form-control" placeholder="Correo electrónico" required>
-        </div>
-        <div class="mb-2">
-          <input type="password" id="registerPassword" class="form-control" placeholder="Contraseña" required>
-        </div>
-        <button class="btn btn-success w-100" type="submit">Registrarse</button>
-      </form>
-      <p class="text-center mt-2">
-        ¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a>
-      </p>
-      <p id="registerMsg" class="text-danger text-center"></p>
-    </div>
+<div class="card p-4 shadow" style="width: 350px;">
+  <!-- LOGIN -->
+  <div id="loginDiv">
+    <h3 class="text-center mb-3">Inicia sesión</h3>
+    <form id="loginForm">
+      <div class="mb-2">
+        <input type="email" id="loginEmail" class="form-control" placeholder="Correo electrónico" required>
+      </div>
+      <div class="mb-2">
+        <input type="password" id="loginPassword" class="form-control" placeholder="Contraseña" required>
+      </div>
+      <button class="btn btn-primary w-100" type="submit">Iniciar sesión</button>
+    </form>
+    <p class="text-center mt-2">
+      ¿No tienes cuenta? <a href="#" id="showRegister">Regístrate</a>
+    </p>
+    <p id="loginMsg" class="text-danger text-center"></p>
   </div>
 
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="script.js"></script>
+  <!-- REGISTRO -->
+  <div id="registerDiv" style="display:none;">
+    <h3 class="text-center mb-3">Regístrate</h3>
+    <form id="registerForm">
+      <div class="mb-2">
+        <input type="text" id="registerName" class="form-control" placeholder="Nombre completo" required>
+      </div>
+      <div class="mb-2">
+        <input type="email" id="registerEmail" class="form-control" placeholder="Correo electrónico" required>
+      </div>
+      <div class="mb-2">
+        <input type="password" id="registerPassword" class="form-control" placeholder="Contraseña" required>
+      </div>
+      <button class="btn btn-success w-100" type="submit">Registrarse</button>
+    </form>
+    <p class="text-center mt-2">
+      ¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión</a>
+    </p>
+    <p id="registerMsg" class="text-danger text-center"></p>
+  </div>
+</div>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
