@@ -1,63 +1,71 @@
-// Navegación Login <-> Registro
-const loginDiv = document.getElementById('loginDiv');
-const registerDiv = document.getElementById('registerDiv');
+// Inicializar Firebase
+var firebaseConfig = {
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
 
-document.getElementById('showRegister').addEventListener('click', e=>{
-  e.preventDefault();
-  loginDiv.style.display='none';
-  registerDiv.style.display='block';
+// Mostrar formulario de registro
+document.getElementById("showRegister").addEventListener("click", ()=>{
+  document.getElementById("loginDiv").style.display="none";
+  document.getElementById("registerDiv").style.display="block";
 });
 
-document.getElementById('showLogin').addEventListener('click', e=>{
-  e.preventDefault();
-  loginDiv.style.display='block';
-  registerDiv.style.display='none';
+// Mostrar formulario de login
+document.getElementById("showLogin").addEventListener("click", ()=>{
+  document.getElementById("registerDiv").style.display="none";
+  document.getElementById("loginDiv").style.display="block";
 });
 
-// Registro
-document.getElementById('registerForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  const name = document.getElementById('registerName').value.trim();
-  const email = document.getElementById('registerEmail').value.trim();
-  const password = document.getElementById('registerPassword').value;
+// Registro de usuario
+document.getElementById("btnRegister").addEventListener("click", ()=>{
+  var name = document.getElementById("registerName").value;
+  var email = document.getElementById("registerEmail").value;
+  var pass = document.getElementById("registerPass").value;
 
-  auth.createUserWithEmailAndPassword(email,password)
-    .then(userCredential=>{
-      return userCredential.user.updateProfile({displayName:name});
-    })
-    .then(()=>{
-      document.getElementById('registerMsg').style.color='green';
-      document.getElementById('registerMsg').textContent='Registrado correctamente';
-      registerDiv.style.display='none';
-      loginDiv.style.display='block';
-    })
-    .catch(err=>{
-      document.getElementById('registerMsg').style.color='red';
-      document.getElementById('registerMsg').textContent=err.message;
-    });
+  if(name && email && pass){
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(userCred=>{
+        var uid = userCred.user.uid;
+        db.collection("usuarios").doc(uid).set({nombre:name,email:email});
+        alert("Usuario registrado exitosamente");
+        document.getElementById("registerDiv").style.display="none";
+        document.getElementById("loginDiv").style.display="block";
+      })
+      .catch(err=>alert(err.message));
+  }else{
+    alert("Completa todos los campos");
+  }
 });
 
-// Login
-document.getElementById('loginForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
+// Login de usuario
+document.getElementById("btnLogin").addEventListener("click", ()=>{
+  var email = document.getElementById("loginEmail").value;
+  var pass = document.getElementById("loginPass").value;
 
-  auth.signInWithEmailAndPassword(email,password)
-    .then(()=>{
-      window.location.href='dashboard.html';
-    })
-    .catch(err=>{
-      document.getElementById('loginMsg').textContent=err.message;
-    });
+  if(email && pass){
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(()=> window.location.href="dashboard.html")
+      .catch(err=> alert(err.message));
+  }else{
+    alert("Completa todos los campos");
+  }
 });
 
 // Mantener sesión activa
 auth.onAuthStateChanged(user=>{
-  if(user && window.location.pathname.includes('index.html')){
-    window.location.href='dashboard.html';
+  if(user && window.location.pathname.includes("index.html")){
+    window.location.href="dashboard.html";
   }
 });
+
+
 
 
 
