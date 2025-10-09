@@ -1,60 +1,64 @@
-import { auth } from './firebase.js';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
+// Navegación Login <-> Registro
 const loginDiv = document.getElementById('loginDiv');
 const registerDiv = document.getElementById('registerDiv');
 
-document.getElementById('showRegister').addEventListener('click', e => {
+document.getElementById('showRegister').addEventListener('click', e=>{
   e.preventDefault();
-  loginDiv.style.display = 'none';
-  registerDiv.style.display = 'block';
+  loginDiv.style.display='none';
+  registerDiv.style.display='block';
 });
 
-document.getElementById('showLogin').addEventListener('click', e => {
+document.getElementById('showLogin').addEventListener('click', e=>{
   e.preventDefault();
-  loginDiv.style.display = 'block';
-  registerDiv.style.display = 'none';
+  loginDiv.style.display='block';
+  registerDiv.style.display='none';
 });
 
 // Registro
-document.getElementById('registerForm').addEventListener('submit', async e => {
+document.getElementById('registerForm').addEventListener('submit', e=>{
   e.preventDefault();
   const name = document.getElementById('registerName').value.trim();
   const email = document.getElementById('registerEmail').value.trim();
   const password = document.getElementById('registerPassword').value;
 
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, { displayName: name });
-    document.getElementById('registerMsg').style.color = 'green';
-    document.getElementById('registerMsg').textContent = 'Registrado correctamente. Redirigiendo...';
-    registerForm.reset();
-  } catch(err) {
-    document.getElementById('registerMsg').style.color = 'red';
-    document.getElementById('registerMsg').textContent = err.message;
-  }
+  auth.createUserWithEmailAndPassword(email,password)
+    .then(userCredential=>{
+      return userCredential.user.updateProfile({displayName:name});
+    })
+    .then(()=>{
+      document.getElementById('registerMsg').style.color='green';
+      document.getElementById('registerMsg').textContent='Registrado correctamente';
+      registerDiv.style.display='none';
+      loginDiv.style.display='block';
+    })
+    .catch(err=>{
+      document.getElementById('registerMsg').style.color='red';
+      document.getElementById('registerMsg').textContent=err.message;
+    });
 });
 
 // Login
-document.getElementById('loginForm').addEventListener('submit', async e => {
+document.getElementById('loginForm').addEventListener('submit', e=>{
   e.preventDefault();
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    document.getElementById('loginMsg').style.color = 'green';
-    document.getElementById('loginMsg').textContent = 'Inicio de sesión exitoso. Redirigiendo...';
-  } catch(err) {
-    document.getElementById('loginMsg').style.color = 'red';
-    document.getElementById('loginMsg').textContent = err.message;
-  }
+  auth.signInWithEmailAndPassword(email,password)
+    .then(()=>{
+      window.location.href='dashboard.html';
+    })
+    .catch(err=>{
+      document.getElementById('loginMsg').textContent=err.message;
+    });
 });
 
 // Mantener sesión activa
-onAuthStateChanged(auth, user => {
-  if(user) window.location.href = 'dashboard.html';
+auth.onAuthStateChanged(user=>{
+  if(user && window.location.pathname.includes('index.html')){
+    window.location.href='dashboard.html';
+  }
 });
+
 
 
 
