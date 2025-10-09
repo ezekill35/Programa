@@ -1,4 +1,4 @@
-/* ------------------ RESET ------------------ */
+/* ------------------ Reset básico ------------------ */
 * {
   margin: 0;
   padding: 0;
@@ -6,208 +6,106 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ------------------ BODY ------------------ */
+/* ------------------ Body ------------------ */
 body {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #f5f5f5;
   color: #333;
 }
 
-/* ------------------ LOGIN/REGISTRO ------------------ */
-.container {
-  width: 400px;
-  background: #fff;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 15px 25px rgba(0,0,0,0.3);
-  text-align: center;
-  transition: transform 0.3s;
-}
-.container:hover {
-  transform: translateY(-5px);
-}
-
-.container h2 {
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.container input, .container button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.container button {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.container button:hover {
-  background: linear-gradient(135deg, #764ba2, #667eea);
-}
-
-.link {
-  font-size: 14px;
-  color: #667eea;
-  cursor: pointer;
-  margin-top: 10px;
-  display: inline-block;
-}
-
-/* ------------------ DASHBOARD ------------------ */
-.dashboard-body {
-  display: flex;
-  min-height: 100vh;
-  background: #f0f2f5;
-  overflow-x: hidden;
-}
-
-/* Sidebar */
+/* ------------------ Sidebar ------------------ */
 .sidebar {
-  width: 250px;
-  background: #667eea;
-  color: #fff;
+  width: 220px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #5a9bd4, #3a6fa5);
   display: flex;
   flex-direction: column;
-  padding: 30px 20px;
-  box-shadow: 5px 0 20px rgba(0,0,0,0.1);
+  padding: 20px;
 }
 
 .sidebar h2 {
+  font-size: 1.8rem;
   margin-bottom: 30px;
-  font-size: 22px;
   text-align: center;
 }
 
-.sidebar nav button {
-  background: transparent;
-  border: none;
-  color: #fff;
-  padding: 12px 10px;
-  width: 100%;
-  text-align: left;
-  font-size: 16px;
+.nav-btn {
   margin-bottom: 10px;
-  border-radius: 10px;
-  cursor: pointer;
+  text-align: left;
+  border: none;
   transition: 0.3s;
 }
 
-.sidebar nav button.active, .sidebar nav button:hover {
-  background: rgba(255,255,255,0.2);
+.nav-btn:hover,
+.nav-btn.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 10px;
 }
 
 .logout-btn {
   margin-top: auto;
-  padding: 10px;
-  background: #ff6b6b;
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.logout-btn:hover {
-  background: #ff4757;
 }
 
-/* Main */
+/* ------------------ Main Content ------------------ */
 .main-content {
-  flex: 1;
+  flex-grow: 1;
   padding: 30px;
 }
 
-/* Cards 3D */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
+/* ------------------ Cards Reportes ------------------ */
 .card {
-  padding: 20px;
-  border-radius: 20px;
-  color: #fff;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s;
 }
 
 .card:hover {
-  transform: perspective(1000px) rotateX(10deg) rotateY(10deg);
+  transform: translateY(-5px) scale(1.02);
 }
 
-.card.pink { background: #ff6b81; }
-.card.purple { background: #6b5b95; }
-.card.teal { background: #00cec9; }
-.card.yellow { background: #f9ca24; }
+.bg-pink { background-color: #ff6b81; }
+.bg-purple { background-color: #6a5acd; }
+.bg-teal { background-color: #20c997; }
+.bg-warning { background-color: #ffc107; }
 
-/* Sections */
-.content-section {
-  display: none;
-}
-
-.content-section.active {
-  display: block;
-}
-
-.content-section h1 {
-  margin-bottom: 20px;
-  color: #333;
-}
-
-/* Formularios */
-.formulario {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.formulario input, .formulario select, .formulario button {
+/* ------------------ Formularios ------------------ */
+.formulario input, 
+.formulario select, 
+.formulario button {
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
+  transition: 0.3s;
+}
+
+.formulario input:focus,
+.formulario select:focus {
+  border-color: #5a9bd4;
+  box-shadow: 0 0 5px rgba(90, 155, 212, 0.5);
+  outline: none;
 }
 
 .formulario button {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: #5a9bd4;
   color: #fff;
   border: none;
   cursor: pointer;
   transition: 0.3s;
 }
+
 .formulario button:hover {
-  background: linear-gradient(135deg, #764ba2, #667eea);
+  background: #3a6fa5;
+  transform: scale(1.05);
 }
 
-/* Tables */
+/* ------------------ Tables ------------------ */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
-  border-radius: 15px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-table thead {
-  background: #667eea;
-  color: #fff;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
 }
 
 table th, table td {
@@ -215,31 +113,71 @@ table th, table td {
   text-align: left;
 }
 
+table th {
+  background-color: #5a9bd4;
+  color: #fff;
+}
+
 table tr:nth-child(even) {
-  background: #f0f2f5;
+  background-color: #f1f1f1;
 }
 
 table tr:hover {
-  background: #dfe6e9;
+  background-color: #dbe8f7;
+  transform: scale(1.01);
+  transition: 0.2s;
 }
 
-/* Botones tabla */
-.btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 8px;
+/* ------------------ Content Sections ------------------ */
+.content-section {
+  animation: fadeIn 0.5s;
+}
+
+/* ------------------ Animations ------------------ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* ------------------ Login y Registro ------------------ */
+.login-container, .register-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+}
+
+.login-container h2, .register-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #5a9bd4;
+}
+
+.login-container input, .register-container input,
+.login-container button, .register-container button {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.login-container button, .register-container button {
+  background: #5a9bd4;
   color: #fff;
-  cursor: pointer;
+  border: none;
 }
 
-.btn-warning { background: #f39c12; }
-.btn-warning:hover { background: #e67e22; }
+.login-container button:hover, .register-container button:hover {
+  background: #3a6fa5;
+  transform: scale(1.05);
+  transition: 0.3s;
+}
 
-.btn-danger { background: #e74c3c; }
-.btn-danger:hover { background: #c0392b; }
-
-.btn-success { background: #2ecc71; }
-.btn-success:hover { background: #27ae60; }
+/* ------------------ Responsive ------------------ */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; padding: 15px; }
+  .sidebar h2 { display: none; }
+}
 
 
 
