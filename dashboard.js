@@ -39,9 +39,9 @@ var formProv = document.getElementById('formProveedor');
 formProv.addEventListener('submit', e=>{
   e.preventDefault();
   proveedoresCol.add({
+    ruc: formProv.rucProv.value,
     nombre: formProv.nombreProv.value,
     producto: formProv.productoProv.value,
-    ruc: formProv.rucProv.value,
     direccion: formProv.direccionProv.value
   });
   formProv.reset();
@@ -53,9 +53,9 @@ proveedoresCol.onSnapshot(snapshot=>{
     const data = doc.data();
     const tr = document.createElement('tr');
     tr.innerHTML=`
+      <td>${data.ruc}</td>
       <td>${data.nombre}</td>
       <td>${data.producto}</td>
-      <td>${data.ruc}</td>
       <td>${data.direccion}</td>
       <td>
         <button class="btn btn-sm btn-warning editProv">Editar</button>
@@ -65,15 +65,14 @@ proveedoresCol.onSnapshot(snapshot=>{
 
     tr.querySelector('.delProv').addEventListener('click', ()=> proveedoresCol.doc(doc.id).delete());
     tr.querySelector('.editProv').addEventListener('click', ()=>{
+      const r = prompt("RUC:", data.ruc);
       const n = prompt("Nombre:", data.nombre);
       const p = prompt("Producto:", data.producto);
-      const r = prompt("RUC:", data.ruc);
       const d = prompt("Dirección:", data.direccion);
-      if(n && p && r && d) proveedoresCol.doc(doc.id).update({nombre:n,producto:p,ruc:r,direccion:d});
+      if(r && n && p && d) proveedoresCol.doc(doc.id).update({ruc:r,nombre:n,producto:p,direccion:d});
     });
   });
 });
-
 // ------------------ CRUD FACTURAS ------------------
 var facturasCol = db.collection('facturas');
 var tablaFac = document.getElementById('tablaFacturas');
