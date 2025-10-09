@@ -1,20 +1,40 @@
-import { auth, db } from "./firebase.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+// script.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
+// Configuración Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+    authDomain: "discovery-pets.firebaseapp.com",
+    projectId: "discovery-pets",
+    storageBucket: "discovery-pets.appspot.com",
+    messagingSenderId: "481355972999",
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+    measurementId: "G-0WMLRY8FGM"
+};
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Capturamos elementos del DOM
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
-const showRegister = document.getElementById("showRegister");
-const showLogin = document.getElementById("showLogin");
+const logoutBtn = document.getElementById("logoutBtn");
 
-showRegister.addEventListener("click", ()=> {
-    loginForm.classList.add("hidden");
-    registerForm.classList.remove("hidden");
-});
-
-showLogin.addEventListener("click", ()=> {
-    loginForm.classList.remove("hidden");
-    registerForm.classList.add("hidden");
+// Mantener sesión iniciada
+onAuthStateChanged(auth, user => {
+    if(user){
+        document.body.classList.remove("login-body");
+        document.body.classList.add("dashboard-body");
+        document.querySelector(".main-content").style.display = "block";
+    } else {
+        document.body.classList.remove("dashboard-body");
+        document.body.classList.add("login-body");
+        document.querySelector(".main-content").style.display = "none";
+    }
 });
 
 // Registro
@@ -24,16 +44,17 @@ if(registerForm){
         const nombre = document.getElementById("regNombre").value;
         const email = document.getElementById("regEmail").value;
         const password = document.getElementById("regPassword").value;
+
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth,email,password);
-            await addDoc(collection(db,"usuarios"),{
-                uid: userCredential.user.uid,
-                nombre,
-                email
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await setDoc(doc(db, "usuarios", user.uid), {
+                nombre: nombre,
+                email: email
             });
             registerForm.reset();
             alert("Usuario registrado correctamente");
-        } catch(err){
+        } catch(err) {
             alert(err.message);
         }
     });
@@ -45,18 +66,26 @@ if(loginForm){
         e.preventDefault();
         const email = document.getElementById("loginEmail").value;
         const password = document.getElementById("loginPassword").value;
-        try{
-            await signInWithEmailAndPassword(auth,email,password);
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
             loginForm.reset();
-            window.location.href = "dashboard.html";
-        } catch(err){
+        } catch(err) {
             alert(err.message);
         }
     });
 }
 
-
-
+// Logout
+if(logoutBtn){
+    logoutBtn.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+        } catch(err){
+            alert(err.message);
+        }
+    });
+}
 
 
 
