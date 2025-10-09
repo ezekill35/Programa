@@ -1,152 +1,290 @@
-// Logout
+// Asegúrate de que firebase.js ya está cargado
+const proveedoresCol = db.collection('proveedores');
+const facturasCol = db.collection('facturas');
+const gastosCol = db.collection('gastos');
+const serviciosCol = db.collection('servicios');
+
+// -------------------- NAVEGACIÓN --------------------
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(btn.dataset.section).style.display = 'block';
+    btn.classList.add('active');
+  });
+});
+
+// -------------------- LOGOUT --------------------
 document.getElementById('logoutBtn').addEventListener('click', () => {
   auth.signOut().then(() => window.location = 'index.html');
 });
 
-// Navegación sidebar
-const navBtns = document.querySelectorAll('.nav-btn');
-const sections = document.querySelectorAll('.content-section');
-
-navBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    navBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const sec = btn.dataset.section;
-    sections.forEach(s => s.style.display = s.id === sec ? 'block' : 'none');
-  });
-});
-
-// ---------- PROVEEDORES ----------
+// -------------------- PROVEEDORES --------------------
 const formProv = document.getElementById('formProveedor');
 const tablaProv = document.getElementById('tablaProveedores');
 
 formProv.addEventListener('submit', e => {
   e.preventDefault();
-  const ruc = document.getElementById('rucProv').value;
-  const nombre = document.getElementById('nombreProv').value;
-  const producto = document.getElementById('productoProv').value;
-  const direccion = document.getElementById('direccionProv').value;
-
-  db.collection('proveedores').add({ ruc, nombre, producto, direccion })
-    .then(() => formProv.reset());
-});
-
-// Render proveedores + llenar select facturas
-db.collection('proveedores').orderBy('ruc').onSnapshot(snapshot => {
-  tablaProv.innerHTML = '';
-  const sel = document.getElementById('proveedorFactura');
-  sel.innerHTML = '<option value="">Seleccione proveedor</option>';
-
-  snapshot.forEach(doc => {
-    const d = doc.data();
-    tablaProv.innerHTML += `
-      <tr>
-        <td>${d.ruc}</td>
-        <td>${d.nombre}</td>
-        <td>${d.producto}</td>
-        <td>${d.direccion}</td>
-        <td>
-          <button class="btn btn-warning btn-sm" onclick="editarProv('${doc.id}')">Editar</button>
-          <button class="btn btn-danger btn-sm" onclick="eliminarProv('${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-    sel.innerHTML += `<option value="${doc.id}">${d.nombre}</option>`;
+  proveedoresCol.add({
+    ruc: document.getElementById('rucProv').value,
+    nombre: document.getElementById('nombreProv').value,
+    producto: document.getElementById('productoProv').value,
+    direccion: document.getElementById('direccionProv').value
   });
-
-  document.getElementById('countProveedores').innerText = snapshot.size;
+  formProv.reset();
 });
 
-window.eliminarProv = id => db.collection('proveedores').doc(id).delete();
+// Render proveedores en tiempo real
+proveedoresCol.onSnapshot(snapshot => {
+  tablaProv.innerHTML = '';
+  const selectProv = document.getElementById('proveedorFactura');
+  selectProv.innerHTML = '<option value="">Seleccione proveedor</option>';
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${data.ruc}</td>
+      <td>${data.nombre}</td>
+      <td>${data.producto}</td>
+      <td>${data.direccion}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editProv" data-id="${doc.id}">Editar</button>
+        <button class="btn btn-sm btn-danger delProv" data-id="${doc.id}">Eliminar</button>
+      </td>`;
+    tablaProv.appendChild(tr);
 
-window.editarProv = id => {
-  db.collection('proveedores').doc(id).get().then(doc => {
-    const d = doc.data();
-    document.getElementById('rucProv').value = d.ruc;
-    document.getElementById('nombreProv').value = d.nombre;
-    document.getElementById('productoProv').value = d.producto;
-    document.getElementById('direccionProv').value = d.direccion;
+    // Agregar a select de facturas
+    selectProv.innerHTML += `<option value="${doc.id}">${data.nombre}</option>`;
+  });
+  document.getElementById('countProveedores').innerText = snapshot.size;
 
-    formProv.onsubmit = e => {
-      e.preventDefault();
-      db.collection('proveedores').doc(id).update({
-        ruc: document.getElementById('rucProv').value,
-        nombre: document.getElementById('nombreProv').value,
-        producto: document.getElementById('productoProv').value,
-        direccion: document.getElementById('direccionProv').value
-      }).then(() => {
-        formProv.reset();
-        formProv.onsubmit = null;
+  // Editar
+  document.querySelectorAll('.editProv').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      proveedoresCol.doc(id).get().then(doc => {
+        const data = doc.data();
+        document.getElementById('rucProv').value = data.ruc;
+        document.getElementById('nombreProv').value = data.nombre;
+        document.getElementById('productoProv').value = data.producto;
+        document.getElementById('direccionProv').value = data.direccion;
+
+        formProv.onsubmit = ev => {
+          ev.preventDefault();
+          proveedoresCol.doc(id).update({
+            ruc: document.getElementById('rucProv').value,
+            nombre: document.getElementById('nombreProv').value,
+            producto: document.getElementById('productoProv').value,
+            direccion: document.getElementById('direccionProv').value
+          });
+          formProv.reset();
+          formProv.onsubmit = null;
+        };
       });
     };
   });
-};
 
-// ---------- FACTURAS ----------
+  // Eliminar
+  document.querySelectorAll('.delProv').forEach(btn => {
+    btn.onclick = () => proveedoresCol.doc(btn.dataset.id).delete();
+  });
+});
+
+// -------------------- FACTURAS --------------------
 const formFac = document.getElementById('formFactura');
 const tablaFac = document.getElementById('tablaFacturas');
 
 formFac.addEventListener('submit', e => {
   e.preventDefault();
-  const proveedorId = document.getElementById('proveedorFactura').value;
-  const tipo = document.getElementById('tipoFactura').value;
-  const monto = document.getElementById('montoFactura').value;
-  const moneda = document.getElementById('monedaFactura').value;
-  const fecha = document.getElementById('fechaFactura').value;
-  const desc = document.getElementById('descFactura').value;
-
-  if (!proveedorId) return alert('Seleccione un proveedor');
-
-  db.collection('facturas').add({ proveedorId, tipo, monto, moneda, fecha, desc })
-    .then(() => formFac.reset());
+  const provId = document.getElementById('proveedorFactura').value;
+  proveedoresCol.doc(provId).get().then(docProv => {
+    const provData = docProv.data();
+    facturasCol.add({
+      proveedorId: provId,
+      proveedorNombre: provData.nombre,
+      tipo: document.getElementById('tipoFactura').value,
+      monto: parseFloat(document.getElementById('montoFactura').value),
+      moneda: document.getElementById('monedaFactura').value,
+      fecha: document.getElementById('fechaFactura').value,
+      descripcion: document.getElementById('descFactura').value
+    });
+    formFac.reset();
+  });
 });
 
 // Render facturas en tiempo real
-db.collection('facturas').onSnapshot(snapshot => {
+facturasCol.onSnapshot(snapshot => {
   tablaFac.innerHTML = '';
   snapshot.forEach(doc => {
-    const d = doc.data();
-    db.collection('proveedores').doc(d.proveedorId).get().then(p => {
-      const prov = p.data()?.nombre || 'Desconocido';
-      tablaFac.innerHTML += `
-        <tr>
-          <td>${prov}</td>
-          <td>${d.tipo}</td>
-          <td>${d.moneda} ${d.monto}</td>
-          <td>${d.fecha}</td>
-          <td>${d.desc}</td>
-          <td>
-            <button class="btn btn-warning btn-sm" onclick="editarFac('${doc.id}')">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="eliminarFac('${doc.id}')">Eliminar</button>
-          </td>
-        </tr>`;
-    });
+    const data = doc.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${data.proveedorNombre}</td>
+      <td>${data.tipo}</td>
+      <td>${data.monto} ${data.moneda}</td>
+      <td>${data.fecha}</td>
+      <td>${data.descripcion}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editFac" data-id="${doc.id}">Editar</button>
+        <button class="btn btn-sm btn-danger delFac" data-id="${doc.id}">Eliminar</button>
+      </td>`;
+    tablaFac.appendChild(tr);
   });
-
   document.getElementById('countFacturas').innerText = snapshot.size;
-});
 
-window.eliminarFac = id => db.collection('facturas').doc(id).delete();
+  // Editar y eliminar
+  document.querySelectorAll('.editFac').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      facturasCol.doc(id).get().then(doc => {
+        const data = doc.data();
+        document.getElementById('proveedorFactura').value = data.proveedorId;
+        document.getElementById('tipoFactura').value = data.tipo;
+        document.getElementById('montoFactura').value = data.monto;
+        document.getElementById('monedaFactura').value = data.moneda;
+        document.getElementById('fechaFactura').value = data.fecha;
+        document.getElementById('descFactura').value = data.descripcion;
 
-window.editarFac = id => {
-  db.collection('facturas').doc(id).get().then(doc => {
-    const d = doc.data();
-    document.getElementById('proveedorFactura').value = d.proveedorId;
-    document.getElementById('tipoFactura').value = d.tipo;
-    document.getElementById('montoFactura').value = d.monto;
-    document.getElementById('monedaFactura').value = d.moneda;
-    document.getElementById('fechaFactura').value = d.fecha;
-    document.getElementById('descFactura').value = d.desc;
-
-    formFac.onsubmit = e => {
-      e.preventDefault();
-      db.collection('facturas').doc(id).update({
-        proveedorId: document.getElementById('proveedorFactura').value,
-        tipo: document.getElementById('tipoFactura').value,
-        monto: document.getElementById('montoFactura').value,
-        moneda: document.getElementById('monedaFactura').value,
-        fecha: document.getElementById('fechaFactura').value,
-        desc: document.getElementById('descFactura').value
-      }).then(() => { formFac.reset(); formFac.onsubmit = null; });
+        formFac.onsubmit = ev => {
+          ev.preventDefault();
+          facturasCol.doc(id).update({
+            proveedorId: document.getElementById('proveedorFactura').value,
+            tipo: document.getElementById('tipoFactura').value,
+            monto: parseFloat(document.getElementById('montoFactura').value),
+            moneda: document.getElementById('monedaFactura').value,
+            fecha: document.getElementById('fechaFactura').value,
+            descripcion: document.getElementById('descFactura').value
+          });
+          formFac.reset();
+          formFac.onsubmit = null;
+        };
+      });
     };
   });
-};
+
+  document.querySelectorAll('.delFac').forEach(btn => {
+    btn.onclick = () => facturasCol.doc(btn.dataset.id).delete();
+  });
+});
+
+// -------------------- GASTOS --------------------
+const formGas = document.getElementById('formGasto');
+const tablaGas = document.getElementById('tablaGastos');
+
+formGas.addEventListener('submit', e => {
+  e.preventDefault();
+  gastosCol.add({
+    nombre: document.getElementById('nombreGasto').value,
+    tipo: document.getElementById('tipoGasto').value,
+    monto: parseFloat(document.getElementById('montoGasto').value),
+    fecha: document.getElementById('fechaGasto').value
+  });
+  formGas.reset();
+});
+
+gastosCol.onSnapshot(snapshot => {
+  tablaGas.innerHTML = '';
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${data.nombre}</td>
+      <td>${data.tipo}</td>
+      <td>${data.monto}</td>
+      <td>${data.fecha}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editGas" data-id="${doc.id}">Editar</button>
+        <button class="btn btn-sm btn-danger delGas" data-id="${doc.id}">Eliminar</button>
+      </td>`;
+    tablaGas.appendChild(tr);
+  });
+  document.getElementById('countGastos').innerText = snapshot.size;
+
+  document.querySelectorAll('.editGas').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      gastosCol.doc(id).get().then(doc => {
+        const data = doc.data();
+        document.getElementById('nombreGasto').value = data.nombre;
+        document.getElementById('tipoGasto').value = data.tipo;
+        document.getElementById('montoGasto').value = data.monto;
+        document.getElementById('fechaGasto').value = data.fecha;
+
+        formGas.onsubmit = ev => {
+          ev.preventDefault();
+          gastosCol.doc(id).update({
+            nombre: document.getElementById('nombreGasto').value,
+            tipo: document.getElementById('tipoGasto').value,
+            monto: parseFloat(document.getElementById('montoGasto').value),
+            fecha: document.getElementById('fechaGasto').value
+          });
+          formGas.reset();
+          formGas.onsubmit = null;
+        };
+      });
+    };
+  });
+
+  document.querySelectorAll('.delGas').forEach(btn => gastosCol.doc(btn.dataset.id).delete());
+});
+
+// -------------------- SERVICIOS --------------------
+const formServ = document.getElementById('formServicio');
+const tablaServ = document.getElementById('tablaServicios');
+
+formServ.addEventListener('submit', e => {
+  e.preventDefault();
+  serviciosCol.add({
+    nombre: document.getElementById('nombreServ').value,
+    precio: parseFloat(document.getElementById('precioServ').value),
+    fecha: document.getElementById('fechaServ').value,
+    descripcion: document.getElementById('descServ').value
+  });
+  formServ.reset();
+});
+
+serviciosCol.onSnapshot(snapshot => {
+  tablaServ.innerHTML = '';
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${data.nombre}</td>
+      <td>${data.precio}</td>
+      <td>${data.fecha}</td>
+      <td>${data.descripcion}</td>
+      <td>
+        <button class="btn btn-sm btn-warning editServ" data-id="${doc.id}">Editar</button>
+        <button class="btn btn-sm btn-danger delServ" data-id="${doc.id}">Eliminar</button>
+      </td>`;
+    tablaServ.appendChild(tr);
+  });
+  document.getElementById('countServicios').innerText = snapshot.size;
+
+  document.querySelectorAll('.editServ').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      serviciosCol.doc(id).get().then(doc => {
+        const data = doc.data();
+        document.getElementById('nombreServ').value = data.nombre;
+        document.getElementById('precioServ').value = data.precio;
+        document.getElementById('fechaServ').value = data.fecha;
+        document.getElementById('descServ').value = data.descripcion;
+
+        formServ.onsubmit = ev => {
+          ev.preventDefault();
+          serviciosCol.doc(id).update({
+            nombre: document.getElementById('nombreServ').value,
+            precio: parseFloat(document.getElementById('precioServ').value),
+            fecha: document.getElementById('fechaServ').value,
+            descripcion: document.getElementById('descServ').value
+          });
+          formServ.reset();
+          formServ.onsubmit = null;
+        };
+      });
+    };
+  });
+
+  document.querySelectorAll('.delServ').forEach(btn => serviciosCol.doc(btn.dataset.id).delete());
+});
