@@ -4,150 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discovery Pets - Login</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
-    <script src="firebase.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="login-body">
 
     <div class="login-container">
         <h1>🐾 Discovery Pets</h1>
-
-        <form id="loginForm">
+        
+        <form id="loginForm" class="auth-form">
             <h2>Iniciar Sesión</h2>
-            <input type="email" id="loginEmail" placeholder="Correo" required>
+            <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
             <input type="password" id="loginPassword" placeholder="Contraseña" required>
-            <button type="submit">Entrar</button>
+            <button type="submit">Ingresar</button>
         </form>
 
-        <form id="registerForm">
+        <form id="registerForm" class="auth-form">
             <h2>Registrarse</h2>
             <input type="text" id="regNombre" placeholder="Nombre" required>
-            <input type="email" id="regEmail" placeholder="Correo" required>
+            <input type="email" id="regEmail" placeholder="Correo electrónico" required>
             <input type="password" id="regPassword" placeholder="Contraseña" required>
-            <button type="submit">Registrar</button>
+            <button type="submit">Crear cuenta</button>
         </form>
     </div>
 
-    <div class="main-content" style="display:none;">
-        <header>
-            <button id="logoutBtn">🚪 Cerrar sesión</button>
-        </header>
-
-        <nav>
-            <button class="nav-btn active" data-section="seccionReportes">📊 Reportes</button>
-            <button class="nav-btn" data-section="seccionProveedores">🏪 Proveedores</button>
-            <button class="nav-btn" data-section="seccionFacturas">📑 Facturas</button>
-            <button class="nav-btn" data-section="seccionGastos">💰 Gastos</button>
-            <button class="nav-btn" data-section="seccionServicios">🛠 Servicios</button>
-        </nav>
-
-        <section id="seccionReportes" class="content-section active">
-            <h2>Reportes Generales</h2>
-            <!-- Aquí tus reportes -->
-        </section>
-
-        <section id="seccionProveedores" class="content-section">
-            <h2>Registro de Proveedores</h2>
-            <form id="formProveedor">
-                <input type="text" id="rucProv" placeholder="RUC" required>
-                <input type="text" id="nombreProv" placeholder="Nombre" required>
-                <input type="text" id="productoProv" placeholder="Producto" required>
-                <input type="text" id="direccionProv" placeholder="Dirección" required>
-                <button type="submit">Agregar</button>
-            </form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>RUC</th>
-                        <th>Nombre</th>
-                        <th>Producto</th>
-                        <th>Dirección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaProveedores"></tbody>
-            </table>
-        </section>
-
-        <section id="seccionFacturas" class="content-section">
-            <h2>Registro de Facturas</h2>
-            <form id="formFactura">
-                <select id="proveedorFactura" required></select>
-                <input type="text" id="tipoFactura" placeholder="Tipo de factura" required>
-                <input type="number" id="montoFactura" placeholder="Monto" required>
-                <input type="text" id="monedaFactura" placeholder="S/." required>
-                <input type="date" id="fechaFactura" required>
-                <input type="text" id="descFactura" placeholder="Descripción">
-                <button type="submit">Agregar</button>
-            </form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Proveedor</th>
-                        <th>Tipo</th>
-                        <th>Monto</th>
-                        <th>Fecha</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaFacturas"></tbody>
-            </table>
-        </section>
-
-        <section id="seccionGastos" class="content-section">
-            <h2>Registro de Gastos</h2>
-            <form id="formGasto">
-                <input type="text" id="nombreGasto" placeholder="Nombre" required>
-                <input type="text" id="tipoGasto" placeholder="Tipo" required>
-                <input type="number" id="montoGasto" placeholder="Monto" required>
-                <input type="date" id="fechaGasto" required>
-                <button type="submit">Agregar</button>
-            </form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Monto</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaGastos"></tbody>
-            </table>
-        </section>
-
-        <section id="seccionServicios" class="content-section">
-            <h2>Registro de Servicios</h2>
-            <form id="formServicio">
-                <input type="text" id="nombreServ" placeholder="Nombre" required>
-                <input type="number" id="precioServ" placeholder="Precio" required>
-                <input type="date" id="fechaServ" required>
-                <input type="text" id="descServ" placeholder="Descripción">
-                <button type="submit">Agregar</button>
-            </form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Fecha</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaServicios"></tbody>
-            </table>
-        </section>
-    </div>
-
-    <script src="dashboard.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
