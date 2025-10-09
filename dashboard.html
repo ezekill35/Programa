@@ -9,139 +9,101 @@
 </head>
 <body class="dashboard-body d-flex">
 
-  <!-- Sidebar -->
-  <aside class="sidebar d-flex flex-column p-3 text-white bg-dark" style="width: 250px;">
-    <h2 class="text-center mb-4">🐾 Discovery Pets</h2>
-    <nav class="nav flex-column mb-3">
-      <button class="nav-btn btn btn-outline-light mb-2 active" data-section="reportes">📊 Reportes</button>
-      <button class="nav-btn btn btn-outline-light mb-2" data-section="proveedores">🏪 Proveedores</button>
-      <button class="nav-btn btn btn-outline-light mb-2" data-section="facturas">📑 Facturas</button>
-      <button class="nav-btn btn btn-outline-light mb-2" data-section="gastos">💰 Gastos</button>
-      <button class="nav-btn btn btn-outline-light mb-2" data-section="servicios">🛠 Servicios</button>
+  <!-- SIDEBAR -->
+  <aside class="sidebar d-flex flex-column">
+    <h2>🐾 Discovery Pets</h2>
+    <nav class="flex-grow-1">
+      <button class="nav-btn active" data-section="reportes">📊 Reportes</button>
+      <button class="nav-btn" data-section="proveedores">🏪 Proveedores</button>
+      <button class="nav-btn" data-section="facturas">📑 Facturas</button>
+      <button class="nav-btn" data-section="gastos">💰 Gastos</button>
+      <button class="nav-btn" data-section="servicios">🛠 Servicios</button>
     </nav>
-    <button class="logout-btn btn btn-danger mt-auto">🚪 Cerrar sesión</button>
+    <button class="logout-btn" id="logoutBtn">🚪 Cerrar sesión</button>
   </aside>
 
-  <!-- Main content -->
+  <!-- MAIN CONTENT -->
   <main class="main-content flex-grow-1 p-4">
-    <!-- REPORTES -->
+    <!-- SECCIÓN REPORTES -->
     <section id="reportes" class="content-section active">
-      <h1 class="mb-4">📊 Reportes Generales</h1>
-      <div class="row g-3">
-        <div class="col-md-3">
-          <div class="card text-center shadow p-3 mb-2 bg-light rounded">
-            <h5>Proveedores</h5>
-            <p id="countProveedores" class="fs-3">0</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card text-center shadow p-3 mb-2 bg-light rounded">
-            <h5>Facturas</h5>
-            <p id="countFacturas" class="fs-3">0</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card text-center shadow p-3 mb-2 bg-light rounded">
-            <h5>Gastos</h5>
-            <p id="countGastos" class="fs-3">0</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card text-center shadow p-3 mb-2 bg-light rounded">
-            <h5>Servicios</h5>
-            <p id="countServicios" class="fs-3">0</p>
-          </div>
-        </div>
+      <h1>📊 Reportes Generales</h1>
+      <div class="cards">
+        <div class="card pink"><h3>Proveedores</h3><p id="countProveedores">0</p></div>
+        <div class="card purple"><h3>Facturas</h3><p id="countFacturas">0</p></div>
+        <div class="card teal"><h3>Gastos</h3><p id="countGastos">0</p></div>
+        <div class="card yellow"><h3>Servicios</h3><p id="countServicios">0</p></div>
       </div>
     </section>
 
-    <!-- PROVEEDORES -->
+    <!-- SECCIÓN PROVEEDORES -->
     <section id="proveedores" class="content-section">
-      <h1 class="mb-4">🏪 Registro de Proveedores</h1>
-      <form id="formProveedor" class="row g-3 mb-3">
-        <div class="col-md-3"><input class="form-control" type="text" id="rucProv" placeholder="RUC" required></div>
-        <div class="col-md-3"><input class="form-control" type="text" id="nombreProv" placeholder="Nombre" required></div>
-        <div class="col-md-3"><input class="form-control" type="text" id="productoProv" placeholder="Producto" required></div>
-        <div class="col-md-3"><input class="form-control" type="text" id="direccionProv" placeholder="Dirección" required></div>
-        <div class="col-12 text-end"><button class="btn btn-primary" type="submit">Agregar</button></div>
+      <h1>🏪 Registro de Proveedores</h1>
+      <form id="formProveedor" class="formulario">
+        <input type="text" id="nombreProv" placeholder="Nombre" required>
+        <input type="text" id="productoProv" placeholder="Producto" required>
+        <input type="text" id="rucProv" placeholder="RUC" pattern="[0-9]*" required>
+        <input type="text" id="direccionProv" placeholder="Dirección" required>
+        <button type="submit">Agregar</button>
       </form>
-      <p id="msgProv" class="text-danger"></p>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
-            <tr><th>RUC</th><th>Nombre</th><th>Producto</th><th>Dirección</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaProveedores"></tbody>
-        </table>
-      </div>
+      <p id="msgProv" class="mensaje"></p>
+      <table class="table">
+        <thead><tr><th>Nombre</th><th>Producto</th><th>RUC</th><th>Dirección</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaProveedores"></tbody>
+      </table>
     </section>
 
-    <!-- FACTURAS -->
+    <!-- SECCIÓN FACTURAS -->
     <section id="facturas" class="content-section">
-      <h1 class="mb-4">📑 Registro de Facturas</h1>
-      <form id="formFactura" class="row g-3 mb-3">
-        <div class="col-md-3">
-          <select class="form-control" id="proveedorFactura" required>
-            <option value="">Selecciona un proveedor</option>
-          </select>
-        </div>
-        <div class="col-md-2"><input class="form-control" type="text" id="tipoFactura" placeholder="Tipo" required></div>
-        <div class="col-md-2"><input class="form-control" type="number" id="montoFactura" placeholder="Monto S/." required></div>
-        <div class="col-md-2"><input class="form-control" type="date" id="fechaFactura" required></div>
-        <div class="col-md-3"><input class="form-control" type="text" id="descFactura" placeholder="Descripción" required></div>
-        <div class="col-12 text-end"><button class="btn btn-primary" type="submit">Agregar</button></div>
+      <h1>📑 Registro de Facturas</h1>
+      <form id="formFactura" class="formulario">
+        <select id="proveedorFactura" class="form-select" required>
+          <option value="">Selecciona proveedor</option>
+        </select>
+        <input type="text" id="tipoFactura" placeholder="Tipo" required>
+        <input type="number" id="montoFactura" placeholder="Monto S/." required>
+        <input type="date" id="fechaFactura" required>
+        <input type="text" id="descFactura" placeholder="Descripción">
+        <button type="submit">Agregar</button>
       </form>
-      <p id="msgFactura" class="text-danger"></p>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
-            <tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </div>
+      <p id="msgFactura" class="mensaje"></p>
+      <table class="table">
+        <thead><tr><th>Proveedor</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaFacturas"></tbody>
+      </table>
     </section>
 
-    <!-- GASTOS -->
+    <!-- SECCIÓN GASTOS -->
     <section id="gastos" class="content-section">
-      <h1 class="mb-4">💰 Registro de Gastos</h1>
-      <form id="formGasto" class="row g-3 mb-3">
-        <div class="col-md-3"><input class="form-control" type="text" id="nombreGasto" placeholder="Nombre" required></div>
-        <div class="col-md-3"><input class="form-control" type="text" id="tipoGasto" placeholder="Tipo" required></div>
-        <div class="col-md-2"><input class="form-control" type="number" id="montoGasto" placeholder="Monto" required></div>
-        <div class="col-md-2"><input class="form-control" type="date" id="fechaGasto" required></div>
-        <div class="col-2 text-end"><button class="btn btn-primary" type="submit">Agregar</button></div>
+      <h1>💰 Registro de Gastos</h1>
+      <form id="formGasto" class="formulario">
+        <input type="text" id="nombreGasto" placeholder="Nombre" required>
+        <input type="text" id="tipoGasto" placeholder="Tipo" required>
+        <input type="number" id="montoGasto" placeholder="Monto" required>
+        <input type="date" id="fechaGasto" required>
+        <button type="submit">Agregar</button>
       </form>
-      <p id="msgGasto" class="text-danger"></p>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
-            <tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaGastos"></tbody>
-        </table>
-      </div>
+      <p id="msgGasto" class="mensaje"></p>
+      <table class="table">
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaGastos"></tbody>
+      </table>
     </section>
 
-    <!-- SERVICIOS -->
+    <!-- SECCIÓN SERVICIOS -->
     <section id="servicios" class="content-section">
-      <h1 class="mb-4">🛠 Registro de Servicios</h1>
-      <form id="formServicio" class="row g-3 mb-3">
-        <div class="col-md-3"><input class="form-control" type="text" id="nombreServ" placeholder="Nombre" required></div>
-        <div class="col-md-2"><input class="form-control" type="number" id="precioServ" placeholder="Precio" required></div>
-        <div class="col-md-3"><input class="form-control" type="date" id="fechaServ" required></div>
-        <div class="col-md-4"><input class="form-control" type="text" id="descServ" placeholder="Descripción" required></div>
-        <div class="col-12 text-end"><button class="btn btn-primary" type="submit">Agregar</button></div>
+      <h1>🛠 Registro de Servicios</h1>
+      <form id="formServicio" class="formulario">
+        <input type="text" id="nombreServ" placeholder="Nombre" required>
+        <input type="number" id="precioServ" placeholder="Precio" required>
+        <input type="date" id="fechaServ" required>
+        <input type="text" id="descServ" placeholder="Descripción">
+        <button type="submit">Agregar</button>
       </form>
-      <p id="msgServ" class="text-danger"></p>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
-            <tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaServicios"></tbody>
-        </table>
-      </div>
+      <p id="msgServ" class="mensaje"></p>
+      <table class="table">
+        <thead><tr><th>Nombre</th><th>Precio</th><th>Fecha</th><th>Descripción</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaServicios"></tbody>
+      </table>
     </section>
   </main>
 
@@ -149,6 +111,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
