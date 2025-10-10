@@ -1,276 +1,276 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discovery Pets - Dashboard</title>
-  <script type="module" src="dashboard.js" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* ------------------ Reset ------------------ */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background: #f6f7fb;
-      color: #333;
-      padding: 20px;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
     }
-
-    /* ------------------ Encabezado ------------------ */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(180deg, #0d47a1, #1976d2);
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+      position: fixed;
+      height: 100%;
+    }
+    .sidebar h3 {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      text-align: left;
+      padding: 12px 20px;
+      font-size: 16px;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .menu-btn:hover, .menu-btn.activo {
+      background: rgba(255,255,255,0.2);
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 25px;
+      flex: 1;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
     header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      background: #fff;
-      padding: 15px 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-
-    header h1 {
-      font-size: 22px;
-      display: flex;
       align-items: center;
-      gap: 8px;
+      margin-bottom: 25px;
     }
-
-    header h1::before {
-      content: "🐾";
-    }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .search-box input {
+    #buscadorGlobal {
+      width: 280px;
+      border-radius: 8px;
       padding: 8px 12px;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 250px;
     }
-
-    /* ------------------ Botones navegación ------------------ */
-    nav {
-      display: flex;
-      gap: 10px;
+    .card {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 20px;
       margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .nav-btn {
-      background: #0078d7;
-      color: #fff;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      cursor: pointer;
+      transform: perspective(1000px) rotateX(3deg);
       transition: 0.3s;
     }
-
-    .nav-btn:hover {
-      background: #005fa3;
+    .card:hover {
+      transform: perspective(1000px) rotateX(0deg) scale(1.02);
     }
-
-    .logout {
-      background: crimson;
-    }
-
-    /* ------------------ Secciones ------------------ */
-    section {
-      display: none;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    section h2 {
-      margin-bottom: 15px;
-      color: #0078d7;
-    }
-
     table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
     }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
+    .btn-primary {
+      background: #1976d2;
+      border: none;
     }
-
-    th {
-      background: #0078d7;
-      color: #fff;
-    }
-
-    form {
-      margin-bottom: 15px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    form input, form select, form button {
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    form button {
-      background: #0078d7;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    form button:hover {
-      background: #005fa3;
+    .btn-primary:hover {
+      background: #0d47a1;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Discovery Pets</h1>
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Buscar factura, proveedor o producto...">
-      <button id="logoutBtn" class="nav-btn logout">Cerrar Sesión</button>
-    </div>
-  </header>
 
-  <nav>
-    <button class="nav-btn" data-section="facturas">📄 Facturas</button>
-    <button class="nav-btn" data-section="proveedores">🏪 Proveedores</button>
-    <button class="nav-btn" data-section="productos">📦 Productos</button>
-    <button class="nav-btn" data-section="gastos">💰 Gastos</button>
-    <button class="nav-btn" data-section="reportes">📊 Reportes</button>
-  </nav>
+  <div class="sidebar">
+    <h3>🐾 Discovery Pets</h3>
+    <button class="menu-btn activo" data-target="facturas">📄 Facturas</button>
+    <button class="menu-btn" data-target="proveedores">🏢 Proveedores</button>
+    <button class="menu-btn" data-target="productos">🛒 Productos</button>
+    <button class="menu-btn" data-target="gastos">💰 Gastos</button>
+    <button class="menu-btn" data-target="reportes">📊 Reportes</button>
+    <hr>
+    <button id="logoutBtn" class="menu-btn text-danger">🚪 Cerrar Sesión</button>
+  </div>
 
-  <!-- FACTURAS -->
-  <section id="facturas" class="section">
-    <h2>Facturas</h2>
-    <form id="facturaForm">
-      <input type="text" id="numeroFactura" placeholder="Número de Factura" required>
-      <input type="text" id="proveedorFactura" placeholder="Proveedor" required>
-      <input type="text" id="productoFactura" placeholder="Producto" required>
-      <input type="number" id="montoFactura" placeholder="Monto" step="0.01" required>
-      <select id="tipoMonedaFactura">
-        <option value="S/.">Soles</option>
-        <option value="$">Dólares</option>
-      </select>
-      <select id="tipoFactura">
-        <option value="Compra">Compra</option>
-        <option value="Boleta">Boleta</option>
-      </select>
-      <button type="submit">Agregar</button>
-    </form>
+  <div class="main-content">
+    <header>
+      <h2>Panel de Control</h2>
+      <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor o producto...">
+    </header>
 
-    <table id="tablaFacturas">
-      <thead>
-        <tr>
-          <th>Número</th>
-          <th>Proveedor</th>
-          <th>Producto</th>
-          <th>Monto</th>
-          <th>Tipo</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+    <!-- Sección Facturas -->
+    <section id="facturas" class="seccion">
+      <div class="card">
+        <h4>Registrar Factura</h4>
+        <form id="facturaForm" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">N° Factura</label>
+            <input type="text" id="numeroFactura" class="form-control" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Proveedor</label>
+            <input type="text" id="proveedorFactura" class="form-control" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Producto</label>
+            <input type="text" id="productoFactura" class="form-control">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Monto</label>
+            <div class="input-group">
+              <select id="monedaFactura" class="form-select" style="max-width:90px;">
+                <option value="S/">S/</option>
+                <option value="$">$</option>
+              </select>
+              <input type="number" id="montoFactura" class="form-control" step="0.01" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Tipo</label>
+            <select id="tipoFactura" class="form-select">
+              <option value="Factura Electrónica">Factura Electrónica</option>
+              <option value="Boleta">Boleta</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary mt-2">Guardar</button>
+          </div>
+        </form>
+      </div>
 
-  <!-- PROVEEDORES -->
-  <section id="proveedores" class="section">
-    <h2>Proveedores</h2>
-    <form id="proveedorForm">
-      <input type="text" id="nombreProveedor" placeholder="Nombre del Proveedor" required>
-      <input type="text" id="rucProveedor" placeholder="RUC (solo números)" required>
-      <button type="submit">Agregar</button>
-    </form>
+      <div class="card">
+        <h4>Facturas Registradas</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Proveedor</th>
+              <th>Producto</th>
+              <th>Monto</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <table id="tablaProveedores">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>RUC</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+    <!-- Sección Proveedores -->
+    <section id="proveedores" class="seccion" style="display:none;">
+      <div class="card">
+        <h4>Registrar Proveedor</h4>
+        <form id="proveedorForm" class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Nombre</label>
+            <input type="text" id="nombreProveedor" class="form-control" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">RUC</label>
+            <input type="number" id="rucProveedor" class="form-control" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Teléfono</label>
+            <input type="number" id="telefonoProveedor" class="form-control" required>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary mt-2">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-  <!-- PRODUCTOS -->
-  <section id="productos" class="section">
-    <h2>Productos</h2>
-    <form id="productoForm">
-      <input type="text" id="nombreProducto" placeholder="Nombre del producto" required>
-      <input type="text" id="descripcionProducto" placeholder="Descripción">
-      <input type="number" id="cantidadProducto" placeholder="Cantidad" required>
-      <input type="text" id="unidadProducto" placeholder="Unidad de medida" required>
-      <input type="number" id="valorProducto" placeholder="Valor unitario" step="0.01" required>
-      <button type="submit">Agregar</button>
-    </form>
+    <!-- Sección Productos -->
+    <section id="productos" class="seccion" style="display:none;">
+      <div class="card">
+        <h4>Registrar Producto</h4>
+        <form id="productoForm" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" id="nombreProducto" class="form-control" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Descripción</label>
+            <input type="text" id="descripcionProducto" class="form-control">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Cantidad</label>
+            <input type="number" id="cantidadProducto" class="form-control">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Unidad</label>
+            <input type="text" id="unidadProducto" class="form-control">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Valor Unitario</label>
+            <input type="number" id="valorUnitarioProducto" class="form-control" step="0.01">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary mt-2">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-    <table id="tablaProductos">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Cantidad</th>
-          <th>Unidad</th>
-          <th>Valor Unitario</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+    <!-- Sección Gastos -->
+    <section id="gastos" class="seccion" style="display:none;">
+      <div class="card">
+        <h4>Registrar Gasto</h4>
+        <form class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Descripción</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Monto</label>
+            <input type="number" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Fecha</label>
+            <input type="date" class="form-control">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary mt-2">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-  <!-- GASTOS -->
-  <section id="gastos" class="section">
-    <h2>Gastos</h2>
-    <form id="gastoForm">
-      <input type="text" id="descripcionGasto" placeholder="Descripción del gasto" required>
-      <input type="number" id="montoGasto" placeholder="Monto" step="0.01" required>
-      <select id="tipoMonedaGasto">
-        <option value="S/.">Soles</option>
-        <option value="$">Dólares</option>
-      </select>
-      <button type="submit">Agregar</button>
-    </form>
+    <!-- Sección Reportes -->
+    <section id="reportes" class="seccion" style="display:none;">
+      <div class="card text-center">
+        <h4>Generar Reporte</h4>
+        <p class="text-muted">Seleccione un rango de fechas y genere su reporte en PDF.</p>
+        <form class="row g-3 justify-content-center">
+          <div class="col-md-3">
+            <input type="date" class="form-control">
+          </div>
+          <div class="col-md-3">
+            <input type="date" class="form-control">
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-success">Generar PDF</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-    <table id="tablaGastos">
-      <thead>
-        <tr>
-          <th>Descripción</th>
-          <th>Monto</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+  </div>
 
-  <!-- REPORTES -->
-  <section id="reportes" class="section">
-    <h2>Reportes</h2>
-    <p>Genera tus reportes generales desde aquí.</p>
-    <p>(Esta sección se actualizará pronto con visualizaciones 3D 📊)</p>
-  </section>
+  <script src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
