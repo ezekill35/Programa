@@ -110,7 +110,6 @@ tr:nth-child(even){background:#fff3e0;}
 <h4>Registrar Producto</h4>
 <form id="productoForm" class="row g-3">
   <div class="col-md-3"><label class="form-label">Nombre</label><input type="text" id="nombreProducto" required></div>
-  <div class="col-md-3"><label class="form-label">Descripción</label><input type="text" id="descripcionProducto"></div>
   <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto"></div>
   <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto"></div>
   <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" step="0.01"></div>
@@ -120,7 +119,7 @@ tr:nth-child(even){background:#fff3e0;}
 <div class="card">
 <h4>Productos Registrados</h4>
 <table>
-<thead><tr><th>Nombre</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Valor</th><th>Acciones</th></tr></thead>
+<thead><tr><th>Nombre</th><th>Cantidad</th><th>Unidad</th><th>Valor</th><th>Acciones</th></tr></thead>
 <tbody id="tablaProductos"></tbody>
 </table>
 </div>
@@ -172,6 +171,7 @@ tr:nth-child(even){background:#fff3e0;}
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
