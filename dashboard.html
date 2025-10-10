@@ -84,7 +84,9 @@ tr:nth-child(even){background:#fff3e0;}
   <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar producto...">
 </header>
 
+<!-- ======================= -->
 <!-- Proveedores -->
+<!-- ======================= -->
 <section id="proveedores" class="seccion">
 <div class="card">
 <h4>Registrar Proveedor</h4>
@@ -104,15 +106,17 @@ tr:nth-child(even){background:#fff3e0;}
 </div>
 </section>
 
+<!-- ======================= -->
 <!-- Productos -->
+<!-- ======================= -->
 <section id="productos" class="seccion" style="display:none;">
 <div class="card">
 <h4>Registrar Producto</h4>
 <form id="productoForm" class="row g-3">
   <div class="col-md-3"><label class="form-label">Nombre</label><input type="text" id="nombreProducto" required></div>
-  <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto"></div>
-  <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto"></div>
-  <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" step="0.01"></div>
+  <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto" required></div>
+  <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto" required></div>
+  <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" step="0.0001" required></div>
   <div class="col-12"><button class="btn-primary" type="submit">Guardar</button></div>
 </form>
 </div>
@@ -125,7 +129,9 @@ tr:nth-child(even){background:#fff3e0;}
 </div>
 </section>
 
+<!-- ======================= -->
 <!-- Facturas -->
+<!-- ======================= -->
 <section id="facturas" class="seccion" style="display:none;">
 <div class="card">
 <h4>Registrar Factura</h4>
