@@ -210,7 +210,13 @@ header {
   justify-content:center;
   align-items:center;
   z-index:1000;
-  display:none;
+  opacity:0;
+  pointer-events:none;
+  transition: all 0.3s ease;
+}
+.modal-overlay.active {
+  opacity:1;
+  pointer-events:auto;
 }
 .modal-card {
   background: linear-gradient(145deg,#fff8e1,#ffe0b2);
@@ -233,11 +239,10 @@ header {
   cursor:pointer;
   color:#ff4081;
   text-shadow:1px 1px 5px rgba(0,0,0,0.3);
+  background:none;
+  border:none;
+  padding:0;
 }
-/* <-- Solución línea blanca debajo del cerrar --> */
-.cerrar::after { content:''; display:block; height:0; border:none; } 
-
-#contenidoModal { margin-top:18px; white-space:pre-wrap; font-size:14px; }
 
 /* ---------------- Secciones ---------------- */
 .seccion {
@@ -385,21 +390,27 @@ botones.forEach(btn=>{
 // ---------------- Modal ----------------
 const modal = document.getElementById('detalleModal');
 const cerrar = document.getElementById('cerrarModal');
-cerrar.addEventListener('click',()=>{ modal.style.display='none'; });
+cerrar.addEventListener('click',()=>{ modal.classList.remove('active'); });
+function abrirModal(titulo, contenido){
+  document.getElementById('tituloModal').innerText = titulo;
+  document.getElementById('contenidoModal').innerText = contenido;
+  modal.classList.add('active');
+}
 
-// ---------------- Buscador Producto ----------------
+// ---------------- Buscador ----------------
 const buscador = document.getElementById('buscadorGlobal');
-buscador.addEventListener('keypress',(e)=>{
+buscador.addEventListener('keydown', e=>{
   if(e.key==='Enter'){
     e.preventDefault();
-    alert(`Buscar productos con: ${buscador.value}`);
-    buscador.value='';
+    alert('Buscar productos relacionados: '+buscador.value);
   }
 });
 </script>
 
 </body>
 </html>
+
+
 
 
 
