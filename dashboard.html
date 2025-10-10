@@ -133,36 +133,68 @@ tr:nth-child(even){background:#fff3e0;}
 <!-- Facturas -->
 <!-- ======================= -->
 <section id="facturas" class="seccion" style="display:none;">
-<div class="card">
-<h4>Registrar Factura</h4>
-<form id="facturaForm" class="row g-3">
-  <div class="col-md-3"><label class="form-label">N° Factura</label><input type="number" id="numeroFactura" required></div>
-  <div class="col-md-3"><label class="form-label">Fecha de Emisión</label><input type="date" id="fechaFactura" required></div>
-  <div class="col-md-3"><label class="form-label">Proveedor</label>
-    <select id="proveedorFactura" required></select>
+  <div class="card">
+    <h4>Registrar Factura</h4>
+    <form id="facturaForm" class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">N° Factura</label>
+        <input type="number" id="numeroFactura" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Fecha de Emisión</label>
+        <input type="date" id="fechaFactura" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Proveedor</label>
+        <select id="proveedorFactura" required></select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Producto</label>
+        <select id="productoFactura" required></select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Monto</label>
+        <div class="input-group">
+          <select id="monedaFactura">
+            <option value="S/">S/</option>
+            <option value="$">$</option>
+          </select>
+          <input type="number" id="montoFactura" step="0.01" required>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Tipo</label>
+        <select id="tipoFactura">
+          <option value="Factura Electrónica">Factura Electrónica</option>
+          <option value="Boleta">Boleta</option>
+        </select>
+      </div>
+
+      <div class="col-12">
+        <button class="btn-primary" type="submit">Guardar</button>
+      </div>
+    </form>
   </div>
-  <div class="col-md-3"><label class="form-label">Producto</label>
-    <select id="productoFactura" required></select>
+
+  <div class="card">
+    <h4>Facturas Registradas</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Fecha</th>
+          <th>Proveedor</th>
+          <th>Producto</th>
+          <th>Monto</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaFacturas"></tbody>
+    </table>
   </div>
-  <div class="col-md-2"><label class="form-label">Monto</label>
-    <div class="input-group">
-      <select id="monedaFactura"><option value="S/">S/</option><option value="$">$</option></select>
-      <input type="number" id="montoFactura" step="0.01" required>
-    </div>
-  </div>
-  <div class="col-md-2"><label class="form-label">Tipo</label>
-    <select id="tipoFactura"><option value="Factura Electrónica">Factura Electrónica</option><option value="Boleta">Boleta</option></select>
-  </div>
-  <div class="col-12"><button class="btn-primary" type="submit">Guardar</button></div>
-</form>
-</div>
-<div class="card">
-<h4>Facturas Registradas</h4>
-<table>
-<thead><tr><th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead>
-<tbody id="tablaFacturas"></tbody>
-</table>
-</div>
 </section>
 
 <!-- Modal Detalle -->
@@ -178,6 +210,7 @@ tr:nth-child(even){background:#fff3e0;}
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
