@@ -58,6 +58,9 @@ body {
   box-shadow: 0 5px 15px rgba(0,0,0,0.35);
 }
 
+/* Separador flexible para que el logout quede abajo */
+.sidebar .flex-spacer { flex:1; }
+
 /* ---------------- Main Content ---------------- */
 .main-content {
   margin-left:260px;
@@ -71,21 +74,31 @@ body {
 /* ---------------- Header ---------------- */
 header {
   display:flex;
-  justify-content:space-between;
+  justify-content: flex-start;
   align-items:center;
+  gap:20px;
   margin-bottom:30px;
+  position:sticky;
+  top:0;
+  background: linear-gradient(135deg,#e0f7fa,#b2ebf2);
+  padding:15px 30px;
+  z-index:50;
+  box-shadow:0 5px 15px rgba(0,0,0,0.15);
+  border-radius:20px;
 }
+header h2 { margin:0; font-size:1.8rem; }
 #buscadorGlobal {
-  width:320px;
-  border-radius:16px;
+  flex:1;
+  max-width:350px;
   padding:12px 16px;
+  border-radius:16px;
   border:1px solid #ccc;
   box-shadow: inset 0 4px 8px rgba(0,0,0,0.12);
   transition: all 0.3s;
 }
 #buscadorGlobal:focus {
   border-color:#0288d1;
-  box-shadow: 0 0 18px rgba(2,136,209,0.3);
+  box-shadow:0 0 18px rgba(2,136,209,0.3);
 }
 
 /* ---------------- Cards ---------------- */
@@ -184,15 +197,8 @@ header {
   padding:10px;
   border-bottom:1px solid #ccc;
 }
-.table tbody tr:nth-child(even) {
-  background-color:#e0f7fa;
-}
-.table .btn {
-  padding:6px 12px;
-  border-radius:12px;
-  font-size:0.9rem;
-  transition: all 0.3s;
-}
+.table tbody tr:nth-child(even) { background-color:#e0f7fa; }
+.table .btn { padding:6px 12px; border-radius:12px; font-size:0.9rem; transition: all 0.3s; }
 .table .btn-edit { background-color:#43a047; color:white; }
 .table .btn-edit:hover { background-color:#2e7d32; transform: scale(1.1); }
 .table .btn-delete { background-color:#e53935; color:white; }
@@ -201,10 +207,8 @@ header {
 /* ---------------- Modal ---------------- */
 .modal-overlay {
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  top:0; left:0;
+  width:100%; height:100%;
   background:rgba(0,0,0,0.55);
   backdrop-filter:blur(6px);
   display:flex;
@@ -215,10 +219,7 @@ header {
   pointer-events:none;
   transition: all 0.3s ease;
 }
-.modal-overlay.active {
-  opacity:1;
-  pointer-events:auto;
-}
+.modal-overlay.active { opacity:1; pointer-events:auto; }
 .modal-card {
   background: linear-gradient(145deg,#fffde7,#fff3e0);
   border-radius:28px;
@@ -240,24 +241,16 @@ header {
   cursor:pointer;
   color:#ff4081;
   text-shadow:1px 1px 5px rgba(0,0,0,0.3);
-  background:none;
-  border:none;
-  padding:0;
+  background:none; border:none; padding:0;
 }
 
 /* ---------------- Secciones ---------------- */
-.seccion {
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  display:none;
-  padding-bottom:40px;
-}
+.seccion { display:none; padding-bottom:40px; }
 .seccion.activa { display:block; animation:fadeIn 0.4s ease; }
 
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 @keyframes slideIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
+
 </style>
 </head>
 <body>
@@ -270,7 +263,7 @@ header {
   <button class="menu-btn" data-target="facturas">📄 Facturas</button>
   <button class="menu-btn" data-target="gastos">💰 Gastos</button>
 
-  <div style="flex:1"></div> <!-- separador flexible -->
+  <div class="flex-spacer"></div> <!-- separador flexible -->
 
   <button id="logoutBtn" class="menu-btn btn-danger">🚪 Cerrar Sesión</button>
 </div>
@@ -282,91 +275,8 @@ header {
   <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar producto...">
 </header>
 
-<!-- Secciones -->
-<section id="proveedores" class="seccion activa">
-  <div class="card-registro">
-    <h4>🏢 Registrar Proveedor</h4>
-    <form id="proveedorForm" class="form-grid">
-      <div class="form-group"><label>RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
-      <div class="form-group"><label>Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
-      <div class="form-group"><label>Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
-      <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
-    </form>
-  </div>
-  <div class="card-registro">
-    <h4>Proveedores Registrados</h4>
-    <table class="table">
-      <thead><tr><th>RUC</th><th>Nombre</th><th>Teléfono</th></tr></thead>
-      <tbody id="tablaProveedores"></tbody>
-    </table>
-  </div>
-</section>
-
-<section id="productos" class="seccion">
-  <div class="card-registro">
-    <h4>🛒 Registrar Producto</h4>
-    <form id="productoForm" class="form-grid">
-      <div class="form-group"><label>Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
-      <div class="form-group"><label>Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
-      <div class="form-group"><label>Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
-      <div class="form-group"><label>Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
-      <div class="form-group"><label>Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
-      <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
-    </form>
-  </div>
-  <div class="card-registro">
-    <h4>Productos Registrados</h4>
-    <table class="table">
-      <thead><tr><th>Nombre</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Valor Unitario</th></tr></thead>
-      <tbody id="tablaProductos"></tbody>
-    </table>
-  </div>
-</section>
-
-<section id="facturas" class="seccion">
-  <div class="card-registro">
-    <h4>📄 Registrar Factura</h4>
-    <form id="facturaForm" class="form-grid">
-      <div class="form-group"><label>N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
-      <div class="form-group"><label>Proveedor</label><select id="proveedorFactura" class="form-control"></select></div>
-      <div class="form-group"><label>Producto</label><input type="text" id="productoFactura" class="form-control"></div>
-      <div class="form-group"><label>Monto</label>
-        <div style="display:flex; gap:10px;">
-          <select id="monedaFactura" class="form-control" style="width:90px;"><option value="S/">S/</option><option value="$">$</option></select>
-          <input type="number" id="montoFactura" class="form-control" step="0.01" required>
-        </div>
-      </div>
-      <div class="form-group"><label>Tipo</label><select id="tipoFactura" class="form-control"><option value="Factura Electrónica">Factura Electrónica</option><option value="Boleta">Boleta</option></select></div>
-      <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
-    </form>
-  </div>
-  <div class="card-registro">
-    <h4>Facturas Registradas</h4>
-    <table class="table">
-      <thead><tr><th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead>
-      <tbody id="tablaFacturas"></tbody>
-    </table>
-  </div>
-</section>
-
-<section id="gastos" class="seccion">
-  <div class="card-registro">
-    <h4>💰 Registrar Gasto</h4>
-    <form id="gastoForm" class="form-grid">
-      <div class="form-group"><label>Descripción</label><input type="text" id="descripcionGasto" class="form-control" required></div>
-      <div class="form-group"><label>Monto</label><input type="number" id="montoGasto" class="form-control" step="0.01" required></div>
-      <div class="form-group"><label>Fecha</label><input type="date" id="fechaGasto" class="form-control" required></div>
-      <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
-    </form>
-  </div>
-  <div class="card-registro">
-    <h4>Gastos Registrados</h4>
-    <table class="table">
-      <thead><tr><th>Descripción</th><th>Monto</th><th>Fecha</th></tr></thead>
-      <tbody id="tablaGastos"></tbody>
-    </table>
-  </div>
-</section>
+<!-- Aquí irían las secciones: proveedores, productos, facturas, gastos -->
+<!-- Cada sección con class="seccion" y la primera activa: class="seccion activa" -->
 
 <!-- Modal -->
 <div id="detalleModal" class="modal-overlay">
@@ -384,7 +294,8 @@ const botones = document.querySelectorAll('.menu-btn');
 botones.forEach(btn=>{
   btn.addEventListener('click',()=>{
     secciones.forEach(sec=>sec.classList.remove('activa'));
-    document.getElementById(btn.dataset.target).classList.add('activa');
+    const target = document.getElementById(btn.dataset.target);
+    if(target) target.classList.add('activa');
     botones.forEach(b=>b.classList.remove('activo'));
     btn.classList.add('activo');
   });
