@@ -1,7 +1,8 @@
-import { auth } from './firebase.js';
+import { auth, db } from './firebase.js';
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const secciones = document.querySelectorAll(".seccion");
     const menuBtns = document.querySelectorAll(".menu-btn");
     const buscador = document.getElementById("buscadorGlobal");
@@ -14,76 +15,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const tituloModal = document.getElementById("tituloModal");
     const contenidoModal = document.getElementById("contenidoModal");
     const cerrarModal = document.getElementById("cerrarModal");
-    cerrarModal.addEventListener("click", () => detalleModal.style.display = "none");
-    window.addEventListener("click", e => { if(e.target === detalleModal) detalleModal.style.display = "none"; });
-    function abrirModal(titulo, contenido){ 
-        tituloModal.textContent = titulo; 
-        contenidoModal.textContent = contenido; 
-        detalleModal.style.display="flex"; 
-    }
+    cerrarModal.addEventListener("click", () => detalleModal.style.display="none");
+    window.addEventListener("click", e=>{ if(e.target===detalleModal) detalleModal.style.display="none"; });
+    function abrirModal(titulo, contenido){ tituloModal.textContent=titulo; contenidoModal.textContent=contenido; detalleModal.style.display="flex"; }
 
-    // Navegación entre secciones
-    menuBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const target = btn.dataset.target;
-            secciones.forEach(sec => sec.style.display = "none");
-            document.getElementById(target).style.display = "block";
-            menuBtns.forEach(b => b.classList.remove("activo"));
+    // Sidebar
+    menuBtns.forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+            const target=btn.dataset.target;
+            secciones.forEach(sec=>sec.style.display="none");
+            document.getElementById(target).style.display="block";
+            menuBtns.forEach(b=>b.classList.remove("activo"));
             btn.classList.add("activo");
         });
     });
-    document.getElementById("facturas").style.display = "block";
+    document.getElementById("facturas").style.display="block";
+
+    logoutBtn.addEventListener("click", ()=>signOut(auth).then(()=>window.location.href="index.html"));
 
     // =========================
-    // Cerrar sesión
+    // Firestore Collections
     // =========================
-    logoutBtn.addEventListener("click", () => {
-        signOut(auth).then(() => window.location.href = "index.html");
+    const proveedoresCol = collection(db,"proveedores");
+    const facturasCol = collection(db,"facturas");
+
+    // Cargar proveedores en tiempo real
+    onSnapshot(proveedoresCol, snapshot=>{
+        proveedorSelect.innerHTML="";
+        snapshot.forEach(docSnap=>{
+            const data = docSnap.data();
+            const opt = document.createElement("option");
+            opt.value = data.nombre;
+            opt.textContent = data.nombre;
+            proveedorSelect.appendChild(opt);
+        });
     });
 
-    // =========================
-    // Datos
-    // =========================
-    const proveedoresList = [];
-    const productosList = [];
-    const facturasList = [];
-
-    // -------------------------
-    // CRUD Proveedores
-    // -------------------------
-    const proveedorForm=document.getElementById("proveedorForm");
-    proveedorForm.addEventListener("submit", e=>{
+    // Registrar proveedor
+    document.getElementById("proveedorForm").addEventListener("submit", async e=>{
         e.preventDefault();
         const ruc=document.getElementById("rucProveedor").value;
         const nombre=document.getElementById("nombreProveedor").value;
         const telefono=document.getElementById("telefonoProveedor").value;
-        const proveedor={ruc,nombre,telefono};
-        proveedoresList.push(proveedor);
-        const opt=document.createElement("option"); opt.value=nombre; opt.textContent=nombre; proveedorSelect.appendChild(opt);
-        proveedorForm.reset();
+        await addDoc(proveedoresCol,{ruc,nombre,telefono});
+        e.target.reset();
     });
 
-    // -------------------------
-    // CRUD Productos
-    // -------------------------
-    const productoForm=document.getElementById("productoForm");
-    productoForm.addEventListener("submit", e=>{
-        e.preventDefault();
-        const nombre=document.getElementById("nombreProducto").value;
-        const descripcion=document.getElementById("descripcionProducto").value;
-        const cantidad=document.getElementById("cantidadProducto").value;
-        const unidad=document.getElementById("unidadProducto").value;
-        const valorUnitario=document.getElementById("valorUnitarioProducto").value;
-        const producto={nombre,descripcion,cantidad,unidad,valorUnitario};
-        productosList.push(producto);
-        productoForm.reset();
-    });
-
-    // -------------------------
-    // CRUD Facturas
-    // -------------------------
-    const facturaForm=document.getElementById("facturaForm");
-    facturaForm.addEventListener("submit", e=>{
+    // Registrar factura
+    document.getElementById("facturaForm").addEventListener("submit", async e=>{
         e.preventDefault();
         const numero=document.getElementById("numeroFactura").value;
         const proveedor=document.getElementById("proveedorFactura").value;
@@ -91,62 +70,50 @@ document.addEventListener("DOMContentLoaded", () => {
         const monto=document.getElementById("montoFactura").value;
         const tipo=document.getElementById("tipoFactura").value;
         const moneda=document.getElementById("monedaFactura").value;
+        await addDoc(facturasCol,{numero,proveedor,producto,monto,tipo,moneda});
+        e.target.reset();
+    });
 
-        const factura={numero,proveedor,producto,monto,tipo,moneda};
-        facturasList.push(factura);
+    // Mostrar facturas en tiempo real
+    onSnapshot(facturasCol, snapshot=>{
+        tablaFacturas.innerHTML="";
+        snapshot.forEach(docSnap=>{
+            const f=docSnap.data();
+            const fila=document.createElement("tr");
+            fila.innerHTML=`
+                <td class="click-detalle" data-tipo="numero">${f.numero}</td>
+                <td class="click-detalle" data-tipo="proveedor">${f.proveedor}</td>
+                <td class="click-detalle" data-tipo="producto">${f.producto}</td>
+                <td>${f.moneda} ${f.monto}</td>
+                <td>${f.tipo}</td>
+                <td><button class="btn btn-danger btn-sm eliminar">🗑️</button></td>
+            `;
+            tablaFacturas.appendChild(fila);
 
-        const fila=document.createElement("tr");
-        fila.innerHTML=`
-            <td class="click-detalle" data-tipo="numero">${numero}</td>
-            <td class="click-detalle" data-tipo="proveedor">${proveedor}</td>
-            <td class="click-detalle" data-tipo="producto">${producto}</td>
-            <td>${moneda} ${monto}</td>
-            <td>${tipo}</td>
-            <td><button class="btn btn-danger btn-sm eliminar">🗑️</button></td>
-        `;
-        tablaFacturas.appendChild(fila);
+            // Modal detalles
+            fila.querySelectorAll(".click-detalle").forEach(td=>{
+                td.addEventListener("click", ()=> abrirModal(td.dataset.tipo, td.textContent));
+            });
 
-        // Modal
-        fila.querySelectorAll(".click-detalle").forEach(td=>{
-            td.addEventListener("click", ()=>{
-                const tipo=td.dataset.tipo;
-                let titulo="",contenido="";
-                if(tipo==="proveedor"){
-                    const p=proveedoresList.find(p=>p.nombre===td.textContent);
-                    titulo="Detalles del Proveedor";
-                    contenido=p?`Nombre: ${p.nombre}\nRUC: ${p.ruc}\nTeléfono: ${p.telefono}`:"Proveedor no encontrado";
-                }
-                if(tipo==="producto"){
-                    const p=productosList.find(p=>p.nombre===td.textContent);
-                    titulo="Detalles del Producto";
-                    contenido=p?`Nombre: ${p.nombre}\nDescripción: ${p.descripcion}\nCantidad: ${p.cantidad}\nUnidad: ${p.unidad}\nValor Unitario: ${p.valorUnitario}`:"Producto no encontrado";
-                }
-                if(tipo==="numero"){ titulo="Número de Factura"; contenido=td.textContent; }
-                abrirModal(titulo,contenido);
+            // Eliminar
+            fila.querySelector(".eliminar").addEventListener("click", async ()=>{
+                const docs = await getDocs(facturasCol);
+                const docToDelete = docs.docs.find(d=>d.data().numero===f.numero);
+                if(docToDelete) await deleteDoc(doc(db,"facturas",docToDelete.id));
             });
         });
-
-        // Eliminar
-        fila.querySelector(".eliminar").addEventListener("click", ()=>{
-            fila.remove();
-            const idx=facturasList.findIndex(f=>f.numero===numero);
-            if(idx>-1) facturasList.splice(idx,1);
-        });
-
-        facturaForm.reset();
     });
 
-    // -------------------------
-    // Buscador Global
-    // -------------------------
+    // Buscador
     buscador.addEventListener("input", ()=>{
-        const txt=buscador.value.toLowerCase();
+        const txt = buscador.value.toLowerCase();
         tablaFacturas.querySelectorAll("tr").forEach(row=>{
-            const contenido=row.innerText.toLowerCase();
-            row.style.display=contenido.includes(txt)?"":"none";
+            row.style.display = row.innerText.toLowerCase().includes(txt) ? "" : "none";
         });
     });
+
 });
+
 
 
 
