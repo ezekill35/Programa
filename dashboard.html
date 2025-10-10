@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discovery Pets - Dashboard 3D Premium</title>
+<title>Discovery Pets - Dashboard 3D Profesional</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 /* ---------------- Reset ---------------- */
@@ -37,8 +37,8 @@ header h2 { margin:0; font-size:1.8rem; }
 .form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:22px; }
 .form-group { display:flex; flex-direction:column; }
 .form-group label { font-weight:600; margin-bottom:8px; color:#0288d1; text-shadow:1px 1px 2px rgba(0,0,0,0.1); }
-.form-control { padding:12px; border-radius:16px; border:1px solid #ccc; box-shadow: inset 0 4px 8px rgba(0,0,0,0.08); transition: all 0.3s;}
-.form-control:focus { border-color:#0288d1; box-shadow: 0 0 14px rgba(2,136,209,0.25);}
+.form-control, .form-select { padding:12px; border-radius:16px; border:1px solid #ccc; box-shadow: inset 0 4px 8px rgba(0,0,0,0.08); transition: all 0.3s;}
+.form-control:focus, .form-select:focus { border-color:#0288d1; box-shadow: 0 0 14px rgba(2,136,209,0.25);}
 
 /* ---------------- Botones ---------------- */
 .btn-primary { background: linear-gradient(145deg,#0288d1,#26c6da); border:none; color:white; padding:14px 28px; border-radius:20px; font-weight:600; cursor:pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.25);}
@@ -70,6 +70,7 @@ header h2 { margin:0; font-size:1.8rem; }
 
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 @keyframes slideIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
+
 </style>
 </head>
 <body>
@@ -101,7 +102,7 @@ header h2 { margin:0; font-size:1.8rem; }
       <div class="form-group"><label>RUC</label><input type="number" id="rucProveedor" class="form-control"></div>
       <div class="form-group"><label>Nombre</label><input type="text" id="nombreProveedor" class="form-control"></div>
       <div class="form-group"><label>Teléfono</label><input type="number" id="telefonoProveedor" class="form-control"></div>
-      <div class="form-group"><button class="btn-primary mt-2">Guardar</button></div>
+      <div class="form-group"><button id="guardarProveedor" class="btn-primary mt-2">Guardar</button></div>
     </div>
   </div>
   <div class="card-registro">
@@ -123,23 +124,13 @@ header h2 { margin:0; font-size:1.8rem; }
       <div class="form-group"><label>Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
       <div class="form-group"><label>Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
       <div class="form-group"><label>Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control"></div>
-      <div class="form-group"><button class="btn-primary mt-2">Guardar</button></div>
+      <div class="form-group"><button id="guardarProducto" class="btn-primary mt-2">Guardar</button></div>
     </div>
   </div>
-
   <div class="card-registro">
     <h4>Productos Registrados</h4>
     <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Cantidad</th>
-          <th>Unidad</th>
-          <th>Valor Unitario</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Nombre</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Valor Unitario</th><th>Acciones</th></tr></thead>
       <tbody id="tablaProductos"></tbody>
     </table>
   </div>
@@ -151,11 +142,11 @@ header h2 { margin:0; font-size:1.8rem; }
     <h4>Registrar Factura</h4>
     <div class="form-grid">
       <div class="form-group"><label>N° Factura</label><input type="text" id="numeroFactura" class="form-control"></div>
-      <div class="form-group"><label>Proveedor</label><input type="text" id="proveedorFactura" class="form-control"></div>
-      <div class="form-group"><label>Producto</label><input type="text" id="productoFactura" class="form-control"></div>
+      <div class="form-group"><label>Proveedor</label><select id="proveedorFactura" class="form-select"><option value="" disabled selected>Seleccione proveedor</option></select></div>
+      <div class="form-group"><label>Producto</label><select id="productoFactura" class="form-select"><option value="" disabled selected>Seleccione producto</option></select></div>
       <div class="form-group"><label>Monto</label><input type="number" id="montoFactura" class="form-control"></div>
       <div class="form-group"><label>Tipo</label><select id="tipoFactura" class="form-control"><option>Factura Electrónica</option><option>Boleta</option></select></div>
-      <div class="form-group"><button class="btn-primary mt-2">Guardar</button></div>
+      <div class="form-group"><button id="guardarFactura" class="btn-primary mt-2">Guardar</button></div>
     </div>
   </div>
   <div class="card-registro">
@@ -174,7 +165,7 @@ header h2 { margin:0; font-size:1.8rem; }
     <div class="form-grid">
       <div class="form-group"><label>Descripción</label><input type="text" id="descripcionGasto" class="form-control"></div>
       <div class="form-group"><label>Monto</label><input type="number" id="montoGasto" class="form-control"></div>
-      <div class="form-group"><button class="btn-primary mt-2">Guardar</button></div>
+      <div class="form-group"><button id="guardarGasto" class="btn-primary mt-2">Guardar</button></div>
     </div>
   </div>
   <div class="card-registro">
@@ -196,14 +187,13 @@ header h2 { margin:0; font-size:1.8rem; }
 </div>
 
 <script type="module">
-// ---------------- Sidebar Control ----------------
+// ---------------- Sidebar ----------------
 const secciones = document.querySelectorAll('.seccion');
 const botones = document.querySelectorAll('.menu-btn');
 botones.forEach(btn=>{
   btn.addEventListener('click',()=>{
     secciones.forEach(sec=>sec.classList.remove('activa'));
-    const target = document.getElementById(btn.dataset.target);
-    if(target) target.classList.add('activa');
+    document.getElementById(btn.dataset.target).classList.add('activa');
     botones.forEach(b=>b.classList.remove('activo'));
     btn.classList.add('activo');
   });
@@ -219,23 +209,101 @@ function abrirModal(titulo, contenido){
   modal.classList.add('active');
 }
 
+// ---------------- Logout ----------------
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  window.location.href = "login.html";
+});
+
+// ---------------- Datos ----------------
+const proveedores = [];
+const productos = [];
+const facturas = [];
+
+// ---------------- Proveedores ----------------
+const tablaProveedores = document.getElementById('tablaProveedores');
+const selectProveedorFactura = document.getElementById('proveedorFactura');
+
+document.getElementById('guardarProveedor').addEventListener('click', ()=>{
+  const ruc = document.getElementById('rucProveedor').value;
+  const nombre = document.getElementById('nombreProveedor').value;
+  const telefono = document.getElementById('telefonoProveedor').value;
+  if(!ruc || !nombre || !telefono) return alert("Complete todos los campos");
+  const prov = {ruc,nombre,telefono};
+  proveedores.push(prov);
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${ruc}</td><td>${nombre}</td><td>${telefono}</td>`;
+  tablaProveedores.appendChild(row);
+
+  // actualizar select de proveedor en facturas
+  const option = document.createElement('option');
+  option.value = nombre; option.textContent = nombre;
+  selectProveedorFactura.appendChild(option);
+
+  document.getElementById('rucProveedor').value='';
+  document.getElementById('nombreProveedor').value='';
+  document.getElementById('telefonoProveedor').value='';
+});
+
+// ---------------- Productos ----------------
+const tablaProductos = document.getElementById('tablaProductos');
+const selectProductoFactura = document.getElementById('productoFactura');
+
+document.getElementById('guardarProducto').addEventListener('click', ()=>{
+  const nombre = document.getElementById('nombreProducto').value;
+  const descripcion = document.getElementById('descripcionProducto').value;
+  const cantidad = document.getElementById('cantidadProducto').value;
+  const unidad = document.getElementById('unidadProducto').value;
+  const valor = document.getElementById('valorUnitarioProducto').value;
+  if(!nombre) return alert("Ingrese nombre del producto");
+  const prod = {nombre,descripcion,cantidad,unidad,valor};
+  productos.push(prod);
+
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${nombre}</td><td>${descripcion}</td><td>${cantidad}</td><td>${unidad}</td><td>${valor}</td><td>-</td>`;
+  tablaProductos.appendChild(row);
+
+  // actualizar select de producto en facturas
+  const option = document.createElement('option');
+  option.value = nombre; option.textContent = nombre;
+  selectProductoFactura.appendChild(option);
+
+  document.getElementById('nombreProducto').value='';
+  document.getElementById('descripcionProducto').value='';
+  document.getElementById('cantidadProducto').value='';
+  document.getElementById('unidadProducto').value='';
+  document.getElementById('valorUnitarioProducto').value='';
+});
+
+// ---------------- Facturas ----------------
+const tablaFacturas = document.getElementById('tablaFacturas');
+document.getElementById('guardarFactura').addEventListener('click', ()=>{
+  const numero = document.getElementById('numeroFactura').value;
+  const proveedor = selectProveedorFactura.value;
+  const producto = selectProductoFactura.value;
+  const monto = document.getElementById('montoFactura').value;
+  const tipo = document.getElementById('tipoFactura').value;
+  if(!numero || !proveedor || !producto || !monto) return alert("Complete todos los campos");
+  const fac = {numero,proveedor,producto,monto,tipo};
+  facturas.push(fac);
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${numero}</td><td>${proveedor}</td><td>${producto}</td><td>${monto}</td><td>${tipo}</td><td>-</td>`;
+  tablaFacturas.appendChild(row);
+
+  document.getElementById('numeroFactura').value='';
+  selectProveedorFactura.selectedIndex = 0;
+  selectProductoFactura.selectedIndex = 0;
+  document.getElementById('montoFactura').value='';
+});
+
 // ---------------- Buscador ----------------
 const buscador = document.getElementById('buscadorGlobal');
 buscador.addEventListener('keydown', e=>{
   if(e.key==='Enter'){ e.preventDefault(); alert('Buscar productos relacionados: '+buscador.value); }
 });
 
-// ---------------- Logout ----------------
-document.getElementById('logoutBtn').addEventListener('click',()=>{
-  window.location.href = "login.html"; // Redirige al login
-});
 </script>
-
 </body>
 </html>
-
-
-
 
 
 
