@@ -3,29 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discovery Pets - Dashboard</title>
+<title>Discovery Pets - Dashboard 3D</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ---------------- Reset y Body ---------------- */
+/* ---------------- Reset ---------------- */
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-body { display:flex; min-height:100vh; background: linear-gradient(135deg,#f0f8ff,#d0e8ff); color:#333; overflow:hidden; }
+
+/* ---------------- Body ---------------- */
+body {
+  display:flex;
+  min-height:100vh;
+  background: linear-gradient(135deg,#f0f8ff,#d0e8ff);
+  color:#333;
+  overflow:hidden;
+}
 
 /* ---------------- Sidebar ---------------- */
 .sidebar {
   width:260px;
   background:linear-gradient(180deg,#0d47a1,#1976d2);
   color:white;
-  padding-top:20px;
+  padding-top:30px;
   display:flex;
   flex-direction:column;
-  box-shadow:5px 0 20px rgba(0,0,0,0.25);
+  box-shadow:5px 0 25px rgba(0,0,0,0.35);
   position:fixed;
   height:100%;
 }
-.sidebar img { display:block; margin:0 auto 10px auto; width:140px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
-.sidebar h3 { text-align:center; font-weight:bold; margin-bottom:25px; font-size:1.3rem; color:#ffe082; }
-.menu-btn { background:none; border:none; color:white; text-align:left; padding:14px 22px; font-size:16px; transition:all 0.3s; cursor:pointer; border-left:4px solid transparent; }
-.menu-btn:hover, .menu-btn.activo { background:rgba(255,255,255,0.2); border-left:4px solid #ff4081; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
+.sidebar h3 {
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:25px;
+  font-size:1.5rem;
+  color:#ffe082;
+  text-shadow:1px 1px 5px rgba(0,0,0,0.3);
+}
+.menu-btn {
+  background:none;
+  border:none;
+  color:white;
+  text-align:left;
+  padding:14px 22px;
+  font-size:16px;
+  transition: all 0.3s ease;
+  cursor:pointer;
+  border-left:4px solid transparent;
+  border-radius:10px;
+  margin:5px 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
+.menu-btn:hover, .menu-btn.activo {
+  background: rgba(255,255,255,0.2);
+  border-left:4px solid #ff4081;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+}
 
 /* ---------------- Main Content ---------------- */
 .main-content {
@@ -38,55 +69,192 @@ body { display:flex; min-height:100vh; background: linear-gradient(135deg,#f0f8f
 }
 
 /* ---------------- Header ---------------- */
-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
-#buscadorGlobal { width:300px; border-radius:12px; padding:10px 14px; border:1px solid #ccc; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+#buscadorGlobal {
+  width:320px;
+  border-radius:14px;
+  padding:12px 16px;
+  border:1px solid #ccc;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.12);
+  transition: all 0.3s;
+}
+#buscadorGlobal:focus {
+  border-color:#1976d2;
+  box-shadow: 0 0 15px rgba(25,118,210,0.3);
+}
 
 /* ---------------- Cards ---------------- */
-.card-registro { background: linear-gradient(145deg,#ffffff,#f0f8ff); border-radius:20px; padding:30px; margin-bottom:25px; box-shadow:0 15px 40px rgba(0,0,0,0.15); transition:all 0.3s; }
-.card-registro:hover { transform:translateY(-5px); box-shadow:0 20px 50px rgba(0,0,0,0.25); }
+.card-registro {
+  background: linear-gradient(145deg,#ffffff,#f4f4f4);
+  border-radius:22px;
+  padding:30px;
+  margin-bottom:30px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+  transition: all 0.4s ease;
+}
+.card-registro:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+}
 
 /* ---------------- Formularios ---------------- */
-.form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px; }
-.form-group { display:flex; flex-direction:column; }
-.form-group label { font-weight:600; margin-bottom:8px; color:#0d47a1; }
-.form-control { padding:12px; border-radius:12px; border:1px solid #ccc; box-shadow: inset 0 2px 6px rgba(0,0,0,0.08); transition: all 0.3s; }
-.form-control:focus { border-color:#1976d2; box-shadow:0 0 10px rgba(25,118,210,0.3); }
+.form-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:22px;
+}
+.form-group {
+  display:flex;
+  flex-direction:column;
+}
+.form-group label {
+  font-weight:600;
+  margin-bottom:8px;
+  color:#0d47a1;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+.form-control {
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #ccc;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+.form-control:focus {
+  border-color:#1976d2;
+  box-shadow: 0 0 12px rgba(25,118,210,0.25);
+}
 
 /* ---------------- Botones ---------------- */
-.btn-primary { background: linear-gradient(135deg,#1976d2,#42a5f5); border:none; color:white; padding:12px 25px; border-radius:15px; font-weight:600; cursor:pointer; transition: all 0.3s; }
-.btn-primary:hover { background: linear-gradient(135deg,#0d47a1,#1e88e5); transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.25);}
-.btn-danger { background: linear-gradient(135deg,#e53935,#ef5350); border:none; color:white; padding:12px 25px; border-radius:15px; font-weight:600; cursor:pointer; }
-.btn-danger:hover { background: linear-gradient(135deg,#b71c1c,#d32f2f); transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.25); }
+.btn-primary {
+  background: linear-gradient(145deg,#1976d2,#42a5f5);
+  border:none;
+  color:white;
+  padding:14px 28px;
+  border-radius:18px;
+  font-weight:600;
+  cursor:pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+.btn-primary:hover {
+  background: linear-gradient(145deg,#0d47a1,#1e88e5);
+  transform: translateY(-4px);
+  box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+.btn-danger {
+  background: linear-gradient(145deg,#e53935,#ef5350);
+  border:none;
+  color:white;
+  padding:14px 28px;
+  border-radius:18px;
+  font-weight:600;
+  cursor:pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+.btn-danger:hover {
+  background: linear-gradient(145deg,#b71c1c,#d32f2f);
+  transform: translateY(-4px);
+  box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
 
 /* ---------------- Tablas ---------------- */
-.table { width:100%; border-collapse: collapse; margin-top:20px; }
-.table th { background-color:#1976d2; color:white; text-align:center; padding:10px; }
-.table td { text-align:center; padding:8px; border-bottom:1px solid #ccc; }
-.table tbody tr:nth-child(even) { background-color:#f5f5f5; }
-.table .btn { padding:5px 10px; border-radius:8px; font-size:0.9rem; transition:all 0.3s; }
+.table {
+  width:100%;
+  border-collapse: collapse;
+  margin-top:20px;
+  animation: slideIn 0.5s ease;
+}
+.table th {
+  background: linear-gradient(135deg,#1976d2,#42a5f5);
+  color:white;
+  text-align:center;
+  padding:12px;
+  border-radius:8px;
+}
+.table td {
+  text-align:center;
+  padding:10px;
+  border-bottom:1px solid #ccc;
+}
+.table tbody tr:nth-child(even) {
+  background-color:#f5f5f5;
+}
+.table .btn {
+  padding:6px 12px;
+  border-radius:10px;
+  font-size:0.9rem;
+  transition: all 0.3s;
+}
 .table .btn-edit { background-color:#4caf50; color:white; }
-.table .btn-edit:hover { background-color:#388e3c; transform:scale(1.05); }
+.table .btn-edit:hover { background-color:#388e3c; transform: scale(1.1); }
 .table .btn-delete { background-color:#f44336; color:white; }
-.table .btn-delete:hover { background-color:#d32f2f; transform:scale(1.05); }
+.table .btn-delete:hover { background-color:#d32f2f; transform: scale(1.1); }
 
 /* ---------------- Modal ---------------- */
-.modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); display:flex; justify-content:center; align-items:center; z-index:1000; display:none; }
-.modal-card { background: linear-gradient(145deg,#fff8e1,#ffe0b2); border-radius:20px; padding:30px; width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.3); position:relative; text-align:left; transform:scale(0.9); transition:all 0.3s;}
+.modal-overlay {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(6px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  display:none;
+}
+.modal-card {
+  background: linear-gradient(145deg,#fff8e1,#ffe0b2);
+  border-radius:22px;
+  padding:35px;
+  width:450px;
+  box-shadow:0 25px 60px rgba(0,0,0,0.35);
+  position:relative;
+  text-align:left;
+  transform: scale(0.9);
+  transition: all 0.4s ease;
+}
 .modal-overlay.active .modal-card { transform:scale(1); }
-.cerrar { position:absolute; top:10px; right:15px; font-size:24px; font-weight:bold; cursor:pointer; color:#ff4081; }
-#contenidoModal { margin-top:15px; white-space:pre-wrap; font-family:'Poppins',sans-serif; font-size:14px; }
+.cerrar {
+  position:absolute;
+  top:12px;
+  right:18px;
+  font-size:26px;
+  font-weight:bold;
+  cursor:pointer;
+  color:#ff4081;
+  text-shadow:1px 1px 5px rgba(0,0,0,0.3);
+}
+#contenidoModal { margin-top:18px; white-space:pre-wrap; font-size:14px; }
 
-/* ---------------- Secciones Absolutas ---------------- */
-.seccion { position:absolute; top:0; left:0; width:100%; display:none; padding-bottom:40px; }
+/* ---------------- Secciones ---------------- */
+.seccion {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  display:none;
+  padding-bottom:40px;
+}
 .seccion.activa { display:block; animation:fadeIn 0.4s ease; }
+
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes slideIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
 </style>
 </head>
 <body>
 
-<!-- ---------------- Sidebar ---------------- -->
+<!-- Sidebar -->
 <div class="sidebar">
-  <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
   <h3>🐾 Discovery Pets</h3>
   <button class="menu-btn activo" data-target="proveedores">🏢 Proveedores</button>
   <button class="menu-btn" data-target="productos">🛒 Productos</button>
@@ -96,21 +264,21 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   <button id="logoutBtn" class="menu-btn btn-danger">🚪 Cerrar Sesión</button>
 </div>
 
-<!-- ---------------- Main Content ---------------- -->
+<!-- Main Content -->
 <div class="main-content">
 <header>
   <h2>Panel de Control 🐶</h2>
   <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar producto...">
 </header>
 
-<!-- ---------------- Proveedores ---------------- -->
+<!-- Secciones (Proveedores, Productos, Facturas, Gastos) -->
 <section id="proveedores" class="seccion activa">
   <div class="card-registro">
     <h4>🏢 Registrar Proveedor</h4>
     <form id="proveedorForm" class="form-grid">
-      <div class="form-group"><label for="rucProveedor">RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
-      <div class="form-group"><label for="nombreProveedor">Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
-      <div class="form-group"><label for="telefonoProveedor">Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
+      <div class="form-group"><label>RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
+      <div class="form-group"><label>Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
+      <div class="form-group"><label>Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
       <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
     </form>
   </div>
@@ -123,16 +291,15 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
-<!-- ---------------- Productos ---------------- -->
 <section id="productos" class="seccion">
   <div class="card-registro">
     <h4>🛒 Registrar Producto</h4>
     <form id="productoForm" class="form-grid">
-      <div class="form-group"><label for="nombreProducto">Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
-      <div class="form-group"><label for="descripcionProducto">Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
-      <div class="form-group"><label for="cantidadProducto">Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
-      <div class="form-group"><label for="unidadProducto">Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
-      <div class="form-group"><label for="valorUnitarioProducto">Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
+      <div class="form-group"><label>Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
+      <div class="form-group"><label>Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
+      <div class="form-group"><label>Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
+      <div class="form-group"><label>Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
+      <div class="form-group"><label>Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
       <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
     </form>
   </div>
@@ -145,21 +312,20 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
-<!-- ---------------- Facturas ---------------- -->
 <section id="facturas" class="seccion">
   <div class="card-registro">
     <h4>📄 Registrar Factura</h4>
     <form id="facturaForm" class="form-grid">
-      <div class="form-group"><label for="numeroFactura">N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
-      <div class="form-group"><label for="proveedorFactura">Proveedor</label><select id="proveedorFactura" class="form-control"></select></div>
-      <div class="form-group"><label for="productoFactura">Producto</label><input type="text" id="productoFactura" class="form-control"></div>
-      <div class="form-group"><label for="montoFactura">Monto</label>
+      <div class="form-group"><label>N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
+      <div class="form-group"><label>Proveedor</label><select id="proveedorFactura" class="form-control"></select></div>
+      <div class="form-group"><label>Producto</label><input type="text" id="productoFactura" class="form-control"></div>
+      <div class="form-group"><label>Monto</label>
         <div style="display:flex; gap:10px;">
           <select id="monedaFactura" class="form-control" style="width:90px;"><option value="S/">S/</option><option value="$">$</option></select>
           <input type="number" id="montoFactura" class="form-control" step="0.01" required>
         </div>
       </div>
-      <div class="form-group"><label for="tipoFactura">Tipo</label><select id="tipoFactura" class="form-control"><option value="Factura Electrónica">Factura Electrónica</option><option value="Boleta">Boleta</option></select></div>
+      <div class="form-group"><label>Tipo</label><select id="tipoFactura" class="form-control"><option value="Factura Electrónica">Factura Electrónica</option><option value="Boleta">Boleta</option></select></div>
       <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
     </form>
   </div>
@@ -172,14 +338,13 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
-<!-- ---------------- Gastos ---------------- -->
 <section id="gastos" class="seccion">
   <div class="card-registro">
     <h4>💰 Registrar Gasto</h4>
     <form id="gastoForm" class="form-grid">
-      <div class="form-group"><label for="descripcionGasto">Descripción</label><input type="text" id="descripcionGasto" class="form-control" required></div>
-      <div class="form-group"><label for="montoGasto">Monto</label><input type="number" id="montoGasto" class="form-control" step="0.01" required></div>
-      <div class="form-group"><label for="fechaGasto">Fecha</label><input type="date" id="fechaGasto" class="form-control" required></div>
+      <div class="form-group"><label>Descripción</label><input type="text" id="descripcionGasto" class="form-control" required></div>
+      <div class="form-group"><label>Monto</label><input type="number" id="montoGasto" class="form-control" step="0.01" required></div>
+      <div class="form-group"><label>Fecha</label><input type="date" id="fechaGasto" class="form-control" required></div>
       <div style="text-align:right; margin-top:15px;"><button class="btn btn-primary">Guardar</button></div>
     </form>
   </div>
@@ -192,7 +357,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
-<!-- ---------------- Modal ---------------- -->
+<!-- Modal -->
 <div id="detalleModal" class="modal-overlay">
   <div class="modal-card">
     <span id="cerrarModal" class="cerrar">&times;</span>
@@ -202,14 +367,14 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 </div>
 
 <script type="module">
-// ---------------- Control Sidebar ----------------
+// ---------------- Sidebar Control ----------------
 const secciones = document.querySelectorAll('.seccion');
 const botones = document.querySelectorAll('.menu-btn');
-botones.forEach(btn => {
-  btn.addEventListener('click', () => {
-    secciones.forEach(sec => sec.classList.remove('activa'));
+botones.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    secciones.forEach(sec=>sec.classList.remove('activa'));
     document.getElementById(btn.dataset.target).classList.add('activa');
-    botones.forEach(b => b.classList.remove('activo'));
+    botones.forEach(b=>b.classList.remove('activo'));
     btn.classList.add('activo');
   });
 });
@@ -217,11 +382,11 @@ botones.forEach(btn => {
 // ---------------- Modal ----------------
 const modal = document.getElementById('detalleModal');
 const cerrar = document.getElementById('cerrarModal');
-cerrar.addEventListener('click', () => { modal.style.display='none'; });
+cerrar.addEventListener('click',()=>{ modal.style.display='none'; });
 
-// ---------------- Buscar Producto ----------------
+// ---------------- Buscador Producto ----------------
 const buscador = document.getElementById('buscadorGlobal');
-buscador.addEventListener('keypress', (e) => {
+buscador.addEventListener('keypress',(e)=>{
   if(e.key==='Enter'){
     e.preventDefault();
     alert(`Buscar productos con: ${buscador.value}`);
@@ -232,6 +397,8 @@ buscador.addEventListener('keypress', (e) => {
 
 </body>
 </html>
+
+
 
 
 
