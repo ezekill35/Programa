@@ -1,235 +1,219 @@
-// dashboard.js
-import {
-  getFirestore, collection, addDoc, onSnapshot, deleteDoc,
-  doc, updateDoc, getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { app } from "./firebase.js";
+import { db } from './firebase.js';
+import { 
+  collection, addDoc, onSnapshot, deleteDoc, doc, getDocs, query, where 
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-const db = getFirestore(app);
-const auth = getAuth(app);
+// -------------------- REFERENCIAS --------------------
+const tablaProveedores = document.getElementById('tablaProveedores');
+const tablaProductos = document.getElementById('tablaProductos');
+const tablaFacturas = document.getElementById('tablaFacturas');
+const selectProveedorFactura = document.getElementById('proveedorFactura');
+const selectProductoFactura = document.getElementById('productoFactura');
+const buscador = document.getElementById('buscadorFactura');
 
-// --- ELEMENTOS ---
-const menuBtns = document.querySelectorAll(".menu-btn");
-const secciones = document.querySelectorAll(".seccion");
-const logoutBtn = document.getElementById("logoutBtn");
-const buscador = document.getElementById("buscadorGlobal");
-
-// --- FORMULARIOS Y TABLAS ---
-const proveedorForm = document.getElementById("proveedorForm");
-const tablaProveedores = document.getElementById("tablaProveedores");
-
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-
-const proveedorFactura = document.getElementById("proveedorFactura");
-const productoFactura = document.getElementById("productoFactura");
-
-// --- NAVEGACIÓN ENTRE SECCIONES ---
-menuBtns.forEach(btn => {
-  btn.addEventListener("click", () => {
-    menuBtns.forEach(b => b.classList.remove("activo"));
-    btn.classList.add("activo");
-    secciones.forEach(sec => sec.style.display = "none");
-    document.getElementById(btn.dataset.target).style.display = "block";
-  });
+// -------------------- VALIDACIONES --------------------
+document.getElementById('rucProveedor').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+});
+document.getElementById('numeroFactura').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
 });
 
-// --- CERRAR SESIÓN ---
-logoutBtn.addEventListener("click", () => {
-  signOut(auth).then(() => window.location.href = "index.html");
+// -------------------- CRUD PROVEEDORES --------------------
+document.getElementById('guardarProveedor').addEventListener('click', async () => {
+  const ruc = document.getElementById('rucProveedor').value;
+  const nombre = document.getElementById('nombreProveedor').value;
+  const direccion = document.getElementById('direccionProveedor').value;
+
+  if (!ruc || !nombre || !direccion) return alert("Complete todos los campos del proveedor");
+
+  await addDoc(collection(db, 'proveedores'), { ruc, nombre, direccion });
+
+  document.getElementById('rucProveedor').value = '';
+  document.getElementById('nombreProveedor').value = '';
+  document.getElementById('direccionProveedor').value = '';
 });
 
-// --- VALIDACIONES NUMÉRICAS ---
-document.getElementById("rucProveedor").addEventListener("input", e => {
-  e.target.value = e.target.value.replace(/\D/g, '');
-});
-document.getElementById("numeroFactura").addEventListener("input", e => {
-  e.target.value = e.target.value.replace(/\D/g, '');
-});
+onSnapshot(collection(db, 'proveedores'), snapshot => {
+  tablaProveedores.innerHTML = '';
+  selectProveedorFactura.innerHTML = '<option value="" disabled selected>Seleccione proveedor</option>';
 
-// --- GUARDAR PROVEEDOR ---
-proveedorForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const ruc = document.getElementById("rucProveedor").value.trim();
-  const nombre = document.getElementById("nombreProveedor").value.trim();
-  const direccion = document.getElementById("direccionProveedor").value.trim();
-  await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion });
-  proveedorForm.reset();
-});
-
-// --- LISTAR PROVEEDORES EN TIEMPO REAL ---
-onSnapshot(collection(db, "proveedores"), snapshot => {
-  tablaProveedores.innerHTML = "";
-  proveedorFactura.innerHTML = '<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(docu => {
-    const p = docu.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.ruc}</td>
-      <td>${p.nombre}</td>
-      <td>${p.direccion}</td>
+  snapshot.forEach(docSnap => {
+    const prov = docSnap.data();
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${prov.ruc}</td>
+      <td>${prov.nombre}</td>
+      <td>${prov.direccion}</td>
       <td>
-        <button class="btn-edit" data-id="${docu.id}" data-tipo="proveedor">✏️</button>
-        <button class="btn-delete" data-id="${docu.id}" data-tipo="proveedor">🗑️</button>
+        <button class="btn btn-edit" onclick="editarProveedor('${docSnap.id}', '${prov.ruc}', '${prov.nombre}', '${prov.direccion}')">Editar</button>
+        <button class="btn btn-delete" onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button>
       </td>`;
-    tablaProveedores.appendChild(tr);
-    proveedorFactura.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
+    tablaProveedores.appendChild(row);
+
+    const option = document.createElement('option');
+    option.value = prov.nombre;
+    option.textContent = prov.nombre;
+    selectProveedorFactura.appendChild(option);
   });
 });
 
-// --- GUARDAR PRODUCTO ---
-productoForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const nombre = document.getElementById("nombreProducto").value.trim();
-  const cantidad = document.getElementById("cantidadProducto").value;
-  const unidad = document.getElementById("unidadProducto").value.trim();
-  const valor = parseFloat(document.getElementById("valorUnitarioProducto").value);
+window.eliminarProveedor = async id => await deleteDoc(doc(db, 'proveedores', id));
 
-  await addDoc(collection(db, "productos"), { nombre, cantidad, unidad, valor });
-  productoForm.reset();
-});
+window.editarProveedor = async (id, ruc, nombre, direccion) => {
+  const nuevoRuc = prompt("Nuevo RUC:", ruc);
+  const nuevoNombre = prompt("Nuevo nombre:", nombre);
+  const nuevaDireccion = prompt("Nueva dirección:", direccion);
 
-// --- LISTAR PRODUCTOS EN TIEMPO REAL ---
-onSnapshot(collection(db, "productos"), snapshot => {
-  tablaProductos.innerHTML = "";
-  productoFactura.innerHTML = '<option value="">Seleccione producto</option>';
-  snapshot.forEach(docu => {
-    const p = docu.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.nombre}</td>
-      <td>${p.cantidad}</td>
-      <td>${p.unidad}</td>
-      <td>${p.valor}</td>
-      <td>
-        <button class="btn-edit" data-id="${docu.id}" data-tipo="producto">✏️</button>
-        <button class="btn-delete" data-id="${docu.id}" data-tipo="producto">🗑️</button>
-      </td>`;
-    tablaProductos.appendChild(tr);
-    productoFactura.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
-  });
-});
-
-// --- GUARDAR FACTURA ---
-facturaForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const numero = document.getElementById("numeroFactura").value;
-  const proveedor = proveedorFactura.value;
-  const producto = productoFactura.value;
-  const moneda = document.getElementById("monedaFactura").value;
-  const monto = parseFloat(document.getElementById("montoFactura").value);
-  const tipo = document.getElementById("tipoFactura").value;
-
-  await addDoc(collection(db, "facturas"), {
-    numero, proveedor, producto, monto, tipo, moneda
-  });
-  facturaForm.reset();
-});
-
-// --- LISTAR FACTURAS EN TIEMPO REAL ---
-const cargarFacturas = () => {
-  onSnapshot(collection(db, "facturas"), snapshot => {
-    tablaFacturas.innerHTML = "";
-    snapshot.forEach(docu => {
-      const f = docu.data();
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${f.numero}</td>
-        <td>${f.proveedor}</td>
-        <td>${f.producto}</td>
-        <td>${f.moneda} ${f.monto}</td>
-        <td>${f.tipo}</td>
-        <td>
-          <button class="btn-edit" data-id="${docu.id}" data-tipo="factura">✏️</button>
-          <button class="btn-delete" data-id="${docu.id}" data-tipo="factura">🗑️</button>
-        </td>`;
-      tablaFacturas.appendChild(tr);
+  if (nuevoRuc && nuevoNombre && nuevaDireccion) {
+    await deleteDoc(doc(db, 'proveedores', id));
+    await addDoc(collection(db, 'proveedores'), {
+      ruc: nuevoRuc, nombre: nuevoNombre, direccion: nuevaDireccion
     });
-  });
+  }
 };
-cargarFacturas();
 
-// --- EDITAR / ELIMINAR ---
-document.addEventListener("click", async e => {
-  const btn = e.target;
-  if (btn.classList.contains("btn-delete")) {
-    const tipo = btn.dataset.tipo;
-    const id = btn.dataset.id;
-    await deleteDoc(doc(db, tipo + "s", id));
-  }
+// -------------------- CRUD PRODUCTOS --------------------
+document.getElementById('guardarProducto').addEventListener('click', async () => {
+  const nombre = document.getElementById('nombreProducto').value;
+  const cantidad = document.getElementById('cantidadProducto').value;
+  const unidad = document.getElementById('unidadProducto').value;
+  const valor = document.getElementById('valorUnitarioProducto').value;
 
-  if (btn.classList.contains("btn-edit")) {
-    const tipo = btn.dataset.tipo;
-    const id = btn.dataset.id;
-    let nuevosDatos = {};
+  if (!nombre || !cantidad || !unidad || !valor) return alert("Complete todos los campos del producto");
 
-    if (tipo === "proveedor") {
-      const ruc = prompt("Nuevo RUC:");
-      const nombre = prompt("Nuevo nombre:");
-      const direccion = prompt("Nueva dirección:");
-      nuevosDatos = { ruc, nombre, direccion };
-    } else if (tipo === "producto") {
-      const nombre = prompt("Nuevo nombre:");
-      const cantidad = prompt("Nueva cantidad:");
-      const unidad = prompt("Nueva unidad:");
-      const valor = parseFloat(prompt("Nuevo valor:"));
-      nuevosDatos = { nombre, cantidad, unidad, valor };
-    } else if (tipo === "factura") {
-      const numero = prompt("Nuevo número de factura:");
-      const monto = parseFloat(prompt("Nuevo monto:"));
-      const tipoF = prompt("Nuevo tipo (Factura Electrónica / Boleta):");
-      nuevosDatos = { numero, monto, tipo: tipoF };
-    }
+  await addDoc(collection(db, 'productos'), {
+    nombre,
+    cantidad,
+    unidad,
+    valor: parseFloat(valor)
+  });
 
-    if (Object.values(nuevosDatos).some(v => v !== null && v !== "")) {
-      await updateDoc(doc(db, tipo + "s", id), nuevosDatos);
-    }
-  }
+  document.getElementById('nombreProducto').value = '';
+  document.getElementById('cantidadProducto').value = '';
+  document.getElementById('unidadProducto').value = '';
+  document.getElementById('valorUnitarioProducto').value = '';
 });
 
-// --- BUSCADOR POR PRODUCTO (solo al presionar Enter) ---
-buscador.addEventListener("keypress", async e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const texto = buscador.value.trim().toLowerCase();
-    tablaFacturas.innerHTML = "";
+onSnapshot(collection(db, 'productos'), snapshot => {
+  tablaProductos.innerHTML = '';
+  selectProductoFactura.innerHTML = '<option value="" disabled selected>Seleccione producto</option>';
 
-    const querySnapshot = await getDocs(collection(db, "facturas"));
-    let encontrados = 0;
-
-    querySnapshot.forEach(docu => {
-      const f = docu.data();
-      if (texto && f.producto.toLowerCase().includes(texto)) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${f.numero}</td>
-          <td>${f.proveedor}</td>
-          <td>${f.producto}</td>
-          <td>${f.moneda} ${f.monto}</td>
-          <td>${f.tipo}</td>
-          <td>
-            <button class="btn-edit" data-id="${docu.id}" data-tipo="factura">✏️</button>
-            <button class="btn-delete" data-id="${docu.id}" data-tipo="factura">🗑️</button>
-          </td>`;
-        tablaFacturas.appendChild(tr);
-        encontrados++;
-      }
-    });
-
-    if (encontrados === 0) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="6" style="text-align:center; color:#ff7043; font-weight:600;">
-        ⚠️ No se encontraron facturas relacionadas con ese producto.
+  snapshot.forEach(docSnap => {
+    const prod = docSnap.data();
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${prod.nombre}</td>
+      <td>${prod.cantidad}</td>
+      <td>${prod.unidad}</td>
+      <td>${prod.valor}</td>
+      <td>
+        <button class="btn btn-edit" onclick="editarProducto('${docSnap.id}', '${prod.nombre}', '${prod.cantidad}', '${prod.unidad}', '${prod.valor}')">Editar</button>
+        <button class="btn btn-delete" onclick="eliminarProducto('${docSnap.id}')">Eliminar</button>
       </td>`;
-      tablaFacturas.appendChild(tr);
-    }
+    tablaProductos.appendChild(row);
+
+    const option = document.createElement('option');
+    option.value = prod.nombre;
+    option.textContent = prod.nombre;
+    selectProductoFactura.appendChild(option);
+  });
+});
+
+window.eliminarProducto = async id => await deleteDoc(doc(db, 'productos', id));
+
+window.editarProducto = async (id, nombre, cantidad, unidad, valor) => {
+  const nuevoNombre = prompt("Nuevo nombre:", nombre);
+  const nuevaCantidad = prompt("Nueva cantidad:", cantidad);
+  const nuevaUnidad = prompt("Nueva unidad:", unidad);
+  const nuevoValor = prompt("Nuevo valor:", valor);
+
+  if (nuevoNombre && nuevaCantidad && nuevaUnidad && nuevoValor) {
+    await deleteDoc(doc(db, 'productos', id));
+    await addDoc(collection(db, 'productos'), {
+      nombre: nuevoNombre,
+      cantidad: nuevaCantidad,
+      unidad: nuevaUnidad,
+      valor: parseFloat(nuevoValor)
+    });
+  }
+};
+
+// -------------------- CRUD FACTURAS --------------------
+document.getElementById('guardarFactura').addEventListener('click', async () => {
+  const numero = document.getElementById('numeroFactura').value;
+  const proveedor = selectProveedorFactura.value;
+  const producto = selectProductoFactura.value;
+  const monto = document.getElementById('montoFactura').value;
+  const tipo = document.getElementById('tipoFactura').value;
+
+  if (!numero || !proveedor || !producto || !monto) return alert("Complete todos los campos de la factura");
+
+  await addDoc(collection(db, 'facturas'), {
+    numero,
+    proveedor,
+    producto,
+    monto,
+    tipo
+  });
+
+  document.getElementById('numeroFactura').value = '';
+  document.getElementById('montoFactura').value = '';
+  selectProveedorFactura.selectedIndex = 0;
+  selectProductoFactura.selectedIndex = 0;
+});
+
+// Función para renderizar facturas
+function renderFacturas(snapshot) {
+  tablaFacturas.innerHTML = '';
+  snapshot.forEach(docSnap => {
+    const fac = docSnap.data();
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${fac.numero}</td>
+      <td class="link" onclick="verProveedor('${fac.proveedor}')">${fac.proveedor}</td>
+      <td class="link" onclick="verProducto('${fac.producto}')">${fac.producto}</td>
+      <td>${fac.monto}</td>
+      <td>${fac.tipo}</td>
+      <td>
+        <button class="btn btn-delete" onclick="eliminarFactura('${docSnap.id}')">Eliminar</button>
+      </td>`;
+    tablaFacturas.appendChild(row);
+  });
+}
+
+// Escucha en tiempo real las facturas
+onSnapshot(collection(db, 'facturas'), renderFacturas);
+
+window.eliminarFactura = async id => await deleteDoc(doc(db, 'facturas', id));
+
+// -------------------- BUSCADOR DE FACTURAS POR PRODUCTO --------------------
+buscador.addEventListener('keydown', async e => {
+  if (e.key === 'Enter') {
+    const texto = buscador.value.trim();
+    if (!texto) return;
+
+    const q = query(collection(db, 'facturas'), where('producto', '==', texto));
+    const snapshot = await getDocs(q);
+    renderFacturas(snapshot);
   }
 });
 
+// -------------------- MOSTRAR INFO DE PROVEEDOR / PRODUCTO --------------------
+window.verProveedor = async nombre => {
+  const q = query(collection(db, 'proveedores'), where('nombre', '==', nombre));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return alert("Proveedor no encontrado");
+  const data = snapshot.docs[0].data();
+  alert(`📦 DATOS DEL PROVEEDOR\n\nRUC: ${data.ruc}\nNombre: ${data.nombre}\nDirección: ${data.direccion}`);
+};
 
+window.verProducto = async nombre => {
+  const q = query(collection(db, 'productos'), where('nombre', '==', nombre));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return alert("Producto no encontrado");
+  const data = snapshot.docs[0].data();
+  alert(`🧾 DATOS DEL PRODUCTO\n\nNombre: ${data.nombre}\nCantidad: ${data.cantidad}\nUnidad: ${data.unidad}\nValor Unitario: ${data.valor}`);
+};
 
 
