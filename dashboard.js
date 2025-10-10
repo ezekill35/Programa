@@ -1,7 +1,7 @@
 import { auth, db } from './firebase.js';
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { 
-  collection, addDoc, onSnapshot, deleteDoc, doc, query, where 
+  collection, addDoc, onSnapshot, deleteDoc, doc, query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Mostrar la primera sección por defecto
   document.getElementById("proveedores").style.display = "block";
   menuBtns[0].classList.add("activo");
 
@@ -63,10 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const ruc = document.getElementById("rucProveedor").value;
     const nombre = document.getElementById("nombreProveedor").value;
-    const telefono = document.getElementById("telefonoProveedor").value;
-    if(!ruc || !nombre || !telefono) return alert("Complete todos los campos");
+    const direccion = document.getElementById("direccionProveedor").value;
+    if(!ruc || !nombre || !direccion) return alert("Complete todos los campos");
 
-    await addDoc(collection(db, "proveedores"), { ruc, nombre, telefono });
+    await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion });
     proveedorForm.reset();
   });
 
@@ -79,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       row.innerHTML = `
         <td>${p.ruc}</td>
         <td>${p.nombre}</td>
-        <td>${p.telefono}</td>
+        <td>${p.direccion}</td>
         <td><button class="btn btn-delete" onclick="eliminarProveedor('${docSnap.id}')">Eliminar</button></td>
       `;
       tablaProveedores.appendChild(row);
@@ -167,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       tablaFacturas.appendChild(row);
 
-      // Modal detalles
       row.querySelectorAll(".click-detalle").forEach(td => {
         td.addEventListener("click", async () => {
           let titulo="", contenido="";
@@ -176,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const snap = await getDocs(q);
             const p = snap.docs[0]?.data();
             titulo="Detalles del Proveedor";
-            contenido=p?`Nombre: ${p.nombre}\nRUC: ${p.ruc}\nTeléfono: ${p.telefono}`:"Proveedor no encontrado";
+            contenido=p?`Nombre: ${p.nombre}\nRUC: ${p.ruc}\nDirección: ${p.direccion}`:"Proveedor no encontrado";
           }
           if(td.dataset.tipo==="producto"){
             const q = query(collection(db,"productos"), where("nombre","==",td.textContent));
@@ -211,13 +209,14 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if(resultados.length>0){
-      const contenido = resultados.map(f=>`Factura N°: ${f.numero}\nProveedor: ${f.proveedor}\nProducto: ${f.producto}\nMonto: ${f.moneda} ${f.monto}\nTipo: ${f.tipo}`).join("\n\n----------------\n\n");
+      const contenido = resultados.map(f =>
+        `Factura N°: ${f.numero}\nProveedor: ${f.proveedor}\nProducto: ${f.producto}\nMonto: ${f.moneda} ${f.monto}\nTipo: ${f.tipo}`
+      ).join("\n\n----------------\n\n");
       abrirModal("Facturas relacionadas", contenido);
     } else detalleModal.style.display="none";
   });
 
 });
-
 
 
 
