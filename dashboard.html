@@ -1,204 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discovery Pets - Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body {
-      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-      font-family: "Poppins", sans-serif;
-      overflow: hidden;
-    }
-
-    .dashboard {
-      display: flex;
-      height: 100vh;
-    }
-
-    .sidebar {
-      width: 240px;
-      background: linear-gradient(145deg, #4fc3f7, #0288d1);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 30px;
-      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.25);
-      z-index: 10;
-    }
-
-    .sidebar h3 {
-      margin-bottom: 30px;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-    }
-
-    .sidebar button {
-      width: 85%;
-      margin: 8px 0;
-      padding: 10px;
-      border: none;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-
-    .sidebar button:hover,
-    .sidebar button.active {
-      background: white;
-      color: #0288d1;
-      transform: scale(1.05);
-    }
-
-    .main {
-      flex: 1;
-      background: #f7f9fc;
-      border-radius: 20px 0 0 20px;
-      overflow-y: auto;
-      padding: 30px;
-      position: relative;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .topbar input {
-      border-radius: 12px;
-      padding: 10px;
-      width: 50%;
-      border: 1px solid #ccc;
-    }
-
-    .card {
-      border-radius: 18px;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-      background: white;
-      padding: 20px;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-      transform: scale(1.01);
-    }
-
-    .form-control, select {
-      border-radius: 8px;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="dashboard.js"></script>
 </head>
+
 <body>
-  <div class="dashboard">
-    <div class="sidebar">
-      <h3>Discovery Pets 🐾</h3>
-      <button id="btnProveedor">Proveedores</button>
-      <button id="btnFactura">Facturación</button>
-      <button id="btnProducto">Productos</button>
-      <button id="btnGastos">Gastos</button>
-      <button id="btnReporte">Reportes</button>
-      <button id="btnCerrarSesion" class="mt-auto mb-3">Cerrar Sesión</button>
-    </div>
+  <!-- ================= Sidebar ================= -->
+  <aside class="sidebar">
+    <h2>🐾 Discovery Pets</h2>
+    <nav>
+      <button class="menu-opcion" data-seccion="facturas">📄 Facturas</button>
+      <button class="menu-opcion" data-seccion="proveedores">🏢 Proveedores</button>
+      <button class="menu-opcion" data-seccion="productos">📦 Productos</button>
+      <button class="menu-opcion" data-seccion="gastos">💸 Gastos</button>
+      <button class="menu-opcion" data-seccion="reportes">📊 Reportes</button>
+    </nav>
+    <button id="cerrarSesion" class="cerrar-sesion">Cerrar Sesión</button>
+  </aside>
 
-    <div class="main">
-      <div class="topbar">
-        <input type="text" id="globalSearch" placeholder="Buscar factura, proveedor o producto...">
-      </div>
-      <div id="contenido">
-        <div class="card text-center p-5">
-          <h4>Bienvenido al Sistema Discovery Pets 🐶🐱</h4>
-          <p>Selecciona una opción del menú lateral para comenzar.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- ================= Contenido Principal ================= -->
+  <main class="main-content">
+    <header>
+      <input type="text" id="buscador" placeholder="🔍 Buscar factura, proveedor o producto...">
+    </header>
 
-  <!-- ===================== -->
-  <!-- TEMPLATES DINÁMICOS -->
-  <!-- ===================== -->
-
-  <template id="tplProveedor">
-    <div class="card">
-      <h4>Registro de Proveedores</h4>
-      <form id="formProveedor" class="mt-3">
-        <input id="provNombre" class="form-control mb-2" placeholder="Nombre del proveedor" required>
-        <input id="provRuc" class="form-control mb-2" placeholder="RUC (solo números)" pattern="[0-9]{11}" required>
-        <input id="provTelefono" class="form-control mb-2" placeholder="Teléfono" pattern="[0-9]{9}" required>
-        <button class="btn btn-primary w-100">Guardar</button>
-      </form>
-    </div>
-  </template>
-
-  <template id="tplFactura">
-    <div class="card">
-      <h4>Registro de Facturación</h4>
-      <form id="formFactura" class="mt-3">
-        <input id="facturaNumero" class="form-control mb-2" placeholder="Número de factura" required>
-        <select id="facturaProveedor" class="form-control mb-2" required>
-          <option value="">Cargando proveedores...</option>
+    <!-- ========== FACTURAS ========== -->
+    <section id="facturas" class="seccion">
+      <h2>Facturas</h2>
+      <form id="formFactura">
+        <input name="numero" placeholder="Número de Factura" required>
+        <input name="proveedor" placeholder="Proveedor" required>
+        <input name="producto" placeholder="Producto" required>
+        <input name="monto" type="number" step="0.01" placeholder="Monto" required>
+        <select name="moneda">
+          <option value="S/.">S/.</option>
+          <option value="$">$</option>
         </select>
-        <select id="tipoFactura" class="form-control mb-2">
-          <option value="Factura Electrónica">Factura Electrónica</option>
-          <option value="Boleta">Boleta</option>
+        <select name="tipo">
+          <option value="Compra">Compra</option>
+          <option value="Servicio">Servicio</option>
         </select>
-        <div class="input-group mb-2">
-          <select id="tipoMoneda" class="form-select" style="max-width:120px">
-            <option value="PEN">S/</option>
-            <option value="USD">$</option>
-          </select>
-          <input id="facturaMonto" type="number" step="0.01" class="form-control" placeholder="Monto total" required>
-        </div>
-        <button class="btn btn-success w-100">Guardar Factura</button>
+        <button type="submit">Agregar</button>
       </form>
-    </div>
-  </template>
 
-  <template id="tplProducto">
-    <div class="card">
-      <h4>Registro de Productos</h4>
-      <form id="formProducto" class="mt-3">
-        <input id="prodNombre" class="form-control mb-2" placeholder="Nombre del producto" required>
-        <input id="prodDescripcion" class="form-control mb-2" placeholder="Descripción">
-        <input id="prodCantidad" type="number" class="form-control mb-2" placeholder="Cantidad" required>
-        <select id="prodUnidad" class="form-control mb-2">
-          <option value="unidad">Unidad</option>
-          <option value="kg">Kilogramos</option>
-          <option value="lt">Litros</option>
-        </select>
-        <input id="prodValor" type="number" step="0.01" class="form-control mb-2" placeholder="Valor unitario" required>
-        <button class="btn btn-info w-100">Guardar Producto</button>
+      <table class="tabla-facturas">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Proveedor</th>
+            <th>Producto</th>
+            <th>Monto</th>
+            <th>Tipo</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- ========== PROVEEDORES ========== -->
+    <section id="proveedores" class="seccion" style="display:none;">
+      <h2>Proveedores</h2>
+      <form id="formProveedor">
+        <input name="nombre" placeholder="Nombre" required>
+        <input name="ruc" placeholder="RUC" required>
+        <input name="telefono" placeholder="Teléfono" required>
+        <button type="submit">Agregar</button>
       </form>
-    </div>
-  </template>
 
-  <template id="tplGastos">
-    <div class="card">
-      <h4>Registro de Gastos</h4>
-      <form id="formGasto" class="mt-3">
-        <input id="gastoDescripcion" class="form-control mb-2" placeholder="Descripción del gasto" required>
-        <input id="gastoMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto" required>
-        <input id="gastoFecha" type="date" class="form-control mb-2" required>
-        <button class="btn btn-warning w-100">Guardar Gasto</button>
+      <table class="tabla-proveedores">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>RUC</th>
+            <th>Teléfono</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- ========== PRODUCTOS ========== -->
+    <section id="productos" class="seccion" style="display:none;">
+      <h2>Productos</h2>
+      <form id="formProducto">
+        <input name="nombre" placeholder="Nombre" required>
+        <input name="descripcion" placeholder="Descripción" required>
+        <input name="cantidad" type="number" placeholder="Cantidad" required>
+        <input name="unidad" placeholder="Unidad de medida" required>
+        <input name="valor" type="number" step="0.01" placeholder="Valor Unitario" required>
+        <button type="submit">Agregar</button>
       </form>
-    </div>
-  </template>
 
-  <template id="tplReporte">
-    <div class="card text-center">
-      <h4>Reporte General</h4>
-      <p>Resumen de operaciones del sistema Discovery Pets en tiempo real.</p>
-    </div>
-  </template>
+      <table class="tabla-productos">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Unidad</th>
+            <th>Valor</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-  <script type="module" src="dashboard.js"></script>
+    <!-- ========== GASTOS ========== -->
+    <section id="gastos" class="seccion" style="display:none;">
+      <h2>Gastos</h2>
+      <form id="formGasto">
+        <input name="descripcion" placeholder="Descripción del Gasto" required>
+        <input name="monto" type="number" step="0.01" placeholder="Monto" required>
+        <button type="submit">Agregar</button>
+      </form>
+
+      <table class="tabla-gastos">
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- ========== REPORTES ========== -->
+    <section id="reportes" class="seccion" style="display:none;">
+      <h2>Reportes</h2>
+      <button id="generarReporte">Generar Reporte</button>
+    </section>
+  </main>
 </body>
 </html>
-
-
 
