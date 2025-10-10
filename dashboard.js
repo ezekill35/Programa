@@ -1,145 +1,188 @@
-import { db } from './firebase.js';
-import { collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// ===============================
+// DASHBOARD.JS - DISCOVERY PETS
+// ===============================
+import { auth } from './firebase.js';
+import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  // ===============================
+  // ELEMENTOS GLOBALES
+  // ===============================
   const secciones = document.querySelectorAll(".seccion");
   const menuBtns = document.querySelectorAll(".menu-btn");
   const buscador = document.getElementById("buscadorGlobal");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // Modal
-  const modalBG = document.getElementById("modalBG");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalContent = document.getElementById("modalContent");
-  const closeModal = document.getElementById("closeModal");
-  closeModal.addEventListener("click", () => modalBG.style.display = "none");
-
-  // Navegación
-  menuBtns.forEach(btn => btn.addEventListener("click", () => {
-    secciones.forEach(sec => sec.style.display = "none");
-    document.getElementById(btn.dataset.target).style.display = "block";
-    menuBtns.forEach(b => b.classList.remove("activo"));
-    btn.classList.add("activo");
-  }));
-  document.getElementById("facturas").style.display = "block";
-
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("usuarioActivo");
-    window.location.href = "index.html";
-  });
-
-  // Colecciones Firestore
-  const proveedoresCol = collection(db, "proveedores");
-  const productosCol = collection(db, "productos");
-  const facturasCol = collection(db, "facturas");
+  const facturaForm = document.getElementById("facturaForm");
+  const facturaTabla = document.getElementById("tablaFacturas");
 
   const proveedorForm = document.getElementById("proveedorForm");
+  const proveedoresList = []; // Para seleccionar en facturas
+
   const productoForm = document.getElementById("productoForm");
-  const facturaForm = document.getElementById("facturaForm");
+  const productosList = []; // Para mostrar detalles
 
-  const tablaProveedores = document.getElementById("tablaProveedores");
-  const tablaProductos = document.getElementById("tablaProductos");
-  const tablaFacturas = document.getElementById("tablaFacturas");
-  const proveedorFacturaSelect = document.getElementById("proveedorFactura");
-
-  // ================== CRUD PROVEEDORES ==================
-  proveedorForm.addEventListener("submit", async e => {
-    e.preventDefault();
-    const ruc = document.getElementById("rucProveedor").value;
-    const nombre = document.getElementById("nombreProveedor").value;
-    const telefono = document.getElementById("telefonoProveedor").value;
-    await addDoc(proveedoresCol,{ruc,nombre,telefono});
-    proveedorForm.reset();
+  // ===============================
+  // SESIÓN
+  // ===============================
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      // No hay usuario → ir a login
+      window.location.href = "index.html";
+    }
   });
 
-  onSnapshot(proveedoresCol, snapshot => {
-    tablaProveedores.innerHTML = "";
-    proveedorFacturaSelect.innerHTML = `<option value="">Seleccione proveedor</option>`;
-    snapshot.forEach(doc=>{
-      const data = doc.data();
-      // Tabla Proveedores
-      const fila = document.createElement("tr");
-      fila.innerHTML = `<td>${data.ruc}</td><td>${data.nombre}</td><td>${data.telefono}</td>`;
-      fila.addEventListener("click", ()=>{
-        modalTitle.textContent = "Proveedor: " + data.nombre;
-        modalContent.innerHTML = `<p>RUC: ${data.ruc}</p><p>Teléfono: ${data.telefono}</p><p>Nombre: ${data.nombre}</p>`;
-        modalBG.style.display = "flex";
-      });
-      tablaProveedores.appendChild(fila);
-      // Select Proveedor
-      const option = document.createElement("option");
-      option.value = data.nombre;
-      option.textContent = data.nombre;
-      proveedorFacturaSelect.appendChild(option);
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "index.html";
+    } catch (e) {
+      alert("Error cerrando sesión: " + e.message);
+    }
+  });
+
+  // ===============================
+  // EVITAR RECARGA DE FORMULARIOS
+  // ===============================
+  document.querySelectorAll("form").forEach(form => {
+    form.addEventListener("submit", e => e.preventDefault());
+  });
+
+  // ===============================
+  // NAVEGACIÓN ENTRE SECCIONES
+  // ===============================
+  menuBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.target;
+      secciones.forEach(sec => sec.style.display = "none");
+      document.getElementById(target).style.display = "block";
+
+      menuBtns.forEach(b => b.classList.remove("activo"));
+      btn.classList.add("activo");
     });
   });
 
-  // ================== CRUD PRODUCTOS ==================
-  productoForm.addEventListener("submit", async e=>{
-    e.preventDefault();
+  document.getElementById("facturas").style.display = "block";
+
+  // ===============================
+  // CRUD PROVEEDORES
+  // ===============================
+  proveedorForm.addEventListener("submit", () => {
+    const ruc = document.getElementById("rucProveedor").value;
+    const nombre = document.getElementById("nombreProveedor").value;
+    const telefono = document.getElementById("telefonoProveedor").value;
+
+    const proveedor = { ruc, nombre, telefono };
+    proveedoresList.push(proveedor);
+
+    // Limpiar formulario
+    proveedorForm.reset();
+    alert("Proveedor registrado correctamente");
+  });
+
+  // ===============================
+  // CRUD PRODUCTOS
+  // ===============================
+  productoForm.addEventListener("submit", () => {
     const nombre = document.getElementById("nombreProducto").value;
     const descripcion = document.getElementById("descripcionProducto").value;
     const cantidad = document.getElementById("cantidadProducto").value;
     const unidad = document.getElementById("unidadProducto").value;
     const valorUnitario = document.getElementById("valorUnitarioProducto").value;
-    await addDoc(productosCol,{nombre,descripcion,cantidad,unidad,valorUnitario});
+
+    const producto = { nombre, descripcion, cantidad, unidad, valorUnitario };
+    productosList.push(producto);
+
     productoForm.reset();
+    alert("Producto registrado correctamente");
   });
 
-  onSnapshot(productosCol, snapshot=>{
-    tablaProductos.innerHTML="";
-    snapshot.forEach(doc=>{
-      const data = doc.data();
-      const fila = document.createElement("tr");
-      fila.innerHTML = `<td>${data.nombre}</td><td>${data.descripcion}</td><td>${data.cantidad}</td><td>${data.unidad}</td><td>${data.valorUnitario}</td>`;
-      fila.addEventListener("click", ()=>{
-        modalTitle.textContent = "Producto: " + data.nombre;
-        modalContent.innerHTML = `<p>Nombre: ${data.nombre}</p><p>Descripción: ${data.descripcion}</p><p>Cantidad: ${data.cantidad}</p><p>Unidad: ${data.unidad}</p><p>Valor Unitario: ${data.valorUnitario}</p>`;
-        modalBG.style.display = "flex";
-      });
-      tablaProductos.appendChild(fila);
-    });
-  });
-
-  // ================== CRUD FACTURAS ==================
-  facturaForm.addEventListener("submit", async e=>{
-    e.preventDefault();
+  // ===============================
+  // CRUD FACTURAS
+  // ===============================
+  facturaForm.addEventListener("submit", () => {
     const numero = document.getElementById("numeroFactura").value;
     const proveedor = document.getElementById("proveedorFactura").value;
     const producto = document.getElementById("productoFactura").value;
     const monto = document.getElementById("montoFactura").value;
     const tipo = document.getElementById("tipoFactura").value;
     const moneda = document.getElementById("monedaFactura").value;
-    await addDoc(facturasCol,{numero,proveedor,producto,monto,moneda,tipo});
-    facturaForm.reset();
-  });
 
-  onSnapshot(facturasCol, snapshot=>{
-    tablaFacturas.innerHTML="";
-    snapshot.forEach(doc=>{
-      const data = doc.data();
-      const fila = document.createElement("tr");
-      fila.innerHTML = `<td>${data.numero}</td><td>${data.proveedor}</td><td>${data.producto}</td><td>${data.moneda} ${data.monto}</td><td>${data.tipo}</td>`;
-      fila.addEventListener("click", ()=>{
-        modalTitle.textContent = "Factura N° " + data.numero;
-        modalContent.innerHTML = `<p>Proveedor: ${data.proveedor}</p><p>Producto: ${data.producto}</p><p>Monto: ${data.moneda} ${data.monto}</p><p>Tipo: ${data.tipo}</p>`;
-        modalBG.style.display = "flex";
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td class="click-detalle" data-tipo="numero">${numero}</td>
+      <td class="click-detalle" data-tipo="proveedor">${proveedor}</td>
+      <td class="click-detalle" data-tipo="producto">${producto}</td>
+      <td>${moneda} ${monto}</td>
+      <td>${tipo}</td>
+      <td>
+        <button class="editar">✏️</button>
+        <button class="eliminar">🗑️</button>
+      </td>
+    `;
+
+    facturaTabla.appendChild(fila);
+    facturaForm.reset();
+
+    // ===============================
+    // ELIMINAR FACTURA
+    // ===============================
+    fila.querySelector(".eliminar").addEventListener("click", () => fila.remove());
+
+    // ===============================
+    // EDITAR FACTURA
+    // ===============================
+    fila.querySelector(".editar").addEventListener("click", () => {
+      document.getElementById("numeroFactura").value = numero;
+      document.getElementById("proveedorFactura").value = proveedor;
+      document.getElementById("productoFactura").value = producto;
+      document.getElementById("montoFactura").value = monto;
+      document.getElementById("tipoFactura").value = tipo;
+      document.getElementById("monedaFactura").value = moneda;
+      fila.remove();
+    });
+
+    // ===============================
+    // MODAL DETALLE
+    // ===============================
+    fila.querySelectorAll(".click-detalle").forEach(td => {
+      td.addEventListener("click", () => {
+        const tipo = td.dataset.tipo;
+        let contenido = "";
+        if (tipo === "proveedor") {
+          const prov = proveedoresList.find(p => p.nombre === td.textContent);
+          if (prov) {
+            contenido = `Nombre: ${prov.nombre}\nRUC: ${prov.ruc}\nTel: ${prov.telefono}`;
+          } else contenido = "Proveedor no encontrado";
+        }
+        if (tipo === "producto") {
+          const prod = productosList.find(p => p.nombre === td.textContent);
+          if (prod) {
+            contenido = `Nombre: ${prod.nombre}\nDescripción: ${prod.descripcion}\nCantidad: ${prod.cantidad}\nUnidad: ${prod.unidad}\nValor unitario: ${prod.valorUnitario}`;
+          } else contenido = "Producto no encontrado";
+        }
+        if (tipo === "numero") {
+          contenido = `Número de factura: ${td.textContent}`;
+        }
+        alert(contenido);
       });
-      tablaFacturas.appendChild(fila);
     });
   });
 
-  // ================== BUSCADOR PRODUCTO ==================
-  buscador.addEventListener("input", ()=>{
+  // ===============================
+  // BUSCADOR GLOBAL (Producto o Proveedor)
+  // ===============================
+  buscador.addEventListener("input", () => {
     const texto = buscador.value.toLowerCase();
-    document.querySelectorAll("#tablaFacturas tr").forEach(row=>{
-      const producto = row.cells[2].innerText.toLowerCase();
-      row.style.display = producto.includes(texto) ? "" : "none";
+    facturaTabla.querySelectorAll("tr").forEach(row => {
+      const filaTexto = row.innerText.toLowerCase();
+      row.style.display = filaTexto.includes(texto) ? "" : "none";
     });
   });
 
 });
+
 
 
 
