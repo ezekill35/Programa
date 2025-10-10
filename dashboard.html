@@ -114,21 +114,37 @@
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
   }
 
-  /* ------------------ Inputs y Botones ------------------ */
-  input, select {
-    border-radius: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    transition: all 0.3s;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+  /* ------------------ Formularios Modernos ------------------ */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
   }
 
-  input:focus, select:focus {
-    outline: none;
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #1976d2;
+  }
+
+  .form-control {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
     border-color: #1976d2;
     box-shadow: 0 0 8px rgba(25,118,210,0.3);
   }
 
+  /* ------------------ Botones ------------------ */
   .btn-primary {
     background: linear-gradient(135deg, #1976d2, #42a5f5);
     border: none;
@@ -164,7 +180,6 @@
     background-color: #f5f5f5;
   }
 
-  /* Botones de acciones */
   .table .btn {
     padding: 5px 10px;
     border-radius: 8px;
@@ -240,8 +255,8 @@
   }
   </style>
 </head>
-
 <body>
+
   <!-- Sidebar -->
   <div class="sidebar">
     <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
@@ -264,26 +279,39 @@
     <section id="facturas" class="seccion">
       <div class="card">
         <h4>📄 Registrar Factura</h4>
-        <form id="facturaForm" class="row g-3">
-          <div class="col-md-3"><label class="form-label">N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
-          <div class="col-md-3"><label class="form-label">Proveedor</label><select id="proveedorFactura" class="form-select"></select></div>
-          <div class="col-md-3"><label class="form-label">Producto</label><input type="text" id="productoFactura" class="form-control"></div>
-          <div class="col-md-2"><label class="form-label">Monto</label>
-            <div class="input-group">
-              <select id="monedaFactura" class="form-select" style="max-width:90px;">
+        <form id="facturaForm" class="form-grid">
+          <div class="form-group">
+            <label for="numeroFactura">N° Factura</label>
+            <input type="text" id="numeroFactura" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="proveedorFactura">Proveedor</label>
+            <select id="proveedorFactura" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label for="productoFactura">Producto</label>
+            <input type="text" id="productoFactura" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="montoFactura">Monto</label>
+            <div style="display:flex; gap:5px;">
+              <select id="monedaFactura" class="form-control" style="width:80px;">
                 <option value="S/">S/</option>
                 <option value="$">$</option>
               </select>
               <input type="number" id="montoFactura" class="form-control" step="0.01" required>
             </div>
           </div>
-          <div class="col-md-3"><label class="form-label">Tipo</label>
-            <select id="tipoFactura" class="form-select">
+          <div class="form-group">
+            <label for="tipoFactura">Tipo</label>
+            <select id="tipoFactura" class="form-control">
               <option value="Factura Electrónica">Factura Electrónica</option>
               <option value="Boleta">Boleta</option>
             </select>
           </div>
-          <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+          <div style="text-align:right; margin-top:15px;">
+            <button class="btn btn-primary">Guardar</button>
+          </div>
         </form>
       </div>
 
@@ -309,11 +337,22 @@
     <section id="proveedores" class="seccion" style="display:none;">
       <div class="card">
         <h4>🏢 Registrar Proveedor</h4>
-        <form id="proveedorForm" class="row g-3">
-          <div class="col-md-4"><label class="form-label">RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
-          <div class="col-md-4"><label class="form-label">Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
-          <div class="col-md-4"><label class="form-label">Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
-          <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+        <form id="proveedorForm" class="form-grid">
+          <div class="form-group">
+            <label for="rucProveedor">RUC</label>
+            <input type="number" id="rucProveedor" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="nombreProveedor">Nombre</label>
+            <input type="text" id="nombreProveedor" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="telefonoProveedor">Teléfono</label>
+            <input type="number" id="telefonoProveedor" class="form-control" required>
+          </div>
+          <div style="text-align:right; margin-top:15px;">
+            <button class="btn btn-primary">Guardar</button>
+          </div>
         </form>
       </div>
 
@@ -336,13 +375,30 @@
     <section id="productos" class="seccion" style="display:none;">
       <div class="card">
         <h4>🛒 Registrar Producto</h4>
-        <form id="productoForm" class="row g-3">
-          <div class="col-md-3"><label class="form-label">Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
-          <div class="col-md-3"><label class="form-label">Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
-          <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
-          <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
-          <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
-          <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+        <form id="productoForm" class="form-grid">
+          <div class="form-group">
+            <label for="nombreProducto">Nombre</label>
+            <input type="text" id="nombreProducto" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcionProducto">Descripción</label>
+            <input type="text" id="descripcionProducto" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="cantidadProducto">Cantidad</label>
+            <input type="number" id="cantidadProducto" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="unidadProducto">Unidad</label>
+            <input type="text" id="unidadProducto" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="valorUnitarioProducto">Valor Unitario</label>
+            <input type="number" id="valorUnitarioProducto" class="form-control" step="0.01">
+          </div>
+          <div style="text-align:right; margin-top:15px;">
+            <button class="btn btn-primary">Guardar</button>
+          </div>
         </form>
       </div>
     </section>
