@@ -126,6 +126,23 @@ header h2 { margin:0; font-size:1.8rem; }
       <div class="form-group"><button class="btn-primary mt-2">Guardar</button></div>
     </div>
   </div>
+
+  <div class="card-registro">
+    <h4>Productos Registrados</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Cantidad</th>
+          <th>Unidad</th>
+          <th>Valor Unitario</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaProductos"></tbody>
+    </table>
+  </div>
 </section>
 
 <!-- Facturas -->
@@ -216,6 +233,7 @@ document.getElementById('logoutBtn').addEventListener('click',()=>{
 
 </body>
 </html>
+
 
 
 
