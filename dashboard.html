@@ -6,11 +6,11 @@
 <title>Discovery Pets - Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Reset y Body */
+/* ---------------- Reset y Body ---------------- */
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
 body { display:flex; min-height:100vh; background: linear-gradient(135deg,#f0f8ff,#d0e8ff); color:#333; overflow:hidden; }
 
-/* Sidebar */
+/* ---------------- Sidebar ---------------- */
 .sidebar {
   width:260px;
   background:linear-gradient(180deg,#0d47a1,#1976d2);
@@ -27,7 +27,7 @@ body { display:flex; min-height:100vh; background: linear-gradient(135deg,#f0f8f
 .menu-btn { background:none; border:none; color:white; text-align:left; padding:14px 22px; font-size:16px; transition:all 0.3s; cursor:pointer; border-left:4px solid transparent; }
 .menu-btn:hover, .menu-btn.activo { background:rgba(255,255,255,0.2); border-left:4px solid #ff4081; box-shadow: inset 0 0 8px rgba(0,0,0,0.2); }
 
-/* Main Content */
+/* ---------------- Main Content ---------------- */
 .main-content {
   margin-left:260px;
   flex:1;
@@ -37,28 +37,28 @@ body { display:flex; min-height:100vh; background: linear-gradient(135deg,#f0f8f
   padding:30px;
 }
 
-/* Header */
+/* ---------------- Header ---------------- */
 header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
 #buscadorGlobal { width:300px; border-radius:12px; padding:10px 14px; border:1px solid #ccc; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
 
-/* Cards */
+/* ---------------- Cards ---------------- */
 .card-registro { background: linear-gradient(145deg,#ffffff,#f0f8ff); border-radius:20px; padding:30px; margin-bottom:25px; box-shadow:0 15px 40px rgba(0,0,0,0.15); transition:all 0.3s; }
 .card-registro:hover { transform:translateY(-5px); box-shadow:0 20px 50px rgba(0,0,0,0.25); }
 
-/* Grid para formularios */
+/* ---------------- Formularios ---------------- */
 .form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px; }
 .form-group { display:flex; flex-direction:column; }
 .form-group label { font-weight:600; margin-bottom:8px; color:#0d47a1; }
 .form-control { padding:12px; border-radius:12px; border:1px solid #ccc; box-shadow: inset 0 2px 6px rgba(0,0,0,0.08); transition: all 0.3s; }
 .form-control:focus { border-color:#1976d2; box-shadow:0 0 10px rgba(25,118,210,0.3); }
 
-/* Botones */
+/* ---------------- Botones ---------------- */
 .btn-primary { background: linear-gradient(135deg,#1976d2,#42a5f5); border:none; color:white; padding:12px 25px; border-radius:15px; font-weight:600; cursor:pointer; transition: all 0.3s; }
 .btn-primary:hover { background: linear-gradient(135deg,#0d47a1,#1e88e5); transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.25);}
 .btn-danger { background: linear-gradient(135deg,#e53935,#ef5350); border:none; color:white; padding:12px 25px; border-radius:15px; font-weight:600; cursor:pointer; }
 .btn-danger:hover { background: linear-gradient(135deg,#b71c1c,#d32f2f); transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.25); }
 
-/* Tablas */
+/* ---------------- Tablas ---------------- */
 .table { width:100%; border-collapse: collapse; margin-top:20px; }
 .table th { background-color:#1976d2; color:white; text-align:center; padding:10px; }
 .table td { text-align:center; padding:8px; border-bottom:1px solid #ccc; }
@@ -69,23 +69,22 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 .table .btn-delete { background-color:#f44336; color:white; }
 .table .btn-delete:hover { background-color:#d32f2f; transform:scale(1.05); }
 
-/* Modal */
+/* ---------------- Modal ---------------- */
 .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); display:flex; justify-content:center; align-items:center; z-index:1000; display:none; }
 .modal-card { background: linear-gradient(145deg,#fff8e1,#ffe0b2); border-radius:20px; padding:30px; width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.3); position:relative; text-align:left; transform:scale(0.9); transition:all 0.3s;}
 .modal-overlay.active .modal-card { transform:scale(1); }
 .cerrar { position:absolute; top:10px; right:15px; font-size:24px; font-weight:bold; cursor:pointer; color:#ff4081; }
 #contenidoModal { margin-top:15px; white-space:pre-wrap; font-family:'Poppins',sans-serif; font-size:14px; }
 
-/* Secciones absolutas */
+/* ---------------- Secciones Absolutas ---------------- */
 .seccion { position:absolute; top:0; left:0; width:100%; display:none; padding-bottom:40px; }
 .seccion.activa { display:block; animation:fadeIn 0.4s ease; }
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
+<!-- ---------------- Sidebar ---------------- -->
 <div class="sidebar">
   <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
   <h3>🐾 Discovery Pets</h3>
@@ -97,14 +96,14 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   <button id="logoutBtn" class="menu-btn btn-danger">🚪 Cerrar Sesión</button>
 </div>
 
-<!-- Main Content -->
+<!-- ---------------- Main Content ---------------- -->
 <div class="main-content">
 <header>
   <h2>Panel de Control 🐶</h2>
   <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar producto...">
 </header>
 
-<!-- Secciones -->
+<!-- ---------------- Proveedores ---------------- -->
 <section id="proveedores" class="seccion activa">
   <div class="card-registro">
     <h4>🏢 Registrar Proveedor</h4>
@@ -124,6 +123,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
+<!-- ---------------- Productos ---------------- -->
 <section id="productos" class="seccion">
   <div class="card-registro">
     <h4>🛒 Registrar Producto</h4>
@@ -145,6 +145,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
+<!-- ---------------- Facturas ---------------- -->
 <section id="facturas" class="seccion">
   <div class="card-registro">
     <h4>📄 Registrar Factura</h4>
@@ -171,6 +172,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
+<!-- ---------------- Gastos ---------------- -->
 <section id="gastos" class="seccion">
   <div class="card-registro">
     <h4>💰 Registrar Gasto</h4>
@@ -190,7 +192,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </section>
 
-<!-- Modal -->
+<!-- ---------------- Modal ---------------- -->
 <div id="detalleModal" class="modal-overlay">
   <div class="modal-card">
     <span id="cerrarModal" class="cerrar">&times;</span>
@@ -199,9 +201,39 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   </div>
 </div>
 
-<script type="module" src="dashboard.js"></script>
+<script type="module">
+// ---------------- Control Sidebar ----------------
+const secciones = document.querySelectorAll('.seccion');
+const botones = document.querySelectorAll('.menu-btn');
+botones.forEach(btn => {
+  btn.addEventListener('click', () => {
+    secciones.forEach(sec => sec.classList.remove('activa'));
+    document.getElementById(btn.dataset.target).classList.add('activa');
+    botones.forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+  });
+});
+
+// ---------------- Modal ----------------
+const modal = document.getElementById('detalleModal');
+const cerrar = document.getElementById('cerrarModal');
+cerrar.addEventListener('click', () => { modal.style.display='none'; });
+
+// ---------------- Buscar Producto ----------------
+const buscador = document.getElementById('buscadorGlobal');
+buscador.addEventListener('keypress', (e) => {
+  if(e.key==='Enter'){
+    e.preventDefault();
+    alert(`Buscar productos con: ${buscador.value}`);
+    buscador.value='';
+  }
+});
+</script>
+
 </body>
 </html>
+
+
 
 
 
