@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const proveedorSelect = document.getElementById("proveedorFactura");
   const productoSelect = document.getElementById("productoFactura");
 
-  // Modal de detalles
+  // MODAL
   const detalleModal = document.getElementById("detalleModal");
   const tituloModal = document.getElementById("tituloModal");
   const contenidoModal = document.getElementById("contenidoModal");
@@ -59,14 +59,21 @@ document.addEventListener("DOMContentLoaded", () => {
     signOut(auth).then(() => window.location.href = "index.html");
   });
 
-  // ==================== VALIDACIONES NUMÉRICAS ====================
+  // ==================== VALIDACIONES ====================
   const rucInput = document.getElementById("rucProveedor");
   const numeroFacturaInput = document.getElementById("numeroFactura");
 
   if (rucInput) rucInput.addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, ''));
   if (numeroFacturaInput) numeroFacturaInput.addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, ''));
 
-  // ==================== PROVEEDORES ====================
+  // ==================== FUNCIONES ====================
+  const normalizarTexto = (texto) =>
+    texto.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+
+  // ==================== CRUD PROVEEDORES ====================
   const proveedorForm = document.getElementById("proveedorForm");
   if (proveedorForm) {
     proveedorForm.addEventListener("submit", async e => {
@@ -121,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ==================== PRODUCTOS ====================
+  // ==================== CRUD PRODUCTOS ====================
   const productoForm = document.getElementById("productoForm");
   if (productoForm) {
     productoForm.addEventListener("submit", async e => {
@@ -174,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ==================== FACTURAS ====================
+  // ==================== CRUD FACTURAS ====================
   const facturaForm = document.getElementById("facturaForm");
   if (facturaForm) {
     facturaForm.addEventListener("submit", async e => {
@@ -213,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Eliminar
       row.querySelector(".btn-delete").addEventListener("click", async () => await deleteDoc(doc(db, "facturas", docSnap.id)));
 
-      // Ver proveedor
+      // Mostrar proveedor
       row.querySelector(".click-prov").addEventListener("click", async () => {
         const provSnap = await getDocs(query(collection(db, "proveedores"), where("nombre", "==", fac.proveedor)));
         if (provSnap.empty) return alert("Proveedor no encontrado");
@@ -221,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         abrirModal("Datos del Proveedor", `<b>RUC:</b> ${p.ruc}<br><b>Nombre:</b> ${p.nombre}<br><b>Dirección:</b> ${p.direccion}`);
       });
 
-      // Ver producto
+      // Mostrar producto
       row.querySelector(".click-prod").addEventListener("click", async () => {
         const prodSnap = await getDocs(query(collection(db, "productos"), where("nombre", "==", fac.producto)));
         if (prodSnap.empty) return alert("Producto no encontrado");
@@ -231,11 +238,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ==================== BUSCADOR ====================
+  // ==================== BUSCADOR INTELIGENTE ====================
   buscador.addEventListener("keydown", async e => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const texto = buscador.value.trim().toLowerCase();
+      const texto = normalizarTexto(buscador.value);
       if (!texto) return;
 
       const facturasSnap = await getDocs(collection(db, "facturas"));
@@ -243,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       facturasSnap.forEach(f => {
         const data = f.data();
-        if (data.producto.toLowerCase().includes(texto)) resultados.push(data);
+        if (normalizarTexto(data.producto).includes(texto)) resultados.push(data);
       });
 
       if (resultados.length === 0) {
@@ -262,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
         html += "</table>";
         abrirModal("Facturas relacionadas", html);
 
-        // Clicks dentro del modal
+        // Clicks en modal
         setTimeout(() => {
           document.querySelectorAll(".link-prov").forEach(el => {
             el.addEventListener("click", async () => {
