@@ -1,9 +1,6 @@
 import { auth, db } from './firebase.js';
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { 
-    collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, 
-    getDocs, query, where 
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -62,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const nombre = document.getElementById("nombreProveedor").value.trim();
         const direccion = document.getElementById("direccionProveedor").value.trim();
         if(!ruc || !nombre || !direccion) return alert("Complete todos los campos");
-        if(!/^\d+$/.test(ruc)) return alert("RUC solo puede contener números");
         await addDoc(collection(db,'proveedores'), {ruc, nombre, direccion});
         proveedorForm.reset();
     });
@@ -88,16 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
             opt.textContent = prov.nombre;
             proveedorSelect.appendChild(opt);
 
-            // eliminar
             row.querySelector(".btn-delete").addEventListener("click", async()=> await deleteDoc(doc(db,'proveedores',docSnap.id)));
-
-            // guardar
             row.querySelector(".btn-primary").addEventListener("click", async()=>{
                 const r = row.querySelector(".edit-ruc").value.trim();
                 const n = row.querySelector(".edit-nombre").value.trim();
                 const d = row.querySelector(".edit-dir").value.trim();
                 if(!r||!n||!d) return alert("Complete todos los campos");
-                if(!/^\d+$/.test(r)) return alert("RUC solo puede contener números");
                 await updateDoc(doc(db,'proveedores',docSnap.id), {ruc:r,nombre:n,direccion:d});
             });
         });
@@ -159,9 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const monto = document.getElementById("montoFactura").value.trim();
         const tipo = document.getElementById("tipoFactura").value;
         const moneda = document.getElementById("monedaFactura").value;
-        if(!numero||!proveedor||!producto||!monto) return alert("Complete todos los campos");
-        if(!/^\d+$/.test(numero)) return alert("Número de factura solo puede contener números");
-        await addDoc(collection(db,'facturas'), {numero, proveedor, producto, monto, tipo, moneda});
+        const fechaEmision = document.getElementById("fechaEmisionFactura").value;
+        if(!numero||!proveedor||!producto||!monto||!fechaEmision) return alert("Complete todos los campos");
+        await addDoc(collection(db,'facturas'), {numero, proveedor, producto, monto, tipo, moneda, fechaEmision});
         facturaForm.reset();
     });
 
@@ -176,26 +168,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td class="click-prod" style="cursor:pointer;color:#4caf50;text-decoration:underline;">${fac.producto}</td>
                 <td>${fac.moneda||''} ${fac.monto}</td>
                 <td>${fac.tipo}</td>
+                <td>${fac.fechaEmision || '-'}</td>
                 <td><button class="btn-delete">Eliminar</button></td>`;
             tablaFacturas.appendChild(row);
 
-            // eliminar
             row.querySelector(".btn-delete").addEventListener("click", async()=> await deleteDoc(doc(db,'facturas',docSnap.id)));
 
-            // click en proveedor
             row.querySelector(".click-prov").addEventListener("click", async()=>{
                 const provSnap = await getDocs(query(collection(db,'proveedores'), where("nombre","==",fac.proveedor)));
                 if(provSnap.empty) return alert("Proveedor no encontrado");
                 const p = provSnap.docs[0].data();
-                abrirModal("📦 Datos del Proveedor",`<b>RUC:</b> ${p.ruc}<br><b>Nombre:</b> ${p.nombre}<br><b>Dirección:</b> ${p.direccion}`);
+                abrirModal("Datos del Proveedor",`<b>RUC:</b> ${p.ruc}<br><b>Nombre:</b> ${p.nombre}<br><b>Dirección:</b> ${p.direccion}`);
             });
 
-            // click en producto
             row.querySelector(".click-prod").addEventListener("click", async()=>{
                 const prodSnap = await getDocs(query(collection(db,'productos'), where("nombre","==",fac.producto)));
                 if(prodSnap.empty) return alert("Producto no encontrado");
                 const pr = prodSnap.docs[0].data();
-                abrirModal("🧾 Datos del Producto",`<b>Nombre:</b> ${pr.nombre}<br><b>Cantidad:</b> ${pr.cantidad}<br><b>Unidad:</b> ${pr.unidad}<br><b>Valor:</b> ${pr.valor}`);
+                abrirModal("Datos del Producto",`<b>Nombre:</b> ${pr.nombre}<br><b>Cantidad:</b> ${pr.cantidad}<br><b>Unidad:</b> ${pr.unidad}<br><b>Valor:</b> ${pr.valor}`);
             });
         });
     });
@@ -215,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if(resultados.length===0){
                 abrirModal("Sin resultados","No se encontraron facturas relacionadas con ese producto.");
             } else {
-                let html = "<table style='width:100%;border-collapse:collapse;'><tr><th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th></tr>";
+                let html = "<table style='width:100%;border-collapse:collapse;'><tr><th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th></tr>";
                 resultados.forEach(f=>{
                     html += `<tr>
                         <td>${f.numero}</td>
@@ -223,19 +213,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td class='link-prod' style='cursor:pointer;color:#4caf50;'>${f.producto}</td>
                         <td>${f.moneda||''} ${f.monto}</td>
                         <td>${f.tipo}</td>
+                        <td>${f.fechaEmision || '-'}</td>
                     </tr>`;
                 });
                 html += "</table>";
                 abrirModal("Facturas relacionadas", html);
 
-                // eventos dentro del modal
                 setTimeout(()=>{
                     document.querySelectorAll(".link-prov").forEach(el=>{
                         el.addEventListener("click", async()=>{
                             const provSnap = await getDocs(query(collection(db,'proveedores'), where("nombre","==",el.textContent)));
                             if(provSnap.empty) return alert("Proveedor no encontrado");
                             const p = provSnap.docs[0].data();
-                            abrirModal("📦 Datos del Proveedor",`<b>RUC:</b> ${p.ruc}<br><b>Nombre:</b> ${p.nombre}<br><b>Dirección:</b> ${p.direccion}`);
+                            abrirModal("Datos del Proveedor",`<b>RUC:</b> ${p.ruc}<br><b>Nombre:</b> ${p.nombre}<br><b>Dirección:</b> ${p.direccion}`);
                         });
                     });
                     document.querySelectorAll(".link-prod").forEach(el=>{
@@ -243,14 +233,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             const prodSnap = await getDocs(query(collection(db,'productos'), where("nombre","==",el.textContent)));
                             if(prodSnap.empty) return alert("Producto no encontrado");
                             const pr = prodSnap.docs[0].data();
-                            abrirModal("🧾 Datos del Producto",`<b>Nombre:</b> ${pr.nombre}<br><b>Cantidad:</b> ${pr.cantidad}<br><b>Unidad:</b> ${pr.unidad}<br><b>Valor:</b> ${pr.valor}`);
+                            abrirModal("Datos del Producto",`<b>Nombre:</b> ${pr.nombre}<br><b>Cantidad:</b> ${pr.cantidad}<br><b>Unidad:</b> ${pr.unidad}<br><b>Valor:</b> ${pr.valor}`);
                         });
                     });
                 },300);
             }
         }
     });
-
 });
 
 
