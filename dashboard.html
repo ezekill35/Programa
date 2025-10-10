@@ -258,7 +258,6 @@ header {
 
 @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 @keyframes slideIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
-
 </style>
 </head>
 <body>
@@ -270,7 +269,9 @@ header {
   <button class="menu-btn" data-target="productos">🛒 Productos</button>
   <button class="menu-btn" data-target="facturas">📄 Facturas</button>
   <button class="menu-btn" data-target="gastos">💰 Gastos</button>
-  <hr>
+
+  <div style="flex:1"></div> <!-- separador flexible -->
+
   <button id="logoutBtn" class="menu-btn btn-danger">🚪 Cerrar Sesión</button>
 </div>
 
@@ -410,12 +411,13 @@ buscador.addEventListener('keydown', e=>{
 
 // ---------------- Logout ----------------
 document.getElementById('logoutBtn').addEventListener('click',()=>{
-  alert('Cerrar sesión'); // Aquí iría tu lógica de logout
+  window.location.href = "login.html"; // Redirige al login
 });
 </script>
 
 </body>
 </html>
+
 
 
 
