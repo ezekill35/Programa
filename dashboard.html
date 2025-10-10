@@ -5,229 +5,181 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discovery Pets - Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="icon" href="https://www.discovery-pets.com/favicon.ico">
 <style>
 body {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  min-height: 100vh;
-  display: flex;
-  overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
+    margin:0;
+    background: linear-gradient(145deg, #ffccf2, #66ccff);
+    display:flex;
+    min-height:100vh;
+    overflow-x:hidden;
 }
-
 /* Sidebar */
 .sidebar {
-  width: 250px;
-  background: linear-gradient(180deg, #0d47a1, #1976d2);
-  color: white;
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 4px 0 10px rgba(0,0,0,0.2);
-  position: fixed;
-  height: 100%;
+    width:250px;
+    background: linear-gradient(180deg,#ff3399,#ff66cc);
+    color:#fff;
+    padding-top:20px;
+    display:flex;
+    flex-direction:column;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.25);
+    position:fixed;
+    height:100%;
 }
-.sidebar h3 {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+.sidebar h3 { text-align:center; font-weight:bold; margin-bottom:20px; }
 .menu-btn {
-  background: none;
-  border: none;
-  color: white;
-  text-align: left;
-  padding: 12px 20px;
-  font-size: 16px;
-  transition: 0.3s;
-  cursor: pointer;
+    background:none;
+    border:none;
+    color:white;
+    padding:12px 20px;
+    text-align:left;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
 }
-.menu-btn:hover, .menu-btn.activo {
-  background: rgba(255,255,255,0.2);
-}
-
-/* Main content */
+.menu-btn:hover, .menu-btn.activo { background: rgba(255,255,255,0.2); }
+/* Main Content */
 .main-content {
-  margin-left: 260px;
-  padding: 25px;
-  flex: 1;
-  animation: fadeIn 0.5s ease;
+    margin-left:260px;
+    padding:25px;
+    flex:1;
 }
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-/* Header y buscador */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-#buscadorGlobal {
-  width: 280px;
-  border-radius: 8px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-}
-
-/* Cards 3D */
 .card {
-  background: white;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  transform: perspective(1000px) rotateX(3deg);
-  transition: 0.3s;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: perspective(1000px) rotateX(3deg);
+    transition:0.3s;
 }
 .card:hover {
-  transform: perspective(1000px) rotateX(0deg) scale(1.02);
+    transform: perspective(1000px) rotateX(0deg) scale(1.03);
 }
-
 /* Buttons */
-.btn-primary { background: #1976d2; border: none; }
-.btn-primary:hover { background: #0d47a1; }
-
+.btn-primary { background:#ff3399; border:none; }
+.btn-primary:hover { background:#ff66cc; }
 /* Modal */
 .modal-overlay {
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
 }
 .modal-card {
-  background: linear-gradient(145deg, #fff8e1, #ffe0b2);
-  border-radius: 20px;
-  padding: 25px;
-  width: 400px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-  transform: perspective(1000px) rotateX(10deg);
-  transition: 0.3s transform ease;
-  text-align: left;
-  position: relative;
+    background: #fff;
+    border-radius:20px;
+    padding:25px;
+    width:400px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
+    transform: perspective(1000px) rotateX(10deg);
+    transition:0.3s transform ease;
+    position:relative;
 }
 .modal-card:hover { transform: perspective(1000px) rotateX(0deg) scale(1.02); }
 .cerrar {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #ff3399;
+    position:absolute; top:10px; right:15px; font-size:22px; font-weight:bold; cursor:pointer; color:#ff3399;
 }
-#contenidoModal { margin-top: 15px; white-space: pre-wrap; font-family: 'Poppins', sans-serif; font-size: 14px; }
+#contenidoModal { margin-top:15px; white-space:pre-wrap; font-size:14px; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; }
+#buscadorGlobal {
+    width:280px;
+    border-radius:8px;
+    padding:8px 12px;
+    border:1px solid #ccc;
+}
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <h3>🐾 Discovery Pets</h3>
-  <button class="menu-btn activo" data-target="facturas">📄 Facturas</button>
-  <button class="menu-btn" data-target="proveedores">🏢 Proveedores</button>
-  <button class="menu-btn" data-target="productos">🛒 Productos</button>
-  <button class="menu-btn" data-target="gastos">💰 Gastos</button>
-  <button class="menu-btn" data-target="reportes">📊 Reportes</button>
-  <hr>
-  <button id="logoutBtn" class="menu-btn text-danger">🚪 Cerrar Sesión</button>
+<h3>🐾 Discovery Pets</h3>
+<button class="menu-btn activo" data-target="facturas">📄 Facturas</button>
+<button class="menu-btn" data-target="proveedores">🏢 Proveedores</button>
+<button class="menu-btn" data-target="productos">🛒 Productos</button>
+<hr>
+<button id="logoutBtn" class="menu-btn text-danger">🚪 Cerrar Sesión</button>
 </div>
 
 <div class="main-content">
 <header>
-  <h2>Panel de Control</h2>
-  <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor o producto...">
+<h2>Panel de Control</h2>
+<input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor o producto...">
 </header>
 
-<!-- Facturas -->
 <section id="facturas" class="seccion">
 <div class="card">
-  <h4>Registrar Factura</h4>
-  <form id="facturaForm" class="row g-3">
-    <div class="col-md-3"><label class="form-label">N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
-    <div class="col-md-3"><label class="form-label">Proveedor</label>
-      <select id="proveedorFactura" class="form-select"></select>
-    </div>
-    <div class="col-md-3"><label class="form-label">Producto</label><input type="text" id="productoFactura" class="form-control"></div>
-    <div class="col-md-2">
-      <label class="form-label">Monto</label>
-      <div class="input-group">
-        <select id="monedaFactura" class="form-select" style="max-width:90px;">
-          <option value="S/">S/</option>
-          <option value="$">$</option>
-        </select>
-        <input type="number" id="montoFactura" class="form-control" step="0.01" required>
-      </div>
-    </div>
-    <div class="col-md-3"><label class="form-label">Tipo</label>
-      <select id="tipoFactura" class="form-select">
-        <option value="Factura Electrónica">Factura Electrónica</option>
-        <option value="Boleta">Boleta</option>
-      </select>
-    </div>
-    <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
-  </form>
-</div>
+<h4>Registrar Factura</h4>
+<form id="facturaForm" class="row g-3">
+<div class="col-md-3"><label>N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
+<div class="col-md-3"><label>Proveedor</label>
+<select id="proveedorFactura" class="form-select"></select></div>
+<div class="col-md-3"><label>Producto</label><input type="text" id="productoFactura" class="form-control"></div>
+<div class="col-md-2">
+<label>Monto</label>
+<div class="input-group">
+<select id="monedaFactura" class="form-select" style="max-width:90px;">
+<option value="S/">S/</option>
+<option value="$">$</option>
+</select>
+<input type="number" id="montoFactura" class="form-control" step="0.01" required>
+</div></div>
+<div class="col-md-3"><label>Tipo</label>
+<select id="tipoFactura" class="form-select">
+<option value="Factura Electrónica">Factura Electrónica</option>
+<option value="Boleta">Boleta</option>
+</select></div>
+<div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+</form></div>
 
 <div class="card">
-  <h4>Facturas Registradas</h4>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>N°</th>
-        <th>Proveedor</th>
-        <th>Producto</th>
-        <th>Monto</th>
-        <th>Tipo</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tablaFacturas"></tbody>
-  </table>
-</div>
+<h4>Facturas Registradas</h4>
+<table class="table table-striped">
+<thead>
+<tr>
+<th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaFacturas"></tbody>
+</table></div>
 </section>
 
-<!-- Proveedores -->
 <section id="proveedores" class="seccion" style="display:none;">
 <div class="card">
 <h4>Registrar Proveedor</h4>
 <form id="proveedorForm" class="row g-3">
-  <div class="col-md-4"><label class="form-label">RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
-  <div class="col-md-4"><label class="form-label">Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
-  <div class="col-md-4"><label class="form-label">Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
-  <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
-</form>
-</div>
+<div class="col-md-4"><label>RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
+<div class="col-md-4"><label>Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
+<div class="col-md-4"><label>Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
+<div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+</form></div>
 </section>
 
-<!-- Productos -->
 <section id="productos" class="seccion" style="display:none;">
 <div class="card">
 <h4>Registrar Producto</h4>
 <form id="productoForm" class="row g-3">
-  <div class="col-md-3"><label class="form-label">Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
-  <div class="col-md-3"><label class="form-label">Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
-  <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
-  <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
-  <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
-  <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
-</form>
-</div>
+<div class="col-md-3"><label>Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
+<div class="col-md-3"><label>Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
+<div class="col-md-2"><label>Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
+<div class="col-md-2"><label>Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
+<div class="col-md-2"><label>Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
+<div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+</form></div>
 </section>
 
-<!-- Modal -->
 <div id="detalleModal" class="modal-overlay">
-  <div class="modal-card">
-    <span id="cerrarModal" class="cerrar">&times;</span>
-    <h4 id="tituloModal"></h4>
-    <pre id="contenidoModal"></pre>
-  </div>
+<div class="modal-card">
+<span id="cerrarModal" class="cerrar">&times;</span>
+<h4 id="tituloModal"></h4>
+<pre id="contenidoModal"></pre>
+</div>
 </div>
 
 </div>
@@ -235,5 +187,6 @@ header {
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
