@@ -47,8 +47,13 @@ table{width:100%;border-collapse:collapse;margin-top:15px;}
 th,td{padding:10px;text-align:left;}
 th{background:#ff7043;color:white;}
 tr:nth-child(even){background:#fff3e0;}
-.btn-delete{background:#ff5252;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;}
+.btn-delete, .btn-edit{
+  border:none;padding:5px 10px;border-radius:8px;cursor:pointer;color:white;
+}
+.btn-delete{background:#ff5252;}
 .btn-delete:hover{background:#ff1744;}
+.btn-edit{background:#4caf50;}
+.btn-edit:hover{background:#388e3c;}
 /* Modal */
 .modal-overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
@@ -167,7 +172,6 @@ tr:nth-child(even){background:#fff3e0;}
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
 
 
