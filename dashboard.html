@@ -234,6 +234,9 @@ header {
   color:#ff4081;
   text-shadow:1px 1px 5px rgba(0,0,0,0.3);
 }
+/* <-- Solución línea blanca debajo del cerrar --> */
+.cerrar::after { content:''; display:block; height:0; border:none; } 
+
 #contenidoModal { margin-top:18px; white-space:pre-wrap; font-size:14px; }
 
 /* ---------------- Secciones ---------------- */
@@ -271,7 +274,7 @@ header {
   <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar producto...">
 </header>
 
-<!-- Secciones (Proveedores, Productos, Facturas, Gastos) -->
+<!-- Secciones -->
 <section id="proveedores" class="seccion activa">
   <div class="card-registro">
     <h4>🏢 Registrar Proveedor</h4>
@@ -397,7 +400,6 @@ buscador.addEventListener('keypress',(e)=>{
 
 </body>
 </html>
-
 
 
 
