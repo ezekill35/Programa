@@ -83,12 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const prov = docSnap.data();
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td><input type="text" value="${prov.ruc}" class="edit-ruc"></td>
-                <td><input type="text" value="${prov.nombre}" class="edit-nombre"></td>
-                <td><input type="text" value="${prov.direccion}" class="edit-dir"></td>
+                <td>${prov.ruc}</td>
+                <td>${prov.nombre}</td>
+                <td>${prov.direccion}</td>
                 <td>
                     <button class="btn-delete">Eliminar</button>
-                    <button class="btn-primary">Guardar</button>
                 </td>`;
             tablaProveedores.appendChild(row);
 
@@ -99,14 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             row.querySelector(".btn-delete").addEventListener("click", async () => {
                 await deleteDoc(doc(db, 'proveedores', docSnap.id));
-            });
-
-            row.querySelector(".btn-primary").addEventListener("click", async () => {
-                const r = row.querySelector(".edit-ruc").value.trim();
-                const n = row.querySelector(".edit-nombre").value.trim();
-                const d = row.querySelector(".edit-dir").value.trim();
-                if (!r || !n || !d) return alert("Complete todos los campos");
-                await updateDoc(doc(db, 'proveedores', docSnap.id), { ruc: r, nombre: n, direccion: d });
             });
         });
     });
@@ -121,7 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const unidad = document.getElementById("unidadProducto").value.trim();
         const valor = document.getElementById("valorUnitarioProducto").value.trim();
 
-        if (!nombre) return alert("Ingrese el nombre del producto");
+        if (!nombre || !cantidad || !unidad || !valor) 
+            return alert("Complete todos los campos del producto");
 
         await addDoc(collection(db, 'productos'), { nombre, cantidad, unidad, valor });
         productoForm.reset();
@@ -135,13 +127,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const prod = docSnap.data();
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td><input type="text" value="${prod.nombre}" class="edit-nombre"></td>
-                <td><input type="number" value="${prod.cantidad}" class="edit-cant"></td>
-                <td><input type="text" value="${prod.unidad}" class="edit-uni"></td>
-                <td><input type="number" step="0.0001" value="${prod.valor}" class="edit-valor"></td>
+                <td>${prod.nombre}</td>
+                <td>${prod.cantidad}</td>
+                <td>${prod.unidad}</td>
+                <td>${prod.valor}</td>
                 <td>
                     <button class="btn-delete">Eliminar</button>
-                    <button class="btn-primary">Guardar</button>
                 </td>`;
             tablaProductos.appendChild(row);
 
@@ -152,14 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             row.querySelector(".btn-delete").addEventListener("click", async () => {
                 await deleteDoc(doc(db, 'productos', docSnap.id));
-            });
-
-            row.querySelector(".btn-primary").addEventListener("click", async () => {
-                const n = row.querySelector(".edit-nombre").value.trim();
-                const c = row.querySelector(".edit-cant").value.trim();
-                const u = row.querySelector(".edit-uni").value.trim();
-                const v = row.querySelector(".edit-valor").value.trim();
-                await updateDoc(doc(db, 'productos', docSnap.id), { nombre: n, cantidad: c, unidad: u, valor: v });
             });
         });
     });
@@ -197,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td class="click-prod" style="cursor:pointer;color:#4caf50;">${fac.producto}</td>
                 <td>${fac.moneda || ''} ${fac.monto}</td>
                 <td>${fac.tipo}</td>
-                <td>${fac.fechaEmision || '-'}</td>
+                <td>${fac.fechaEmision}</td>
                 <td><button class="btn-delete">Eliminar</button></td>`;
             tablaFacturas.appendChild(row);
 
@@ -250,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td class='link-prod' style='cursor:pointer;color:#4caf50;'>${f.producto}</td>
                             <td>${f.moneda || ''} ${f.monto}</td>
                             <td>${f.tipo}</td>
-                            <td>${f.fechaEmision || '-'}</td>
+                            <td>${f.fechaEmision}</td>
                         </tr>`;
                 });
                 html += "</table>";
