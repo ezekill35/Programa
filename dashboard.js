@@ -18,25 +18,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const facturaTabla = document.getElementById("tablaFacturas");
 
   const proveedorForm = document.getElementById("proveedorForm");
-  const proveedoresList = []; // Para seleccionar en facturas
+  const proveedoresList = [];
 
   const productoForm = document.getElementById("productoForm");
-  const productosList = []; // Para mostrar detalles
+  const productosList = [];
 
   // ===============================
-  // SESIÓN
+  // SESIÓN SEGURA
   // ===============================
   auth.onAuthStateChanged(user => {
     if (!user) {
-      // No hay usuario → ir a login
-      window.location.href = "index.html";
+      // Usuario no autenticado → login
+      window.location.replace("index.html");
     }
   });
 
   logoutBtn.addEventListener("click", async () => {
     try {
       await signOut(auth);
-      window.location.href = "index.html";
+      // No se necesita redirect manual, onAuthStateChanged se encarga
     } catch (e) {
       alert("Error cerrando sesión: " + e.message);
     }
@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.add("activo");
     });
   });
-
   document.getElementById("facturas").style.display = "block";
 
   // ===============================
@@ -76,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const proveedor = { ruc, nombre, telefono };
     proveedoresList.push(proveedor);
 
-    // Limpiar formulario
     proveedorForm.reset();
     alert("Proveedor registrado correctamente");
   });
@@ -152,26 +150,22 @@ document.addEventListener("DOMContentLoaded", () => {
         let contenido = "";
         if (tipo === "proveedor") {
           const prov = proveedoresList.find(p => p.nombre === td.textContent);
-          if (prov) {
-            contenido = `Nombre: ${prov.nombre}\nRUC: ${prov.ruc}\nTel: ${prov.telefono}`;
-          } else contenido = "Proveedor no encontrado";
+          if (prov) contenido = `Nombre: ${prov.nombre}\nRUC: ${prov.ruc}\nTel: ${prov.telefono}`;
+          else contenido = "Proveedor no encontrado";
         }
         if (tipo === "producto") {
           const prod = productosList.find(p => p.nombre === td.textContent);
-          if (prod) {
-            contenido = `Nombre: ${prod.nombre}\nDescripción: ${prod.descripcion}\nCantidad: ${prod.cantidad}\nUnidad: ${prod.unidad}\nValor unitario: ${prod.valorUnitario}`;
-          } else contenido = "Producto no encontrado";
+          if (prod) contenido = `Nombre: ${prod.nombre}\nDescripción: ${prod.descripcion}\nCantidad: ${prod.cantidad}\nUnidad: ${prod.unidad}\nValor unitario: ${prod.valorUnitario}`;
+          else contenido = "Producto no encontrado";
         }
-        if (tipo === "numero") {
-          contenido = `Número de factura: ${td.textContent}`;
-        }
+        if (tipo === "numero") contenido = `Número de factura: ${td.textContent}`;
         alert(contenido);
       });
     });
   });
 
   // ===============================
-  // BUSCADOR GLOBAL (Producto o Proveedor)
+  // BUSCADOR GLOBAL
   // ===============================
   buscador.addEventListener("input", () => {
     const texto = buscador.value.toLowerCase();
