@@ -52,18 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // =========================
-    // Mantener sesión activa
-    // =========================
     onAuthStateChanged(auth, user => {
-        const currentPage = window.location.pathname.split("/").pop(); // index.html o dashboard.html
-        if (user && currentPage === "index.html") {
-            // Si hay usuario activo y estamos en login → ir al dashboard
-            window.location.href = "dashboard.html";
-        }
-        // Si no hay usuario, permanece en login
+        const currentPage = window.location.pathname.split("/").pop();
+        if(user && currentPage === "index.html") window.location.href = "dashboard.html";
     });
 });
+
 
 
 
