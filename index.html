@@ -4,84 +4,81 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discovery Pets - Login</title>
-<link rel="icon" href="https://www.discovery-pets.com/favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body {
-    margin:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    background: linear-gradient(135deg, #ffb3cc, #66ccff);
-    font-family: 'Poppins', sans-serif;
-    perspective: 1000px;
+body { 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  min-height:100vh; 
+  background: linear-gradient(135deg, #ffe0f0, #ffb3d9); 
+  font-family: 'Poppins', sans-serif; 
+  margin:0;
 }
-.container {
-    background: #fff;
-    padding: 40px 30px;
-    border-radius: 20px;
-    width: 360px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    transform: rotateY(10deg);
-    animation: entry 0.8s ease forwards;
+.container { 
+  background:#fff; 
+  padding:30px; 
+  border-radius:20px; 
+  width:350px; 
+  box-shadow:10px 10px 30px rgba(0,0,0,0.2); 
+  text-align:center; 
+  animation:fadeIn 0.8s ease;
 }
-@keyframes entry {
-    0% { opacity:0; transform: rotateY(45deg) translateY(-50px); }
-    100% { opacity:1; transform: rotateY(0deg) translateY(0); }
+@keyframes fadeIn { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
+
+.container img { 
+  width:120px; 
+  margin-bottom:15px; 
 }
-h1 {
-    text-align:center;
-    color:#ff3399;
-    margin-bottom:25px;
+
+.container h1 { 
+  color:#ff3399; 
+  margin-bottom:20px; 
 }
-input {
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border-radius:10px;
-    border:1px solid #ccc;
-    transition:0.3s;
+
+.container input { 
+  width:100%; 
+  padding:10px; 
+  margin:8px 0; 
+  border-radius:8px; 
+  border:1px solid #ccc; 
+  transition:0.3s;
 }
-input:focus {
-    border-color:#ff3399;
-    box-shadow: 0 0 8px rgba(255,51,153,0.4);
-    outline:none;
+.container input:focus { 
+  border-color:#ff3399; 
+  box-shadow:0 0 10px rgba(255,51,153,0.3);
 }
-button {
-    width:100%;
-    padding:14px;
-    margin-top:10px;
-    background:#ff3399;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    transition:0.3s;
+
+.container button { 
+  width:100%; 
+  padding:12px; 
+  background:#ff3399; 
+  color:#fff; 
+  border:none; 
+  border-radius:8px; 
+  cursor:pointer; 
+  font-weight:600; 
+  transition:0.3s;
 }
-button:hover {
-    background:#ff66cc;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255,51,153,0.4);
+.container button:hover { 
+  background:#ff66cc; 
+  transform:scale(1.03);
 }
-.switch {
-    margin-top:12px;
-    text-align:center;
-    cursor:pointer;
-    color:#666;
-    font-size:14px;
+
+.switch { 
+  margin-top:10px; 
+  cursor:pointer; 
+  color:#666; 
+  font-size:13px; 
 }
-#mensaje {
-    margin-top:12px;
-    text-align:center;
-    font-weight:500;
+#mensaje { 
+  margin-top:10px; 
 }
 </style>
 </head>
 <body>
 <div class="container">
-    <h1>🐾 Discovery Pets</h1>
+    <img src="https://www.discovery-pets.com/wp-content/uploads/2021/04/logo.png" alt="Discovery Pets Logo">
+    <h1>Discovery Pets</h1>
 
     <div id="formLogin">
         <input id="emailLogin" type="email" placeholder="Correo" required>
@@ -97,14 +94,11 @@ button:hover {
         <p class="switch" id="toLogin">¿Ya tienes cuenta? Inicia sesión</p>
     </div>
 
-    <p id="mensaje"></p>
+    <p id="mensaje" style="color:red;"></p>
 </div>
-
 <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
 
 
 
