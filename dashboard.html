@@ -4,19 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discovery Pets - Dashboard</title>
-  
-  <!-- Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  
   <style>
-  /* ------------------ Reset y body ------------------ */
+  /* ------------------ Reset y Body ------------------ */
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
   }
-
   body {
     display: flex;
     min-height: 100vh;
@@ -36,9 +32,7 @@
     box-shadow: 5px 0 20px rgba(0,0,0,0.25);
     position: fixed;
     height: 100%;
-    transition: all 0.3s ease;
   }
-
   .sidebar img {
     display: block;
     margin: 0 auto 10px auto;
@@ -46,7 +40,6 @@
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   }
-
   .sidebar h3 {
     text-align: center;
     font-weight: bold;
@@ -54,7 +47,6 @@
     font-size: 1.3rem;
     color: #ffe082;
   }
-
   .menu-btn {
     background: none;
     border: none;
@@ -66,21 +58,19 @@
     cursor: pointer;
     border-left: 4px solid transparent;
   }
-
   .menu-btn:hover, .menu-btn.activo {
     background: rgba(255,255,255,0.2);
     border-left: 4px solid #ff4081;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
   }
 
-  /* ------------------ Main content ------------------ */
+  /* ------------------ Main Content ------------------ */
   .main-content {
     margin-left: 260px;
     padding: 30px;
     flex: 1;
     animation: fadeIn 0.5s ease;
   }
-
   @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 
   /* ------------------ Header y buscador ------------------ */
@@ -90,7 +80,6 @@
     align-items: center;
     margin-bottom: 30px;
   }
-
   #buscadorGlobal {
     width: 300px;
     border-radius: 12px;
@@ -99,49 +88,45 @@
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
   }
 
-  /* ------------------ Cards ------------------ */
-  .card {
+  /* ------------------ Cards de registro ------------------ */
+  .card-registro {
     background: linear-gradient(145deg, #ffffff, #f0f8ff);
-    border-radius: 15px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 30px;
     margin-bottom: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     transition: all 0.3s;
   }
-
-  .card:hover {
+  .card-registro:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   }
 
-  /* ------------------ Formularios Modernos ------------------ */
+  /* Grid moderno para formularios */
   .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
+    gap: 20px;
   }
-
   .form-group {
     display: flex;
     flex-direction: column;
   }
-
   .form-group label {
     font-weight: 600;
-    margin-bottom: 5px;
-    color: #1976d2;
+    margin-bottom: 8px;
+    color: #0d47a1;
   }
-
   .form-control {
-    padding: 10px;
-    border-radius: 10px;
+    padding: 12px;
+    border-radius: 12px;
     border: 1px solid #ccc;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
     transition: all 0.3s;
   }
-
   .form-control:focus {
     border-color: #1976d2;
-    box-shadow: 0 0 8px rgba(25,118,210,0.3);
+    box-shadow: 0 0 10px rgba(25,118,210,0.3);
   }
 
   /* ------------------ Botones ------------------ */
@@ -149,24 +134,30 @@
     background: linear-gradient(135deg, #1976d2, #42a5f5);
     border: none;
     color: white;
-    padding: 10px 20px;
-    border-radius: 12px;
+    padding: 12px 25px;
+    border-radius: 15px;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.3s;
   }
-
   .btn-primary:hover {
     background: linear-gradient(135deg, #0d47a1, #1e88e5);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
   }
-
   .btn-danger {
     background: linear-gradient(135deg, #e53935, #ef5350);
+    border: none;
     color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    font-weight: 600;
+    cursor: pointer;
   }
-
   .btn-danger:hover {
-    background: linear-gradient(135deg, #b71c1c, #e53935);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #b71c1c, #d32f2f);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
   }
 
   /* ------------------ Tablas ------------------ */
@@ -175,33 +166,27 @@
     color: white;
     text-align: center;
   }
-
   .table tbody tr:nth-child(even) {
     background-color: #f5f5f5;
   }
-
   .table .btn {
     padding: 5px 10px;
     border-radius: 8px;
     font-size: 0.9rem;
     transition: all 0.3s;
   }
-
   .table .btn-edit {
     background-color: #4caf50;
     color: white;
   }
-
   .table .btn-edit:hover {
     background-color: #388e3c;
     transform: scale(1.05);
   }
-
   .table .btn-delete {
     background-color: #f44336;
     color: white;
   }
-
   .table .btn-delete:hover {
     background-color: #d32f2f;
     transform: scale(1.05);
@@ -220,7 +205,6 @@
     z-index: 1000;
     display:none;
   }
-
   .modal-card {
     background: linear-gradient(145deg, #fff8e1, #ffe0b2);
     border-radius: 20px;
@@ -232,11 +216,9 @@
     transform: scale(0.9);
     transition: all 0.3s;
   }
-
   .modal-overlay.active .modal-card {
     transform: scale(1);
   }
-
   .cerrar {
     position: absolute;
     top: 10px;
@@ -246,7 +228,6 @@
     cursor: pointer;
     color: #ff4081;
   }
-
   #contenidoModal {
     margin-top: 15px;
     white-space: pre-wrap;
@@ -264,6 +245,7 @@
     <button class="menu-btn activo" data-target="facturas">📄 Facturas</button>
     <button class="menu-btn" data-target="proveedores">🏢 Proveedores</button>
     <button class="menu-btn" data-target="productos">🛒 Productos</button>
+    <button class="menu-btn" data-target="gastos">💰 Gastos</button>
     <hr>
     <button id="logoutBtn" class="menu-btn btn-danger">🚪 Cerrar Sesión</button>
   </div>
@@ -272,12 +254,12 @@
   <div class="main-content">
     <header>
       <h2>Panel de Control 🐶</h2>
-      <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor o producto...">
+      <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor, producto o gasto...">
     </header>
 
-    <!-- Facturas -->
+    <!-- ------------------ Facturas ------------------ -->
     <section id="facturas" class="seccion">
-      <div class="card">
+      <div class="card-registro">
         <h4>📄 Registrar Factura</h4>
         <form id="facturaForm" class="form-grid">
           <div class="form-group">
@@ -294,8 +276,8 @@
           </div>
           <div class="form-group">
             <label for="montoFactura">Monto</label>
-            <div style="display:flex; gap:5px;">
-              <select id="monedaFactura" class="form-control" style="width:80px;">
+            <div style="display:flex; gap:10px;">
+              <select id="monedaFactura" class="form-control" style="width:90px;">
                 <option value="S/">S/</option>
                 <option value="$">$</option>
               </select>
@@ -314,28 +296,11 @@
           </div>
         </form>
       </div>
-
-      <div class="card">
-        <h4>📑 Facturas Registradas</h4>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>N°</th>
-              <th>Proveedor</th>
-              <th>Producto</th>
-              <th>Monto</th>
-              <th>Tipo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </div>
     </section>
 
-    <!-- Proveedores -->
+    <!-- ------------------ Proveedores ------------------ -->
     <section id="proveedores" class="seccion" style="display:none;">
-      <div class="card">
+      <div class="card-registro">
         <h4>🏢 Registrar Proveedor</h4>
         <form id="proveedorForm" class="form-grid">
           <div class="form-group">
@@ -355,25 +320,11 @@
           </div>
         </form>
       </div>
-
-      <div class="card">
-        <h4>📑 Proveedores Registrados</h4>
-        <table class="table table-striped table-proveedores">
-          <thead>
-            <tr>
-              <th>RUC</th>
-              <th>Nombre</th>
-              <th>Teléfono</th>
-            </tr>
-          </thead>
-          <tbody id="tablaProveedores"></tbody>
-        </table>
-      </div>
     </section>
 
-    <!-- Productos -->
+    <!-- ------------------ Productos ------------------ -->
     <section id="productos" class="seccion" style="display:none;">
-      <div class="card">
+      <div class="card-registro">
         <h4>🛒 Registrar Producto</h4>
         <form id="productoForm" class="form-grid">
           <div class="form-group">
@@ -403,7 +354,31 @@
       </div>
     </section>
 
-    <!-- Modal -->
+    <!-- ------------------ Gastos ------------------ -->
+    <section id="gastos" class="seccion" style="display:none;">
+      <div class="card-registro">
+        <h4>💰 Registrar Gasto</h4>
+        <form id="gastoForm" class="form-grid">
+          <div class="form-group">
+            <label for="descripcionGasto">Descripción</label>
+            <input type="text" id="descripcionGasto" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="montoGasto">Monto</label>
+            <input type="number" id="montoGasto" class="form-control" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label for="fechaGasto">Fecha</label>
+            <input type="date" id="fechaGasto" class="form-control" required>
+          </div>
+          <div style="text-align:right; margin-top:15px;">
+            <button class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ------------------ Modal ------------------ -->
     <div id="detalleModal" class="modal-overlay">
       <div class="modal-card">
         <span id="cerrarModal" class="cerrar">&times;</span>
@@ -416,6 +391,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
