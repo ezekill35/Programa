@@ -1,251 +1,363 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discovery Pets - Dashboard</title>
-<img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets" style="width:120px; display:block; margin:0 auto 10px auto;">
-<style>
-body {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  min-height: 100vh;
-  display: flex;
-  overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
-  margin:0;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discovery Pets - Dashboard</title>
+  
+  <!-- Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+  /* ------------------ Reset y body ------------------ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
 
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background: linear-gradient(180deg, #0d47a1, #1976d2);
-  color: white;
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 4px 0 10px rgba(0,0,0,0.2);
-  position: fixed;
-  height: 100%;
-}
-.sidebar h3 {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-.sidebar img {
-  display:block;
-  margin: 0 auto 10px auto;
-  width: 120px;
-}
-.menu-btn {
-  background: none;
-  border: none;
-  color: white;
-  text-align: left;
-  padding: 12px 20px;
-  font-size: 16px;
-  transition: 0.3s;
-  cursor: pointer;
-}
-.menu-btn:hover, .menu-btn.activo {
-  background: rgba(255,255,255,0.2);
-}
+  body {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f8ff, #d0e8ff);
+    overflow-x: hidden;
+    color: #333;
+  }
 
-/* Main content */
-.main-content {
-  margin-left: 260px;
-  padding: 25px;
-  flex: 1;
-  animation: fadeIn 0.5s ease;
-}
-@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+  /* ------------------ Sidebar ------------------ */
+  .sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #0d47a1, #1976d2);
+    color: white;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.25);
+    position: fixed;
+    height: 100%;
+    transition: all 0.3s ease;
+  }
 
-/* Header y buscador */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-#buscadorGlobal {
-  width: 280px;
-  border-radius: 8px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-}
+  .sidebar img {
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 140px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
 
-/* Cards */
-.card {
-  background: white;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
+  .sidebar h3 {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    color: #ffe082;
+  }
 
-/* Buttons */
-.btn-primary { background: #1976d2; border: none; }
-.btn-primary:hover { background: #0d47a1; }
+  .menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    padding: 14px 22px;
+    font-size: 16px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+  }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  display:none;
-}
-.modal-card {
-  background: linear-gradient(145deg, #fff8e1, #ffe0b2);
-  border-radius: 20px;
-  padding: 25px;
-  width: 400px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-  text-align: left;
-  position: relative;
-}
-.cerrar {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #ff3399;
-}
-#contenidoModal { margin-top: 15px; white-space: pre-wrap; font-family: 'Poppins', sans-serif; font-size: 14px; }
+  .menu-btn:hover, .menu-btn.activo {
+    background: rgba(255,255,255,0.2);
+    border-left: 4px solid #ff4081;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+  }
 
-/* Tabla Proveedores */
-.table-proveedores th, .table-proveedores td {
-  vertical-align: middle;
-}
-</style>
+  /* ------------------ Main content ------------------ */
+  .main-content {
+    margin-left: 260px;
+    padding: 30px;
+    flex: 1;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+  /* ------------------ Header y buscador ------------------ */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  #buscadorGlobal {
+    width: 300px;
+    border-radius: 12px;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  /* ------------------ Cards ------------------ */
+  .card {
+    background: linear-gradient(145deg, #ffffff, #f0f8ff);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  }
+
+  /* ------------------ Inputs y Botones ------------------ */
+  input, select {
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    transition: all 0.3s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 8px rgba(25,118,210,0.3);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #0d47a1, #1e88e5);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #e53935, #ef5350);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: linear-gradient(135deg, #b71c1c, #e53935);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  /* ------------------ Tablas ------------------ */
+  .table th {
+    background-color: #1976d2;
+    color: white;
+    text-align: center;
+  }
+
+  .table tbody tr:nth-child(even) {
+    background-color: #f5f5f5;
+  }
+
+  /* Botones de acciones */
+  .table .btn {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+
+  .table .btn-edit {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .table .btn-edit:hover {
+    background-color: #388e3c;
+    transform: scale(1.05);
+  }
+
+  .table .btn-delete {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .table .btn-delete:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
+  }
+
+  /* ------------------ Modal ------------------ */
+  .modal-overlay {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display:none;
+  }
+
+  .modal-card {
+    background: linear-gradient(145deg, #fff8e1, #ffe0b2);
+    border-radius: 20px;
+    padding: 30px;
+    width: 420px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    position: relative;
+    text-align: left;
+    transform: scale(0.9);
+    transition: all 0.3s;
+  }
+
+  .modal-overlay.active .modal-card {
+    transform: scale(1);
+  }
+
+  .cerrar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #ff4081;
+  }
+
+  #contenidoModal {
+    margin-top: 15px;
+    white-space: pre-wrap;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+  }
+  </style>
 </head>
+
 <body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
+    <h3>🐾 Discovery Pets</h3>
+    <button class="menu-btn activo" data-target="facturas">📄 Facturas</button>
+    <button class="menu-btn" data-target="proveedores">🏢 Proveedores</button>
+    <button class="menu-btn" data-target="productos">🛒 Productos</button>
+    <hr>
+    <button id="logoutBtn" class="menu-btn btn-danger">🚪 Cerrar Sesión</button>
+  </div>
 
-<div class="sidebar">
-  <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
-  <h3>🐾 Discovery Pets</h3>
-  <button class="menu-btn activo" data-target="facturas">📄 Facturas</button>
-  <button class="menu-btn" data-target="proveedores">🏢 Proveedores</button>
-  <button class="menu-btn" data-target="productos">🛒 Productos</button>
-  <hr>
-  <button id="logoutBtn" class="menu-btn text-danger">🚪 Cerrar Sesión</button>
-</div>
+  <!-- Main Content -->
+  <div class="main-content">
+    <header>
+      <h2>Panel de Control 🐶</h2>
+      <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor o producto...">
+    </header>
 
-<div class="main-content">
-<header>
-  <h2>Panel de Control</h2>
-  <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar factura, proveedor o producto...">
-</header>
+    <!-- Facturas -->
+    <section id="facturas" class="seccion">
+      <div class="card">
+        <h4>📄 Registrar Factura</h4>
+        <form id="facturaForm" class="row g-3">
+          <div class="col-md-3"><label class="form-label">N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
+          <div class="col-md-3"><label class="form-label">Proveedor</label><select id="proveedorFactura" class="form-select"></select></div>
+          <div class="col-md-3"><label class="form-label">Producto</label><input type="text" id="productoFactura" class="form-control"></div>
+          <div class="col-md-2"><label class="form-label">Monto</label>
+            <div class="input-group">
+              <select id="monedaFactura" class="form-select" style="max-width:90px;">
+                <option value="S/">S/</option>
+                <option value="$">$</option>
+              </select>
+              <input type="number" id="montoFactura" class="form-control" step="0.01" required>
+            </div>
+          </div>
+          <div class="col-md-3"><label class="form-label">Tipo</label>
+            <select id="tipoFactura" class="form-select">
+              <option value="Factura Electrónica">Factura Electrónica</option>
+              <option value="Boleta">Boleta</option>
+            </select>
+          </div>
+          <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+        </form>
+      </div>
 
-<!-- Facturas -->
-<section id="facturas" class="seccion">
-<div class="card">
-  <h4>Registrar Factura</h4>
-  <form id="facturaForm" class="row g-3">
-    <div class="col-md-3"><label class="form-label">N° Factura</label><input type="text" id="numeroFactura" class="form-control" required></div>
-    <div class="col-md-3"><label class="form-label">Proveedor</label>
-      <select id="proveedorFactura" class="form-select"></select>
-    </div>
-    <div class="col-md-3"><label class="form-label">Producto</label><input type="text" id="productoFactura" class="form-control"></div>
-    <div class="col-md-2">
-      <label class="form-label">Monto</label>
-      <div class="input-group">
-        <select id="monedaFactura" class="form-select" style="max-width:90px;">
-          <option value="S/">S/</option>
-          <option value="$">$</option>
-        </select>
-        <input type="number" id="montoFactura" class="form-control" step="0.01" required>
+      <div class="card">
+        <h4>📑 Facturas Registradas</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Proveedor</th>
+              <th>Producto</th>
+              <th>Monto</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Proveedores -->
+    <section id="proveedores" class="seccion" style="display:none;">
+      <div class="card">
+        <h4>🏢 Registrar Proveedor</h4>
+        <form id="proveedorForm" class="row g-3">
+          <div class="col-md-4"><label class="form-label">RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
+          <div class="col-md-4"><label class="form-label">Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
+          <div class="col-md-4"><label class="form-label">Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
+          <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h4>📑 Proveedores Registrados</h4>
+        <table class="table table-striped table-proveedores">
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Productos -->
+    <section id="productos" class="seccion" style="display:none;">
+      <div class="card">
+        <h4>🛒 Registrar Producto</h4>
+        <form id="productoForm" class="row g-3">
+          <div class="col-md-3"><label class="form-label">Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
+          <div class="col-md-3"><label class="form-label">Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
+          <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
+          <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
+          <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
+          <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="detalleModal" class="modal-overlay">
+      <div class="modal-card">
+        <span id="cerrarModal" class="cerrar">&times;</span>
+        <h4 id="tituloModal"></h4>
+        <pre id="contenidoModal"></pre>
       </div>
     </div>
-    <div class="col-md-3"><label class="form-label">Tipo</label>
-      <select id="tipoFactura" class="form-select">
-        <option value="Factura Electrónica">Factura Electrónica</option>
-        <option value="Boleta">Boleta</option>
-      </select>
-    </div>
-    <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
-  </form>
-</div>
-
-<div class="card">
-  <h4>Facturas Registradas</h4>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>N°</th>
-        <th>Proveedor</th>
-        <th>Producto</th>
-        <th>Monto</th>
-        <th>Tipo</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tablaFacturas"></tbody>
-  </table>
-</div>
-</section>
-
-<!-- Proveedores -->
-<section id="proveedores" class="seccion" style="display:none;">
-<div class="card">
-<h4>Registrar Proveedor</h4>
-<form id="proveedorForm" class="row g-3">
-  <div class="col-md-4"><label class="form-label">RUC</label><input type="number" id="rucProveedor" class="form-control" required></div>
-  <div class="col-md-4"><label class="form-label">Nombre</label><input type="text" id="nombreProveedor" class="form-control" required></div>
-  <div class="col-md-4"><label class="form-label">Teléfono</label><input type="number" id="telefonoProveedor" class="form-control" required></div>
-  <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
-</form>
-</div>
-
-<div class="card">
-<h4>Proveedores Registrados</h4>
-<table class="table table-striped table-proveedores">
-  <thead>
-    <tr>
-      <th>RUC</th>
-      <th>Nombre</th>
-      <th>Teléfono</th>
-    </tr>
-  </thead>
-  <tbody id="tablaProveedores"></tbody>
-</table>
-</div>
-</section>
-
-<!-- Productos -->
-<section id="productos" class="seccion" style="display:none;">
-<div class="card">
-<h4>Registrar Producto</h4>
-<form id="productoForm" class="row g-3">
-  <div class="col-md-3"><label class="form-label">Nombre</label><input type="text" id="nombreProducto" class="form-control" required></div>
-  <div class="col-md-3"><label class="form-label">Descripción</label><input type="text" id="descripcionProducto" class="form-control"></div>
-  <div class="col-md-2"><label class="form-label">Cantidad</label><input type="number" id="cantidadProducto" class="form-control"></div>
-  <div class="col-md-2"><label class="form-label">Unidad</label><input type="text" id="unidadProducto" class="form-control"></div>
-  <div class="col-md-2"><label class="form-label">Valor Unitario</label><input type="number" id="valorUnitarioProducto" class="form-control" step="0.01"></div>
-  <div class="col-12"><button class="btn btn-primary mt-2">Guardar</button></div>
-</form>
-</div>
-</section>
-
-<!-- Modal -->
-<div id="detalleModal" class="modal-overlay">
-  <div class="modal-card">
-    <span id="cerrarModal" class="cerrar">&times;</span>
-    <h4 id="tituloModal"></h4>
-    <pre id="contenidoModal"></pre>
   </div>
-</div>
 
-</div>
-
-<script type="module" src="dashboard.js"></script>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
 
