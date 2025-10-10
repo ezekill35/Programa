@@ -88,12 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
             opt.value = prov.nombre; opt.textContent = prov.nombre;
             proveedorSelect.appendChild(opt);
 
-            // Eliminar
             row.querySelector(".btn-delete").addEventListener("click", async ()=>{
                 await deleteDoc(doc(db,'proveedores',docSnap.id));
             });
 
-            // Guardar cambios
             row.querySelector(".btn-primary").addEventListener("click", async ()=>{
                 const nuevoRUC = row.querySelector(".edit-ruc").value.trim();
                 const nuevoNombre = row.querySelector(".edit-nombre").value.trim();
@@ -110,13 +108,12 @@ document.addEventListener("DOMContentLoaded", () => {
     productoForm.addEventListener("submit", async e=>{
         e.preventDefault();
         const nombre = document.getElementById("nombreProducto").value.trim();
-        const descripcion = document.getElementById("descripcionProducto").value.trim();
         const cantidad = document.getElementById("cantidadProducto").value.trim();
         const unidad = document.getElementById("unidadProducto").value.trim();
         const valor = document.getElementById("valorUnitarioProducto").value.trim();
         if(!nombre) return alert("Ingrese nombre del producto");
 
-        await addDoc(collection(db,'productos'), {nombre,descripcion,cantidad,unidad,valor});
+        await addDoc(collection(db,'productos'), {nombre,cantidad,unidad,valor});
         productoForm.reset();
     });
 
@@ -128,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = document.createElement("tr");
             row.innerHTML=`
                 <td><input type="text" value="${prod.nombre}" class="edit-nombre"></td>
-                <td><input type="text" value="${prod.descripcion}" class="edit-desc"></td>
                 <td><input type="number" value="${prod.cantidad}" class="edit-cant"></td>
                 <td><input type="text" value="${prod.unidad}" class="edit-uni"></td>
                 <td><input type="number" step="0.01" value="${prod.valor}" class="edit-valor"></td>
@@ -149,12 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             row.querySelector(".btn-primary").addEventListener("click", async ()=>{
                 const n = row.querySelector(".edit-nombre").value.trim();
-                const d = row.querySelector(".edit-desc").value.trim();
                 const c = row.querySelector(".edit-cant").value.trim();
                 const u = row.querySelector(".edit-uni").value.trim();
                 const v = row.querySelector(".edit-valor").value.trim();
                 if(!n) return alert("Ingrese nombre del producto");
-                await updateDoc(doc(db,'productos',docSnap.id), {nombre:n,descripcion:d,cantidad:c,unidad:u,valor:v});
+                await updateDoc(doc(db,'productos',docSnap.id), {nombre:n,cantidad:c,unidad:u,valor:v});
             });
         });
     });
@@ -203,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             tablaFacturas.appendChild(row);
 
-            // Llenar select de proveedores
+            // Llenar select proveedores
             proveedorSelect.querySelectorAll("option").forEach(opt=>{
                 const sel = document.createElement("option");
                 sel.value = opt.value;
@@ -212,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.querySelector(".edit-prov").appendChild(sel);
             });
 
-            // Llenar select de productos
+            // Llenar select productos
             productoSelect.querySelectorAll("option").forEach(opt=>{
                 const sel = document.createElement("option");
                 sel.value = opt.value;
@@ -237,15 +232,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(!/^\d+$/.test(n)) return alert("Número de factura solo puede contener números");
                 await updateDoc(doc(db,'facturas',docSnap.id), {numero:n,proveedor:p,producto:prod,monto:m,tipo:t,moneda:fac.moneda});
             });
-
-            // Detalle al hacer click en número
-            row.querySelector(".edit-numero").addEventListener("click", ()=>{
-                abrirModal("Factura N° "+fac.numero, JSON.stringify(fac,null,2));
-            });
         });
     });
 
-    // ==================== BUSCADOR GLOBAL ====================
+    // ==================== BUSCADOR ====================
     buscador.addEventListener("input", async ()=>{
         const txt = buscador.value.toLowerCase().trim();
         if(!txt){ detalleModal.style.display="none"; return; }
@@ -258,13 +248,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if(resultados.length){
-            let contenido = resultados.map(p=>`Nombre: ${p.nombre}\nDescripción: ${p.descripcion}\nCantidad: ${p.cantidad}\nUnidad: ${p.unidad}\nValor: ${p.valor}`).join("\n\n----------------\n\n");
+            let contenido = resultados.map(p=>`Nombre: ${p.nombre}\nCantidad: ${p.cantidad}\nUnidad: ${p.unidad}\nValor: ${p.valor}`).join("\n\n----------------\n\n");
             abrirModal("Productos relacionados",contenido);
         } else detalleModal.style.display="none";
     });
 
 });
-
-
 
 
