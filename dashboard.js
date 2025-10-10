@@ -1,6 +1,6 @@
 import { auth, db } from './firebase.js';
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         detalleModal.style.display="flex";
     }
 
-    // ---------------- NAV ----------------
+    // NAV
     menuBtns.forEach(btn=>{
         btn.addEventListener("click", ()=>{
             const target = btn.dataset.target;
@@ -43,17 +43,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById("proveedores").style.display="block";
 
-    // ---------------- LOGOUT ----------------
+    // LOGOUT
     logoutBtn.addEventListener("click", ()=>signOut(auth).then(()=>window.location.href="index.html"));
+
+    // VALIDACIONES SOLO NÚMEROS
+    const rucInput = document.getElementById("rucProveedor");
+    const numeroFacturaInput = document.getElementById("numeroFactura");
+
+    rucInput.addEventListener("input", e=>{ e.target.value = e.target.value.replace(/\D/g,''); });
+    numeroFacturaInput.addEventListener("input", e=>{ e.target.value = e.target.value.replace(/\D/g,''); });
 
     // ==================== PROVEEDORES ====================
     const proveedorForm=document.getElementById("proveedorForm");
     proveedorForm.addEventListener("submit", async e=>{
         e.preventDefault();
-        const ruc=document.getElementById("rucProveedor").value;
-        const nombre=document.getElementById("nombreProveedor").value;
-        const direccion=document.getElementById("direccionProveedor").value;
-
+        const ruc = rucInput.value.trim();
+        const nombre = document.getElementById("nombreProveedor").value.trim();
+        const direccion = document.getElementById("direccionProveedor").value.trim();
         if(!ruc||!nombre||!direccion) return alert("Complete todos los campos");
         if(!/^\d+$/.test(ruc)) return alert("RUC solo puede contener números");
 
@@ -61,52 +67,41 @@ document.addEventListener("DOMContentLoaded", () => {
         proveedorForm.reset();
     });
 
-    document.getElementById("rucProveedor").addEventListener("input", e=>{
-        e.target.value = e.target.value.replace(/\D/g,'');
-    });
-
-    window.eliminarProveedor = async (id)=>{ await deleteDoc(doc(db,'proveedores',id)); };
-
     onSnapshot(collection(db,'proveedores'), snapshot=>{
         tablaProveedores.innerHTML='';
         proveedorSelect.innerHTML='<option value="" disabled selected>Seleccione proveedor</option>';
         snapshot.forEach(docSnap=>{
-            const prov=docSnap.data();
-            const row=document.createElement("tr");
+            const prov = docSnap.data();
+            const row = document.createElement("tr");
             row.innerHTML=`
                 <td><input type="text" value="${prov.ruc}" class="edit-ruc"></td>
                 <td><input type="text" value="${prov.nombre}" class="edit-nombre"></td>
                 <td><input type="text" value="${prov.direccion}" class="edit-direccion"></td>
                 <td>
                     <button class="btn-delete">Eliminar</button>
-                    <button class="btn-primary btn-sm guardar">Guardar</button>
+                    <button class="btn-primary">Guardar</button>
                 </td>
             `;
             tablaProveedores.appendChild(row);
 
-            // Opciones proveedor factura
-            const opt=document.createElement("option");
-            opt.value=prov.nombre; opt.textContent=prov.nombre;
+            const opt = document.createElement("option");
+            opt.value = prov.nombre; opt.textContent = prov.nombre;
             proveedorSelect.appendChild(opt);
 
-            // Editar y guardar en tiempo real
-            const btnGuardar=row.querySelector(".guardar");
-            const btnEliminar=row.querySelector(".btn-delete");
-            const rucInput=row.querySelector(".edit-ruc");
-            const nombreInput=row.querySelector(".edit-nombre");
-            const direccionInput=row.querySelector(".edit-direccion");
-
-            rucInput.addEventListener("input", e=>{ e.target.value=e.target.value.replace(/\D/g,''); });
-
-            btnGuardar.addEventListener("click", async ()=>{
-                const rucVal=rucInput.value.trim();
-                const nombreVal=nombreInput.value.trim();
-                const dirVal=direccionInput.value.trim();
-                if(!rucVal||!nombreVal||!dirVal) return alert("Complete todos los campos");
-                await updateDoc(doc(db,'proveedores',docSnap.id), {ruc:rucVal,nombre:nombreVal,direccion:dirVal});
+            // Eliminar
+            row.querySelector(".btn-delete").addEventListener("click", async ()=>{
+                await deleteDoc(doc(db,'proveedores',docSnap.id));
             });
 
-            btnEliminar.addEventListener("click", ()=>eliminarProveedor(docSnap.id));
+            // Guardar cambios
+            row.querySelector(".btn-primary").addEventListener("click", async ()=>{
+                const nuevoRUC = row.querySelector(".edit-ruc").value.trim();
+                const nuevoNombre = row.querySelector(".edit-nombre").value.trim();
+                const nuevaDir = row.querySelector(".edit-direccion").value.trim();
+                if(!nuevoRUC||!nuevoNombre||!nuevaDir) return alert("Complete todos los campos");
+                if(!/^\d+$/.test(nuevoRUC)) return alert("RUC solo puede contener números");
+                await updateDoc(doc(db,'proveedores',docSnap.id), {ruc:nuevoRUC,nombre:nuevoNombre,direccion:nuevaDir});
+            });
         });
     });
 
@@ -114,55 +109,53 @@ document.addEventListener("DOMContentLoaded", () => {
     const productoForm=document.getElementById("productoForm");
     productoForm.addEventListener("submit", async e=>{
         e.preventDefault();
-        const nombre=document.getElementById("nombreProducto").value;
-        const descripcion=document.getElementById("descripcionProducto").value;
-        const cantidad=document.getElementById("cantidadProducto").value;
-        const unidad=document.getElementById("unidadProducto").value;
-        const valor=document.getElementById("valorUnitarioProducto").value;
+        const nombre = document.getElementById("nombreProducto").value.trim();
+        const descripcion = document.getElementById("descripcionProducto").value.trim();
+        const cantidad = document.getElementById("cantidadProducto").value.trim();
+        const unidad = document.getElementById("unidadProducto").value.trim();
+        const valor = document.getElementById("valorUnitarioProducto").value.trim();
         if(!nombre) return alert("Ingrese nombre del producto");
+
         await addDoc(collection(db,'productos'), {nombre,descripcion,cantidad,unidad,valor});
         productoForm.reset();
     });
-
-    window.eliminarProducto = async id=>{ await deleteDoc(doc(db,'productos',id)); };
 
     onSnapshot(collection(db,'productos'), snapshot=>{
         tablaProductos.innerHTML='';
         productoSelect.innerHTML='<option value="" disabled selected>Seleccione producto</option>';
         snapshot.forEach(docSnap=>{
-            const prod=docSnap.data();
-            const row=document.createElement("tr");
+            const prod = docSnap.data();
+            const row = document.createElement("tr");
             row.innerHTML=`
                 <td><input type="text" value="${prod.nombre}" class="edit-nombre"></td>
-                <td><input type="text" value="${prod.descripcion}" class="edit-descripcion"></td>
-                <td><input type="number" value="${prod.cantidad}" class="edit-cantidad"></td>
-                <td><input type="text" value="${prod.unidad}" class="edit-unidad"></td>
-                <td><input type="number" value="${prod.valor}" step="0.01" class="edit-valor"></td>
+                <td><input type="text" value="${prod.descripcion}" class="edit-desc"></td>
+                <td><input type="number" value="${prod.cantidad}" class="edit-cant"></td>
+                <td><input type="text" value="${prod.unidad}" class="edit-uni"></td>
+                <td><input type="number" step="0.01" value="${prod.valor}" class="edit-valor"></td>
                 <td>
                     <button class="btn-delete">Eliminar</button>
-                    <button class="btn-primary btn-sm guardar">Guardar</button>
+                    <button class="btn-primary">Guardar</button>
                 </td>
             `;
             tablaProductos.appendChild(row);
 
-            const opt=document.createElement("option");
-            opt.value=prod.nombre; opt.textContent=prod.nombre;
+            const opt = document.createElement("option");
+            opt.value = prod.nombre; opt.textContent = prod.nombre;
             productoSelect.appendChild(opt);
 
-            const btnGuardar=row.querySelector(".guardar");
-            const btnEliminar=row.querySelector(".btn-delete");
-
-            btnGuardar.addEventListener("click", async ()=>{
-                await updateDoc(doc(db,'productos',docSnap.id), {
-                    nombre: row.querySelector(".edit-nombre").value,
-                    descripcion: row.querySelector(".edit-descripcion").value,
-                    cantidad: row.querySelector(".edit-cantidad").value,
-                    unidad: row.querySelector(".edit-unidad").value,
-                    valor: row.querySelector(".edit-valor").value
-                });
+            row.querySelector(".btn-delete").addEventListener("click", async ()=>{
+                await deleteDoc(doc(db,'productos',docSnap.id));
             });
 
-            btnEliminar.addEventListener("click", ()=>eliminarProducto(docSnap.id));
+            row.querySelector(".btn-primary").addEventListener("click", async ()=>{
+                const n = row.querySelector(".edit-nombre").value.trim();
+                const d = row.querySelector(".edit-desc").value.trim();
+                const c = row.querySelector(".edit-cant").value.trim();
+                const u = row.querySelector(".edit-uni").value.trim();
+                const v = row.querySelector(".edit-valor").value.trim();
+                if(!n) return alert("Ingrese nombre del producto");
+                await updateDoc(doc(db,'productos',docSnap.id), {nombre:n,descripcion:d,cantidad:c,unidad:u,valor:v});
+            });
         });
     });
 
@@ -170,78 +163,104 @@ document.addEventListener("DOMContentLoaded", () => {
     const facturaForm=document.getElementById("facturaForm");
     facturaForm.addEventListener("submit", async e=>{
         e.preventDefault();
-        const numero=document.getElementById("numeroFactura").value;
-        const proveedor=proveedorSelect.value;
-        const producto=productoSelect.value;
-        const monto=document.getElementById("montoFactura").value;
-        const tipo=document.getElementById("tipoFactura").value;
-        const moneda=document.getElementById("monedaFactura").value;
+        const numero = numeroFacturaInput.value.trim();
+        const proveedor = proveedorSelect.value;
+        const producto = productoSelect.value;
+        const monto = document.getElementById("montoFactura").value.trim();
+        const tipo = document.getElementById("tipoFactura").value;
+        const moneda = document.getElementById("monedaFactura").value;
         if(!numero||!proveedor||!producto||!monto) return alert("Complete todos los campos");
         if(!/^\d+$/.test(numero)) return alert("Número de factura solo puede contener números");
+
         await addDoc(collection(db,'facturas'), {numero,proveedor,producto,monto,tipo,moneda});
         facturaForm.reset();
     });
 
-    document.getElementById("numeroFactura").addEventListener("input", e=>{
-        e.target.value = e.target.value.replace(/\D/g,'');
-    });
-
-    window.eliminarFactura = async id=>{ await deleteDoc(doc(db,'facturas',id)); };
-
     onSnapshot(collection(db,'facturas'), snapshot=>{
         tablaFacturas.innerHTML='';
         snapshot.forEach(docSnap=>{
-            const fac=docSnap.data();
-            const row=document.createElement("tr");
+            const fac = docSnap.data();
+            const row = document.createElement("tr");
             row.innerHTML=`
-                <td><input type="text" value="${fac.numero}" class="edit-numero" /></td>
-                <td><input type="text" value="${fac.proveedor}" class="edit-proveedor" /></td>
-                <td><input type="text" value="${fac.producto}" class="edit-producto" /></td>
-                <td><input type="number" value="${fac.monto}" step="0.01" class="edit-monto" /></td>
-                <td><input type="text" value="${fac.tipo}" class="edit-tipo" /></td>
+                <td><input type="text" value="${fac.numero}" class="edit-numero"></td>
+                <td>
+                    <select class="edit-prov"></select>
+                </td>
+                <td>
+                    <select class="edit-prod"></select>
+                </td>
+                <td><input type="number" value="${fac.monto}" class="edit-monto"></td>
+                <td>
+                    <select class="edit-tipo">
+                        <option ${fac.tipo==="Factura Electrónica"?"selected":""}>Factura Electrónica</option>
+                        <option ${fac.tipo==="Boleta"?"selected":""}>Boleta</option>
+                    </select>
+                </td>
                 <td>
                     <button class="btn-delete">Eliminar</button>
-                    <button class="btn-primary btn-sm guardar">Guardar</button>
+                    <button class="btn-primary">Guardar</button>
                 </td>
             `;
             tablaFacturas.appendChild(row);
 
-            const btnGuardar=row.querySelector(".guardar");
-            const btnEliminar=row.querySelector(".btn-delete");
-
-            row.querySelector(".edit-numero").addEventListener("input", e=>{ e.target.value=e.target.value.replace(/\D/g,''); });
-
-            btnGuardar.addEventListener("click", async ()=>{
-                await updateDoc(doc(db,'facturas',docSnap.id), {
-                    numero: row.querySelector(".edit-numero").value,
-                    proveedor: row.querySelector(".edit-proveedor").value,
-                    producto: row.querySelector(".edit-producto").value,
-                    monto: row.querySelector(".edit-monto").value,
-                    tipo: row.querySelector(".edit-tipo").value,
-                    moneda: fac.moneda
-                });
+            // Llenar select de proveedores
+            proveedorSelect.querySelectorAll("option").forEach(opt=>{
+                const sel = document.createElement("option");
+                sel.value = opt.value;
+                sel.textContent = opt.textContent;
+                if(opt.value===fac.proveedor) sel.selected = true;
+                row.querySelector(".edit-prov").appendChild(sel);
             });
 
-            btnEliminar.addEventListener("click", ()=>eliminarFactura(docSnap.id));
+            // Llenar select de productos
+            productoSelect.querySelectorAll("option").forEach(opt=>{
+                const sel = document.createElement("option");
+                sel.value = opt.value;
+                sel.textContent = opt.textContent;
+                if(opt.value===fac.producto) sel.selected = true;
+                row.querySelector(".edit-prod").appendChild(sel);
+            });
+
+            // Eliminar factura
+            row.querySelector(".btn-delete").addEventListener("click", async ()=>{
+                await deleteDoc(doc(db,'facturas',docSnap.id));
+            });
+
+            // Guardar cambios
+            row.querySelector(".btn-primary").addEventListener("click", async ()=>{
+                const n = row.querySelector(".edit-numero").value.trim();
+                const p = row.querySelector(".edit-prov").value;
+                const prod = row.querySelector(".edit-prod").value;
+                const m = row.querySelector(".edit-monto").value.trim();
+                const t = row.querySelector(".edit-tipo").value;
+                if(!n||!p||!prod||!m) return alert("Complete todos los campos");
+                if(!/^\d+$/.test(n)) return alert("Número de factura solo puede contener números");
+                await updateDoc(doc(db,'facturas',docSnap.id), {numero:n,proveedor:p,producto:prod,monto:m,tipo:t,moneda:fac.moneda});
+            });
+
+            // Detalle al hacer click en número
+            row.querySelector(".edit-numero").addEventListener("click", ()=>{
+                abrirModal("Factura N° "+fac.numero, JSON.stringify(fac,null,2));
+            });
         });
     });
 
     // ==================== BUSCADOR GLOBAL ====================
-    buscador.addEventListener("keypress", async e=>{
-        if(e.key==="Enter"){
-            const txt=buscador.value.toLowerCase();
-            if(!txt) return;
-            const snapshot=await getDocs(collection(db,'productos'));
-            const resultados=[];
-            snapshot.forEach(docSnap=>{
-                const prod=docSnap.data();
-                if(prod.nombre.toLowerCase().includes(txt)) resultados.push(prod);
-            });
-            if(resultados.length>0){
-                let contenido=resultados.map(p=>`Nombre: ${p.nombre}\nDescripción: ${p.descripcion}\nCantidad: ${p.cantidad}\nUnidad: ${p.unidad}\nValor: ${p.valor}`).join("\n\n----------------\n\n");
-                abrirModal("Productos relacionados",contenido);
-            } else detalleModal.style.display="none";
-        }
+    buscador.addEventListener("input", async ()=>{
+        const txt = buscador.value.toLowerCase().trim();
+        if(!txt){ detalleModal.style.display="none"; return; }
+
+        const snapshot = await getDocs(collection(db,'productos'));
+        const resultados = [];
+        snapshot.forEach(docSnap=>{
+            const prod = docSnap.data();
+            if(prod.nombre.toLowerCase().includes(txt)) resultados.push(prod);
+        });
+
+        if(resultados.length){
+            let contenido = resultados.map(p=>`Nombre: ${p.nombre}\nDescripción: ${p.descripcion}\nCantidad: ${p.cantidad}\nUnidad: ${p.unidad}\nValor: ${p.valor}`).join("\n\n----------------\n\n");
+            abrirModal("Productos relacionados",contenido);
+        } else detalleModal.style.display="none";
     });
 
 });
