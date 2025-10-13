@@ -145,6 +145,10 @@ onSnapshot(collection(db, "facturas"), snapshot => {
 
 function mostrarFacturas(facturas) {
   tablaFacturas.innerHTML = "";
+  if (facturas.length === 0) {
+    tablaFacturas.innerHTML = `<tr><td colspan="8" style="text-align:center;">No se encontraron coincidencias.</td></tr>`;
+    return;
+  }
   facturas.forEach(f => {
     const fila = document.createElement("tr");
     fila.innerHTML = `
@@ -165,14 +169,17 @@ function mostrarFacturas(facturas) {
 
 // ======================= BUSCADOR INTELIGENTE =======================
 const buscador = document.getElementById("buscadorFactura");
-buscador.addEventListener("keypress", e => {
+buscador.addEventListener("keydown", e => {
   if (e.key === "Enter") {
+    e.preventDefault(); // Evita enviar formulario accidentalmente
     const valor = buscador.value.trim().toLowerCase();
     const filtradas = facturasGuardadas.filter(f => f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
   }
 });
+
 document.getElementById("btnRefresh").addEventListener("click", () => {
+  buscador.value = "";
   mostrarFacturas(facturasGuardadas);
 });
 
@@ -242,6 +249,7 @@ async function editarFila(btn, datos, coleccion) {
   btn.onclick = async () => {
     const inputs = fila.querySelectorAll("input, select");
     const datosActualizados = {};
+
     if (coleccion === "proveedores") {
       datosActualizados.ruc = inputs[0].value.trim();
       datosActualizados.nombre = inputs[1].value.trim();
