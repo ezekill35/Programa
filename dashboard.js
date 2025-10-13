@@ -169,13 +169,12 @@ function mostrarFacturas(facturas) {
 const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keydown", e => {
   if (e.key === "Enter") {
-    e.preventDefault(); // evita enviar formulario
+    e.preventDefault();
     const valor = buscador.value.trim().toLowerCase();
     const filtradas = facturasGuardadas.filter(f => f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
   }
 });
-
 document.getElementById("btnRefresh").addEventListener("click", () => {
   buscador.value = "";
   mostrarFacturas(facturasGuardadas);
@@ -186,14 +185,12 @@ document.addEventListener("click", async e => {
   const id = e.target.dataset.id;
   const tipo = e.target.dataset.tipo;
 
-  // Eliminar
   if (e.target.classList.contains("btn-delete")) {
     if (confirm("¿Desea eliminar este registro?")) {
       await deleteDoc(doc(db, tipo, id));
     }
   }
 
-  // Editar / Guardar
   if (e.target.classList.contains("btn-edit") || e.target.classList.contains("btn-save")) {
     const registro = (tipo === "proveedores" ? proveedoresGuardados : tipo === "productos" ? productosGuardados : facturasGuardadas).find(r => r.id === id);
     const fila = e.target.closest("tr");
@@ -205,7 +202,6 @@ document.addEventListener("click", async e => {
     }
   }
 
-  // Modal detalle
   if (e.target.classList.contains("ver-proveedor")) {
     mostrarModalDatos("proveedores", e.target.dataset.nombre);
   }
@@ -297,7 +293,9 @@ async function mostrarModalDatos(coleccion, valor) {
   modal.classList.add("show");
 }
 
-document.getElementById("cerrarModal").addEventListener("click
+document.getElementById("cerrarModal").addEventListener("click", () => {
+  document.getElementById("modalDetalle").classList.remove("show");
+});
 
 
 
