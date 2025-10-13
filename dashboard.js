@@ -1,14 +1,16 @@
 // ------------------ Configuración Firebase ------------------
-const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:xxxxxxxxxxxxxx"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+import { db, auth } from "./firebase.js";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  deleteDoc,
+  doc,
+  getDoc,
+  orderBy,
+  query
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 // ------------------ Helpers ------------------
 const qs = (selector) => document.querySelector(selector);
@@ -16,160 +18,137 @@ const qsa = (selector) => document.querySelectorAll(selector);
 
 // ------------------ Sidebar Tabs ------------------
 qsa(".menu-btn").forEach(btn => {
-  btn.addEventListener("click", e => {
+  btn.addEventListener("click", () => {
     qsa(".menu-btn").forEach(b => b.classList.remove("activo"));
     btn.classList.add("activo");
+
     const target = btn.dataset.target;
     qsa(".seccion").forEach(sec => sec.classList.remove("activa"));
-    qs(`#${target}`).classList.add("activa");
+    const seccionActiva = qs(`#${target}`);
+    seccionActiva.classList.add("activa");
+
+    // Mantener la sección visible sin scroll hacia abajo
+    seccionActiva.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
-// ------------------ Proveedores ------------------
+// ------------------ Logout ------------------
+qs("#logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+});
+
+// ------------------ PROVEEDORES ------------------
 const proveedorForm = qs("#proveedorForm");
 const tablaProveedores = qs("#tablaProveedores");
+const proveedorSelect = qs("#proveedorFactura");
 
-const renderProveedores = (snapshot) => {
-  tablaProveedores.innerHTML = "";
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    tablaProveedores.innerHTML += `
-      <tr>
-        <td>${data.ruc}</td>
-        <td>${data.nombre}</td>
-        <td>${data.direccion || ""}</td>
-        <td>${data.telefono || ""}</td>
-        <td>
-          <button class="btn secondary" onclick="eliminarProveedor('${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-};
-
-proveedorForm.addEventListener("submit", e => {
+proveedorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const ruc = qs("#rucProveedor").value.trim();
   const nombre = qs("#nombreProveedor").value.trim();
   const direccion = qs("#direccionProveedor").value.trim();
-  const telefono = qs("#telefonoProveedor").value.trim();
+  const telefono = qs("#telefonoProveedor") ? qs("#telefonoProveedor").value.trim() : "";
 
   if (!ruc || !nombre) return alert("RUC y Nombre son obligatorios");
 
-  db.collection("proveedores").add({ ruc, nombre, direccion, telefono })
-    .then(() => proveedorForm.reset());
+  await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, telefono });
+  proveedorForm.reset();
 });
 
-const eliminarProveedor = (id) => db.collection("proveedores").doc(id).delete();
+onSnapshot(collection(db, "proveedores"), (snapshot) => {
+  tablaProveedores.innerHTML = "";
+  proveedorSelect.innerHTML = `<option value="">Seleccione proveedor</option>`;
 
-// Real-time listener
-db.collection("proveedores").orderBy("nombre").onSnapshot(renderProveedores);
+  snapshot.forEach(docu => {
+    const p = docu.data();
+    // Tabla
+    tablaProveedores.innerHTML += `
+      <tr>
+        <td>${p.ruc}</td>
+        <td>${p.nombre}</td>
+        <td>${p.direccion || ""}</td>
+        <td>${p.telefono || ""}</td>
+        <td><button class="btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️</button></td>
+      </tr>
+    `;
+    // Select proveedor
+    const option = document.createElement("option");
+    option.value = docu.id;   // ID real de Firestore
+    option.textContent = p.nombre;
+    proveedorSelect.appendChild(option);
+  });
+});
 
-// ------------------ Productos ------------------
+// ------------------ PRODUCTOS ------------------
 const productoForm = qs("#productoForm");
 const tablaProductos = qs("#tablaProductos");
-const categoriaProducto = qs("#categoriaProducto");
+const productoSelect = qs("#productoFactura");
 
-const renderProductos = (snapshot) => {
-  tablaProductos.innerHTML = "";
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    tablaProductos.innerHTML += `
-      <tr>
-        <td>${data.nombre}</td>
-        <td>${data.cantidad || ""}</td>
-        <td>${data.unidad || ""}</td>
-        <td>${data.valorUnitario || ""}</td>
-        <td>${data.descripcion || ""}</td>
-        <td>${data.categoria || ""}</td>
-        <td>
-          <button class="btn secondary" onclick="eliminarProducto('${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-};
-
-productoForm.addEventListener("submit", e => {
+productoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const nombre = qs("#nombreProducto").value.trim();
   const cantidad = qs("#cantidadProducto").value.trim();
   const unidad = qs("#unidadProducto").value.trim();
-  const valorUnitario = qs("#valorUnitarioProducto").value.trim();
-  const descripcion = qs("#descripcionProducto").value.trim();
-  const categoria = categoriaProducto.value;
+  const valor = qs("#valorUnitarioProducto").value.trim();
+  const descripcion = qs("#descripcionProducto") ? qs("#descripcionProducto").value.trim() : "";
+  const categoria = qs("#categoriaProducto") ? qs("#categoriaProducto").value : "";
 
   if (!nombre) return alert("Nombre es obligatorio");
 
-  db.collection("productos").add({ nombre, cantidad, unidad, valorUnitario, descripcion, categoria })
-    .then(() => productoForm.reset());
+  await addDoc(collection(db, "productos"), { nombre, cantidad, unidad, valor, descripcion, categoria });
+  productoForm.reset();
 });
 
-const eliminarProducto = (id) => db.collection("productos").doc(id).delete();
+onSnapshot(collection(db, "productos"), (snapshot) => {
+  tablaProductos.innerHTML = "";
+  productoSelect.innerHTML = `<option value="">Seleccione producto</option>`;
 
-// Real-time listener
-db.collection("productos").orderBy("nombre").onSnapshot(renderProductos);
+  snapshot.forEach(docu => {
+    const p = docu.data();
+    // Tabla
+    tablaProductos.innerHTML += `
+      <tr>
+        <td>${p.nombre}</td>
+        <td>${p.cantidad || ""}</td>
+        <td>${p.unidad || ""}</td>
+        <td>${p.valor || ""}</td>
+        <td>${p.descripcion || ""}</td>
+        <td>${p.categoria || ""}</td>
+        <td><button class="btn-delete" data-id="${docu.id}" data-tipo="productos">🗑️</button></td>
+      </tr>
+    `;
+    // Select producto
+    const option = document.createElement("option");
+    option.value = docu.id;
+    option.textContent = p.nombre;
+    productoSelect.appendChild(option);
+  });
+});
 
-// ------------------ Facturas ------------------
+// ------------------ FACTURAS ------------------
 const facturaForm = qs("#facturaForm");
 const tablaFacturas = qs("#tablaFacturas");
-const proveedorFactura = qs("#proveedorFactura");
-const productoFactura = qs("#productoFactura");
 
-// Llenar select proveedores
-db.collection("proveedores").orderBy("nombre").onSnapshot(snapshot => {
-  proveedorFactura.innerHTML = `<option value="">Seleccione proveedor</option>`;
-  snapshot.forEach(doc => {
-    proveedorFactura.innerHTML += `<option value="${doc.id}">${doc.data().nombre}</option>`;
-  });
-});
-
-// Llenar select productos
-db.collection("productos").orderBy("nombre").onSnapshot(snapshot => {
-  productoFactura.innerHTML = `<option value="">Seleccione producto</option>`;
-  snapshot.forEach(doc => {
-    productoFactura.innerHTML += `<option value="${doc.id}">${doc.data().nombre}</option>`;
-  });
-});
-
-// Render facturas
-const renderFacturas = (snapshot) => {
-  tablaFacturas.innerHTML = "";
-  snapshot.forEach(doc => {
-    const f = doc.data();
-    tablaFacturas.innerHTML += `
-      <tr>
-        <td>${doc.id}</td>
-        <td>${f.numeroFactura || ""}</td>
-        <td>${f.proveedorNombre || ""}</td>
-        <td>${f.productoNombre || ""}</td>
-        <td>${f.monto ? f.moneda+f.monto : ""}</td>
-        <td>${f.tipo}</td>
-        <td>${f.fechaEmision || ""}</td>
-        <td>
-          <button class="btn secondary" onclick="eliminarFactura('${doc.id}')">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-};
-
-facturaForm.addEventListener("submit", async e => {
+facturaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const numeroFactura = qs("#numeroFactura").value.trim();
-  const fechaEmision = qs("#fechaEmisionFactura").value;
-  const proveedorId = proveedorFactura.value;
-  const productoId = productoFactura.value;
+  const numero = qs("#numeroFactura").value.trim();
+  const fecha = qs("#fechaEmisionFactura").value;
+  const proveedorId = proveedorSelect.value;
+  const productoId = productoSelect.value;
   const monto = qs("#montoFactura").value.trim();
   const moneda = qs("#monedaFactura").value;
   const tipo = qs("#tipoFactura").value;
 
-  if (!proveedorId || !productoId) return alert("Debe seleccionar proveedor y producto");
+  if (!proveedorId || !productoId) return alert("Debe seleccionar un proveedor y un producto.");
 
-  // Obtener nombres para mostrar
-  const provDoc = await db.collection("proveedores").doc(proveedorId).get();
-  const prodDoc = await db.collection("productos").doc(productoId).get();
+  // Obtener nombres reales
+  const provDoc = await getDoc(doc(db, "proveedores", proveedorId));
+  const prodDoc = await getDoc(doc(db, "productos", productoId));
 
-  db.collection("facturas").add({
-    numeroFactura,
-    fechaEmision,
+  await addDoc(collection(db, "facturas"), {
+    numeroFactura: numero,
+    fechaEmision: fecha,
     proveedorId,
     proveedorNombre: provDoc.data().nombre,
     productoId,
@@ -177,39 +156,92 @@ facturaForm.addEventListener("submit", async e => {
     monto,
     moneda,
     tipo
-  }).then(() => facturaForm.reset());
+  });
+
+  facturaForm.reset();
 });
 
-const eliminarFactura = (id) => db.collection("facturas").doc(id).delete();
+// Render facturas en tiempo real
+onSnapshot(collection(db, "facturas"), (snapshot) => {
+  tablaFacturas.innerHTML = "";
+  snapshot.forEach(docu => {
+    const f = docu.data();
+    tablaFacturas.innerHTML += `
+      <tr>
+        <td>${docu.id}</td>
+        <td>${f.numeroFactura || ""}</td>
+        <td class="ver-proveedor" data-id="${f.proveedorId}" style="cursor:pointer;color:#007bff">${f.proveedorNombre || ""}</td>
+        <td class="ver-producto" data-id="${f.productoId}" style="cursor:pointer;color:#007bff">${f.productoNombre || ""}</td>
+        <td>${f.moneda || ""}${f.monto || ""}</td>
+        <td>${f.tipo || ""}</td>
+        <td>${f.fechaEmision || ""}</td>
+        <td><button class="btn-delete" data-id="${docu.id}" data-tipo="facturas">🗑️</button></td>
+      </tr>
+    `;
+  });
+});
 
-// Real-time listener
-db.collection("facturas").orderBy("fechaEmision", "desc").onSnapshot(renderFacturas);
+// ------------------ ELIMINAR ------------------
+document.addEventListener("click", async (e) => {
+  // Delete registro
+  if (e.target.classList.contains("btn-delete")) {
+    const id = e.target.dataset.id;
+    const tipo = e.target.dataset.tipo;
+    if (confirm("¿Desea eliminar este registro?")) {
+      await deleteDoc(doc(db, tipo, id));
+    }
+  }
 
-// ------------------ Búsqueda Facturas ------------------
-const buscadorFactura = qs("#buscadorFactura");
-const btnRefresh = qs("#btnRefresh");
+  // Mostrar modal proveedor
+  if (e.target.classList.contains("ver-proveedor")) {
+    const id = e.target.dataset.id;
+    const docSnap = await getDoc(doc(db, "proveedores", id));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      mostrarModalDatos("proveedores", data);
+    }
+  }
 
-buscadorFactura.addEventListener("keypress", async e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const queryText = buscadorFactura.value.trim().toLowerCase();
-    if (!queryText) return;
-    const snapshot = await db.collection("facturas").get();
-    const filtered = snapshot.docs.filter(doc => doc.data().productoNombre.toLowerCase().includes(queryText));
-    renderFacturas({ forEach: (cb) => filtered.forEach(cb) });
+  // Mostrar modal producto
+  if (e.target.classList.contains("ver-producto")) {
+    const id = e.target.dataset.id;
+    const docSnap = await getDoc(doc(db, "productos", id));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      mostrarModalDatos("productos", data);
+    }
   }
 });
 
-btnRefresh.addEventListener("click", () => {
-  buscadorFactura.value = "";
-  db.collection("facturas").orderBy("fechaEmision", "desc").get().then(renderFacturas);
-});
+// ------------------ MODAL DETALLE ------------------
+function mostrarModalDatos(tipo, data) {
+  const modal = qs("#modalDetalle");
+  const modalContenido = qs("#modalContenido");
 
-// ------------------ Logout ------------------
-qs("#logoutBtn").addEventListener("click", () => {
-  firebase.auth().signOut().then(() => location.href = "login.html");
-});
+  if (tipo === "proveedores") {
+    modalContenido.innerHTML = `
+      <h3>Proveedor: ${data.nombre}</h3>
+      <p><strong>RUC:</strong> ${data.ruc || "-"}</p>
+      <p><strong>Dirección:</strong> ${data.direccion || "-"}</p>
+      <p><strong>Teléfono:</strong> ${data.telefono || "-"}</p>
+    `;
+  } else {
+    modalContenido.innerHTML = `
+      <h3>Producto: ${data.nombre}</h3>
+      <p><strong>Unidad:</strong> ${data.unidad || "-"}</p>
+      <p><strong>Cantidad:</strong> ${data.cantidad || "-"}</p>
+      <p><strong>Valor:</strong> ${data.valor || "-"}</p>
+      <p><strong>Descripción:</strong> ${data.descripcion || "-"}</p>
+      <p><strong>Categoría:</strong> ${data.categoria || "-"}</p>
+    `;
+  }
 
+  modal.style.display = "flex";
+}
+
+qs("#cerrarModal").addEventListener("click", () => {
+  qs("#modalDetalle").style.display = "none";
+});
 
 
 
