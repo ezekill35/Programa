@@ -3,13 +3,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebas
 import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  databaseURL: "TU_DB_URL",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_BUCKET",
-  messagingSenderId: "TU_MSG_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+    authDomain: "discovery-pets.firebaseapp.com",
+    projectId: "discovery-pets",
+    storageBucket: "discovery-pets.appspot.com",
+    messagingSenderId: "481355972999",
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+    measurementId: "G-0WMLRY8FGM"
 };
 
 const app = initializeApp(firebaseConfig);
