@@ -1,12 +1,19 @@
-// ------------------------------
-// DASHBOARD.JS COMPLETO
-// ------------------------------
+// -----------------------------------------
+// DASHBOARD.JS — Discovery Pets (Edición en línea)
+// -----------------------------------------
 
-// Import Firebase
 import { db } from './firebase.js';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from 'firebase/firestore';
 
-// --- VARIABLES GLOBALES ---
+// -------------------- Variables globales --------------------
 const tablaProveedores = document.getElementById('tablaProveedores');
 const tablaProductos = document.getElementById('tablaProductos');
 const tablaFacturas = document.getElementById('tablaFacturas');
@@ -17,200 +24,200 @@ const facturaForm = document.getElementById('facturaForm');
 
 const proveedorFactura = document.getElementById('proveedorFactura');
 const productoFactura = document.getElementById('productoFactura');
-
 const buscadorFactura = document.getElementById('buscadorFactura');
 const btnRefresh = document.getElementById('btnRefresh');
 
-// Arrays globales para filtrar
 let proveedoresGlobal = [];
 let productosGlobal = [];
 let facturasGlobal = [];
 
-// ------------------------------
-// FUNCIONES AUXILIARES
-// ------------------------------
-function crearFilaProveedor(p) {
+// -------------------- Funciones auxiliares --------------------
+function celdaEditable(texto, campo, id, coleccion) {
+  const td = document.createElement('td');
+  const input = document.createElement('input');
+  input.value = texto || '';
+  input.style.width = '100%';
+  input.style.border = 'none';
+  input.style.background = 'transparent';
+  input.style.outline = 'none';
+  input.addEventListener('change', async () => {
+    const ref = doc(db, coleccion, id);
+    await updateDoc(ref, { [campo]: input.value });
+  });
+  td.appendChild(input);
+  return td;
+}
+
+function botonEliminar(id, coleccion) {
+  const btn = document.createElement('button');
+  btn.textContent = '🗑️';
+  btn.className = 'btn secondary';
+  btn.style.fontSize = '13px';
+  btn.addEventListener('click', async () => {
+    if (confirm('¿Eliminar este registro?')) {
+      await deleteDoc(doc(db, coleccion, id));
+    }
+  });
+  return btn;
+}
+
+// -------------------- Render de tablas --------------------
+function renderProveedor(p) {
   const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${p.ruc}</td>
-    <td>${p.nombre}</td>
-    <td>${p.direccion || ''}</td>
-    <td>${p.telefono || ''}</td>
-    <td>
-      <button class="btn btn-editar" data-id="${p.id}">Editar</button>
-      <button class="btn btn-eliminar" data-id="${p.id}">Eliminar</button>
-    </td>
-  `;
+  tr.append(
+    celdaEditable(p.ruc, 'ruc', p.id, 'proveedores'),
+    celdaEditable(p.nombre, 'nombre', p.id, 'proveedores'),
+    celdaEditable(p.direccion, 'direccion', p.id, 'proveedores'),
+    celdaEditable(p.telefono, 'telefono', p.id, 'proveedores')
+  );
+  const tdAcc = document.createElement('td');
+  tdAcc.appendChild(botonEliminar(p.id, 'proveedores'));
+  tr.appendChild(tdAcc);
   tablaProveedores.appendChild(tr);
 }
 
-function crearFilaProducto(p) {
+function renderProducto(p) {
   const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${p.nombre}</td>
-    <td>${p.unidad || ''}</td>
-    <td>${p.materialP || ''}</td>
-    <td>${p.maquinaria || ''}</td>
-    <td>${p.productoOf || ''}</td>
-    <td>${p.insumosExtra || ''}</td>
-    <td>
-      <button class="btn btn-editar" data-id="${p.id}">Editar</button>
-      <button class="btn btn-eliminar" data-id="${p.id}">Eliminar</button>
-    </td>
-  `;
+  tr.append(
+    celdaEditable(p.nombre, 'nombre', p.id, 'productos'),
+    celdaEditable(p.unidad, 'unidad', p.id, 'productos'),
+    celdaEditable(p.materialP, 'materialP', p.id, 'productos'),
+    celdaEditable(p.maquinaria, 'maquinaria', p.id, 'productos'),
+    celdaEditable(p.productoOf, 'productoOf', p.id, 'productos'),
+    celdaEditable(p.insumosExtra, 'insumosExtra', p.id, 'productos')
+  );
+  const tdAcc = document.createElement('td');
+  tdAcc.appendChild(botonEliminar(p.id, 'productos'));
+  tr.appendChild(tdAcc);
   tablaProductos.appendChild(tr);
 }
 
-function crearFilaFactura(f) {
+function renderFactura(f) {
   const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${f.numero}</td>
-    <td>${f.proveedor}</td>
-    <td>${f.producto}</td>
-    <td>${f.monto} ${f.moneda}</td>
-    <td>${f.tipo}</td>
-    <td>${f.fecha}</td>
-    <td>
-      <button class="btn btn-editar" data-id="${f.id}">Editar</button>
-      <button class="btn btn-eliminar" data-id="${f.id}">Eliminar</button>
-    </td>
-  `;
+  tr.append(
+    celdaEditable(f.numero, 'numero', f.id, 'facturas'),
+    celdaEditable(f.proveedor, 'proveedor', f.id, 'facturas'),
+    celdaEditable(f.producto, 'producto', f.id, 'facturas'),
+    celdaEditable(f.monto, 'monto', f.id, 'facturas'),
+    celdaEditable(f.tipo, 'tipo', f.id, 'facturas'),
+    celdaEditable(f.fecha, 'fecha', f.id, 'facturas'),
+    celdaEditable(f.idFactura || '', 'idFactura', f.id, 'facturas')
+  );
+  const tdAcc = document.createElement('td');
+  tdAcc.appendChild(botonEliminar(f.id, 'facturas'));
+  tr.appendChild(tdAcc);
   tablaFacturas.appendChild(tr);
 }
 
-// ------------------------------
-// CARGA INICIAL DESDE FIREBASE
-// ------------------------------
-async function cargarProveedores() {
-  const querySnapshot = await getDocs(collection(db, "proveedores"));
+// -------------------- Carga en tiempo real --------------------
+onSnapshot(collection(db, 'proveedores'), (snap) => {
   proveedoresGlobal = [];
-  proveedorFactura.innerHTML = '<option value="">Seleccione proveedor</option>';
   tablaProveedores.innerHTML = '';
-  querySnapshot.forEach(docSnap => {
-    const p = { id: docSnap.id, ...docSnap.data() };
+  proveedorFactura.innerHTML = '<option value="">Seleccione proveedor</option>';
+  snap.forEach((d) => {
+    const p = { id: d.id, ...d.data() };
     proveedoresGlobal.push(p);
-    crearFilaProveedor(p);
-    // Llenar select de facturas
+    renderProveedor(p);
     const opt = document.createElement('option');
     opt.value = p.nombre;
     opt.textContent = p.nombre;
     proveedorFactura.appendChild(opt);
   });
-}
+});
 
-async function cargarProductos() {
-  const querySnapshot = await getDocs(collection(db, "productos"));
+onSnapshot(collection(db, 'productos'), (snap) => {
   productosGlobal = [];
-  productoFactura.innerHTML = '<option value="">Seleccione producto</option>';
   tablaProductos.innerHTML = '';
-  querySnapshot.forEach(docSnap => {
-    const p = { id: docSnap.id, ...docSnap.data() };
+  productoFactura.innerHTML = '<option value="">Seleccione producto</option>';
+  snap.forEach((d) => {
+    const p = { id: d.id, ...d.data() };
     productosGlobal.push(p);
-    crearFilaProducto(p);
-    // Llenar select de facturas
+    renderProducto(p);
     const opt = document.createElement('option');
     opt.value = p.nombre;
     opt.textContent = p.nombre;
     productoFactura.appendChild(opt);
   });
-}
+});
 
-async function cargarFacturas() {
-  const querySnapshot = await getDocs(collection(db, "facturas"));
+onSnapshot(collection(db, 'facturas'), (snap) => {
   facturasGlobal = [];
   tablaFacturas.innerHTML = '';
-  querySnapshot.forEach(docSnap => {
-    const f = { id: docSnap.id, ...docSnap.data() };
+  snap.forEach((d) => {
+    const f = { id: d.id, ...d.data() };
     facturasGlobal.push(f);
-    crearFilaFactura(f);
+    renderFactura(f);
   });
-}
+});
 
-// ------------------------------
-// CRUD PROVEEDORES
-// ------------------------------
-proveedorForm.addEventListener('submit', async e => {
+// -------------------- Formularios CRUD --------------------
+proveedorForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const ruc = document.getElementById('rucProveedor').value.trim();
-  const nombre = document.getElementById('nombreProveedor').value.trim();
-  const direccion = document.getElementById('direccionProveedor').value.trim();
-  const telefono = document.getElementById('telefonoProveedor').value.trim();
-  if (!ruc || !nombre) return alert('RUC y Nombre son obligatorios');
-  const docRef = await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, telefono });
+  const data = {
+    ruc: document.getElementById('rucProveedor').value.trim(),
+    nombre: document.getElementById('nombreProveedor').value.trim(),
+    direccion: document.getElementById('direccionProveedor').value.trim(),
+    telefono: document.getElementById('telefonoProveedor').value.trim(),
+  };
+  if (!data.ruc || !data.nombre) return alert('RUC y Nombre son obligatorios.');
+  await addDoc(collection(db, 'proveedores'), data);
   proveedorForm.reset();
-  cargarProveedores();
 });
 
-// ------------------------------
-// CRUD PRODUCTOS
-// ------------------------------
-productoForm.addEventListener('submit', async e => {
+productoForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const nombre = document.getElementById('nombreProducto').value.trim();
-  const unidad = document.getElementById('unidadProducto').value.trim();
-  const materialP = document.getElementById('materialP').value.trim();
-  const maquinaria = document.getElementById('maquinaria').value.trim();
-  const productoOf = document.getElementById('productoOf').value.trim();
-  const insumosExtra = document.getElementById('insumosExtra').value.trim();
-  if (!nombre) return alert('Nombre es obligatorio');
-  await addDoc(collection(db, "productos"), { nombre, unidad, materialP, maquinaria, productoOf, insumosExtra });
+  const data = {
+    nombre: document.getElementById('nombreProducto').value.trim(),
+    unidad: document.getElementById('unidadProducto').value.trim(),
+    materialP: document.getElementById('materialP').value.trim(),
+    maquinaria: document.getElementById('maquinaria').value.trim(),
+    productoOf: document.getElementById('productoOf').value.trim(),
+    insumosExtra: document.getElementById('insumosExtra').value.trim(),
+  };
+  if (!data.nombre) return alert('El nombre es obligatorio.');
+  await addDoc(collection(db, 'productos'), data);
   productoForm.reset();
-  cargarProductos();
 });
 
-// ------------------------------
-// CRUD FACTURAS
-// ------------------------------
-facturaForm.addEventListener('submit', async e => {
+facturaForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const numero = document.getElementById('numeroFactura').value.trim();
-  const fecha = document.getElementById('fechaEmisionFactura').value;
-  const proveedor = proveedorFactura.value;
-  const producto = productoFactura.value;
-  const monto = document.getElementById('montoFactura').value.trim();
-  const moneda = document.getElementById('monedaFactura').value;
-  const tipo = document.getElementById('tipoFactura').value;
-  if (!proveedor || !producto) return alert('Seleccione proveedor y producto');
-  await addDoc(collection(db, "facturas"), { numero, fecha, proveedor, producto, monto, moneda, tipo });
+  const data = {
+    numero: document.getElementById('numeroFactura').value.trim(),
+    fecha: document.getElementById('fechaEmisionFactura').value,
+    proveedor: proveedorFactura.value,
+    producto: productoFactura.value,
+    monto: document.getElementById('montoFactura').value.trim(),
+    moneda: document.getElementById('monedaFactura').value,
+    tipo: document.getElementById('tipoFactura').value,
+    idFactura: prompt('Ingrese el ID de factura (ej.: F003-007598):', ''),
+  };
+  if (!data.proveedor || !data.producto) return alert('Seleccione proveedor y producto.');
+  await addDoc(collection(db, 'facturas'), data);
   facturaForm.reset();
-  cargarFacturas();
 });
 
-// ------------------------------
-// BUSCADOR DE FACTURAS
-// ------------------------------
+// -------------------- Buscador de facturas --------------------
 buscadorFactura.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
-    const query = buscadorFactura.value.toLowerCase().trim();
-    if (!query) return;
-    const filtradas = facturasGlobal.filter(f => f.producto.toLowerCase().includes(query));
+    const q = buscadorFactura.value.toLowerCase().trim();
+    if (!q) return;
+    const filtradas = facturasGlobal.filter((f) => f.producto?.toLowerCase().includes(q));
     tablaFacturas.innerHTML = '';
-    filtradas.forEach(f => crearFilaFactura(f));
+    filtradas.forEach((f) => renderFactura(f));
   }
 });
 
 btnRefresh.addEventListener('click', () => {
   buscadorFactura.value = '';
   tablaFacturas.innerHTML = '';
-  facturasGlobal.forEach(f => crearFilaFactura(f));
+  facturasGlobal.forEach((f) => renderFactura(f));
 });
 
-// ------------------------------
-// BOTÓN CERRAR SESIÓN
-// ------------------------------
+// -------------------- Cerrar sesión --------------------
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  // Aquí integras Firebase Auth si lo usas
-  console.log('Cerrar sesión');
-  // location.href = 'login.html'; // si quieres redirigir
+  // Aquí puedes integrar Firebase Auth si usas login
+  window.location.href = 'index.html';
 });
-
-// ------------------------------
-// INICIALIZACIÓN
-// ------------------------------
-cargarProveedores();
-cargarProductos();
-cargarFacturas();
-
 
 
 
