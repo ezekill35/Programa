@@ -225,10 +225,13 @@ function iniciarEdicion(fila, registro, coleccion, btn) {
     fila.cells[4].innerHTML = `<input value="${registro.productoOf}">`;
     fila.cells[5].innerHTML = `<input value="${registro.insumosExtra}">`;
   } else if (coleccion === "facturas") {
+    const proveedorOptions = proveedoresGuardados.map(p => `<option value="${p.nombre}" ${p.nombre===registro.proveedor?"selected":""}>${p.nombre}</option>`).join("");
+    const productoOptions = productosGuardados.map(p => `<option value="${p.nombre}" ${p.nombre===registro.producto?"selected":""}>${p.nombre}</option>`).join("");
+
     fila.cells[0].innerHTML = `<input value="${registro.idFactura || ''}">`;
     fila.cells[1].innerHTML = `<input value="${registro.numero}">`;
-    fila.cells[2].innerHTML = `<input value="${registro.proveedor}">`;
-    fila.cells[3].innerHTML = `<input value="${registro.producto}">`;
+    fila.cells[2].innerHTML = `<select>${proveedorOptions}</select>`;
+    fila.cells[3].innerHTML = `<select>${productoOptions}</select>`;
     fila.cells[4].innerHTML = `<input type="number" step="0.01" value="${registro.monto}">`;
     fila.cells[5].innerHTML = `<select><option value="FACTURA" ${registro.tipo==="FACTURA"?"selected":""}>FACTURA</option><option value="BOLETA DE VENTA" ${registro.tipo==="BOLETA DE VENTA"?"selected":""}>BOLETA DE VENTA</option></select>`;
     fila.cells[6].innerHTML = `<input type="date" value="${registro.fecha}">`;
@@ -258,8 +261,8 @@ async function guardarEdicion(fila, registro, coleccion, btn) {
   } else if (coleccion === "facturas") {
     datosActualizados.idFactura = inputs[0].value.trim();
     datosActualizados.numero = inputs[1].value.trim();
-    datosActualizados.proveedor = inputs[2].value.trim();
-    datosActualizados.producto = inputs[3].value.trim();
+    datosActualizados.proveedor = inputs[2].value;
+    datosActualizados.producto = inputs[3].value;
     datosActualizados.monto = parseFloat(inputs[4].value);
     datosActualizados.tipo = inputs[5].value;
     datosActualizados.fecha = inputs[6].value;
