@@ -6,32 +6,34 @@
   <title>Discovery Pets - Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
     /* ==================== GENERAL ==================== */
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background-color: #f8fafc;
+      background-color: #f4f8f5;
       display: flex;
       min-height: 100vh;
       overflow: hidden;
+      color: #184d47;
     }
 
     h2, h3, h4 {
-      color: #184d47;
       font-weight: 600;
     }
 
     /* ==================== SIDEBAR ==================== */
     .sidebar {
-      width: 260px;
+      width: 250px;
       background-color: #1b4d3e;
       color: #fff;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 30px 20px;
-      box-shadow: 5px 0 20px rgba(0,0,0,0.15);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+      border-radius: 0 20px 20px 0;
     }
 
     .sidebar h2 {
@@ -49,9 +51,9 @@
       border: none;
       color: #e2e8f0;
       font-size: 16px;
-      padding: 10px 15px;
+      padding: 12px 15px;
       margin: 6px 0;
-      border-radius: 8px;
+      border-radius: 10px;
       width: 100%;
       transition: 0.3s;
       text-align: left;
@@ -60,6 +62,7 @@
     .menu-btn:hover, .menu-btn.activo {
       background-color: #2a7562;
       color: #fff;
+      transform: translateX(3px);
     }
 
     .menu-btn i {
@@ -77,7 +80,7 @@
     }
 
     #logoutBtn:hover {
-      background-color: #c82333;
+      background-color: #b02a37;
     }
 
     /* ==================== CONTENIDO ==================== */
@@ -85,20 +88,24 @@
       flex: 1;
       padding: 40px;
       overflow-y: auto;
-      background-color: #f8fafc;
+      background-color: #f4f8f5;
+    }
+
+    .content h3 {
+      color: #1b4d3e;
     }
 
     .form-control, .form-select {
       background-color: #fff;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
+      border: 1px solid #cdd5ce;
+      border-radius: 8px;
       color: #333;
       padding: 10px;
     }
 
     .form-control:focus, .form-select:focus {
       border-color: #2a7562;
-      box-shadow: 0 0 6px rgba(42,117,98,0.4);
+      box-shadow: 0 0 8px rgba(42,117,98,0.3);
     }
 
     .btn-primary {
@@ -106,13 +113,14 @@
       border: none;
       color: #fff;
       font-weight: 600;
-      padding: 8px 20px;
-      border-radius: 6px;
+      padding: 10px 25px;
+      border-radius: 8px;
       transition: 0.3s;
     }
 
     .btn-primary:hover {
       background-color: #23644f;
+      transform: scale(1.03);
     }
 
     .btn-delete {
@@ -121,18 +129,20 @@
       color: #fff;
       border-radius: 6px;
       padding: 5px 10px;
+      transition: 0.3s;
     }
 
     .btn-delete:hover {
       background-color: #c82333;
+      transform: scale(1.1);
     }
 
     table {
       background-color: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-      margin-top: 15px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+      margin-top: 20px;
     }
 
     th {
@@ -144,27 +154,44 @@
     td {
       text-align: center;
       vertical-align: middle;
+      cursor: default;
+    }
+
+    td:hover {
+      background-color: #f0faf7;
+    }
+
+    td[data-clickable="true"] {
+      color: #2a7562;
+      cursor: pointer;
+      font-weight: 500;
     }
 
     /* ==================== BUSCADOR ==================== */
-    #buscadorGlobal {
-      width: 300px;
+    #buscadorProducto {
+      width: 320px;
       border-radius: 8px;
-      border: 1px solid #d1d5db;
-      padding: 10px;
-      margin-bottom: 20px;
+      border: 1px solid #cdd5ce;
+      padding: 10px 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     /* ==================== SECCIONES ==================== */
-    .seccion { display: none; }
+    .seccion { display: none; animation: fade 0.3s ease-in-out; }
     .seccion.activa { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* ==================== MODAL ==================== */
     #detalleModal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
       z-index: 999;
@@ -172,18 +199,24 @@
 
     .modal-contenido {
       background: #fff;
-      padding: 20px 30px;
-      border-radius: 10px;
+      padding: 25px 35px;
+      border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
       color: #333;
       width: 400px;
       max-width: 90%;
       text-align: center;
+      animation: zoomIn 0.3s ease;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
-<body>
 
+<body>
   <!-- ===== SIDEBAR ===== -->
   <div class="sidebar">
     <div>
@@ -197,7 +230,7 @@
 
   <!-- ===== CONTENIDO ===== -->
   <div class="content">
-    <input type="text" id="buscadorGlobal" placeholder="🔍 Buscar producto y presionar Enter">
+    <input type="text" id="buscadorProducto" placeholder="🔍 Buscar facturas por producto (Enter para buscar)">
 
     <!-- ===== PROVEEDORES ===== -->
     <section id="proveedores" class="seccion activa">
@@ -266,7 +299,7 @@
     </section>
   </div>
 
-  <!-- MODAL -->
+  <!-- ===== MODAL DETALLE ===== -->
   <div id="detalleModal">
     <div class="modal-contenido">
       <h4 id="tituloModal"></h4>
@@ -279,6 +312,8 @@
   <script type="module" src="./dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
