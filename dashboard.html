@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* --------- ESTILOS BÁSICOS --------- */
 :root{
   --bg1:#f7fbff; --bg2:#eef9ff; --card:#fff; --accent:#10bcd4; --muted:#6b7280; 
   --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08); --radius:16px;
@@ -41,7 +40,7 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12)}
 .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12)}
 .btn-edit{background:#fcd34d;color:#fff;margin-right:4px}
-.btn-save{background:#10b981;color:#fff;margin-right:4px;display:none;}
+.btn-save{background:#10b981;color:#fff;margin-right:4px}
 .btn-delete{background:#ef4444;color:#fff}
 .muted{color:var(--muted);font-size:13px}
 
@@ -52,59 +51,11 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 .modal-card{position:relative;z-index:2;max-width:500px;width:100%;border-radius:18px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95)); box-shadow:0 40px 80px rgba(10,20,30,0.12);}
 .close-x{position:absolute;right:12px;top:12px;background:transparent;border:none;font-size:20px;cursor:pointer;color:#334155;}
 
-/* Resultados de búsqueda */
-.card.resultados-buscador {
-  background: linear-gradient(180deg, #ffffff, #e0f7fa);
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 20px 40px rgba(16,188,212,0.2);
-  margin-bottom: 16px;
-  border: 1px solid rgba(16,188,212,0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card.resultados-buscador:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 25px 50px rgba(16,188,212,0.25);
-}
-
-.card.resultados-buscador h3 {
-  margin-bottom: 12px;
-  font-size: 16px;
-  color: #0a3140;
-}
-
-.card.resultados-buscador table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
-}
-
-.card.resultados-buscador table th,
-.card.resultados-buscador table td {
-  padding: 10px;
-  text-align: left;
-  font-size: 14px;
-  border-bottom: 1px dashed rgba(10,20,30,0.05);
-}
-
-.card.resultados-buscador table th {
-  background: linear-gradient(90deg, #10bcd4, #55d1e2);
-  color: #fff;
-  font-weight: 600;
-}
-
-.card.resultados-buscador table tr:hover {
-  background: rgba(16,188,212,0.08);
-}
-
-.card.resultados-buscador td .btn {
-  font-size: 13px;
-  padding: 6px 10px;
-}
+/* Buscador resultados */
+.resultados-buscador{background:linear-gradient(180deg,#f0f8ff,#d9f0ff);border:1px solid #10bcd4;border-radius:14px;padding:16px;margin-bottom:16px;}
+.resultados-buscador h3{margin:0 0 8px 0;color:#07203a}
+.resultados-buscador table{border:none}
+.resultados-buscador table th, .resultados-buscador table td{border-bottom:1px solid rgba(16,188,212,0.2);padding:8px;font-size:13px}
 
 @media(max-width:980px){.app{grid-template-columns:1fr;padding:18px}.seccion{margin-bottom:16px}}
 </style>
@@ -129,7 +80,6 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 </div>
 </div>
 
-<!-- Aquí se insertará el bloque de resultados del buscador -->
 <!-- Secciones -->
 <section id="seccion-proveedores" class="seccion activa">
 <div class="card">
@@ -170,8 +120,11 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 <input id="maquinaria" placeholder="Maquinaria">
 </div>
 <div class="row">
-<input id="productoOF" placeholder="Producto de OF">
+<input id="productoOF" placeholder="Producto OF">
 <input id="insumosExtra" placeholder="Insumos extra">
+</div>
+<div class="row">
+<input id="descripcionProducto" placeholder="Descripción">
 <button class="btn" type="submit">Añadir producto</button>
 </div>
 </form>
@@ -180,7 +133,7 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 <h3>Productos registrados</h3>
 <div class="table-scroll">
 <table>
-<thead><tr><th>Nombre</th><th>Unidad</th><th>Material</th><th>Maquinaria</th><th>Producto de OF</th><th>Insumos extra</th><th>Acción</th></tr></thead>
+<thead><tr><th>Nombre</th><th>Unidad</th><th>Material</th><th>Maquinaria</th><th>Producto OF</th><th>Insumos extra</th><th>Descripción</th><th>Acción</th></tr></thead>
 <tbody id="tablaProductos"></tbody>
 </table>
 </div>
@@ -227,6 +180,17 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 </div>
 </section>
 
+<!-- Resultados del buscador -->
+<div id="resultadosBuscador" class="resultados-buscador" style="display:none">
+<h3>Resultados de la búsqueda</h3>
+<div class="table-scroll">
+<table>
+<thead><tr><th>ID</th><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th></tr></thead>
+<tbody id="tablaResultadosBuscador"></tbody>
+</table>
+</div>
+</div>
+
 </main>
 </div>
 
@@ -242,6 +206,7 @@ table th,table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
