@@ -174,22 +174,55 @@ function mostrarFacturas(lista) {
   });
 }
 
-// ======================= BUSCADOR DE FACTURAS =======================
-document.getElementById("buscadorGlobal").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const termino = e.target.value.trim().toLowerCase();
-    if (!termino) return mostrarFacturas(facturas);
-    const filtradas = facturas.filter((f) =>
-      f.producto.toLowerCase().includes(termino)
-    );
-    if (filtradas.length > 0) {
-      mostrarFacturas(filtradas);
-    } else {
-      tablaFacturas.innerHTML = `<tr><td colspan="7">No se encontraron facturas relacionadas con "${termino}".</td></tr>`;
+// ======================= BUSCADOR DE FACTURAS POR PRODUCTO =======================
+const buscadorProducto = document.getElementById("buscadorProducto");
+const tablaFacturas = document.getElementById("tablaFacturas");
+
+if (buscadorProducto) {
+  // Buscar al presionar Enter
+  buscadorProducto.addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const texto = buscadorProducto.value.trim().toLowerCase();
+
+      if (texto === "") {
+        alert("Por favor, escriba el nombre de un producto.");
+        return;
+      }
+
+      // Escucha las facturas y filtra las relacionadas con el producto buscado
+      onSnapshot(collection(db, "facturas"), (snapshot) => {
+        tablaFacturas.innerHTML = "";
+        let encontrado = false;
+
+        snapshot.forEach((docu) => {
+          const f = docu.data();
+          if (f.producto.toLowerCase().includes(texto)) {
+            encontrado = true;
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+              <td>${f.numero}</td>
+              <td>${f.proveedor}</td>
+              <td>${f.producto}</td>
+              <td>${f.moneda}${f.monto}</td>
+              <td>${f.tipo}</td>
+              <td>${f.fecha}</td>
+              <td>
+                <button class="btn-delete" data-id="${docu.id}" data-tipo="facturas">🗑️</button>
+              </td>
+            `;
+            tablaFacturas.appendChild(fila);
+          }
+        });
+
+        if (!encontrado) {
+          tablaFacturas.innerHTML = `<tr><td colspan="7">No se encontraron facturas para el producto "${texto}"</td></tr>`;
+        }
+      });
     }
-  }
-});
+  });
+}
+
 
 // ======================= ELIMINAR REGISTRO =======================
 document.addEventListener("click", async (e) => {
