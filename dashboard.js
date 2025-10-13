@@ -2,7 +2,7 @@ import { db, auth } from "./firebase.js";
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-// =================== NAVEGACIÓN ===================
+// ================= NAVEGACIÓN =================
 const botones = document.querySelectorAll(".menu-btn");
 const secciones = document.querySelectorAll(".seccion");
 botones.forEach(btn => btn.addEventListener("click", () => {
@@ -12,13 +12,13 @@ botones.forEach(btn => btn.addEventListener("click", () => {
   document.getElementById(btn.dataset.target).classList.add("activa");
 }));
 
-// =================== CERRAR SESIÓN ===================
+// ================= CERRAR SESIÓN =================
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "index.html";
 });
 
-// =================== PROVEEDORES ===================
+// ================= PROVEEDORES =================
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 let proveedoresGuardados = [];
@@ -33,35 +33,7 @@ proveedorForm.addEventListener("submit", async e => {
   proveedorForm.reset();
 });
 
-onSnapshot(collection(db, "proveedores"), snapshot => {
-  proveedoresGuardados = [];
-  tablaProveedores.innerHTML = "";
-  const proveedorSelect = document.getElementById("proveedorFactura");
-  proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(docu => {
-    const p = docu.data();
-    proveedoresGuardados.push({ id: docu.id, ...p });
-    const fila = document.createElement("tr");
-    fila.innerHTML = `
-      <td>${p.ruc}</td>
-      <td>${p.nombre}</td>
-      <td>${p.direccion}</td>
-      <td>${p.telefono || "-"}</td>
-      <td>
-        <button class="btn btn-edit" data-id="${docu.id}" data-tipo="proveedores">✏️ Editar</button>
-        <button class="btn btn-save" data-id="${docu.id}" data-tipo="proveedores" style="display:none">💾 Guardar</button>
-        <button class="btn btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️ Eliminar</button>
-      </td>`;
-    tablaProveedores.appendChild(fila);
-
-    const option = document.createElement("option");
-    option.value = p.nombre; 
-    option.textContent = p.nombre;
-    proveedorSelect.appendChild(option);
-  });
-});
-
-// =================== PRODUCTOS ===================
+// ================= PRODUCTOS =================
 const productoForm = document.getElementById("productoForm");
 const tablaProductos = document.getElementById("tablaProductos");
 let productosGuardados = [];
@@ -78,14 +50,73 @@ productoForm.addEventListener("submit", async e => {
   productoForm.reset();
 });
 
+// ================= FACTURAS =================
+const facturaForm = document.getElementById("facturaForm");
+const tablaFacturas = document.getElementById("tablaFacturas");
+let facturasGuardadas = [];
+
+facturaForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const idFactura = document.getElementById("idFactura").value.trim();
+  const numero = document.getElementById("numeroFactura").value.trim();
+  const fecha = document.getElementById("fechaEmisionFactura").value;
+  const proveedor = document.getElementById("proveedorFactura").value;
+  const producto = document.getElementById("productoFactura").value;
+  const monto = parseFloat(document.getElementById("montoFactura").value);
+  const moneda = document.getElementById("monedaFactura").value;
+  const tipo = document.getElementById("tipoFactura").value;
+
+  if(!proveedor || !producto){
+    alert("Debe seleccionar proveedor y producto");
+    return;
+  }
+
+  await addDoc(collection(db, "facturas"), { idFactura, numero, fecha, proveedor, producto, monto, moneda, tipo });
+  facturaForm.reset();
+});
+
+// =================== SNAPSHOTS ===================
+onSnapshot(collection(db, "proveedores"), snapshot => {
+  proveedoresGuardados = [];
+  const proveedorSelect = document.getElementById("proveedorFactura");
+  proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
+  tablaProveedores.innerHTML = "";
+  snapshot.forEach(docu => {
+    const p = docu.data();
+    proveedoresGuardados.push({ id: docu.id, ...p });
+
+    // Tabla
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${p.ruc}</td>
+      <td>${p.nombre}</td>
+      <td>${p.direccion}</td>
+      <td>${p.telefono||'-'}</td>
+      <td>
+        <button class="btn btn-edit" data-id="${docu.id}" data-tipo="proveedores">✏️ Editar</button>
+        <button class="btn btn-save" data-id="${docu.id}" data-tipo="proveedores" style="display:none">💾 Guardar</button>
+        <button class="btn btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️ Eliminar</button>
+      </td>`;
+    tablaProveedores.appendChild(fila);
+
+    // Select
+    const option = document.createElement("option");
+    option.value = p.nombre;
+    option.textContent = p.nombre;
+    proveedorSelect.appendChild(option);
+  });
+});
+
 onSnapshot(collection(db, "productos"), snapshot => {
   productosGuardados = [];
-  tablaProductos.innerHTML = "";
   const productoSelect = document.getElementById("productoFactura");
   productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
+  tablaProductos.innerHTML = "";
   snapshot.forEach(docu => {
     const p = docu.data();
     productosGuardados.push({ id: docu.id, ...p });
+
+    // Tabla
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.nombre}</td>
@@ -101,33 +132,12 @@ onSnapshot(collection(db, "productos"), snapshot => {
       </td>`;
     tablaProductos.appendChild(fila);
 
+    // Select
     const option = document.createElement("option");
-    option.value = p.nombre; 
+    option.value = p.nombre;
     option.textContent = p.nombre;
     productoSelect.appendChild(option);
   });
-});
-
-// =================== FACTURAS ===================
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-let facturasGuardadas = [];
-
-facturaForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const idFactura = document.getElementById("idFactura").value.trim();
-  const numero = document.getElementById("numeroFactura").value.trim();
-  const fecha = document.getElementById("fechaEmisionFactura").value;
-  const proveedor = document.getElementById("proveedorFactura").value;
-  const producto = document.getElementById("productoFactura").value;
-  const monto = document.getElementById("montoFactura").value;
-  const moneda = document.getElementById("monedaFactura").value;
-  const tipo = document.getElementById("tipoFactura").value;
-
-  if (!proveedor || !producto) { alert("Debe seleccionar un proveedor y un producto."); return; }
-
-  await addDoc(collection(db, "facturas"), { idFactura, numero, fecha, proveedor, producto, monto, moneda, tipo });
-  facturaForm.reset();
 });
 
 onSnapshot(collection(db, "facturas"), snapshot => {
@@ -136,18 +146,20 @@ onSnapshot(collection(db, "facturas"), snapshot => {
   mostrarFacturas(facturasGuardadas);
 });
 
+// =================== MOSTRAR FACTURAS ===================
 function mostrarFacturas(facturas){
   tablaFacturas.innerHTML="";
   if(facturas.length===0){
-    const fila=document.createElement("tr");
-    fila.innerHTML=`<td colspan="8" style="text-align:center;color:#555">No se encontraron coincidencias</td>`;
+    const fila = document.createElement("tr");
+    fila.innerHTML = `<td colspan="8" style="text-align:center;color:#555">No se encontraron coincidencias</td>`;
     tablaFacturas.appendChild(fila);
     return;
   }
+
   facturas.forEach(f=>{
-    const fila=document.createElement("tr");
-    fila.innerHTML=`
-      <td>${f.idFactura||"-"}</td>
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${f.idFactura||'-'}</td>
       <td>${f.numero}</td>
       <td class="ver-proveedor" data-nombre="${f.proveedor}" style="cursor:pointer;color:#007bff">${f.proveedor}</td>
       <td class="ver-producto" data-nombre="${f.producto}" style="cursor:pointer;color:#007bff">${f.producto}</td>
@@ -168,42 +180,41 @@ const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keydown", e=>{
   if(e.key==="Enter"){
     e.preventDefault();
-    const valor=buscador.value.trim().toLowerCase();
-    const filtradas=facturasGuardadas.filter(f=>f.producto.toLowerCase().includes(valor));
+    const valor = buscador.value.trim().toLowerCase();
+    const filtradas = facturasGuardadas.filter(f=>f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
   }
 });
-document.getElementById("btnRefresh").addEventListener("click",()=>{
+document.getElementById("btnRefresh").addEventListener("click", ()=>{
   buscador.value="";
   mostrarFacturas(facturasGuardadas);
 });
 
 // =================== ACCIONES ===================
 document.addEventListener("click", async e=>{
-  const id=e.target.dataset.id;
-  const tipo=e.target.dataset.tipo;
+  const id = e.target.dataset.id;
+  const tipo = e.target.dataset.tipo;
 
   if(e.target.classList.contains("btn-delete")){
-    if(confirm("¿Desea eliminar este registro?")) await deleteDoc(doc(db, tipo, id));
+    if(confirm("¿Desea eliminar este registro?")) await deleteDoc(doc(db,tipo,id));
   }
 
   if(e.target.classList.contains("btn-edit")) mostrarInputsEdicion(e.target);
   if(e.target.classList.contains("btn-save")) guardarEdicion(e.target);
-  
+
   if(e.target.classList.contains("ver-proveedor")) mostrarModalDatos("proveedores", e.target.dataset.nombre);
   if(e.target.classList.contains("ver-producto")) mostrarModalDatos("productos", e.target.dataset.nombre);
 });
 
-// =================== FUNCIONES EDICIÓN ===================
+// =================== FUNCIONES EDITAR / GUARDAR ===================
 function mostrarInputsEdicion(btn){
   const fila = btn.closest("tr");
   const tipo = btn.dataset.tipo;
-  const id = btn.dataset.id;
   let registro;
 
-  if(tipo==="proveedores") registro = proveedoresGuardados.find(r=>r.id===id);
-  else if(tipo==="productos") registro = productosGuardados.find(r=>r.id===id);
-  else registro = facturasGuardadas.find(r=>r.id===id);
+  if(tipo==="proveedores") registro = proveedoresGuardados.find(r=>r.id===btn.dataset.id);
+  else if(tipo==="productos") registro = productosGuardados.find(r=>r.id===btn.dataset.id);
+  else registro = facturasGuardadas.find(r=>r.id===btn.dataset.id);
 
   if(!registro) return;
 
@@ -212,18 +223,20 @@ function mostrarInputsEdicion(btn){
     fila.cells[1].innerHTML=`<input value="${registro.nombre}">`;
     fila.cells[2].innerHTML=`<input value="${registro.direccion}">`;
     fila.cells[3].innerHTML=`<input value="${registro.telefono||''}">`;
-  } else if(tipo==="productos"){
+  }
+  else if(tipo==="productos"){
     fila.cells[0].innerHTML=`<input value="${registro.nombre}">`;
     fila.cells[1].innerHTML=`<input value="${registro.unidad}">`;
     fila.cells[2].innerHTML=`<input value="${registro.material}">`;
     fila.cells[3].innerHTML=`<input value="${registro.maquinaria}">`;
     fila.cells[4].innerHTML=`<input value="${registro.productoOf}">`;
     fila.cells[5].innerHTML=`<input value="${registro.insumosExtra}">`;
-  } else if(tipo==="facturas"){
-    fila.cells[0].innerHTML=`<input value="${registro.idFactura||''}">`; // Editable ID
+  }
+  else if(tipo==="facturas"){
+    fila.cells[0].innerHTML=`<input value="${registro.idFactura||''}">`;
     fila.cells[1].innerHTML=`<input value="${registro.numero}">`;
-    fila.cells[2].innerHTML=`<select>${proveedoresGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.proveedor?'selected':''}>${p.nombre}</option>`).join("")}</select>`;
-    fila.cells[3].innerHTML=`<select>${productosGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.producto?'selected':''}>${p.nombre}</option>`).join("")}</select>`;
+    fila.cells[2].innerHTML=`<select>${proveedoresGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.proveedor?'selected':''}>${p.nombre}</option>`).join('')}</select>`;
+    fila.cells[3].innerHTML=`<select>${productosGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.producto?'selected':''}>${p.nombre}</option>`).join('')}</select>`;
     fila.cells[4].innerHTML=`<input type="number" step="0.01" value="${registro.monto}">`;
     fila.cells[5].innerHTML=`<select><option value="FACTURA" ${registro.tipo==="FACTURA"?'selected':''}>FACTURA</option><option value="BOLETA DE VENTA" ${registro.tipo==="BOLETA DE VENTA"?'selected':''}>BOLETA DE VENTA</option></select>`;
     fila.cells[6].innerHTML=`<input type="date" value="${registro.fecha}">`;
@@ -261,7 +274,7 @@ async function guardarEdicion(btn){
     datosActualizados.productoOf = inputs[4].value.trim();
     datosActualizados.insumosExtra = inputs[5].value.trim();
   } else if(tipo==="facturas"){
-    datosActualizados.idFactura = inputs[0].value.trim(); // Guardar ID editable
+    datosActualizados.idFactura = inputs[0].value.trim();
     datosActualizados.numero = inputs[1].value.trim();
     datosActualizados.proveedor = inputs[2].value;
     datosActualizados.producto = inputs[3].value;
@@ -274,7 +287,6 @@ async function guardarEdicion(btn){
   fila.querySelector(".btn-edit").style.display="inline-block";
   btn.style.display="none";
 
-  // Refrescar tablas
   if(tipo==="facturas") mostrarFacturas(facturasGuardadas);
 }
 
@@ -292,6 +304,6 @@ async function mostrarModalDatos(coleccion, valor){
   modal.classList.add("show");
 }
 
-document.getElementById("cerrarModal").addEventListener("click",()=>{document.getElementById("modalDetalle").classList.remove("show");});
+document.getElementById("cerrarModal").addEventListener("click",()=>document.getElementById("modalDetalle").classList.remove("show"));
 
 
