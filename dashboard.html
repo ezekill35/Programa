@@ -1,499 +1,343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discovery Pets — Facturas</title>
-
-  <!-- Fuente y estilos base -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard · Discovery Pets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --azul: #21c1d6;
-      --azul-claro: #bff5fb;
-      --gris-claro: #f5f9fa;
-      --gris: #e0e6e8;
-      --sombra: 0 6px 18px rgba(0,0,0,0.1);
+    :root{
+      --bg1: #f7fbff;
+      --bg2: #eef9ff;
+      --card: #ffffff;
+      --accent: #10bcd4;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.7);
+      --shadow-lg: 0 10px 30px rgba(16,188,212,0.12);
+      --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
+      --radius: 16px;
     }
+    *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
 
-    * {
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-
-    body {
-      background: linear-gradient(135deg, #e9f9fb, #fefefe);
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      color: #333;
-      overflow-x: hidden;
-    }
-
-    h2 {
-      text-align: center;
-      font-weight: 600;
-      color: var(--azul);
-      margin-top: 20px;
-    }
-
-    /* ----------- Contenedor principal ----------- */
-    .container {
-      width: 95%;
-      max-width: 1200px;
-      margin: 30px auto;
-      background: rgba(255,255,255,0.8);
-      border-radius: 20px;
-      box-shadow: var(--sombra);
-      padding: 25px 30px;
-      backdrop-filter: blur(10px);
-      position: relative;
-    }
-
-    /* ----------- Formulario ----------- */
-    form {
+    /* Layout */
+    .app {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      padding: 32px;
+      min-height:100vh;
+      align-items:start;
     }
 
-    input, select, textarea, button {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid var(--gris);
-      border-radius: 10px;
-      outline: none;
-      transition: 0.2s;
+    /* SIDEBAR */
+    .sidebar {
+      position: sticky;
+      top:32px;
+      padding:20px;
+      border-radius:20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(6px);
+      transition:all .2s ease;
     }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--azul);
-      box-shadow: 0 0 0 3px var(--azul-claro);
+    .sidebar:hover { transform: translateY(-2px); }
+    .brand {
+      display:flex;gap:12px;align-items:center;margin-bottom:18px;
     }
-
-    textarea {
-      resize: vertical;
-      min-height: 50px;
+    .logo {
+      width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2);
+      box-shadow: 0 8px 20px rgba(16,188,212,0.2);
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;
     }
-
-    button {
-      background: var(--azul);
-      color: #fff;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.2s;
+    .brand h1{font-size:16px;margin:0;font-weight:700}
+    .nav {
+      margin-top:8px;display:flex;flex-direction:column;gap:8px;
     }
-
-    button:hover {
-      transform: translateY(-2px);
-      background: #1ba8bb;
+    .menu-btn {
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;
+      transition:all .18s ease;
     }
-
-    /* ----------- Tabla ----------- */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+    .menu-btn:hover{transform:translateY(-2px);background: rgba(16,188,212,0.06);}
+    .menu-btn.activo, .menu-btn:focus{
+      background: linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06));
+      box-shadow: var(--shadow-md);
+      border-left:3px solid var(--accent);
     }
-
-    thead {
-      background: var(--azul);
-      color: #fff;
+    .menu-btn .ico{width:18px;height:18px;display:inline-block;opacity:0.9}
+    .logout {
+      margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;
+      transition:all .18s ease;
     }
+    .logout:hover{background: rgba(16,188,212,0.06);}
 
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
+    /* MAIN CONTENT */
+    .main {
+      padding:28px;border-radius:20px;background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82));
+      box-shadow: var(--shadow-lg);backdrop-filter:blur(4px);
     }
-
-    tr:nth-child(even) {
-      background: #f9f9f9;
+    .header {display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .header h2{margin:0;font-weight:700;color:#07203a}
+    .search-box {display:flex;gap:10px;align-items:center;}
+    input[type="search"], input, select {
+      padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);
+      box-shadow: var(--shadow-md);transition: all .2s ease;
     }
+    input:focus, select:focus { border-color: var(--accent); outline:none; box-shadow:0 4px 12px rgba(16,188,212,0.12);}
+    .tabs {display:flex;gap:12px;margin-bottom:18px;}
 
-    .editable {
-      background: #fff7e6;
+    /* SECCIONES */
+    .seccion { display:none; }
+    .seccion.activa { display:block; animation:fadeIn .28s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+    .grid { display:grid; grid-template-columns:1fr 420px; gap:18px; }
+
+    /* Cards */
+    .card {
+      background:var(--card);border-radius:14px;padding:16px;box-shadow: var(--shadow-md);
+      border:1px solid rgba(15,23,42,0.03);transition:all .2s ease;
     }
+    .card:hover{ transform: translateY(-3px); box-shadow: 0 16px 36px rgba(16,188,212,0.14);}
+    .card h3{margin:0 0 8px 0;font-size:15px;font-weight:600}
+    form .row{display:flex;gap:8px;margin-bottom:10px}
+    form input, form select { flex:1 }
 
-    .btn-edit, .btn-delete {
-      border: none;
-      cursor: pointer;
-      background: none;
-      font-size: 18px;
-      color: var(--azul);
-      transition: 0.2s;
-    }
+    table{width:100%;border-collapse:collapse;transition:all .2s ease}
+    table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
+    .table-scroll{max-height:420px;overflow:auto;padding-right:6px;scroll-behavior:smooth}
 
-    .btn-delete:hover { color: crimson; }
-    .btn-edit:hover { color: #1ba8bb; }
+    .btn { padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12);transition:all .2s ease;}
+    .btn:hover{ transform: translateY(-2px); box-shadow:0 12px 28px rgba(16,188,212,0.16);}
+    .btn.secondary { background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12) }
+    .btn.secondary:hover { background: rgba(16,188,212,0.06); }
 
-    /* ----------- Buscador ----------- */
-    .search-box {
-      text-align: center;
-      margin-bottom: 15px;
-    }
+    /* small text */
+    .muted{color:var(--muted);font-size:13px}
 
-    .search-box input {
-      width: 50%;
-      padding: 10px;
-      border-radius: 15px;
-      border: 1px solid var(--gris);
-      box-shadow: var(--sombra);
-    }
-
-    /* ----------- Modal general ----------- */
+    /* Modal generales */
     .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      transition: opacity 0.3s ease;
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1800; padding: 28px;
     }
-
-    .modal.show {
-      display: flex;
-      opacity: 1;
+    .modal.show { display:flex; }
+    .modal-backdrop {
+      position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.28), rgba(2,6,23,0.18));
+      backdrop-filter: blur(6px);
     }
-
-    .modal-content {
-      background: rgba(255,255,255,0.9);
-      border-radius: 20px;
-      padding: 25px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: var(--sombra);
-      transform: scale(0.95);
-      animation: popin 0.3s forwards;
+    .modal-card {
+      position:relative;z-index:2;max-width:1100px;width:100%;border-radius:18px;padding:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95));
+      box-shadow: 0 40px 80px rgba(10,20,30,0.12);transform: translateY(-6px);
+      animation:modalIn .26s cubic-bezier(.2,.9,.3,1);
     }
-
-    @keyframes popin {
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .close {
-      cursor: pointer;
-      font-size: 22px;
-      color: #666;
-      transition: color 0.2s;
-    }
-
-    .close:hover {
-      color: var(--azul);
-    }
-
+    @keyframes modalIn { from{opacity:0;transform:translateY(8px) scale(.995)} to{opacity:1;transform:none} }
+    .results-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
     .fact-card {
-      background: white;
-      padding: 15px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      box-shadow: var(--sombra);
-      cursor: pointer;
-      transition: 0.2s;
+      border-radius:14px;padding:14px;background:linear-gradient(180deg,#fff,#f8feff);
+      box-shadow: 0 16px 40px rgba(16,188,212,0.08);cursor:pointer;border:1px solid rgba(16,188,212,0.06);
+      transition:transform .14s ease, box-shadow .14s;
     }
+    .fact-card:hover{ transform: translateY(-6px); box-shadow: 0 28px 60px rgba(16,188,212,0.12); }
+    .fact-card h4{margin:0 0 6px 0;font-weight:600}
+    .meta{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-top:10px}
+    .close-x { position:absolute; right:12px; top:12px; background:transparent;border:none;font-size:20px;cursor:pointer;color:#334155 }
 
-    .fact-card:hover {
-      transform: translateY(-3px);
-      background: #f1fdff;
-    }
+    .factura-detail { display:grid; grid-template-columns: 1fr 320px; gap:12px; align-items:start }
+    .detail-block{ background:linear-gradient(180deg,#fff,#fbffff); border-radius:12px;padding:12px;border:1px solid rgba(10,20,30,0.03) }
+    .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .value{font-weight:700;font-size:15px;color:#062936}
 
-    .factura-detail .label {
-      font-weight: 600;
-      color: var(--azul);
-    }
-
-    .factura-detail .value {
-      margin-bottom: 8px;
+    /* responsive */
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr;padding:18px}
+      .grid{grid-template-columns:1fr}
+      .sidebar{display:flex;flex-direction:row;gap:12px;overflow:auto}
+      .menu-btn{white-space:nowrap}
     }
   </style>
 </head>
 <body>
-
-  <h2>📜 Gestión de Facturas - Discovery Pets</h2>
-  <div class="container">
-
-    <div class="search-box">
-      <input id="searchInput" type="text" placeholder="🔍 Buscar por producto (Enter para buscar)" />
-    </div>
-
-    <form id="facturaForm">
-      <input id="codigo" placeholder="Código" required />
-      <input id="numeroFactura" placeholder="N° de Factura" required />
-      <select id="proveedor" required></select>
-      <textarea id="producto" placeholder="Producto o Descripción" required></textarea>
-      <input id="monto" type="number" placeholder="Monto" required />
-      <select id="moneda">
-        <option>S/</option>
-        <option>$</option>
-      </select>
-      <select id="tipo">
-        <option>Compra</option>
-        <option>Venta</option>
-        <option>Servicio</option>
-      </select>
-      <input id="fecha" type="date" required />
-      <button type="submit">Registrar</button>
-    </form>
-
-    <table id="facturasTable">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>N° Factura</th>
-          <th>Proveedor</th>
-          <th>Producto / Descripción</th>
-          <th>Monto</th>
-          <th>Moneda</th>
-          <th>Tipo</th>
-          <th>Fecha</th>
-          <th>✏️</th>
-          <th>🗑️</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- Modal resultados -->
-  <div class="modal" id="modalResultados">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="resultTitle">Resultados</h3>
-        <span class="close" onclick="closeResultados()">✖</span>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">DP</div>
+        <div>
+          <h1>Discovery Pets</h1>
+          <div class="muted" style="font-size:13px">Panel administrativo</div>
+        </div>
       </div>
-      <p id="resultSub"></p>
-      <div id="resultsContainer"></div>
-    </div>
-  </div>
+      <nav class="nav">
+        <button class="menu-btn activo" data-target="seccion-proveedores"><span class="ico">🏢</span> Proveedores</button>
+        <button class="menu-btn" data-target="seccion-productos"><span class="ico">📦</span> Productos</button>
+        <button class="menu-btn" data-target="seccion-facturas"><span class="ico">🧾</span> Facturas</button>
+      </nav>
+      <button id="logoutBtn" class="logout">Cerrar sesión</button>
+    </aside>
 
-  <!-- Modal detalle factura -->
-  <div class="modal" id="modalFactura">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="facturaTitle"></h3>
-        <span class="close" onclick="closeFactura()">✖</span>
+    <main class="main">
+      <div class="header">
+        <h2>Dashboard · Discovery Pets</h2>
+        <div class="search-box">
+          <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto" aria-label="Buscar">
+          <button class="btn secondary" id="btnRefresh">Restablecer</button>
+        </div>
       </div>
-      <div id="modalFacturaContenido"></div>
-    </div>
-  </div>
 
-  <!-- Modal edición descripción -->
-  <div class="modal" id="modalEditDesc">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="editDescTitle"></h3>
-        <span class="close" onclick="closeEditDesc()">✖</span>
+      <div class="grid">
+        <div>
+          <!-- Sección Proveedores -->
+          <section id="seccion-proveedores" class="seccion activa">
+            <div class="card">
+              <h3>Registrar proveedor</h3>
+              <form id="proveedorForm">
+                <div class="row">
+                  <input id="rucProveedor" placeholder="RUC" required />
+                  <input id="nombreProveedor" placeholder="Nombre" required />
+                </div>
+                <div class="row">
+                  <input id="direccionProveedor" placeholder="Dirección" />
+                  <button class="btn" type="submit">Añadir proveedor</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+              <h3>Proveedores registrados</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th></th></tr></thead>
+                  <tbody id="tablaProveedores"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sección Productos -->
+          <section id="seccion-productos" class="seccion">
+            <div class="card">
+              <h3>Registrar producto</h3>
+              <form id="productoForm">
+                <div class="row">
+                  <input id="nombreProducto" placeholder="Nombre producto" required />
+                  <input id="cantidadProducto" placeholder="Cantidad" inputmode="decimal" />
+                </div>
+                <div class="row">
+                  <input id="unidadProducto" placeholder="Unidad (ej: kg, und)" />
+                  <input id="valorUnitarioProducto" placeholder="Valor unitario" inputmode="decimal" />
+                  <button class="btn" type="submit">Añadir producto</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+              <h3>Productos registrados</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>Nombre</th><th>Cant.</th><th>Unidad</th><th>Valor</th><th></th></tr></thead>
+                  <tbody id="tablaProductos"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sección Facturas -->
+          <section id="seccion-facturas" class="seccion">
+            <div class="card">
+              <h3>Registrar factura</h3>
+              <form id="facturaForm">
+                <div class="row">
+                  <input id="numeroFactura" placeholder="N° factura" />
+                  <input id="fechaEmisionFactura" type="date" />
+                </div>
+                <div class="row">
+                  <select id="proveedorFactura"><option value="">Seleccione proveedor</option></select>
+                  <select id="productoFactura"><option value="">Seleccione producto</option></select>
+                </div>
+                <div class="row">
+                  <input id="montoFactura" placeholder="Monto" inputmode="decimal" />
+                  <select id="monedaFactura">
+                    <option value="S/ ">S/</option>
+                    <option value="$ ">$</option>
+                  </select>
+                  <select id="tipoFactura">
+                    <option value="Compra">Compra</option>
+                    <option value="Gasto">Gasto</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <button class="btn" type="submit">Guardar factura</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+              <h3>Facturas</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th></th></tr></thead>
+                  <tbody id="tablaFacturas"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside>
+          <div class="card">
+            <h3>Información rápida</h3>
+            <p class="muted">Usa el buscador para filtrar facturas por producto. Presiona <strong>Enter</strong>. Haz clic en las tarjetas para ver detalle.</p>
+            <hr style="margin:12px 0;border:none;border-top:1px dashed rgba(10,20,30,0.04)">
+            <div><strong>Atajos</strong></div>
+            <ul style="margin-top:8px" class="muted">
+              <li>Enter → abrir modal resultados</li>
+              <li>Click tarjeta → ver factura detallada</li>
+              <li>Click proveedor/producto → confirmación → ficha</li>
+            </ul>
+          </div>
+        </aside>
       </div>
-      <textarea id="editDescTextarea"></textarea>
-      <button id="saveDescBtn">Guardar cambios</button>
+    </main>
+  </div>
+
+  <!-- MODALES -->
+  <div id="modalDetalle" class="modal">
+    <div class="modal-backdrop" onclick="document.getElementById('modalDetalle').style.display='none'"></div>
+    <div class="modal-card">
+      <button id="cerrarModal" class="close-x">✕</button>
+      <div id="modalContenido"><p>Cargando datos...</p></div>
     </div>
   </div>
 
-  <!-- ================= SCRIPT PRINCIPAL ================= -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, onSnapshot,
-      deleteDoc, doc, updateDoc, getDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <div id="modalResultados" class="modal">
+    <div class="modal-backdrop" onclick="closeResultados()"></div>
+    <div class="modal-card" style="max-width:980px">
+      <button class="close-x" onclick="closeResultados()">✕</button>
+      <h3 id="resultTitle">Resultados</h3>
+      <p id="resultSub" class="muted" style="margin-top:6px;margin-bottom:12px"></p>
+      <div id="resultsContainer" class="results-grid"></div>
+    </div>
+  </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-      authDomain: "discovery-pets.firebaseapp.com",
-      projectId: "discovery-pets",
-      storageBucket: "discovery-pets.appspot.com",
-      messagingSenderId: "481355972999",
-      appId: "1:481355972999:web:1234567890abcdef"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  <div id="modalFactura" class="modal">
+    <div class="modal-backdrop" onclick="closeFactura()"></div>
+    <div class="modal-card">
+      <button class="close-x" onclick="closeFactura()">✕</button>
+      <h3>Detalle de la Factura</h3>
+      <div class="factura-detail">
+        <div class="detail-block"><div class="label">Número</div><div id="facturaNumero" class="value"></div></div>
+        <div class="detail-block"><div class="label">Fecha</div><div id="facturaFecha" class="value"></div></div>
+        <div class="detail-block"><div class="label">Proveedor</div><div id="facturaProveedor" class="value"></div></div>
+        <div class="detail-block"><div class="label">Producto</div><div id="facturaProducto" class="value"></div></div>
+        <div class="detail-block"><div class="label">Monto</div><div id="facturaMonto" class="value"></div></div>
+        <div class="detail-block"><div class="label">Moneda</div><div id="facturaMoneda" class="value"></div></div>
+        <div class="detail-block"><div class="label">Tipo</div><div id="facturaTipo" class="value"></div></div>
+      </div>
+    </div>
+  </div>
 
-    // ================= CARGAR PROVEEDORES =================
-    const proveedorSelect = document.getElementById("proveedor");
-    const cargarProveedores = () => {
-      onSnapshot(collection(db, "proveedores"), (snap) => {
-        proveedorSelect.innerHTML = "<option value=''>Seleccione proveedor</option>";
-        snap.forEach((d) => {
-          const data = d.data();
-          proveedorSelect.innerHTML += `<option value="${data.nombre}">${data.nombre}</option>`;
-        });
-      });
-    };
-    cargarProveedores();
-
-    // ================= REGISTRAR FACTURA =================
-    const facturaForm = document.getElementById("facturaForm");
-    facturaForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const nuevaFactura = {
-        codigo: codigo.value,
-        numero: numeroFactura.value,
-        proveedor: proveedor.value,
-        producto: producto.value,
-        monto: monto.value,
-        moneda: moneda.value,
-        tipo: tipo.value,
-        fecha: fecha.value
-      };
-      await addDoc(collection(db, "facturas"), nuevaFactura);
-      facturaForm.reset();
-    });
-
-    // ================= MOSTRAR FACTURAS =================
-    const tbody = document.querySelector("#facturasTable tbody");
-    onSnapshot(collection(db, "facturas"), (snap) => {
-      tbody.innerHTML = "";
-      snap.forEach((docu) => {
-        const d = docu.data();
-        const tr = document.createElement("tr");
-        tr.dataset.id = docu.id;
-        tr.dataset.tipo = "facturas";
-        tr.innerHTML = `
-          <td contenteditable="true" class="editable" data-field="codigo">${d.codigo || ""}</td>
-          <td contenteditable="true" class="editable" data-field="numero">${d.numero || ""}</td>
-          <td contenteditable="true" class="editable" data-field="proveedor">${d.proveedor || ""}</td>
-          <td contenteditable="true" class="editable" data-field="producto">${d.producto || ""}</td>
-          <td contenteditable="true" class="editable" data-field="monto">${d.monto || ""}</td>
-          <td contenteditable="true" class="editable" data-field="moneda">${d.moneda || ""}</td>
-          <td contenteditable="true" class="editable" data-field="tipo">${d.tipo || ""}</td>
-          <td contenteditable="true" class="editable" data-field="fecha">${d.fecha || ""}</td>
-          <td><button class="btn-edit-desc" data-id="${docu.id}" data-tipo="facturas">✏️</button></td>
-          <td><button class="btn-delete" data-id="${docu.id}" data-tipo="facturas">🗑️</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    });
-
-    // ================= ELIMINAR / EDITAR =================
-    document.addEventListener("click", async (e) => {
-      if (e.target.classList.contains("btn-delete")) {
-        const id = e.target.dataset.id;
-        if (confirm("¿Deseas eliminar esta factura?")) {
-          await deleteDoc(doc(db, "facturas", id));
-        }
-      }
-
-      if (e.target.classList.contains("btn-edit-desc")) {
-        descEditId = e.target.dataset.id;
-        descEditTipo = e.target.dataset.tipo;
-        const docSnap = await getDoc(doc(db, descEditTipo, descEditId));
-        if (docSnap.exists()) {
-          editDescTextarea.value = docSnap.data().producto || "";
-          document.getElementById("editDescTitle").textContent = "Editar descripción del producto";
-          modalEditDesc.classList.add("show");
-        }
-      }
-    });
-
-    saveDescBtn.addEventListener("click", async () => {
-      if (!descEditId) return;
-      const texto = editDescTextarea.value.trim();
-      await updateDoc(doc(db, "facturas", descEditId), { producto: texto });
-      closeEditDesc();
-    });
-
-    function closeEditDesc() { modalEditDesc.classList.remove("show"); }
-
-    // ================= EDITAR EN LINEA =================
-    document.addEventListener("blur", async (e) => {
-      if (e.target.classList.contains("editable")) {
-        const celda = e.target;
-        const valor = celda.textContent.trim();
-        const campo = celda.dataset.field;
-        const id = celda.closest("tr").dataset.id;
-        if (id && campo) await updateDoc(doc(db, "facturas", id), { [campo]: valor });
-      }
-    }, true);
-
-    // ================= BUSCADOR =================
-    const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("keypress", async (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const valor = searchInput.value.toLowerCase();
-        const querySnap = await onSnapshot(collection(db, "facturas"), (snap) => {
-          const resultados = [];
-          snap.forEach((d) => {
-            const data = d.data();
-            if ((data.producto || "").toLowerCase().includes(valor)) resultados.push(data);
-          });
-          mostrarResultadosModal(valor, resultados);
-        });
-      }
-    });
-
-    const modalResultados = document.getElementById("modalResultados");
-    const resultsContainer = document.getElementById("resultsContainer");
-    const resultTitle = document.getElementById("resultTitle");
-    const resultSub = document.getElementById("resultSub");
-
-    function mostrarResultadosModal(valor, resultados) {
-      modalResultados.classList.add("show");
-      resultTitle.textContent = `Resultados para "${valor}"`;
-      resultSub.textContent = `${resultados.length} coincidencia(s) encontradas`;
-      resultsContainer.innerHTML = "";
-      if (!resultados.length) {
-        resultsContainer.innerHTML = "<p>No se encontraron resultados.</p>";
-        return;
-      }
-      resultados.forEach((f) => {
-        const card = document.createElement("div");
-        card.className = "fact-card";
-        card.innerHTML = `
-          <h4>${f.codigo || "Sin código"}</h4>
-          <div>${f.proveedor || ""}</div>
-          <div>${f.producto || ""}</div>
-          <div class="meta">
-            <span>${f.moneda || ""}${f.monto || ""}</span>
-            <span>${f.fecha || ""}</span>
-          </div>`;
-        card.addEventListener("click", () => mostrarFacturaDetalle(f));
-        resultsContainer.appendChild(card);
-      });
-    }
-    function closeResultados() { modalResultados.classList.remove("show"); }
-
-    // ================= MODAL DETALLE =================
-    const modalFactura = document.getElementById("modalFactura");
-    const modalFacturaContenido = document.getElementById("modalFacturaContenido");
-
-    function mostrarFacturaDetalle(f) {
-      modalFactura.classList.add("show");
-      document.getElementById("facturaTitle").textContent = `Factura ${f.codigo}`;
-      modalFacturaContenido.innerHTML = `
-        <div class="factura-detail">
-          <div class="label">Proveedor</div><div class="value">${f.proveedor}</div>
-          <div class="label">Producto / Descripción</div><div class="value">${f.producto}</div>
-          <div class="label">Monto</div><div class="value">${f.moneda}${f.monto}</div>
-          <div class="label">Tipo</div><div class="value">${f.tipo}</div>
-          <div class="label">Fecha</div><div class="value">${f.fecha}</div>
-        </div>`;
-    }
-    function closeFactura() { modalFactura.classList.remove("show"); }
-
-    // Cierre por tecla Escape
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        [modalResultados, modalFactura, modalEditDesc].forEach(m => m.classList.remove("show"));
-      }
-    });
-  </script>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
 
 
