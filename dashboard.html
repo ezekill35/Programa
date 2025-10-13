@@ -8,49 +8,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg1: #f7fbff;
-  --bg2: #eef9ff;
-  --card: #ffffff;
-  --accent: #10bcd4;
-  --muted: #6b7280;
-  --glass: rgba(255,255,255,0.7);
-  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12);
-  --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
-  --radius: 16px;
+  --bg1:#f7fbff;--bg2:#eef9ff;--card:#ffffff;--accent:#10bcd4;--muted:#6b7280;--glass:rgba(255,255,255,0.7);
+  --shadow-lg:0 10px 30px rgba(16,188,212,0.12);--shadow-md:0 6px 18px rgba(16,188,212,0.08);--radius:16px;
 }
 *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
-.app {display: grid; grid-template-columns: 260px 1fr; gap:28px; padding:32px; min-height:100vh; align-items:start;}
-.sidebar {position: sticky; top:32px; padding:20px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7)); box-shadow: var(--shadow-lg); backdrop-filter: blur(6px);}
-.brand {display:flex; gap:12px; align-items:center; margin-bottom:18px;}
-.logo {width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2); box-shadow: 0 8px 20px rgba(16,188,212,0.2); display:flex; align-items:center; justify-content:center; color:white;font-weight:800;font-size:18px;}
+.app{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:32px;min-height:100vh;align-items:start}
+.sidebar{position:sticky;top:32px;padding:20px;border-radius:20px;background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));box-shadow:var(--shadow-lg);backdrop-filter: blur(6px);}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:18px;}
+.logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2);box-shadow:0 8px 20px rgba(16,188,212,0.2);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;}
 .brand h1{font-size:16px;margin:0}
-.nav {margin-top:8px;display:flex;flex-direction:column;gap:8px;}
-.menu-btn {display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;}
+.nav{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.menu-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;}
 .menu-btn:hover{transform:translateY(-3px)}
-.menu-btn.activo, .menu-btn:focus{background: linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06)); box-shadow: var(--shadow-md); border-left:3px solid var(--accent);}
+.menu-btn.activo,.menu-btn:focus{background: linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06)); box-shadow: var(--shadow-md); border-left:3px solid var(--accent);}
 .menu-btn .ico{width:18px;height:18px;display:inline-block;opacity:0.9}
-.logout {margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;}
-.main {padding:28px;border-radius:20px;background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82)); box-shadow: var(--shadow-lg);backdrop-filter:blur(4px);}
-.header {display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.logout{margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;}
+.main{padding:28px;border-radius:20px;background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82)); box-shadow: var(--shadow-lg);backdrop-filter:blur(4px);}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .header h2{margin:0;font-weight:700;color:#07203a}
-.search-box {display:flex;gap:10px;align-items:center;}
+.search-box{display:flex;gap:10px;align-items:center;}
 input[type="search"]{padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);min-width:280px; box-shadow: var(--shadow-md);}
-.tabs {display:flex;gap:12px;margin-bottom:18px;}
-.seccion { display:none; }
-.seccion.activa { display:block; animation:fadeIn .28s ease; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-.grid {display:grid;grid-template-columns: 1fr;gap:18px;}
-.card {background:var(--card);border-radius:14px;padding:16px;box-shadow: var(--shadow-md);border:1px solid rgba(15,23,42,0.03);}
+.tabs{display:flex;gap:12px;margin-bottom:18px;}
+.seccion{display:none;}
+.seccion.activa{display:block;animation:fadeIn .28s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+.grid{display:grid;grid-template-columns:1fr 420px;gap:18px;}
+.card{background:var(--card);border-radius:14px;padding:16px;box-shadow: var(--shadow-md);border:1px solid rgba(15,23,42,0.03);}
 .card h3{margin:0 0 8px 0;font-size:15px}
 form .row{display:flex;gap:8px;margin-bottom:10px}
-form input, form select { padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1 }
+form input, form select{padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1}
 table{width:100%;border-collapse:collapse}
 table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
 .table-scroll{max-height:420px;overflow:auto;padding-right:6px}
-.btn { padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12) }
-.btn.secondary { background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12) }
+.btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12)}
+.btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12)}
 .muted{color:var(--muted);font-size:13px}
+.modal{position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1800; padding: 28px;}
+.modal.show{display:flex;}
+.modal-backdrop{position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.28), rgba(2,6,23,0.18)); backdrop-filter: blur(6px);}
+.modal-card{position:relative;z-index:2;max-width:1100px;width:100%;border-radius:18px;padding:18px;background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95)); box-shadow: 0 40px 80px rgba(10,20,30,0.12); transform: translateY(-6px); animation:modalIn .26s cubic-bezier(.2,.9,.3,1);}
+@keyframes modalIn{from{opacity:0;transform:translateY(8px) scale(.995)} to{opacity:1;transform:none}}
+.close-x{position:absolute; right:12px; top:12px; background:transparent;border:none;font-size:20px;cursor:pointer;color:#334155}
+@media (max-width:980px){.app{grid-template-columns:1fr;padding:18px}.grid{grid-template-columns:1fr}.sidebar{display:flex;flex-direction:row;gap:12px;overflow:auto}.menu-btn{white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -58,148 +58,126 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   <aside class="sidebar" aria-label="sidebar">
     <div class="brand"><div class="logo">DP</div><div><h1>Discovery Pets</h1><div class="muted" style="font-size:13px">Panel administrativo</div></div></div>
     <nav class="nav" role="navigation">
-      <button class="menu-btn activo" data-target="seccion-proveedores" aria-pressed="true"><span class="ico">🏢</span> Proveedores</button>
+      <button class="menu-btn activo" data-target="seccion-proveedores"><span class="ico">🏢</span> Proveedores</button>
       <button class="menu-btn" data-target="seccion-productos"><span class="ico">📦</span> Productos</button>
       <button class="menu-btn" data-target="seccion-facturas"><span class="ico">🧾</span> Facturas</button>
     </nav>
-    <button id="logoutBtn" class="logout" title="Cerrar sesión">Cerrar sesión</button>
+    <button id="logoutBtn" class="logout">Cerrar sesión</button>
   </aside>
-
-  <main class="main" role="main">
+  <main class="main">
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
       <div class="search-box">
-        <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto o proveedor (Enter)" aria-label="Buscar facturas">
-        <button class="btn secondary" id="btnRefresh" title="Mostrar todas">Restablecer</button>
+        <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto (Enter)">
+        <button class="btn secondary" id="btnRefresh">Restablecer</button>
       </div>
     </div>
-
-    <!-- SECCION PROVEEDORES -->
-    <div id="seccion-proveedores" class="seccion activa">
-      <div class="card">
-        <h3>Registrar proveedor</h3>
-        <form id="proveedorForm">
-          <div class="row">
-            <input type="text" id="rucProveedor" placeholder="RUC" required>
-            <input type="text" id="nombreProveedor" placeholder="Nombre" required>
+    <div class="grid">
+      <div>
+        <!-- Proveedores -->
+        <section id="seccion-proveedores" class="seccion activa">
+          <div class="card">
+            <h3>Registrar proveedor</h3>
+            <form id="proveedorForm">
+              <div class="row">
+                <input id="rucProveedor" placeholder="RUC" required />
+                <input id="nombreProveedor" placeholder="Nombre" required />
+              </div>
+              <div class="row">
+                <input id="direccionProveedor" placeholder="Dirección" />
+                <input id="telefonoProveedor" placeholder="Teléfono" />
+                <button class="btn" type="submit">Añadir proveedor</button>
+              </div>
+            </form>
           </div>
-          <div class="row">
-            <input type="text" id="direccionProveedor" placeholder="Dirección" required>
-            <input type="text" id="telefonoProveedor" placeholder="Teléfono">
+          <div class="card" style="margin-top:12px">
+            <h3>Proveedores registrados</h3>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acción</th></tr></thead>
+                <tbody id="tablaProveedores"></tbody>
+              </table>
+            </div>
           </div>
-          <button class="btn" type="submit">Añadir proveedor</button>
-        </form>
-      </div>
-      <div class="card table-scroll">
-        <h3>Proveedores registrados</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>RUC</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaProveedores"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SECCION PRODUCTOS -->
-    <div id="seccion-productos" class="seccion">
-      <div class="card">
-        <h3>Registrar producto</h3>
-        <form id="productoForm">
-          <div class="row">
-            <input type="text" id="nombreProducto" placeholder="Nombre producto" required>
-            <input type="text" id="unidadProducto" placeholder="Unidad (kg, und)" required>
+        </section>
+        <!-- Productos -->
+        <section id="seccion-productos" class="seccion">
+          <div class="card">
+            <h3>Registrar producto</h3>
+            <form id="productoForm">
+              <div class="row">
+                <input id="nombreProducto" placeholder="Nombre producto" required />
+                <input id="unidadProducto" placeholder="Unidad (kg, und)" />
+              </div>
+              <div class="row">
+                <input id="materialP" placeholder="Material" />
+                <input id="maquinaria" placeholder="Maquinaria" />
+              </div>
+              <div class="row">
+                <input id="productoOf" placeholder="Producto final" />
+                <input id="insumosExtra" placeholder="Insumos extra" />
+                <button class="btn" type="submit">Añadir producto</button>
+              </div>
+            </form>
           </div>
-          <div class="row">
-            <input type="text" id="materialP" placeholder="Material">
-            <input type="text" id="maquinaria" placeholder="Maquinaria">
+          <div class="card" style="margin-top:12px">
+            <h3>Productos registrados</h3>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Nombre</th><th>Unidad</th><th>Material</th><th>Maquinaria</th><th>Producto final</th><th>Insumos extra</th><th>Acción</th></tr></thead>
+                <tbody id="tablaProductos"></tbody>
+              </table>
+            </div>
           </div>
-          <div class="row">
-            <input type="text" id="productoOf" placeholder="Producto final">
-            <input type="text" id="insumosExtra" placeholder="Insumos extra">
+        </section>
+        <!-- Facturas -->
+        <section id="seccion-facturas" class="seccion">
+          <div class="card">
+            <h3>Registrar factura</h3>
+            <form id="facturaForm">
+              <div class="row">
+                <input id="numeroFactura" placeholder="Número factura" required />
+                <input id="fechaEmisionFactura" type="date" required />
+              </div>
+              <div class="row">
+                <select id="proveedorFactura" required></select>
+                <select id="productoFactura" required></select>
+              </div>
+              <div class="row">
+                <input id="montoFactura" placeholder="Monto" required />
+                <input id="monedaFactura" placeholder="Moneda" />
+                <input id="tipoFactura" placeholder="Tipo" />
+                <button class="btn" type="submit">Añadir factura</button>
+              </div>
+            </form>
           </div>
-          <button class="btn" type="submit">Añadir producto</button>
-        </form>
-      </div>
-      <div class="card table-scroll">
-        <h3>Productos registrados</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Unidad</th>
-              <th>Material</th>
-              <th>Maquinaria</th>
-              <th>Producto final</th>
-              <th>Insumos extra</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaProductos"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SECCION FACTURAS -->
-    <div id="seccion-facturas" class="seccion">
-      <div class="card">
-        <h3>Registrar factura</h3>
-        <form id="facturaForm">
-          <div class="row">
-            <input type="text" id="numeroFactura" placeholder="Número factura" required>
-            <input type="date" id="fechaEmisionFactura" required>
+          <div class="card" style="margin-top:12px">
+            <h3>Facturas registradas</h3>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>ID</th><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Moneda</th><th>Tipo</th><th>Fecha</th><th>Acción</th></tr></thead>
+                <tbody id="tablaFacturas"></tbody>
+              </table>
+            </div>
           </div>
-          <div class="row">
-            <select id="proveedorFactura" required>
-              <option value="">Seleccione proveedor</option>
-            </select>
-            <select id="productoFactura" required>
-              <option value="">Seleccione producto</option>
-            </select>
-          </div>
-          <div class="row">
-            <input type="number" step="0.01" id="montoFactura" placeholder="Monto" required>
-            <input type="text" id="monedaFactura" placeholder="Moneda (S/, USD)" required>
-          </div>
-          <div class="row">
-            <input type="text" id="tipoFactura" placeholder="Tipo (Factura Electrónica, Boleta, etc.)" required>
-          </div>
-          <button class="btn" type="submit">Añadir factura</button>
-        </form>
-      </div>
-      <div class="card table-scroll">
-        <h3>Facturas registradas</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Proveedor</th>
-              <th>Producto</th>
-              <th>Monto</th>
-              <th>Moneda</th>
-              <th>Tipo</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
+        </section>
       </div>
     </div>
-
   </main>
 </div>
 
-<script type="module" src="./dashboard.js"></script>
+<!-- Modal detalle proveedor/producto -->
+<div id="modalDetalle" class="modal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-card">
+    <button class="close-x" id="cerrarModal">×</button>
+    <div id="modalContenido"></div>
+  </div>
+</div>
+
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
 
 
