@@ -32,6 +32,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 // ======================= PROVEEDORES =======================
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
+let proveedoresGuardados = [];
 
 proveedorForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -43,7 +44,6 @@ proveedorForm.addEventListener("submit", async e => {
   proveedorForm.reset();
 });
 
-let proveedoresGuardados = [];
 onSnapshot(collection(db, "proveedores"), snapshot => {
   proveedoresGuardados = [];
   tablaProveedores.innerHTML = "";
@@ -67,6 +67,7 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
 // ======================= PRODUCTOS =======================
 const productoForm = document.getElementById("productoForm");
 const tablaProductos = document.getElementById("tablaProductos");
+let productosGuardados = [];
 
 productoForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -80,7 +81,6 @@ productoForm.addEventListener("submit", async e => {
   productoForm.reset();
 });
 
-let productosGuardados = [];
 onSnapshot(collection(db, "productos"), snapshot => {
   productosGuardados = [];
   tablaProductos.innerHTML = "";
@@ -113,6 +113,7 @@ onSnapshot(collection(db, "productos"), snapshot => {
 // ======================= FACTURAS =======================
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
+let facturasGuardadas = [];
 
 facturaForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -134,12 +135,9 @@ facturaForm.addEventListener("submit", async e => {
   facturaForm.reset();
 });
 
-let facturasGuardadas = [];
 onSnapshot(collection(db, "facturas"), snapshot => {
   facturasGuardadas = [];
-  snapshot.forEach(docu => {
-    facturasGuardadas.push({ id: docu.id, ...docu.data() });
-  });
+  snapshot.forEach(docu => facturasGuardadas.push({ id: docu.id, ...docu.data() }));
   mostrarFacturas(facturasGuardadas);
 });
 
@@ -167,11 +165,11 @@ function mostrarFacturas(facturas) {
   });
 }
 
-// ======================= BUSCADOR INTELIGENTE =======================
+// ======================= BUSCADOR =======================
 const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keydown", e => {
   if (e.key === "Enter") {
-    e.preventDefault(); // Evita enviar formulario accidentalmente
+    e.preventDefault(); // evita enviar formulario
     const valor = buscador.value.trim().toLowerCase();
     const filtradas = facturasGuardadas.filter(f => f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
@@ -195,14 +193,19 @@ document.addEventListener("click", async e => {
     }
   }
 
-  // Editar
-  if (e.target.classList.contains("btn-edit")) {
-    if (tipo === "proveedores") editarFila(e.target, proveedoresGuardados, tipo);
-    if (tipo === "productos") editarFila(e.target, productosGuardados, tipo);
-    if (tipo === "facturas") editarFila(e.target, facturasGuardadas, tipo);
+  // Editar / Guardar
+  if (e.target.classList.contains("btn-edit") || e.target.classList.contains("btn-save")) {
+    const registro = (tipo === "proveedores" ? proveedoresGuardados : tipo === "productos" ? productosGuardados : facturasGuardadas).find(r => r.id === id);
+    const fila = e.target.closest("tr");
+
+    if (e.target.classList.contains("btn-edit")) {
+      iniciarEdicion(fila, registro, tipo, e.target);
+    } else {
+      guardarEdicion(fila, registro, tipo, e.target);
+    }
   }
 
-  // Ver detalle
+  // Modal detalle
   if (e.target.classList.contains("ver-proveedor")) {
     mostrarModalDatos("proveedores", e.target.dataset.nombre);
   }
@@ -211,27 +214,21 @@ document.addEventListener("click", async e => {
   }
 });
 
-// ======================= FUNCIONES EDITAR =======================
-async function editarFila(btn, datos, coleccion) {
-  const fila = btn.closest("tr");
-  const registro = datos.find(d => d.id === btn.dataset.id);
-
-  // Reemplazar celdas por inputs
+// ======================= FUNCIONES EDITAR/GUARDAR =======================
+function iniciarEdicion(fila, registro, coleccion, btn) {
   if (coleccion === "proveedores") {
     fila.cells[0].innerHTML = `<input value="${registro.ruc}">`;
     fila.cells[1].innerHTML = `<input value="${registro.nombre}">`;
     fila.cells[2].innerHTML = `<input value="${registro.direccion}">`;
     fila.cells[3].innerHTML = `<input value="${registro.telefono || ''}">`;
-  }
-  if (coleccion === "productos") {
+  } else if (coleccion === "productos") {
     fila.cells[0].innerHTML = `<input value="${registro.nombre}">`;
     fila.cells[1].innerHTML = `<input value="${registro.unidad}">`;
     fila.cells[2].innerHTML = `<input value="${registro.material}">`;
     fila.cells[3].innerHTML = `<input value="${registro.maquinaria}">`;
     fila.cells[4].innerHTML = `<input value="${registro.productoOf}">`;
     fila.cells[5].innerHTML = `<input value="${registro.insumosExtra}">`;
-  }
-  if (coleccion === "facturas") {
+  } else if (coleccion === "facturas") {
     fila.cells[0].innerHTML = `<input value="${registro.idFactura || ''}">`;
     fila.cells[1].innerHTML = `<input value="${registro.numero}">`;
     fila.cells[2].innerHTML = `<input value="${registro.proveedor}">`;
@@ -241,45 +238,43 @@ async function editarFila(btn, datos, coleccion) {
     fila.cells[6].innerHTML = `<input type="date" value="${registro.fecha}">`;
   }
 
-  // Cambiar botones
   btn.textContent = "💾 Guardar";
   btn.classList.remove("btn-edit");
   btn.classList.add("btn-save");
+}
 
-  btn.onclick = async () => {
-    const inputs = fila.querySelectorAll("input, select");
-    const datosActualizados = {};
+async function guardarEdicion(fila, registro, coleccion, btn) {
+  const inputs = fila.querySelectorAll("input, select");
+  const datosActualizados = {};
 
-    if (coleccion === "proveedores") {
-      datosActualizados.ruc = inputs[0].value.trim();
-      datosActualizados.nombre = inputs[1].value.trim();
-      datosActualizados.direccion = inputs[2].value.trim();
-      datosActualizados.telefono = inputs[3].value.trim();
-    }
-    if (coleccion === "productos") {
-      datosActualizados.nombre = inputs[0].value.trim();
-      datosActualizados.unidad = inputs[1].value.trim();
-      datosActualizados.material = inputs[2].value.trim();
-      datosActualizados.maquinaria = inputs[3].value.trim();
-      datosActualizados.productoOf = inputs[4].value.trim();
-      datosActualizados.insumosExtra = inputs[5].value.trim();
-    }
-    if (coleccion === "facturas") {
-      datosActualizados.idFactura = inputs[0].value.trim();
-      datosActualizados.numero = inputs[1].value.trim();
-      datosActualizados.proveedor = inputs[2].value.trim();
-      datosActualizados.producto = inputs[3].value.trim();
-      datosActualizados.monto = parseFloat(inputs[4].value);
-      datosActualizados.tipo = inputs[5].value;
-      datosActualizados.fecha = inputs[6].value;
-    }
+  if (coleccion === "proveedores") {
+    datosActualizados.ruc = inputs[0].value.trim();
+    datosActualizados.nombre = inputs[1].value.trim();
+    datosActualizados.direccion = inputs[2].value.trim();
+    datosActualizados.telefono = inputs[3].value.trim();
+  } else if (coleccion === "productos") {
+    datosActualizados.nombre = inputs[0].value.trim();
+    datosActualizados.unidad = inputs[1].value.trim();
+    datosActualizados.material = inputs[2].value.trim();
+    datosActualizados.maquinaria = inputs[3].value.trim();
+    datosActualizados.productoOf = inputs[4].value.trim();
+    datosActualizados.insumosExtra = inputs[5].value.trim();
+  } else if (coleccion === "facturas") {
+    datosActualizados.idFactura = inputs[0].value.trim();
+    datosActualizados.numero = inputs[1].value.trim();
+    datosActualizados.proveedor = inputs[2].value.trim();
+    datosActualizados.producto = inputs[3].value.trim();
+    datosActualizados.monto = parseFloat(inputs[4].value);
+    datosActualizados.tipo = inputs[5].value;
+    datosActualizados.fecha = inputs[6].value;
+  }
 
-    await updateDoc(doc(db, coleccion, registro.id), datosActualizados);
-    btn.textContent = "✏️ Editar";
-    btn.classList.remove("btn-save");
-    btn.classList.add("btn-edit");
-    mostrarFacturas(facturasGuardadas);
-  };
+  await updateDoc(doc(db, coleccion, registro.id), datosActualizados);
+  btn.textContent = "✏️ Editar";
+  btn.classList.remove("btn-save");
+  btn.classList.add("btn-edit");
+
+  if (coleccion === "facturas") mostrarFacturas(facturasGuardadas);
 }
 
 // ======================= MODAL DETALLE =======================
@@ -302,9 +297,7 @@ async function mostrarModalDatos(coleccion, valor) {
   modal.classList.add("show");
 }
 
-document.getElementById("cerrarModal").addEventListener("click", () => {
-  document.getElementById("modalDetalle").classList.remove("show");
-});
+document.getElementById("cerrarModal").addEventListener("click
 
 
 
