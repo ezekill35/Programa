@@ -32,6 +32,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 // ================= PROVEEDORES =================
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
+const proveedorSelect = document.getElementById("proveedorFactura");
 
 proveedorForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -47,13 +48,13 @@ let proveedoresGuardados = [];
 onSnapshot(collection(db, "proveedores"), snapshot => {
   proveedoresGuardados = [];
   tablaProveedores.innerHTML = "";
-  const proveedorSelect = document.getElementById("proveedorFactura");
   proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
 
   snapshot.forEach(docu => {
     const p = docu.data();
     proveedoresGuardados.push({ id: docu.id, ...p });
 
+    // Tabla de proveedores
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.ruc}</td>
@@ -66,6 +67,7 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
       </td>`;
     tablaProveedores.appendChild(fila);
 
+    // Select de proveedores para facturas
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -76,6 +78,7 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
 // ================= PRODUCTOS =================
 const productoForm = document.getElementById("productoForm");
 const tablaProductos = document.getElementById("tablaProductos");
+const productoSelect = document.getElementById("productoFactura");
 
 productoForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -95,13 +98,13 @@ let productosGuardados = [];
 onSnapshot(collection(db, "productos"), snapshot => {
   productosGuardados = [];
   tablaProductos.innerHTML = "";
-  const productoSelect = document.getElementById("productoFactura");
   productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
 
   snapshot.forEach(docu => {
     const p = docu.data();
     productosGuardados.push({ id: docu.id, ...p });
 
+    // Tabla productos
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.nombre}</td>
@@ -117,6 +120,7 @@ onSnapshot(collection(db, "productos"), snapshot => {
       </td>`;
     tablaProductos.appendChild(fila);
 
+    // Select productos para facturas
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -127,6 +131,8 @@ onSnapshot(collection(db, "productos"), snapshot => {
 // ================= FACTURAS =================
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
+const resultadosDiv = document.getElementById("resultadosBuscador");
+const tablaResultados = document.getElementById("tablaResultadosBuscador");
 
 facturaForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -180,9 +186,6 @@ function mostrarFacturas(facturas) {
 
 // ================= BUSCADOR =================
 const buscador = document.getElementById("buscadorFactura");
-const resultadosDiv = document.getElementById("resultadosBuscador");
-const tablaResultados = document.getElementById("tablaResultadosBuscador");
-
 buscador.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -194,11 +197,12 @@ buscador.addEventListener("keydown", e => {
 
 document.getElementById("btnRefresh").addEventListener("click", () => {
   mostrarFacturas(facturasGuardadas);
-  resultadosDiv.style.display = "none";
+  if (resultadosDiv) resultadosDiv.style.display = "none";
   buscador.value = "";
 });
 
 function mostrarResultadosBuscador(facturas) {
+  if (!resultadosDiv || !tablaResultados) return;
   tablaResultados.innerHTML = "";
   if (facturas.length === 0) {
     tablaResultados.innerHTML = `<tr><td colspan="7" style="text-align:center">No se encontraron resultados</td></tr>`;
@@ -247,12 +251,12 @@ document.addEventListener("click", async e => {
   }
 });
 
-// ================= FUNCIONES EDITAR =================
+// ================= EDITAR =================
 async function editarFila(btn, datos, coleccion) {
   const fila = btn.closest("tr");
   const registro = datos.find(d => d.id === btn.dataset.id);
 
-  // Reemplazar celdas por inputs
+  // Inputs según colección
   if (coleccion === "proveedores") {
     fila.cells[0].innerHTML = `<input value="${registro.ruc}">`;
     fila.cells[1].innerHTML = `<input value="${registro.nombre}">`;
@@ -269,16 +273,19 @@ async function editarFila(btn, datos, coleccion) {
     fila.cells[6].innerHTML = `<input value="${registro.descripcion || ''}">`;
   }
   if (coleccion === "facturas") {
+    // Select dinámico para editar
     fila.cells[0].innerHTML = `<input value="${registro.idFactura || ''}">`;
     fila.cells[1].innerHTML = `<input value="${registro.numero}">`;
-    fila.cells[2].innerHTML = `<select>${proveedoresGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.proveedor?'selected':''}>${p.nombre}</option>`).join('')}</select>`;
-    fila.cells[3].innerHTML = `<select>${productosGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.producto?'selected':''}>${p.nombre}</option>`).join('')}</select>`;
+
+    fila.cells[2].innerHTML = `<select>${proveedoresGuardados.map(p => `<option value="${p.nombre}" ${p.nombre===registro.proveedor?"selected":""}>${p.nombre}</option>`).join('')}</select>`;
+    fila.cells[3].innerHTML = `<select>${productosGuardados.map(p => `<option value="${p.nombre}" ${p.nombre===registro.producto?"selected":""}>${p.nombre}</option>`).join('')}</select>`;
+
     fila.cells[4].innerHTML = `<input type="number" step="0.01" value="${registro.monto}">`;
     fila.cells[5].innerHTML = `<select><option value="FACTURA" ${registro.tipo==="FACTURA"?"selected":""}>FACTURA</option><option value="BOLETA DE VENTA" ${registro.tipo==="BOLETA DE VENTA"?"selected":""}>BOLETA DE VENTA</option></select>`;
     fila.cells[6].innerHTML = `<input type="date" value="${registro.fecha}">`;
   }
 
-  // Cambiar botones
+  // Botón guardar
   btn.textContent = "💾 Guardar";
   btn.classList.remove("btn-edit");
   btn.classList.add("btn-save");
