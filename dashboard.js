@@ -85,7 +85,6 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
     const p = docu.data();
     proveedoresGuardados.push({ id: docu.id, ...p });
 
-    // Tabla
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.ruc}</td>
@@ -99,7 +98,6 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
       </td>`;
     tablaProveedores.appendChild(fila);
 
-    // Select
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -116,7 +114,6 @@ onSnapshot(collection(db, "productos"), snapshot => {
     const p = docu.data();
     productosGuardados.push({ id: docu.id, ...p });
 
-    // Tabla
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.nombre}</td>
@@ -132,7 +129,6 @@ onSnapshot(collection(db, "productos"), snapshot => {
       </td>`;
     tablaProductos.appendChild(fila);
 
-    // Select
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -181,10 +177,13 @@ buscador.addEventListener("keydown", e=>{
   if(e.key==="Enter"){
     e.preventDefault();
     const valor = buscador.value.trim().toLowerCase();
-    const filtradas = facturasGuardadas.filter(f=>f.producto.toLowerCase().includes(valor));
+    const filtradas = facturasGuardadas.filter(f => 
+      f.producto.toLowerCase().includes(valor)
+    );
     mostrarFacturas(filtradas);
   }
 });
+
 document.getElementById("btnRefresh").addEventListener("click", ()=>{
   buscador.value="";
   mostrarFacturas(facturasGuardadas);
@@ -206,7 +205,7 @@ document.addEventListener("click", async e=>{
   if(e.target.classList.contains("ver-producto")) mostrarModalDatos("productos", e.target.dataset.nombre);
 });
 
-// =================== FUNCIONES EDITAR / GUARDAR ===================
+// =================== EDITAR / GUARDAR ===================
 function mostrarInputsEdicion(btn){
   const fila = btn.closest("tr");
   const tipo = btn.dataset.tipo;
@@ -223,16 +222,14 @@ function mostrarInputsEdicion(btn){
     fila.cells[1].innerHTML=`<input value="${registro.nombre}">`;
     fila.cells[2].innerHTML=`<input value="${registro.direccion}">`;
     fila.cells[3].innerHTML=`<input value="${registro.telefono||''}">`;
-  }
-  else if(tipo==="productos"){
+  } else if(tipo==="productos"){
     fila.cells[0].innerHTML=`<input value="${registro.nombre}">`;
     fila.cells[1].innerHTML=`<input value="${registro.unidad}">`;
     fila.cells[2].innerHTML=`<input value="${registro.material}">`;
     fila.cells[3].innerHTML=`<input value="${registro.maquinaria}">`;
     fila.cells[4].innerHTML=`<input value="${registro.productoOf}">`;
     fila.cells[5].innerHTML=`<input value="${registro.insumosExtra}">`;
-  }
-  else if(tipo==="facturas"){
+  } else if(tipo==="facturas"){
     fila.cells[0].innerHTML=`<input value="${registro.idFactura||''}">`;
     fila.cells[1].innerHTML=`<input value="${registro.numero}">`;
     fila.cells[2].innerHTML=`<select>${proveedoresGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.proveedor?'selected':''}>${p.nombre}</option>`).join('')}</select>`;
@@ -283,7 +280,8 @@ async function guardarEdicion(btn){
     datosActualizados.fecha = inputs[6].value;
   }
 
-  await updateDoc(doc(db, tipo, registro.id), datosActualizados);
+  await updateDoc(doc(db,tipo,registro.id),datosActualizados);
+
   fila.querySelector(".btn-edit").style.display="inline-block";
   btn.style.display="none";
 
