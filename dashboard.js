@@ -17,7 +17,6 @@ botones.forEach((btn) => {
   btn.addEventListener("click", () => {
     botones.forEach((b) => b.classList.remove("activo"));
     btn.classList.add("activo");
-
     secciones.forEach((sec) => {
       sec.classList.remove("activa");
       if (sec.id === btn.dataset.target) sec.classList.add("activa");
@@ -42,13 +41,10 @@ proveedorForm.addEventListener("submit", async (e) => {
   const direccion = document.getElementById("direccionProveedor").value.trim();
   const telefono = document.getElementById("telefonoProveedor").value.trim();
 
-  if (!ruc || !nombre) return alert("RUC y Nombre son obligatorios.");
-
   await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, telefono });
   proveedorForm.reset();
 });
 
-// Mostrar proveedores en tabla y select de facturas
 onSnapshot(collection(db, "proveedores"), (snapshot) => {
   tablaProveedores.innerHTML = "";
   const proveedorSelect = document.getElementById("proveedorFactura");
@@ -60,9 +56,12 @@ onSnapshot(collection(db, "proveedores"), (snapshot) => {
     fila.innerHTML = `
       <td>${p.ruc}</td>
       <td>${p.nombre}</td>
-      <td>${p.direccion || "-"}</td>
+      <td>${p.direccion}</td>
       <td>${p.telefono || "-"}</td>
-      <td><button class="btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️</button></td>
+      <td>
+        <button class="btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️</button>
+        <button class="btn-edit" data-id="${docu.id}" data-tipo="proveedores">✏️</button>
+      </td>
     `;
     tablaProveedores.appendChild(fila);
 
@@ -86,15 +85,17 @@ productoForm.addEventListener("submit", async (e) => {
   const productoOf = document.getElementById("productoOf").value.trim();
   const insumosExtra = document.getElementById("insumosExtra").value.trim();
 
-  if (!nombre) return alert("El nombre del producto es obligatorio.");
-
   await addDoc(collection(db, "productos"), {
-    nombre, unidad, materialP, maquinaria, productoOf, insumosExtra
+    nombre,
+    unidad,
+    materialP,
+    maquinaria,
+    productoOf,
+    insumosExtra,
   });
   productoForm.reset();
 });
 
-// Mostrar productos en tabla y select de facturas
 onSnapshot(collection(db, "productos"), (snapshot) => {
   tablaProductos.innerHTML = "";
   const productoSelect = document.getElementById("productoFactura");
@@ -105,12 +106,15 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.nombre}</td>
-      <td>${p.unidad || "-"}</td>
+      <td>${p.unidad}</td>
       <td>${p.materialP || "-"}</td>
       <td>${p.maquinaria || "-"}</td>
       <td>${p.productoOf || "-"}</td>
       <td>${p.insumosExtra || "-"}</td>
-      <td><button class="btn-delete" data-id="${docu.id}" data-tipo="productos">🗑️</button></td>
+      <td>
+        <button class="btn-delete" data-id="${docu.id}" data-tipo="productos">🗑️</button>
+        <button class="btn-edit" data-id="${docu.id}" data-tipo="productos">✏️</button>
+      </td>
     `;
     tablaProductos.appendChild(fila);
 
@@ -125,30 +129,40 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
 
+let facturasGuardadas = [];
+
 facturaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const numero = document.getElementById("numeroFactura").value.trim();
   const fecha = document.getElementById("fechaEmisionFactura").value;
   const proveedor = document.getElementById("proveedorFactura").value;
   const producto = document.getElementById("productoFactura").value;
-  const monto = document.getElementById("montoFactura").value;
+  const monto = document.getElementById("montoFactura").value.trim();
   const moneda = document.getElementById("monedaFactura").value;
   const tipo = document.getElementById("tipoFactura").value;
 
-  if (!numero || !proveedor || !producto) return alert("Número, proveedor y producto son obligatorios.");
+  if (!proveedor || !producto) {
+    alert("Debe seleccionar un proveedor y un producto.");
+    return;
+  }
 
   await addDoc(collection(db, "facturas"), {
-    numero, fecha, proveedor, producto, monto, moneda, tipo
+    numero,
+    fecha,
+    proveedor,
+    producto,
+    monto,
+    moneda,
+    tipo,
   });
   facturaForm.reset();
 });
 
-// ======================= MOSTRAR Y EDITAR FACTURAS =======================
-let facturasGuardadas = [];
-
 onSnapshot(collection(db, "facturas"), (snapshot) => {
   facturasGuardadas = [];
-  snapshot.forEach((docu) => facturasGuardadas.push({ id: docu.id, ...docu.data() }));
+  snapshot.forEach((docu) => {
+    facturasGuardadas.push({ id: docu.id, ...docu.data() });
+  });
   mostrarFacturas(facturasGuardadas);
 });
 
@@ -157,26 +171,30 @@ function mostrarFacturas(facturas) {
   facturas.forEach((f) => {
     const fila = document.createElement("tr");
     fila.innerHTML = `
-      <td contenteditable data-field="numero" data-id="${f.id}">${f.numero}</td>
-      <td contenteditable data-field="proveedor" data-id="${f.id}">${f.proveedor}</td>
-      <td contenteditable data-field="producto" data-id="${f.id}">${f.producto}</td>
-      <td contenteditable data-field="monto" data-id="${f.id}">${f.monto || ""}</td>
-      <td contenteditable data-field="tipo" data-id="${f.id}">${f.tipo}</td>
-      <td contenteditable data-field="fecha" data-id="${f.id}">${f.fecha || ""}</td>
-      <td><button class="btn-delete" data-id="${f.id}" data-tipo="facturas">🗑️</button></td>
+      <td contenteditable="true" class="edit-factura" data-campo="numero" data-id="${f.id}">${f.numero}</td>
+      <td>${f.proveedor}</td>
+      <td>${f.producto}</td>
+      <td contenteditable="true" class="edit-factura" data-campo="monto" data-id="${f.id}">${f.monto}</td>
+      <td contenteditable="true" class="edit-factura" data-campo="moneda" data-id="${f.id}">${f.moneda}</td>
+      <td contenteditable="true" class="edit-factura" data-campo="tipo" data-id="${f.id}">${f.tipo}</td>
+      <td contenteditable="true" class="edit-factura" data-campo="fecha" data-id="${f.id}">${f.fecha}</td>
+      <td>
+        <button class="btn-delete" data-id="${f.id}" data-tipo="facturas">🗑️</button>
+      </td>
     `;
     tablaFacturas.appendChild(fila);
   });
-
-  tablaFacturas.querySelectorAll("[contenteditable]").forEach(td => {
-    td.addEventListener("blur", async () => {
-      const field = td.dataset.field;
-      const id = td.dataset.id;
-      const value = td.textContent.trim();
-      await updateDoc(doc(db, "facturas", id), { [field]: value });
-    });
-  });
 }
+
+// ======================= EDITAR FACTURA EN LÍNEA =======================
+document.addEventListener("blur", async (e) => {
+  if (e.target.classList.contains("edit-factura")) {
+    const id = e.target.dataset.id;
+    const campo = e.target.dataset.campo;
+    const valor = e.target.textContent.trim();
+    await updateDoc(doc(db, "facturas", id), { [campo]: valor });
+  }
+}, true);
 
 // ======================= BUSCADOR =======================
 const buscador = document.getElementById("buscadorFactura");
@@ -184,10 +202,10 @@ const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     const valor = buscador.value.trim().toLowerCase();
-    const filtradas = facturasGuardadas.filter(f =>
-      f.producto.toLowerCase().includes(valor) ||
-      f.proveedor.toLowerCase().includes(valor) ||
-      f.numero.toLowerCase().includes(valor)
+    const filtradas = facturasGuardadas.filter(
+      (f) =>
+        f.producto.toLowerCase().includes(valor) ||
+        f.proveedor.toLowerCase().includes(valor)
     );
     mostrarFacturas(filtradas);
   }
@@ -197,7 +215,7 @@ buscador.addEventListener("input", () => {
   if (buscador.value.trim() === "") mostrarFacturas(facturasGuardadas);
 });
 
-// ======================= ELIMINAR REGISTRO =======================
+// ======================= ELIMINAR =======================
 document.addEventListener("click", async (e) => {
   if (e.target.classList.contains("btn-delete")) {
     const id = e.target.dataset.id;
@@ -207,5 +225,6 @@ document.addEventListener("click", async (e) => {
     }
   }
 });
+
 
 
