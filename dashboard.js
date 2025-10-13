@@ -220,6 +220,8 @@ function mostrarInputsEdicion(btn){
     fila.cells[4].innerHTML=`<input value="${registro.productoOf}">`;
     fila.cells[5].innerHTML=`<input value="${registro.insumosExtra}">`;
   } else if(tipo==="facturas"){
+    fila.cells[0].innerHTML=`<input value="${registro.idFactura||''}">`; // Editable ID
+    fila.cells[1].innerHTML=`<input value="${registro.numero}">`;
     fila.cells[2].innerHTML=`<select>${proveedoresGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.proveedor?'selected':''}>${p.nombre}</option>`).join("")}</select>`;
     fila.cells[3].innerHTML=`<select>${productosGuardados.map(p=>`<option value="${p.nombre}" ${p.nombre===registro.producto?'selected':''}>${p.nombre}</option>`).join("")}</select>`;
     fila.cells[4].innerHTML=`<input type="number" step="0.01" value="${registro.monto}">`;
@@ -227,7 +229,7 @@ function mostrarInputsEdicion(btn){
     fila.cells[6].innerHTML=`<input type="date" value="${registro.fecha}">`;
   }
 
-  fila.querySelector(".btn-edit").style.display="none";
+  btn.style.display="none";
   fila.querySelector(".btn-save").style.display="inline-block";
 }
 
@@ -235,6 +237,14 @@ async function guardarEdicion(btn){
   const fila = btn.closest("tr");
   const tipo = btn.dataset.tipo;
   const id = btn.dataset.id;
+  let registro;
+
+  if(tipo==="proveedores") registro = proveedoresGuardados.find(r=>r.id===id);
+  else if(tipo==="productos") registro = productosGuardados.find(r=>r.id===id);
+  else registro = facturasGuardadas.find(r=>r.id===id);
+
+  if(!registro) return;
+
   const inputs = fila.querySelectorAll("input, select");
   const datosActualizados = {};
 
@@ -251,26 +261,30 @@ async function guardarEdicion(btn){
     datosActualizados.productoOf = inputs[4].value.trim();
     datosActualizados.insumosExtra = inputs[5].value.trim();
   } else if(tipo==="facturas"){
-    datosActualizados.proveedor = inputs[0].value;
-    datosActualizados.producto = inputs[1].value;
-    datosActualizados.monto = parseFloat(inputs[2].value);
-    datosActualizados.tipo = inputs[3].value;
-    datosActualizados.fecha = inputs[4].value;
+    datosActualizados.idFactura = inputs[0].value.trim(); // Guardar ID editable
+    datosActualizados.numero = inputs[1].value.trim();
+    datosActualizados.proveedor = inputs[2].value;
+    datosActualizados.producto = inputs[3].value;
+    datosActualizados.monto = parseFloat(inputs[4].value);
+    datosActualizados.tipo = inputs[5].value;
+    datosActualizados.fecha = inputs[6].value;
   }
 
-  await updateDoc(doc(db, tipo, id), datosActualizados);
+  await updateDoc(doc(db, tipo, registro.id), datosActualizados);
   fila.querySelector(".btn-edit").style.display="inline-block";
   btn.style.display="none";
+
+  // Refrescar tablas
   if(tipo==="facturas") mostrarFacturas(facturasGuardadas);
 }
 
 // =================== MODAL ===================
 async function mostrarModalDatos(coleccion, valor){
-  const modal=document.getElementById("modalDetalle"); 
+  const modal=document.getElementById("modalDetalle");
   const modalContenido=document.getElementById("modalContenido");
   modalContenido.innerHTML="Cargando...";
-  const datos=coleccion==="proveedores"?proveedoresGuardados:productosGuardados;
-  const registro=datos.find(r=>r.nombre===valor);
+  const datos = coleccion==="proveedores"?proveedoresGuardados:productosGuardados;
+  const registro = datos.find(r=>r.nombre===valor);
   if(!registro) return;
   let html=`<h3>${coleccion==="proveedores"?"Proveedor":"Producto"}: ${registro.nombre}</h3>`;
   for(const key in registro) if(key!=="id" && key!=="nombre") html+=`<p><strong>${key}:</strong> ${registro[key]||"-"}</p>`;
@@ -279,4 +293,5 @@ async function mostrarModalDatos(coleccion, valor){
 }
 
 document.getElementById("cerrarModal").addEventListener("click",()=>{document.getElementById("modalDetalle").classList.remove("show");});
+
 
