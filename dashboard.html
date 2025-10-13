@@ -25,24 +25,18 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(
 .app { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 32px; min-height:100vh; align-items:start; }
 
 /* SIDEBAR */
-.sidebar {
-  position: sticky; top:32px; padding:20px; border-radius:20px;
+.sidebar { position: sticky; top:32px; padding:20px; border-radius:20px;
   background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-lg); backdrop-filter: blur(6px);
 }
 .brand { display:flex;gap:12px;align-items:center;margin-bottom:18px; }
-.logo {
-  width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2);
+.logo { width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2);
   box-shadow: 0 8px 20px rgba(16,188,212,0.2);
   display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;
 }
 .brand h1{font-size:16px;margin:0}
 .nav { margin-top:8px;display:flex;flex-direction:column;gap:8px; }
-.menu-btn {
-  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;
-  transition:all .18s ease;
-}
+.menu-btn { display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer; transition:all .18s ease; }
 .menu-btn:hover{transform:translateY(-3px)}
 .menu-btn.activo, .menu-btn:focus{
   background: linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06));
@@ -75,22 +69,21 @@ form input, form select { padding:10px;border-radius:10px;border:1px solid rgba(
 
 table{width:100%;border-collapse:collapse}
 table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
+td[contenteditable="true"]:focus{outline:2px solid var(--accent);background:#e0f7fa}
 .table-scroll{max-height:420px;overflow:auto;padding-right:6px}
 
 .btn { padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12) }
 .btn.secondary { background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12) }
+.btn-delete{background:#ff5b5b;color:white;padding:4px 8px;border-radius:6px;border:none;cursor:pointer}
+.btn-edit{background:#10bcd4;color:white;padding:4px 8px;border-radius:6px;border:none;cursor:pointer;margin-right:6px;font-size:12px}
 .muted{color:var(--muted);font-size:13px}
 
 /* Modales */
 .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1800; padding: 28px; }
 .modal.show { display:flex; }
 .modal-backdrop { position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.28), rgba(2,6,23,0.18));backdrop-filter: blur(6px); }
-.modal-card {
-  position:relative;z-index:2;max-width:1100px;width:100%;border-radius:18px;padding:18px;background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95));
-  box-shadow: 0 40px 80px rgba(10,20,30,0.12);
-  transform: translateY(-6px);
-  animation:modalIn .26s cubic-bezier(.2,.9,.3,1);
-}
+.modal-card { position:relative;z-index:2;max-width:1100px;width:100%;border-radius:18px;padding:18px;background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95));
+  box-shadow: 0 40px 80px rgba(10,20,30,0.12); transform: translateY(-6px); animation:modalIn .26s cubic-bezier(.2,.9,.3,1);}
 @keyframes modalIn { from{opacity:0;transform:translateY(8px) scale(.995)} to{opacity:1;transform:none} }
 .results-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
 .fact-card { border-radius:14px;padding:14px;background:linear-gradient(180deg,#fff,#f8feff);box-shadow: 0 16px 40px rgba(16,188,212,0.08); cursor:pointer;border:1px solid rgba(16,188,212,0.06);transition:transform .14s ease, box-shadow .14s; }
@@ -124,7 +117,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
       </div>
     </div>
     <nav class="nav" role="navigation">
-      <button class="menu-btn activo" data-target="seccion-proveedores" aria-pressed="true"><span class="ico">🏢</span> Proveedores</button>
+      <button class="menu-btn activo" data-target="seccion-proveedores"><span class="ico">🏢</span> Proveedores</button>
       <button class="menu-btn" data-target="seccion-productos"><span class="ico">📦</span> Productos</button>
       <button class="menu-btn" data-target="seccion-facturas"><span class="ico">🧾</span> Facturas</button>
     </nav>
@@ -136,12 +129,10 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
       <div class="search-box">
-        <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto (Enter)" aria-label="Buscar facturas">
-        <button class="btn secondary" id="btnRefresh" title="Mostrar todas">Restablecer</button>
+        <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto (Enter)">
+        <button class="btn secondary" id="btnRefresh">Restablecer</button>
       </div>
     </div>
-
-    <div class="tabs"></div>
 
     <div class="grid">
       <div>
@@ -165,7 +156,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
             <h3>Proveedores registrados</h3>
             <div class="table-scroll">
               <table>
-                <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th></th></tr></thead>
+                <thead><tr><th>Editar</th><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
                 <tbody id="tablaProveedores"></tbody>
               </table>
             </div>
@@ -196,7 +187,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
             <h3>Productos registrados</h3>
             <div class="table-scroll">
               <table>
-                <thead><tr><th>Nombre</th><th>Unidad</th><th>Material P</th><th>Maquinaria</th><th>Producto Of.</th><th>Insumos Extra</th><th></th></tr></thead>
+                <thead><tr><th>Editar</th><th>Nombre</th><th>Unidad</th><th>Material P</th><th>Maquinaria</th><th>Producto Of.</th><th>Insumos Extra</th><th>Acciones</th></tr></thead>
                 <tbody id="tablaProductos"></tbody>
               </table>
             </div>
@@ -224,21 +215,18 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
                 </select>
                 <select id="tipoFactura">
                   <option value="Compra">Compra</option>
-                  <option value="Gasto">Gasto</option>
                   <option value="Servicio">Servicio</option>
                 </select>
-              </div>
-              <div class="row">
                 <input id="fechaEmisionFactura" type="date" />
-                <button class="btn" type="submit">Guardar factura</button>
+                <button class="btn" type="submit">Añadir factura</button>
               </div>
             </form>
           </div>
           <div class="card" style="margin-top:12px">
-            <h3>Facturas</h3>
+            <h3>Facturas registradas</h3>
             <div class="table-scroll">
               <table>
-                <thead><tr><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th>ID</th><th></th></tr></thead>
+                <thead><tr><th>Editar</th><th>Nº</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th>ID</th><th>Acciones</th></tr></thead>
                 <tbody id="tablaFacturas"></tbody>
               </table>
             </div>
@@ -246,48 +234,46 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
         </section>
       </div>
 
-      <!-- Right column -->
-      <aside>
-        <div class="card">
-          <h3>Información rápida</h3>
-          <p class="muted">Usa el buscador para filtrar facturas por producto. Escribe el nombre y presiona <strong>Enter</strong>. Las coincidencias se mostrarán en una ventana flotante con tarjetas 3D.</p>
+      <!-- Modales -->
+      <div>
+        <div id="modalResultados" class="modal">
+          <div class="modal-backdrop" onclick="closeResultados()"></div>
+          <div class="modal-card">
+            <button class="close-x" onclick="closeResultados()">×</button>
+            <h3 id="resultTitle"></h3>
+            <p id="resultSub" class="muted"></p>
+            <div class="results-grid" id="resultsContainer"></div>
+          </div>
         </div>
-      </aside>
+
+        <div id="modalFactura" class="modal">
+          <div class="modal-backdrop" onclick="closeFactura()"></div>
+          <div class="modal-card">
+            <button class="close-x" onclick="closeFactura()">×</button>
+            <h3 id="facturaTitle"></h3>
+            <div id="modalFacturaContenido"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 </div>
 
-<!-- MODALES -->
-<div id="modalDetalle" class="modal" aria-hidden="true">
-  <div class="modal-backdrop" onclick="document.getElementById('modalDetalle').style.display='none'"></div>
-  <div class="modal-card">
-    <button id="cerrarModal" class="close-x" title="Cerrar">✕</button>
-    <div id="modalContenido"><p>Cargando datos...</p></div>
-  </div>
-</div>
+<script>
+/* Activar contenteditable solo al click en ✏️ */
+document.addEventListener('click', e => {
+  if(e.target.classList.contains('btn-edit')){
+    const row = e.target.closest('tr');
+    row.querySelectorAll('td[data-campo]').forEach(td => td.setAttribute('contenteditable','true'));
+    row.querySelectorAll('td[data-campo]')[0].focus();
+  }
+});
+</script>
 
-<div id="modalResultados" class="modal" aria-hidden="true">
-  <div class="modal-backdrop" onclick="closeResultados()"></div>
-  <div class="modal-card" style="max-width:980px">
-    <button class="close-x" onclick="closeResultados()">✕</button>
-    <h3 id="resultTitle"></h3>
-    <p id="resultSub" class="muted" style="margin:6px 0 12px 0"></p>
-    <div id="resultsContainer" class="results-grid"></div>
-  </div>
-</div>
-
-<div id="modalFactura" class="modal" aria-hidden="true">
-  <div class="modal-backdrop" onclick="closeFactura()"></div>
-  <div class="modal-card" style="max-width:920px">
-    <button class="close-x" onclick="closeFactura()">✕</button>
-    <h3 id="facturaTitle">Factura</h3>
-    <div id="modalFacturaContenido"></div>
-  </div>
-</div>
-
-<script type="module" src="./dashboard.js"></script>
 </body>
 </html>
+
 
 
 
