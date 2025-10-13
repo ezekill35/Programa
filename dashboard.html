@@ -20,41 +20,55 @@
     }
     *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
     html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
-    .app { display: grid; grid-template-columns: 260px 1fr; gap: 28px; padding: 32px; min-height:100vh; align-items:start; }
-    .sidebar { position: sticky; top:32px; padding:20px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7)); box-shadow: var(--shadow-lg); backdrop-filter: blur(6px); }
-    .brand { display:flex;gap:12px;align-items:center;margin-bottom:18px; }
-    .logo { width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2); box-shadow: 0 8px 20px rgba(16,188,212,0.2); display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px; }
+
+    .app { display:grid; grid-template-columns:260px 1fr; gap:28px; padding:32px; min-height:100vh; align-items:start; }
+
+    /* SIDEBAR */
+    .sidebar { position:sticky; top:32px; padding:20px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7)); box-shadow: var(--shadow-lg); backdrop-filter: blur(6px); }
+    .brand { display:flex; gap:12px; align-items:center; margin-bottom:18px; }
+    .logo { width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg,var(--accent),#55d1e2); display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:18px; }
     .brand h1{font-size:16px;margin:0}
-    .nav { margin-top:8px;display:flex;flex-direction:column;gap:8px; }
-    .menu-btn { display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer; transition:all .18s ease; }
+    .nav { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+    .menu-btn { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; border:none; background:transparent; color:#0f172a; cursor:pointer; transition:all .18s ease; }
     .menu-btn:hover{transform:translateY(-3px)}
-    .menu-btn.activo, .menu-btn:focus{ background: linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06)); box-shadow: var(--shadow-md); border-left:3px solid var(--accent); }
+    .menu-btn.activo, .menu-btn:focus{ background: linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06)); box-shadow: var(--shadow-md); border-left:3px solid var(--accent);}
     .menu-btn .ico{width:18px;height:18px;display:inline-block;opacity:0.9}
     .logout { margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer; }
-    .main { padding:28px;border-radius:20px;background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82)); box-shadow: var(--shadow-lg);backdrop-filter:blur(4px); }
-    .header {display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+
+    /* MAIN CONTENT */
+    .main { padding:28px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82)); box-shadow: var(--shadow-lg); backdrop-filter:blur(4px); }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
     .header h2{margin:0;font-weight:700;color:#07203a}
-    .search-box { display:flex;gap:10px;align-items:center; }
-    input[type="search"]{ padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);min-width:280px; box-shadow: var(--shadow-md); }
-    .tabs { display:flex;gap:12px;margin-bottom:18px; }
+    .search-box { display:flex; gap:10px; align-items:center; }
+    input[type="search"]{ padding:10px 14px; border-radius:12px; border:1px solid rgba(10,20,30,0.06); min-width:280px; box-shadow: var(--shadow-md); }
+    .tabs { display:flex; gap:12px; margin-bottom:18px; }
+
     .seccion { display:none; }
     .seccion.activa { display:block; animation:fadeIn .28s ease; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-    .grid { display:grid;grid-template-columns: 1fr 420px;gap:18px; }
-    .card { background:var(--card);border-radius:14px;padding:16px;box-shadow: var(--shadow-md);border:1px solid rgba(15,23,42,0.03); }
+
+    .grid { display:grid; grid-template-columns:1fr 420px; gap:18px; }
+
+    /* Cards */
+    .card { background:var(--card); border-radius:14px; padding:16px; box-shadow: var(--shadow-md); border:1px solid rgba(15,23,42,0.03); }
     .card h3{margin:0 0 8px 0;font-size:15px}
     form .row{display:flex;gap:8px;margin-bottom:10px}
     form input, form select { padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1 }
+
     table{width:100%;border-collapse:collapse}
     table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
     .table-scroll{max-height:420px;overflow:auto;padding-right:6px}
+
     .btn { padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12) }
     .btn.secondary { background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12) }
+
     .muted{color:var(--muted);font-size:13px}
+
+    /* Modales */
     .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1800; padding: 28px; }
     .modal.show { display:flex; }
     .modal-backdrop { position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.28), rgba(2,6,23,0.18)); backdrop-filter: blur(6px); }
-    .modal-card { position:relative;z-index:2;max-width:1100px;width:100%;border-radius:18px;padding:18px;background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95)); box-shadow: 0 40px 80px rgba(10,20,30,0.12); transform: translateY(-6px); animation:modalIn .26s cubic-bezier(.2,.9,.3,1); }
+    .modal-card { position:relative; z-index:2; max-width:1100px; width:100%; border-radius:18px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(250,255,255,0.95)); box-shadow: 0 40px 80px rgba(10,20,30,0.12); transform: translateY(-6px); animation:modalIn .26s cubic-bezier(.2,.9,.3,1); }
     @keyframes modalIn { from{opacity:0;transform:translateY(8px) scale(.995)} to{opacity:1;transform:none} }
     .results-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
     .fact-card { border-radius:14px;padding:14px;background:linear-gradient(180deg,#fff,#f8feff);box-shadow: 0 16px 40px rgba(16,188,212,0.08); cursor:pointer;border:1px solid rgba(16,188,212,0.06);transition:transform .14s ease, box-shadow .14s; }
@@ -66,6 +80,7 @@
     .detail-block{ background:linear-gradient(180deg,#fff,#fbffff); border-radius:12px;padding:12px;border:1px solid rgba(10,20,30,0.03) }
     .label{font-size:13px;color:var(--muted);margin-bottom:6px}
     .value{font-weight:700;font-size:15px;color:#062936}
+
     @media (max-width:980px){
       .app{grid-template-columns:1fr;padding:18px}
       .grid{grid-template-columns:1fr}
@@ -87,9 +102,15 @@
       </div>
 
       <nav class="nav" role="navigation">
-        <button class="menu-btn activo" data-target="seccion-proveedores" aria-pressed="true"><span class="ico">🏢</span> Proveedores</button>
-        <button class="menu-btn" data-target="seccion-productos"><span class="ico">📦</span> Productos</button>
-        <button class="menu-btn" data-target="seccion-facturas"><span class="ico">🧾</span> Facturas</button>
+        <button class="menu-btn activo" data-target="seccion-proveedores" aria-pressed="true">
+          <span class="ico">🏢</span> Proveedores
+        </button>
+        <button class="menu-btn" data-target="seccion-productos">
+          <span class="ico">📦</span> Productos
+        </button>
+        <button class="menu-btn" data-target="seccion-facturas">
+          <span class="ico">🧾</span> Facturas
+        </button>
       </nav>
 
       <button id="logoutBtn" class="logout" title="Cerrar sesión">Cerrar sesión</button>
@@ -100,11 +121,12 @@
       <div class="header">
         <h2>Dashboard · Discovery Pets</h2>
         <div class="search-box">
-          <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto (Enter)" aria-label="Buscar facturas por producto">
+          <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto" aria-label="Buscar facturas">
           <button class="btn secondary" id="btnRefresh" title="Mostrar todas">Restablecer</button>
         </div>
       </div>
 
+      <div class="tabs"></div>
       <div class="grid">
         <div>
           <!-- Proveedores -->
@@ -118,16 +140,18 @@
                 </div>
                 <div class="row">
                   <input id="direccionProveedor" placeholder="Dirección" />
+                  <input id="telefonoProveedor" placeholder="Teléfono (opcional)" />
                   <button class="btn" type="submit">Añadir proveedor</button>
                 </div>
               </form>
             </div>
-
             <div class="card" style="margin-top:12px">
               <h3>Proveedores registrados</h3>
               <div class="table-scroll">
                 <table>
-                  <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th></th></tr></thead>
+                  <thead>
+                    <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th></th></tr>
+                  </thead>
                   <tbody id="tablaProveedores"></tbody>
                 </table>
               </div>
@@ -141,21 +165,25 @@
               <form id="productoForm">
                 <div class="row">
                   <input id="nombreProducto" placeholder="Nombre producto" required />
-                  <input id="cantidadProducto" placeholder="Cantidad" inputmode="numeric" />
+                  <input id="unidadProducto" placeholder="Unidad (ej: kg, und)" />
                 </div>
                 <div class="row">
-                  <input id="unidadProducto" placeholder="Unidad (ej: kg, und)" />
-                  <input id="valorUnitarioProducto" placeholder="Valor unitario" inputmode="decimal" />
+                  <input id="mateP" placeholder="Mate P" />
+                  <input id="maquinaria" placeholder="Maquinaria" />
+                </div>
+                <div class="row">
+                  <input id="productoOf" placeholder="Producto of." />
+                  <input id="insumosExtra" placeholder="Insumos extra" />
+                  <input id="valorUnitarioProducto" placeholder="Valor unitario" />
                   <button class="btn" type="submit">Añadir producto</button>
                 </div>
               </form>
             </div>
-
             <div class="card" style="margin-top:12px">
               <h3>Productos registrados</h3>
               <div class="table-scroll">
                 <table>
-                  <thead><tr><th>Nombre</th><th>Cant.</th><th>Unidad</th><th>Valor</th><th></th></tr></thead>
+                  <thead><tr><th>Nombre</th><th>Unidad</th><th>Mate P</th><th>Maquinaria</th><th>Producto Of.</th><th>Insumos extra</th><th>Valor</th><th></th></tr></thead>
                   <tbody id="tablaProductos"></tbody>
                 </table>
               </div>
@@ -168,31 +196,30 @@
               <h3>Registrar factura</h3>
               <form id="facturaForm">
                 <div class="row">
-                  <input id="numeroFactura" placeholder="N° factura" />
-                  <input id="fechaEmisionFactura" type="date" />
-                </div>
-                <div class="row">
                   <select id="proveedorFactura"><option value="">Seleccione proveedor</option></select>
                   <select id="productoFactura"><option value="">Seleccione producto</option></select>
                 </div>
                 <div class="row">
+                  <input id="fechaEmisionFactura" type="date" />
                   <input id="montoFactura" placeholder="Monto" inputmode="decimal" />
-                  <select id="monedaFactura"><option value="S/ ">S/</option><option value="$ ">$</option></select>
-                  <select id="tipoFactura">
-                   <option value="Compra">Compra</option>
-                   <option value="Gasto">Gasto</option>
-                  <option value="Servicio">Servicio</option>
+                  <select id="monedaFactura">
+                    <option value="S/ ">S/</option>
+                    <option value="$ ">$</option>
                   </select>
+                  <select id="tipoFactura">
+                    <option value="Compra">Compra</option>
+                    <option value="Gasto">Gasto</option>
+                    <option value="Servicio">Servicio</option>
+                  </select>
+                  <button class="btn" type="submit">Guardar factura</button>
                 </div>
-                <div class="row"><button class="btn" type="submit">Guardar factura</button></div>
               </form>
             </div>
-
             <div class="card" style="margin-top:12px">
               <h3>Facturas</h3>
               <div class="table-scroll">
                 <table>
-                  <thead><tr><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th></th></tr></thead>
+                  <thead><tr><th>ID</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th></th></tr></thead>
                   <tbody id="tablaFacturas"></tbody>
                 </table>
               </div>
@@ -200,17 +227,11 @@
           </section>
         </div>
 
+        <!-- Right column -->
         <aside>
           <div class="card">
             <h3>Información rápida</h3>
-            <p class="muted">Usa el buscador para filtrar facturas por producto. Presiona Enter y se mostrarán tarjetas 3D.</p>
-            <hr style="margin:12px 0;border:none;border-top:1px dashed rgba(10,20,30,0.04)">
-            <div><strong>Atajos</strong></div>
-            <ul style="margin-top:8px" class="muted">
-              <li>Presionar Enter en el buscador → abrir modal resultados</li>
-              <li>Click tarjeta → ver factura detallada</li>
-              <li>Click proveedor / producto → confirmación → ficha</li>
-            </ul>
+            <p class="muted">Usa el buscador para filtrar facturas por producto. Escribe el nombre y presiona <strong>Enter</strong>. Haz clic en una tarjeta para ver detalle.</p>
           </div>
         </aside>
       </div>
@@ -220,17 +241,17 @@
   <!-- MODALES -->
   <div id="modalDetalle" class="modal" aria-hidden="true">
     <div class="modal-backdrop" onclick="document.getElementById('modalDetalle').style.display='none'"></div>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalDetalleTitle">
-      <button id="cerrarModal" class="close-x" title="Cerrar">✕</button>
+    <div class="modal-card">
+      <button id="cerrarModal" class="close-x">✕</button>
       <div id="modalContenido"><p>Cargando datos...</p></div>
     </div>
   </div>
 
   <div id="modalResultados" class="modal" aria-hidden="true">
     <div class="modal-backdrop" onclick="closeResultados()"></div>
-    <div class="modal-card" role="dialog" aria-modal="true" style="max-width:980px">
+    <div class="modal-card" style="max-width:980px">
       <button class="close-x" onclick="closeResultados()">✕</button>
-      <h3 id="resultTitle"></h3>
+      <h3 id="resultTitle">Resultados</h3>
       <p id="resultSub" class="muted" style="margin-top:6px;margin-bottom:12px"></p>
       <div id="resultsContainer" class="results-grid"></div>
     </div>
@@ -238,144 +259,17 @@
 
   <div id="modalFactura" class="modal" aria-hidden="true">
     <div class="modal-backdrop" onclick="closeFactura()"></div>
-    <div class="modal-card" role="dialog" aria-modal="true" style="max-width:920px">
+    <div class="modal-card" style="max-width:920px">
       <button class="close-x" onclick="closeFactura()">✕</button>
       <h3 id="facturaTitle">Factura</h3>
-      <div id="modalFacturaContenido" style="margin-top:12px"><p class="muted">Selecciona una factura para ver el detalle.</p></div>
+      <div id="facturaDetail" class="factura-detail"></div>
     </div>
   </div>
 
-  <!-- Dashboard JS -->
+  <!-- JS -->
   <script type="module" src="./dashboard.js"></script>
-
-  <!-- Script de búsqueda con tarjetas 3D y modales -->
-  <script type="module">
-    const buscador = document.getElementById('buscadorFactura');
-    const tablaFacturas = document.getElementById('tablaFacturas');
-    const modalResultados = document.getElementById('modalResultados');
-    const resultsContainer = document.getElementById('resultsContainer');
-    const resultTitle = document.getElementById('resultTitle');
-    const resultSub = document.getElementById('resultSub');
-
-    window.closeResultados = () => { modalResultados.classList.remove('show'); modalResultados.style.display='none'; resultsContainer.innerHTML=''; };
-    window.closeFactura = () => { document.getElementById('modalFactura').classList.remove('show'); document.getElementById('modalFactura').style.display='none'; document.getElementById('modalFacturaContenido').innerHTML=''; };
-
-    function abrirModalFacturaFromCard(fData){
-      const modal = document.getElementById('modalFactura');
-      const cont = document.getElementById('modalFacturaContenido');
-      document.getElementById('facturaTitle').textContent = `Factura Nº ${fData.numero || '-'}`;
-      cont.innerHTML = `
-        <div class="factura-detail">
-          <div>
-            <div class="detail-block">
-              <div class="label">Proveedor</div>
-              <div class="value"><span class="ver-proveedor" data-nombre="${fData.proveedor}" style="cursor:pointer;color:var(--accent)">${fData.proveedor}</span></div>
-            </div>
-            <div style="height:12px"></div>
-            <div class="detail-block">
-              <div class="label">Producto</div>
-              <div class="value"><span class="ver-producto" data-nombre="${fData.producto}" style="cursor:pointer;color:var(--accent)">${fData.producto}</span></div>
-            </div>
-            <div style="height:12px"></div>
-            <div class="detail-block">
-              <div class="label">Tipo</div>
-              <div class="value">${fData.tipo || '-'}</div>
-            </div>
-          </div>
-          <aside>
-            <div class="detail-block">
-              <div class="label">Monto</div>
-              <div class="value">${fData.moneda || ''}${fData.monto || '-'}</div>
-            </div>
-            <div style="height:12px"></div>
-            <div class="detail-block">
-              <div class="label">Número</div>
-              <div class="value">${fData.numero || '-'}</div>
-            </div>
-            <div style="height:12px"></div>
-            <div class="detail-block">
-              <div class="label">Fecha</div>
-              <div class="value">${fData.fecha || '-'}</div>
-            </div>
-          </aside>
-        </div>
-      `;
-      modal.classList.add('show'); modal.style.display='flex';
-    }
-
-    function construirResultadosDesdeTabla(busqueda){
-      resultsContainer.innerHTML = '';
-      const rows = Array.from(tablaFacturas.querySelectorAll('tr'));
-      if(rows.length === 0){
-        resultsContainer.innerHTML = `<div class="muted">No hay facturas que coincidan.</div>`;
-        return;
-      }
-
-      rows.forEach(r => {
-        const cells = r.querySelectorAll('td');
-        if(cells.length < 6) return;
-        const f = {
-          numero: cells[0].textContent.trim(),
-          proveedor: cells[1].textContent.trim(),
-          producto: cells[2].textContent.trim(),
-          monto: cells[3].textContent.replace(/\n/g,'').trim(),
-          tipo: cells[4].textContent.trim(),
-          fecha: cells[5].textContent.trim(),
-          id: (r.querySelector('.btn-delete') ? r.querySelector('.btn-delete').dataset.id : '')
-        };
-
-        const card = document.createElement('div');
-        card.className = 'fact-card';
-        card.tabIndex = 0;
-        card.innerHTML = `
-          <h4>Factura ${f.numero || '-'}</h4>
-          <div style="font-size:14px;color:#034c57"><strong>${f.producto}</strong></div>
-          <div style="margin-top:8px">
-            <div class="muted">Proveedor</div>
-            <div><span class="ver-proveedor" data-nombre="${f.proveedor}" style="cursor:pointer;color:var(--accent)">${f.proveedor}</span></div>
-          </div>
-          <div class="meta">
-            <div>${f.fecha}</div>
-            <div>${f.monto}</div>
-          </div>
-        `;
-
-        card.addEventListener('click', (ev) => {
-          const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
-          for(const el of path){
-            if(!el || el === window || el === document) break;
-            if(el.classList && (el.classList.contains('ver-proveedor') || el.classList.contains('ver-producto'))) return;
-          }
-          abrirModalFacturaFromCard(f);
-        });
-
-        resultsContainer.appendChild(card);
-      });
-
-      resultTitle.textContent = `🔍 Resultados relacionados con "${busqueda}"`;
-      resultSub.textContent = `${rows.length} factura(s) mostradas según el filtro actual. Haz clic en una tarjeta para ver detalle.`;
-    }
-
-    buscador.addEventListener('keypress', (e) => {
-      if(e.key === 'Enter'){
-        setTimeout(() => {
-          const term = buscador.value.trim();
-          construirResultadosDesdeTabla(term);
-          modalResultados.classList.add('show');
-          modalResultados.style.display='flex';
-        }, 100);
-      }
-    });
-
-    document.getElementById('btnRefresh').addEventListener('click', () => {
-      buscador.value = '';
-      buscador.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-  </script>
 </body>
 </html>
-
-
 
 
 
