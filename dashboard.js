@@ -5,7 +5,6 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
-  updateDoc,
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
@@ -35,6 +34,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 // ======================= PROVEEDORES =======================
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
+let proveedores = [];
 
 proveedorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -47,24 +47,24 @@ proveedorForm.addEventListener("submit", async (e) => {
 });
 
 onSnapshot(collection(db, "proveedores"), (snapshot) => {
+  proveedores = [];
   tablaProveedores.innerHTML = "";
   const proveedorSelect = document.getElementById("proveedorFactura");
   proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
 
   snapshot.forEach((docu) => {
-    const p = docu.data();
+    const p = { id: docu.id, ...docu.data() };
+    proveedores.push(p);
+
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.ruc}</td>
-      <td>${p.nombre}</td>
+      <td><span class="clic-detalle" data-tipo="proveedor" data-id="${p.id}">${p.nombre}</span></td>
       <td>${p.direccion}</td>
-      <td>
-        <button class="btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️</button>
-      </td>
+      <td><button class="btn-delete" data-id="${p.id}" data-tipo="proveedores">🗑️</button></td>
     `;
     tablaProveedores.appendChild(fila);
 
-    // Agregar proveedor al select
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -75,6 +75,7 @@ onSnapshot(collection(db, "proveedores"), (snapshot) => {
 // ======================= PRODUCTOS =======================
 const productoForm = document.getElementById("productoForm");
 const tablaProductos = document.getElementById("tablaProductos");
+let productos = [];
 
 productoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -83,35 +84,30 @@ productoForm.addEventListener("submit", async (e) => {
   const unidad = document.getElementById("unidadProducto").value.trim();
   const valor = document.getElementById("valorUnitarioProducto").value.trim();
 
-  await addDoc(collection(db, "productos"), {
-    nombre,
-    cantidad,
-    unidad,
-    valor,
-  });
+  await addDoc(collection(db, "productos"), { nombre, cantidad, unidad, valor });
   productoForm.reset();
 });
 
 onSnapshot(collection(db, "productos"), (snapshot) => {
+  productos = [];
   tablaProductos.innerHTML = "";
   const productoSelect = document.getElementById("productoFactura");
   productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
 
   snapshot.forEach((docu) => {
-    const p = docu.data();
+    const p = { id: docu.id, ...docu.data() };
+    productos.push(p);
+
     const fila = document.createElement("tr");
     fila.innerHTML = `
-      <td>${p.nombre}</td>
+      <td><span class="clic-detalle" data-tipo="producto" data-id="${p.id}">${p.nombre}</span></td>
       <td>${p.cantidad}</td>
       <td>${p.unidad}</td>
       <td>${p.valor}</td>
-      <td>
-        <button class="btn-delete" data-id="${docu.id}" data-tipo="productos">🗑️</button>
-      </td>
+      <td><button class="btn-delete" data-id="${p.id}" data-tipo="productos">🗑️</button></td>
     `;
     tablaProductos.appendChild(fila);
 
-    // Agregar producto al select
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -122,6 +118,7 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
 // ======================= FACTURAS =======================
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
+let facturas = [];
 
 facturaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -151,23 +148,47 @@ facturaForm.addEventListener("submit", async (e) => {
 });
 
 onSnapshot(collection(db, "facturas"), (snapshot) => {
+  facturas = [];
   tablaFacturas.innerHTML = "";
   snapshot.forEach((docu) => {
-    const f = docu.data();
+    const f = { id: docu.id, ...docu.data() };
+    facturas.push(f);
+  });
+  mostrarFacturas(facturas);
+});
+
+function mostrarFacturas(lista) {
+  tablaFacturas.innerHTML = "";
+  lista.forEach((f) => {
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${f.numero}</td>
-      <td>${f.proveedor}</td>
-      <td>${f.producto}</td>
+      <td><span class="clic-detalle" data-tipo="proveedor-nombre" data-nombre="${f.proveedor}">${f.proveedor}</span></td>
+      <td><span class="clic-detalle" data-tipo="producto-nombre" data-nombre="${f.producto}">${f.producto}</span></td>
       <td>${f.moneda}${f.monto}</td>
       <td>${f.tipo}</td>
       <td>${f.fecha}</td>
-      <td>
-        <button class="btn-delete" data-id="${docu.id}" data-tipo="facturas">🗑️</button>
-      </td>
+      <td><button class="btn-delete" data-id="${f.id}" data-tipo="facturas">🗑️</button></td>
     `;
     tablaFacturas.appendChild(fila);
   });
+}
+
+// ======================= BUSCADOR DE FACTURAS =======================
+document.getElementById("buscadorGlobal").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const termino = e.target.value.trim().toLowerCase();
+    if (!termino) return mostrarFacturas(facturas);
+    const filtradas = facturas.filter((f) =>
+      f.producto.toLowerCase().includes(termino)
+    );
+    if (filtradas.length > 0) {
+      mostrarFacturas(filtradas);
+    } else {
+      tablaFacturas.innerHTML = `<tr><td colspan="7">No se encontraron facturas relacionadas con "${termino}".</td></tr>`;
+    }
+  }
 });
 
 // ======================= ELIMINAR REGISTRO =======================
@@ -177,6 +198,65 @@ document.addEventListener("click", async (e) => {
     const tipo = e.target.dataset.tipo;
     if (confirm("¿Desea eliminar este registro?")) {
       await deleteDoc(doc(db, tipo, id));
+    }
+  }
+});
+
+// ======================= MODAL DETALLES =======================
+const modal = document.getElementById("detalleModal");
+const tituloModal = document.getElementById("tituloModal");
+const contenidoModal = document.getElementById("contenidoModal");
+document.getElementById("cerrarModal").addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("clic-detalle")) {
+    const tipo = e.target.dataset.tipo;
+
+    // Si es producto o proveedor dentro de las listas
+    if (tipo === "producto" || tipo === "proveedor") {
+      const id = e.target.dataset.id;
+      const coleccion = tipo === "producto" ? "productos" : "proveedores";
+      const docu = await getDoc(doc(db, coleccion, id));
+      if (docu.exists()) {
+        const datos = docu.data();
+        tituloModal.textContent =
+          tipo === "producto" ? "Datos del Producto 🐕" : "Datos del Proveedor 🚚";
+        contenidoModal.innerHTML = Object.entries(datos)
+          .map(([k, v]) => `<p><strong>${k}:</strong> ${v}</p>`)
+          .join("");
+        modal.style.display = "flex";
+      }
+    }
+
+    // Si se hace clic en nombre dentro de la tabla de facturas
+    if (tipo === "producto-nombre" || tipo === "proveedor-nombre") {
+      const nombre = e.target.dataset.nombre;
+      const confirmacion = confirm(
+        `¿Deseas ver los datos del ${tipo === "producto-nombre" ? "producto" : "proveedor"} "${nombre}"?`
+      );
+      if (!confirmacion) return;
+
+      const coleccion = tipo === "producto-nombre" ? "productos" : "proveedores";
+      const lista = coleccion === "productos" ? productos : proveedores;
+      const encontrado = lista.find(
+        (x) => x.nombre.toLowerCase() === nombre.toLowerCase()
+      );
+
+      if (encontrado) {
+        tituloModal.textContent =
+          coleccion === "productos"
+            ? "Datos del Producto 🐕"
+            : "Datos del Proveedor 🚚";
+        contenidoModal.innerHTML = Object.entries(encontrado)
+          .filter(([k]) => k !== "id")
+          .map(([k, v]) => `<p><strong>${k}:</strong> ${v}</p>`)
+          .join("");
+        modal.style.display = "flex";
+      } else {
+        alert("No se encontraron datos en Firebase.");
+      }
     }
   }
 });
