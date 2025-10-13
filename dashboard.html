@@ -10,44 +10,82 @@
       --bg1:#f7fbff; --bg2:#eef9ff; --card:#fff; --accent:#10bcd4; --muted:#6b7280; 
       --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08);
     }
+
     *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
     body{margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a;}
     .app{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:32px;min-height:100vh;}
-    .sidebar{position:sticky;top:32px;padding:20px;border-radius:20px;background:rgba(255,255,255,0.85);box-shadow:var(--shadow-lg);backdrop-filter:blur(6px);}
+    
+    /* Sidebar */
+    .sidebar{
+      position:sticky;
+      top:32px;
+      padding:20px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.85);
+      box-shadow:var(--shadow-lg);
+      backdrop-filter:blur(6px);
+    }
     .brand{display:flex;gap:12px;align-items:center;margin-bottom:18px;}
-    .logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;}
+    .logo{
+      width:48px;height:48px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#55d1e2);
+      display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;
+    }
     .nav{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
-    .menu-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;}
-    .menu-btn.activo{background:linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06));border-left:3px solid var(--accent);}
-    .logout{margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;}
+    .menu-btn{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;
+      background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;
+    }
+    .menu-btn.activo{
+      background:linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.06));
+      border-left:3px solid var(--accent);
+    }
+    .logout{
+      margin-top:18px;padding:10px;border-radius:12px;
+      background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;
+    }
+
+    /* Main */
     .main{padding:28px;border-radius:20px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82));box-shadow:var(--shadow-lg);}
-    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-    .header h2{margin:0;font-weight:700;color:#07203a}
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+    .header h2{margin:0;font-weight:700;color:#07203a;}
     .search-box{display:flex;gap:10px;align-items:center;}
     input[type="search"]{padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);min-width:280px;box-shadow:var(--shadow-md);}
     .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;}
     .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.03);}
-    .card h3{margin:0 0 8px 0;font-size:15px}
-    form .row{display:flex;gap:8px;margin-bottom:10px}
-    form input, form select{padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1}
-    table{width:100%;border-collapse:collapse}
-    table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
-    .table-scroll{max-height:420px;overflow:auto;padding-right:6px}
-    .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12)}
-    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12)}
-    .muted{color:var(--muted);font-size:13px}
+    .card h3{margin:0 0 8px 0;font-size:15px;}
+    form .row{display:flex;gap:8px;margin-bottom:10px;}
+    form input, form select{padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1;}
+    table{width:100%;border-collapse:collapse;}
+    table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px;}
+    .table-scroll{max-height:420px;overflow:auto;padding-right:6px;}
+    .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12);}
+    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12);}
     .btn-edit,.btn-save,.btn-delete{margin:0 2px;padding:4px 8px;font-size:12px;border-radius:6px;cursor:pointer;}
     .btn-edit{background:#facc15;color:#fff;}
     .btn-save{background:#16a34a;color:#fff;display:none;}
     .btn-delete{background:#ef4444;color:#fff;}
     td[contenteditable]{background:rgba(255,255,255,0.9);}
-    @media(max-width:980px){.app{grid-template-columns:1fr;padding:18px}.grid{grid-template-columns:1fr}.sidebar{display:flex;flex-direction:row;gap:12px;overflow:auto}.menu-btn{white-space:nowrap}}
+    @media(max-width:980px){
+      .app{grid-template-columns:1fr;padding:18px}
+      .grid{grid-template-columns:1fr}
+      .sidebar{display:flex;flex-direction:row;gap:12px;overflow:auto}
+      .menu-btn{white-space:nowrap}
+    }
   </style>
 </head>
 <body>
+
 <div class="app">
+  <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="brand"><div class="logo">DP</div><div><h1>Discovery Pets</h1><div class="muted" style="font-size:13px">Panel administrativo</div></div></div>
+    <div class="brand">
+      <div class="logo">DP</div>
+      <div>
+        <h1>Discovery Pets</h1>
+        <div class="muted" style="font-size:13px">Panel administrativo</div>
+      </div>
+    </div>
     <nav class="nav">
       <button class="menu-btn activo" data-target="seccion-proveedores">🏢 Proveedores</button>
       <button class="menu-btn" data-target="seccion-productos">📦 Productos</button>
@@ -55,7 +93,10 @@
     </nav>
     <button id="logoutBtn" class="logout">Cerrar sesión</button>
   </aside>
+
+  <!-- Main -->
   <main class="main">
+    <!-- Header -->
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
       <div class="search-box">
@@ -149,7 +190,9 @@
           <h3>Facturas registradas</h3>
           <div class="table-scroll">
             <table>
-              <thead><tr><th>ID</th><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th>Acción</th></tr></thead>
+              <thead>
+                <tr><th>ID</th><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th>Acción</th></tr>
+              </thead>
               <tbody id="tablaFacturas"></tbody>
             </table>
           </div>
@@ -171,6 +214,7 @@
 <script type="module" src="./dashboard.js"></script>
 </body>
 </html>
+
 
 
 
