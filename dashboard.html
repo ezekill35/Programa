@@ -17,6 +17,7 @@
       --shadow-lg: 0 10px 30px rgba(16,188,212,0.12);
       --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
       --radius: 16px;
+      --edit-bg: rgba(14,165,233,0.06);
     }
     *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
     html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
@@ -101,7 +102,7 @@
     }
     .card h3{margin:0 0 8px 0;font-size:15px}
     form .row{display:flex;gap:8px;margin-bottom:10px}
-    form input, form select { padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1 }
+    form input, form select, form textarea { padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1 }
 
     table{width:100%;border-collapse:collapse}
     table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
@@ -156,6 +157,17 @@
     .detail-block{ background:linear-gradient(180deg,#fff,#fbffff); border-radius:12px;padding:12px;border:1px solid rgba(10,20,30,0.03) }
     .label{font-size:13px;color:var(--muted);margin-bottom:6px}
     .value{font-weight:700;font-size:15px;color:#062936}
+
+    /* editable highlight */
+    .editable:focus { outline: none; background: var(--edit-bg); box-shadow: 0 6px 20px rgba(16,188,212,0.06); border-radius:6px; }
+
+    /* truncated */
+    .truncate {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
     /* small responsive */
     @media (max-width:980px){
@@ -214,11 +226,12 @@
               <h3>Registrar proveedor</h3>
               <form id="proveedorForm">
                 <div class="row">
-                  <input id="rucProveedor" placeholder="RUC" required />
+                  <input id="rucProveedor" placeholder="RUC (opcional)" />
                   <input id="nombreProveedor" placeholder="Nombre" required />
                 </div>
                 <div class="row">
                   <input id="direccionProveedor" placeholder="Dirección" />
+                  <input id="telefonoProveedor" placeholder="Teléfono (opcional)" inputmode="tel" />
                   <button class="btn" type="submit">Añadir proveedor</button>
                 </div>
               </form>
@@ -229,7 +242,7 @@
               <div class="table-scroll">
                 <table>
                   <thead>
-                    <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th></th></tr>
+                    <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th></th></tr>
                   </thead>
                   <tbody id="tablaProveedores"></tbody>
                 </table>
@@ -244,11 +257,20 @@
               <form id="productoForm">
                 <div class="row">
                   <input id="nombreProducto" placeholder="Nombre producto" required />
-                  <input id="cantidadProducto" placeholder="Cantidad" inputmode="numeric" />
+                  <input id="unidadProducto" placeholder="Unidad (ej: kg, und)" />
                 </div>
                 <div class="row">
-                  <input id="unidadProducto" placeholder="Unidad (ej: kg, und)" />
-                  <input id="valorUnitarioProducto" placeholder="Valor unitario" inputmode="decimal" />
+                  <input id="materialP" placeholder="Material P" />
+                  <input id="maquinaria" placeholder="Maquinaria" />
+                </div>
+                <div class="row">
+                  <input id="productoOf" placeholder="Producto Of" />
+                  <input id="insumosExtra" placeholder="Insumos extra" />
+                </div>
+                <div class="row">
+                  <textarea id="descripcionProducto" placeholder="Descripción extensa del producto (ej: 1 caja de EMBALAJE, 2 CAJAS DE STRECH). Puede ser larga." rows="3"></textarea>
+                </div>
+                <div class="row">
                   <button class="btn" type="submit">Añadir producto</button>
                 </div>
               </form>
@@ -258,7 +280,7 @@
               <h3>Productos registrados</h3>
               <div class="table-scroll">
                 <table>
-                  <thead><tr><th>Nombre</th><th>Cant.</th><th>Unidad</th><th>Valor</th><th></th></tr></thead>
+                  <thead><tr><th>Nombre</th><th>Unidad</th><th>Material P</th><th>Maquinaria</th><th>Producto Of</th><th>Insumos</th><th>Descripción</th><th></th></tr></thead>
                   <tbody id="tablaProductos"></tbody>
                 </table>
               </div>
@@ -271,12 +293,15 @@
               <h3>Registrar factura</h3>
               <form id="facturaForm">
                 <div class="row">
-                  <input id="numeroFactura" placeholder="N° factura" />
-                  <input id="fechaEmisionFactura" type="date" />
+                  <input id="codigoFactura" placeholder="Código (ej: F-001)" required />
+                  <input id="numeroFactura" placeholder="N° de factura" />
                 </div>
                 <div class="row">
                   <select id="proveedorFactura"><option value="">Seleccione proveedor</option></select>
                   <select id="productoFactura"><option value="">Seleccione producto</option></select>
+                </div>
+                <div class="row">
+                  <textarea id="productoDescripcionFactura" placeholder="Descripción del producto (puede ser larga)" rows="2"></textarea>
                 </div>
                 <div class="row">
                   <input id="montoFactura" placeholder="Monto" inputmode="decimal" />
@@ -287,9 +312,11 @@
                   <select id="tipoFactura">
                     <option value="Compra">Compra</option>
                     <option value="Gasto">Gasto</option>
+                    <option value="Servicio">Servicio</option>
                   </select>
                 </div>
                 <div class="row">
+                  <input id="fechaEmisionFactura" type="date" />
                   <button class="btn" type="submit">Guardar factura</button>
                 </div>
               </form>
@@ -299,7 +326,9 @@
               <h3>Facturas</h3>
               <div class="table-scroll">
                 <table>
-                  <thead><tr><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th></th></tr></thead>
+                  <thead>
+                    <tr><th>Código</th><th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Moneda</th><th>Tipo</th><th>Fecha</th><th></th></tr>
+                  </thead>
                   <tbody id="tablaFacturas"></tbody>
                 </table>
               </div>
@@ -318,6 +347,8 @@
               <li>Presionar Enter en el buscador → abrir modal resultados</li>
               <li>Click tarjeta → ver factura detallada</li>
               <li>Click proveedor / producto → confirmación → ficha</li>
+              <li>Editar celdas → Enter o salir (blur) guarda en Firebase</li>
+              <li>Descripción larga → usar modal de edición</li>
             </ul>
           </div>
         </aside>
@@ -325,13 +356,12 @@
     </main>
   </div>
 
-  <!-- MODAL: Detalle (proveedor/producto) - usado por dashboard.js -->
+  <!-- MODAL: Detalle (proveedor/producto) -->
   <div id="modalDetalle" class="modal" aria-hidden="true">
-    <div class="modal-backdrop" onclick="document.getElementById('modalDetalle').style.display='none'"></div>
+    <div class="modal-backdrop" onclick="document.getElementById('modalDetalle').classList.remove('show')"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalDetalleTitle">
       <button id="cerrarModal" class="close-x" title="Cerrar">✕</button>
       <div id="modalContenido">
-        <!-- contenido rellenado por tu dashboard.js -> mostrarModalDatos -->
         <p>Cargando datos...</p>
       </div>
     </div>
@@ -344,9 +374,7 @@
       <button class="close-x" onclick="closeResultados()">✕</button>
       <h3 id="resultTitle">Resultados</h3>
       <p id="resultSub" class="muted" style="margin-top:6px;margin-bottom:12px"></p>
-      <div id="resultsContainer" class="results-grid">
-        <!-- tarjetas generadas por el script -->
-      </div>
+      <div id="resultsContainer" class="results-grid"></div>
     </div>
   </div>
 
@@ -357,40 +385,413 @@
       <button class="close-x" onclick="closeFactura()">✕</button>
       <h3 id="facturaTitle">Factura</h3>
       <div id="modalFacturaContenido" style="margin-top:12px">
-        <!-- contenido dinámico -->
         <p class="muted">Selecciona una factura para ver el detalle.</p>
       </div>
     </div>
   </div>
 
-  <!-- Carga tu dashboard.js como módulo (asegúrate que dashboard.js use export/import igual que me mostraste) -->
-  <script type="module" src="./dashboard.js"></script>
+  <!-- MODAL: Editar Descripción larga (productos / facturas) -->
+  <div id="modalEditDesc" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeEditDesc()"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" style="max-width:820px">
+      <button class="close-x" onclick="closeEditDesc()">✕</button>
+      <h3 id="editDescTitle">Editar descripción</h3>
+      <textarea id="editDescTextarea" style="width:100%;min-height:180px;padding:12px;border-radius:10px;border:1px solid rgba(10,20,30,0.06)"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn secondary" onclick="closeEditDesc()">Cancelar</button>
+        <button class="btn" id="saveDescBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Script añadido: abre modalResultados cuando se presiona Enter y construye tarjetas 3D
-       Este script lee lo que está actualmente en #tablaFacturas (renderizado por dashboard.js)
-       y lo muestra en tarjetas. Las clases ver-proveedor / ver-producto se conservan para
-       que el listener de dashboard.js maneje la confirmación y modalDetalle.
-  -->
+  <!-- Import firebase helper exports (assumes firebase.js exports db, auth) -->
   <script type="module">
-    const buscador = document.getElementById('buscadorFactura');
-    const tablaFacturas = document.getElementById('tablaFacturas');
+    import { db, auth } from "./firebase.js";
+    import {
+      collection,
+      addDoc,
+      onSnapshot,
+      deleteDoc,
+      doc,
+      updateDoc,
+      getDocs,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+    import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    // ======================= NAVEGACIÓN =======================
+    const botones = document.querySelectorAll(".menu-btn");
+    const secciones = document.querySelectorAll(".seccion");
+
+    botones.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        botones.forEach((b) => b.classList.remove("activo"));
+        btn.classList.add("activo");
+
+        secciones.forEach((sec) => {
+          sec.classList.remove("activa");
+          if (sec.id === btn.dataset.target) sec.classList.add("activa");
+        });
+      });
+    });
+
+    // ======================= CERRAR SESIÓN =======================
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.warn('Error al cerrar sesión', err);
+      }
+      window.location.href = "index.html";
+    });
+
+    // ======================= REFERENCIAS DOM =======================
+    const proveedorForm = document.getElementById("proveedorForm");
+    const tablaProveedores = document.getElementById("tablaProveedores");
+    const productoForm = document.getElementById("productoForm");
+    const tablaProductos = document.getElementById("tablaProductos");
+    const facturaForm = document.getElementById("facturaForm");
+    const tablaFacturas = document.getElementById("tablaFacturas");
+    const proveedorSelect = document.getElementById("proveedorFactura");
+    const productoSelect = document.getElementById("productoFactura");
+    const buscador = document.getElementById("buscadorFactura");
+
+    // arrays cache
+    let proveedoresCache = [];
+    let productosCache = [];
+    let facturasGuardadas = [];
+
+    // ======================= PROVEEDORES =======================
+    proveedorForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const ruc = document.getElementById("rucProveedor").value.trim();
+      const nombre = document.getElementById("nombreProveedor").value.trim();
+      const direccion = document.getElementById("direccionProveedor").value.trim();
+      const telefono = document.getElementById("telefonoProveedor").value.trim();
+
+      if (!nombre) return alert('El nombre es requerido');
+
+      await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, telefono });
+      proveedorForm.reset();
+    });
+
+    onSnapshot(collection(db, "proveedores"), (snapshot) => {
+      tablaProveedores.innerHTML = "";
+      proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
+      proveedoresCache = [];
+
+      snapshot.forEach((docu) => {
+        const p = docu.data();
+        proveedoresCache.push({ id: docu.id, ...p });
+
+        const fila = document.createElement("tr");
+        fila.dataset.id = docu.id;
+        fila.dataset.tipo = "proveedores";
+        fila.innerHTML = `
+          <td><div class="editable" contenteditable="true" data-field="ruc">${p.ruc || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="nombre">${p.nombre || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="direccion">${p.direccion || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="telefono">${p.telefono || ''}</div></td>
+          <td style="text-align:right"><button class="btn secondary btn-delete" data-id="${docu.id}" data-tipo="proveedores">Eliminar</button></td>
+        `;
+        tablaProveedores.appendChild(fila);
+
+        const option = document.createElement("option");
+        option.value = p.nombre;
+        option.textContent = p.nombre;
+        proveedorSelect.appendChild(option);
+      });
+    });
+
+    // ======================= PRODUCTOS =======================
+    productoForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById("nombreProducto").value.trim();
+      const unidad = document.getElementById("unidadProducto").value.trim();
+      const materialP = document.getElementById("materialP").value.trim();
+      const maquinaria = document.getElementById("maquinaria").value.trim();
+      const productoOf = document.getElementById("productoOf").value.trim();
+      const insumosExtra = document.getElementById("insumosExtra").value.trim();
+      const descripcion = document.getElementById("descripcionProducto").value.trim();
+
+      if (!nombre) return alert('El nombre del producto es requerido');
+
+      await addDoc(collection(db, "productos"), {
+        nombre,
+        unidad,
+        materialP,
+        maquinaria,
+        productoOf,
+        insumosExtra,
+        descripcion
+      });
+
+      productoForm.reset();
+    });
+
+    onSnapshot(collection(db, "productos"), (snapshot) => {
+      tablaProductos.innerHTML = "";
+      productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
+      productosCache = [];
+
+      snapshot.forEach((docu) => {
+        const p = docu.data();
+        productosCache.push({ id: docu.id, ...p });
+
+        const fila = document.createElement("tr");
+        fila.dataset.id = docu.id;
+        fila.dataset.tipo = "productos";
+
+        // descripción truncated, edit via modal
+        const descShort = (p.descripcion || '').length > 120 ? (p.descripcion || '').slice(0, 120) + '…' : (p.descripcion || '');
+
+        fila.innerHTML = `
+          <td><div class="editable" contenteditable="true" data-field="nombre">${p.nombre || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="unidad">${p.unidad || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="materialP">${p.materialP || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="maquinaria">${p.maquinaria || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="productoOf">${p.productoOf || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="insumosExtra">${p.insumosExtra || ''}</div></td>
+          <td><div class="truncate" data-full="${encodeURIComponent(p.descripcion || '')}">${descShort}</div>
+              <div style="margin-top:6px"><button class="btn secondary btn-edit-desc" data-id="${docu.id}" data-tipo="productos">Editar desc</button></div>
+          </td>
+          <td style="text-align:right"><button class="btn secondary btn-delete" data-id="${docu.id}" data-tipo="productos">Eliminar</button></td>
+        `;
+        tablaProductos.appendChild(fila);
+
+        const option = document.createElement("option");
+        option.value = p.nombre;
+        option.textContent = p.nombre;
+        productoSelect.appendChild(option);
+      });
+    });
+
+    // ======================= FACTURAS =======================
+    facturaForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const codigo = document.getElementById("codigoFactura").value.trim();
+      const numero = document.getElementById("numeroFactura").value.trim();
+      const proveedor = document.getElementById("proveedorFactura").value;
+      const producto = document.getElementById("productoFactura").value;
+      const productoDescripcion = document.getElementById("productoDescripcionFactura").value.trim();
+      const monto = document.getElementById("montoFactura").value.trim();
+      const moneda = document.getElementById("monedaFactura").value;
+      const tipo = document.getElementById("tipoFactura").value;
+      const fecha = document.getElementById("fechaEmisionFactura").value || new Date().toISOString().slice(0,10);
+
+      if (!codigo) return alert('El campo Código es requerido');
+      if (!producto) return alert('Debe seleccionar un producto');
+      if (!proveedor) return alert('Debe seleccionar un proveedor');
+
+      await addDoc(collection(db, "facturas"), {
+        codigo,
+        numero,
+        proveedor,
+        producto,
+        productoDescripcion,
+        monto,
+        moneda,
+        tipo,
+        fecha
+      });
+
+      facturaForm.reset();
+    });
+
+    // Mostrar todas las facturas inicialmente y mantener cache
+    onSnapshot(collection(db, "facturas"), (snapshot) => {
+      facturasGuardadas = [];
+      snapshot.forEach((docu) => {
+        facturasGuardadas.push({ id: docu.id, ...docu.data() });
+      });
+      mostrarFacturas(facturasGuardadas);
+    });
+
+    function mostrarFacturas(facturas) {
+      tablaFacturas.innerHTML = "";
+      facturas.forEach((f) => {
+        const fila = document.createElement("tr");
+        fila.dataset.id = f.id;
+        fila.dataset.tipo = "facturas";
+
+        fila.innerHTML = `
+          <td><div class="editable" contenteditable="true" data-field="codigo">${f.codigo || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="numero">${f.numero || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="proveedor">${f.proveedor || ''}</div></td>
+          <td>
+            <div class="editable" contenteditable="true" data-field="producto">${f.producto || ''}</div>
+            <div style="margin-top:6px" class="truncate" title="Descripción completa">${(f.productoDescripcion || '').length > 120 ? (f.productoDescripcion || '').slice(0,120)+'…' : (f.productoDescripcion || '')}</div>
+            <div style="margin-top:6px"><button class="btn secondary btn-edit-desc" data-id="${f.id}" data-tipo="facturas">Editar desc</button></div>
+          </td>
+          <td><div class="editable" contenteditable="true" data-field="monto">${f.monto || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="moneda">${f.moneda || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="tipo">${f.tipo || ''}</div></td>
+          <td><div class="editable" contenteditable="true" data-field="fecha">${f.fecha || ''}</div></td>
+          <td style="text-align:right">
+            <button class="btn secondary btn-delete" data-id="${f.id}" data-tipo="facturas">Eliminar</button>
+          </td>
+        `;
+        tablaFacturas.appendChild(fila);
+      });
+    }
+
+    // ======================= BUSCADOR =======================
+    buscador.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        const valor = buscador.value.trim().toLowerCase();
+        // filtrar por producto o por descripcion larga
+        const filtradas = facturasGuardadas.filter((f) =>
+          (f.producto && f.producto.toLowerCase().includes(valor)) ||
+          (f.productoDescripcion && f.productoDescripcion.toLowerCase().includes(valor))
+        );
+        mostrarResultadosModal(valor, filtradas);
+      }
+    });
+
+    buscador.addEventListener("input", () => {
+      if (buscador.value.trim() === "") mostrarFacturas(facturasGuardadas);
+    });
+
+    document.getElementById('btnRefresh').addEventListener('click', () => {
+      buscador.value = '';
+      buscador.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    // ======================= ELIMINAR REGISTRO =======================
+    document.addEventListener("click", async (e) => {
+      // botones eliminar
+      if (e.target.classList.contains("btn-delete")) {
+        const id = e.target.dataset.id;
+        const tipo = e.target.dataset.tipo;
+        if (confirm("¿Desea eliminar este registro?")) {
+          await deleteDoc(doc(db, tipo, id));
+        }
+      }
+
+      // editar descripción (productos o facturas) - abre modal
+      if (e.target.classList.contains("btn-edit-desc")) {
+        const id = e.target.dataset.id;
+        const tipo = e.target.dataset.tipo;
+        // obtener documento actual para llenar textarea
+        const docRef = doc(db, tipo, id);
+        const docSnap = await getDoc(docRef);
+        const data = docSnap.exists() ? docSnap.data() : {};
+        const contenido = tipo === 'productos' ? (data.descripcion || '') : (data.productoDescripcion || '');
+        openEditDescModal({ id, tipo, contenido });
+      }
+
+      // Ver datos del proveedor o producto desde la tabla principal (click sobre texto editable)
+      if (e.target.classList && e.target.classList.contains("ver-proveedor")) {
+        const nombre = e.target.dataset.nombre;
+        if (confirm(`¿Deseas ver los datos de ${nombre}?`)) {
+          mostrarModalDatos("proveedores", "nombre", nombre);
+        }
+      }
+
+      if (e.target.classList && e.target.classList.contains("ver-producto")) {
+        const nombre = e.target.dataset.nombre;
+        if (confirm(`¿Deseas ver los datos de ${nombre}?`)) {
+          mostrarModalDatos("productos", "nombre", nombre);
+        }
+      }
+    });
+
+    // ======================= EDITAR INLINE (contenteditable) =======================
+    // Delegado: escucha focusout en elementos con .editable
+    document.addEventListener('focusout', async (ev) => {
+      const el = ev.target;
+      if (!el.classList || !el.classList.contains('editable')) return;
+      const field = el.dataset.field;
+      const tr = el.closest('tr');
+      if (!tr) return;
+      const id = tr.dataset.id;
+      const tipo = tr.dataset.tipo;
+      if (!id || !tipo) return;
+      const newValue = el.textContent.trim();
+
+      try {
+        await updateDoc(doc(db, tipo, id), { [field]: newValue });
+      } catch (err) {
+        console.error('Error actualizando:', err);
+        alert('Error al guardar cambios: ' + (err.message || err));
+      }
+    });
+
+    // También captura Enter para guardar (prevent newline)
+    document.addEventListener('keydown', (ev) => {
+      const el = ev.target;
+      if (!el.classList || !el.classList.contains('editable')) return;
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        el.blur(); // disparará focusout y guardará
+      }
+    });
+
+    // ======================= MODALES Y FUNCIONES AUX =======================
     const modalResultados = document.getElementById('modalResultados');
     const resultsContainer = document.getElementById('resultsContainer');
     const resultTitle = document.getElementById('resultTitle');
     const resultSub = document.getElementById('resultSub');
 
-    // cerrar helpers
-    window.closeResultados = () => { modalResultados.classList.remove('show'); modalResultados.style.display='none'; resultsContainer.innerHTML=''; };
-    window.closeFactura = () => { document.getElementById('modalFactura').classList.remove('show'); document.getElementById('modalFactura').style.display='none'; document.getElementById('modalFacturaContenido').innerHTML=''; };
+    function closeResultados(){ modalResultados.classList.remove('show'); modalResultados.style.display='none'; resultsContainer.innerHTML=''; }
+    window.closeResultados = closeResultados;
 
-    // helper para abrir modalFactura con datos
+    const modalFactura = document.getElementById('modalFactura');
+    function closeFactura(){ modalFactura.classList.remove('show'); modalFactura.style.display='none'; document.getElementById('modalFacturaContenido').innerHTML=''; }
+    window.closeFactura = closeFactura;
+
+    // Modal Edit Desc
+    const modalEditDesc = document.getElementById('modalEditDesc');
+    const editDescTextarea = document.getElementById('editDescTextarea');
+    const saveDescBtn = document.getElementById('saveDescBtn');
+    let _editDescContext = null;
+    function openEditDescModal(ctx){
+      _editDescContext = ctx; // {id, tipo, contenido}
+      document.getElementById('editDescTitle').textContent = ctx.tipo === 'productos' ? 'Editar descripción del producto' : 'Editar descripción en factura';
+      editDescTextarea.value = ctx.contenido || '';
+      modalEditDesc.classList.add('show'); modalEditDesc.style.display='flex';
+    }
+    function closeEditDesc(){ modalEditDesc.classList.remove('show'); modalEditDesc.style.display='none'; editDescTextarea.value=''; _editDescContext = null; }
+    window.closeEditDesc = closeEditDesc;
+
+    saveDescBtn.addEventListener('click', async () => {
+      if (!_editDescContext) return;
+      const { id, tipo } = _editDescContext;
+      const newText = editDescTextarea.value.trim();
+      try {
+        if (tipo === 'productos') {
+          await updateDoc(doc(db, 'productos', id), { descripcion: newText });
+        } else if (tipo === 'facturas') {
+          await updateDoc(doc(db, 'facturas', id), { productoDescripcion: newText });
+        }
+        closeEditDesc();
+      } catch (err) {
+        console.error('Error guardando descripción:', err);
+        alert('Error al guardar descripción: ' + (err.message || err));
+      }
+    });
+
+    // abrir modal factura con datos completos
     function abrirModalFacturaFromCard(fData){
-      const modal = document.getElementById('modalFactura');
       const cont = document.getElementById('modalFacturaContenido');
-      document.getElementById('facturaTitle').textContent = `Factura Nº ${fData.numero || '-'}`;
+      document.getElementById('facturaTitle').textContent = `Factura · ${fData.codigo || '-'}`;
       cont.innerHTML = `
         <div class="factura-detail">
           <div>
+            <div class="detail-block">
+              <div class="label">Código</div>
+              <div class="value">${fData.codigo || '-'}</div>
+            </div>
+
+            <div style="height:12px"></div>
+
+            <div class="detail-block">
+              <div class="label">N° de factura</div>
+              <div class="value">${fData.numero || '-'}</div>
+            </div>
+
+            <div style="height:12px"></div>
+
             <div class="detail-block">
               <div class="label">Proveedor</div>
               <div class="value"><span class="ver-proveedor" data-nombre="${fData.proveedor}" style="cursor:pointer;color:var(--accent)">${fData.proveedor}</span></div>
@@ -401,13 +802,7 @@
             <div class="detail-block">
               <div class="label">Producto</div>
               <div class="value"><span class="ver-producto" data-nombre="${fData.producto}" style="cursor:pointer;color:var(--accent)">${fData.producto}</span></div>
-            </div>
-
-            <div style="height:12px"></div>
-
-            <div class="detail-block">
-              <div class="label">Tipo</div>
-              <div class="value">${fData.tipo || '-'}</div>
+              <div style="margin-top:8px"><small class="muted">Descripción:</small><div style="margin-top:6px">${(fData.productoDescripcion || '').replace(/\n/g, '<br/>')}</div></div>
             </div>
           </div>
 
@@ -420,8 +815,8 @@
             <div style="height:12px"></div>
 
             <div class="detail-block">
-              <div class="label">Número</div>
-              <div class="value">${fData.numero || '-'}</div>
+              <div class="label">Tipo</div>
+              <div class="value">${fData.tipo || '-'}</div>
             </div>
 
             <div style="height:12px"></div>
@@ -433,91 +828,121 @@
           </aside>
         </div>
       `;
-      modal.classList.add('show'); modal.style.display='flex';
+      modalFactura.classList.add('show'); modalFactura.style.display='flex';
     }
 
-    // Construye tarjetas a partir de las filas actualmente renderizadas en la tabla
-    function construirResultadosDesdeTabla(busqueda){
+    // construir resultados para modalResultados
+    function mostrarResultadosModal(busqueda, facturas){
       resultsContainer.innerHTML = '';
-      const rows = Array.from(tablaFacturas.querySelectorAll('tr'));
-      if(rows.length === 0){
-        resultsContainer.innerHTML = `<div class="muted">No hay facturas que coincidan.</div>`;
-        return;
-      }
+      if(!facturas || facturas.length === 0){
+        resultsContainer.innerHTML = '<div class="muted">No se encontraron facturas relacionadas.</div>';
+      } else {
+        facturas.forEach(f => {
+          const card = document.createElement('div');
+          card.className = 'fact-card';
+          card.tabIndex = 0;
+          card.innerHTML = `
+            <h4>${f.codigo ? f.codigo : ('Factura ' + (f.numero || '—'))}</h4>
+            <div style="font-size:14px;color:#034c57"><strong>${f.producto || '-'}</strong></div>
+            <div style="margin-top:8px"><div class="muted">Proveedor</div><div><span class="ver-proveedor" data-nombre="${f.proveedor}" style="cursor:pointer;color:var(--accent)">${f.proveedor}</span></div></div>
+            <div class="meta"><div>${f.fecha || ''}</div><div>${f.moneda || ''}${f.monto || ''}</div></div>
+          `;
 
-      rows.forEach(r => {
-        const cells = r.querySelectorAll('td');
-        if(cells.length < 6) return;
-        // extraer datos según el orden del dashboard.js: numero, proveedor, producto, monto, tipo, fecha
-        const f = {
-          numero: cells[0].textContent.trim(),
-          proveedor: cells[1].textContent.trim(),
-          producto: cells[2].textContent.trim(),
-          monto: cells[3].textContent.replace(/\n/g,'').trim(),
-          tipo: cells[4].textContent.trim(),
-          fecha: cells[5].textContent.trim(),
-          id: (r.querySelector('.btn-delete') ? r.querySelector('.btn-delete').dataset.id : '')
-        };
-
-        // crear tarjeta
-        const card = document.createElement('div');
-        card.className = 'fact-card';
-        card.tabIndex = 0;
-        card.innerHTML = `
-          <h4>Factura ${f.numero || '-'}</h4>
-          <div style="font-size:14px;color:#034c57"><strong>${f.producto}</strong></div>
-          <div style="margin-top:8px">
-            <div class="muted">Proveedor</div>
-            <div><span class="ver-proveedor" data-nombre="${f.proveedor}" style="cursor:pointer;color:var(--accent)">${f.proveedor}</span></div>
-          </div>
-          <div class="meta">
-            <div>${f.fecha}</div>
-            <div>${f.monto}</div>
-          </div>
-        `;
-
-        // click en tarjeta -> abrir modal detalle factura
-        card.addEventListener('click', (ev) => {
-          // evitar cuando se clickea el link del proveedor o producto (dejar que el otro listener lo maneje)
-          const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
-          for(const el of path){
-            if(!el || el === window || el === document) break;
-            if(el.classList && (el.classList.contains('ver-proveedor') || el.classList.contains('ver-producto'))) {
-              // dejar que el otro listener (dashboard.js) maneje confirmación
-              return;
+          card.addEventListener('click', (ev) => {
+            const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
+            for(const el of path){
+              if(!el || el === window || el === document) break;
+              if(el.classList && (el.classList.contains('ver-proveedor') || el.classList.contains('ver-producto'))) {
+                return; // let other handler act
+              }
             }
-          }
-          abrirModalFacturaFromCard(f);
-        });
+            abrirModalFacturaFromCard(f);
+          });
 
-        resultsContainer.appendChild(card);
-      });
+          resultsContainer.appendChild(card);
+        });
+      }
 
       resultTitle.textContent = `🔍 Resultados relacionados con "${busqueda}"`;
-      resultSub.textContent = `${rows.length} factura(s) mostradas según el filtro actual. Haz clic en una tarjeta para ver detalle.`;
+      resultSub.textContent = `${facturas.length} factura(s) encontradas`;
+      modalResultados.classList.add('show'); modalResultados.style.display='flex';
     }
 
-    // Escuchar Enter: abrimos modalResultados con lo que está actualmente en tablaFacturas
-    buscador.addEventListener('keypress', (e) => {
-      if(e.key === 'Enter'){
-        // permitir que dashboard.js haga su filtrado primero (su listener ejecuta en el mismo tick)
-        setTimeout(() => {
-          const term = buscador.value.trim();
-          construirResultadosDesdeTabla(term);
-          modalResultados.classList.add('show');
-          modalResultados.style.display='flex';
-        }, 100); // pequeño retraso para dejar que dashboard.js actualice la tabla
+    // ======================= mostrarModalDatos (proveedor/producto) =======================
+    async function mostrarModalDatos(coleccion, campo, valor) {
+      const modal = document.getElementById("modalDetalle");
+      const modalContenido = document.getElementById("modalContenido");
+      modalContenido.innerHTML = "<p>Cargando datos...</p>";
+
+      // obtener todos y buscar coincidencia (puede optimizarse con query)
+      try {
+        const snap = await getDocs(collection(db, coleccion));
+        let found = null;
+        snap.forEach((docu) => {
+          const data = docu.data();
+          if ((data[campo] || '').toString() === valor.toString()) {
+            found = { id: docu.id, ...data };
+          }
+        });
+
+        if (!found) {
+          modalContenido.innerHTML = `<p>No se encontró información para "${valor}".</p>`;
+        } else {
+          if (coleccion === 'proveedores') {
+            modalContenido.innerHTML = `
+              <h3>Proveedor: ${found.nombre}</h3>
+              <p><strong>RUC:</strong> ${found.ruc || '-'}</p>
+              <p><strong>Dirección:</strong> ${found.direccion || '-'}</p>
+              <p><strong>Teléfono:</strong> ${found.telefono || '-'}</p>
+            `;
+          } else {
+            // producto
+            modalContenido.innerHTML = `
+              <h3>Producto: ${found.nombre}</h3>
+              <p><strong>Unidad:</strong> ${found.unidad || '-'}</p>
+              <p><strong>Material P:</strong> ${found.materialP || '-'}</p>
+              <p><strong>Maquinaria:</strong> ${found.maquinaria || '-'}</p>
+              <p><strong>Producto Of:</strong> ${found.productoOf || '-'}</p>
+              <p><strong>Insumos extra:</strong> ${found.insumosExtra || '-'}</p>
+              <p style="margin-top:8px"><strong>Descripción:</strong><div style="margin-top:6px">${(found.descripcion || '').replace(/\n/g,'<br/>')}</div></p>
+            `;
+          }
+        }
+      } catch (err) {
+        console.error('Error al obtener datos', err);
+        modalContenido.innerHTML = `<p>Error al cargar datos.</p>`;
+      }
+
+      modal.classList.add('show'); modal.style.display = 'flex';
+    }
+
+    // cerrar modal detalle
+    document.getElementById('cerrarModal').addEventListener('click', () => {
+      document.getElementById('modalDetalle').classList.remove('show');
+      document.getElementById('modalDetalle').style.display = 'none';
+    });
+
+    // ======================= Helpers: edición y sincronización automática =======================
+    // Al cambiar nombre de proveedor/producto en dropdowns actualizar opciones dinámicamente
+    // (ya lo maneja onSnapshot al repoblar selects)
+
+    // ======================= Inicializaciones pequeñas =======================
+    // Botón para cerrar resultados on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeResultados();
+        closeFactura();
+        closeEditDesc();
+        document.getElementById('modalDetalle').classList.remove('show');
       }
     });
 
-    // Botón restablecer muestra todas las facturas (simula limpiar buscador y disparar input)
-    document.getElementById('btnRefresh').addEventListener('click', () => {
-      buscador.value = '';
-      buscador.dispatchEvent(new Event('input', { bubbles: true }));
-    });
+    // ---------------- End of script ----------------
   </script>
 </body>
 </html>
+
+
 
 
 
