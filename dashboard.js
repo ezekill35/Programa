@@ -4,7 +4,7 @@ import {
   addDoc,
   onSnapshot,
   deleteDoc,
-  doc
+  doc,
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
@@ -16,7 +16,6 @@ botones.forEach((btn) => {
   btn.addEventListener("click", () => {
     botones.forEach((b) => b.classList.remove("activo"));
     btn.classList.add("activo");
-
     secciones.forEach((sec) => {
       sec.classList.remove("activa");
       if (sec.id === btn.dataset.target) sec.classList.add("activa");
@@ -39,7 +38,7 @@ proveedorForm.addEventListener("submit", async (e) => {
   const ruc = document.getElementById("rucProveedor").value.trim();
   const nombre = document.getElementById("nombreProveedor").value.trim();
   const direccion = document.getElementById("direccionProveedor").value.trim();
-  const telefono = document.getElementById("telefonoProveedor") ? document.getElementById("telefonoProveedor").value.trim() : "";
+  const telefono = document.getElementById("telefonoProveedor")?.value.trim() || "";
 
   await addDoc(collection(db, "proveedores"), { ruc, nombre, direccion, telefono });
   proveedorForm.reset();
@@ -65,7 +64,7 @@ onSnapshot(collection(db, "proveedores"), (snapshot) => {
 
     // Select
     const option = document.createElement("option");
-    option.value = p.nombre; // usar nombre directamente
+    option.value = p.nombre;
     option.textContent = p.nombre;
     proveedorSelect.appendChild(option);
   });
@@ -83,13 +82,7 @@ productoForm.addEventListener("submit", async (e) => {
   const descripcion = document.getElementById("descripcionProducto").value.trim();
   const categoria = document.getElementById("categoriaProducto").value;
 
-  await addDoc(collection(db, "productos"), {
-    nombre,
-    cantidad,
-    unidad,
-    descripcion,
-    categoria
-  });
+  await addDoc(collection(db, "productos"), { nombre, cantidad, unidad, descripcion, categoria });
   productoForm.reset();
 });
 
@@ -100,7 +93,6 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
 
   snapshot.forEach((docu) => {
     const p = docu.data();
-    // Tabla
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${p.nombre}</td>
@@ -112,7 +104,6 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
     `;
     tablaProductos.appendChild(fila);
 
-    // Select
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -141,23 +132,13 @@ facturaForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  await addDoc(collection(db, "facturas"), {
-    numero,
-    fecha,
-    proveedor,
-    producto,
-    monto,
-    moneda,
-    tipo
-  });
+  await addDoc(collection(db, "facturas"), { numero, fecha, proveedor, producto, monto, moneda, tipo });
   facturaForm.reset();
 });
 
 onSnapshot(collection(db, "facturas"), (snapshot) => {
   facturasGuardadas = [];
-  snapshot.forEach((docu) => {
-    facturasGuardadas.push({ id: docu.id, ...docu.data() });
-  });
+  snapshot.forEach((docu) => facturasGuardadas.push({ id: docu.id, ...docu.data() }));
   mostrarFacturas(facturasGuardadas);
 });
 
@@ -167,7 +148,6 @@ function mostrarFacturas(facturas) {
     const fila = document.createElement("tr");
     fila.innerHTML = `
       <td>${f.numero}</td>
-      <td>${f.id || '-'}</td>
       <td class="ver-proveedor" data-nombre="${f.proveedor}" style="cursor:pointer;color:#007bff">${f.proveedor}</td>
       <td class="ver-producto" data-nombre="${f.producto}" style="cursor:pointer;color:#007bff">${f.producto}</td>
       <td>${f.moneda}${f.monto}</td>
@@ -184,9 +164,7 @@ const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     const valor = buscador.value.trim().toLowerCase();
-    const filtradas = facturasGuardadas.filter((f) =>
-      f.producto.toLowerCase().includes(valor)
-    );
+    const filtradas = facturasGuardadas.filter(f => f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
   }
 });
@@ -204,19 +182,12 @@ document.addEventListener("click", async (e) => {
     }
   }
 
-  // Ver datos del proveedor o producto
   if (e.target.classList.contains("ver-proveedor")) {
-    const nombre = e.target.dataset.nombre;
-    if (confirm(`¿Deseas ver los datos de ${nombre}?`)) {
-      mostrarModalDatos("proveedores", "nombre", nombre);
-    }
+    mostrarModalDatos("proveedores", "nombre", e.target.dataset.nombre);
   }
 
   if (e.target.classList.contains("ver-producto")) {
-    const nombre = e.target.dataset.nombre;
-    if (confirm(`¿Deseas ver los datos de ${nombre}?`)) {
-      mostrarModalDatos("productos", "nombre", nombre);
-    }
+    mostrarModalDatos("productos", "nombre", e.target.dataset.nombre);
   }
 });
 
@@ -236,7 +207,8 @@ async function mostrarModalDatos(coleccion, campo, valor) {
             ? `<p><strong>RUC:</strong> ${data.ruc || "-"}</p>
                <p><strong>Dirección:</strong> ${data.direccion || "-"}</p>
                <p><strong>Teléfono:</strong> ${data.telefono || "-"}</p>`
-            : `<p><strong>Unidad:</strong> ${data.unidad || "-"}</p>
+            : `<p><strong>Cantidad:</strong> ${data.cantidad || "-"}</p>
+               <p><strong>Unidad:</strong> ${data.unidad || "-"}</p>
                <p><strong>Descripción:</strong> ${data.descripcion || "-"}</p>
                <p><strong>Categoría:</strong> ${data.categoria || "-"}</p>`}
         `;
@@ -250,7 +222,5 @@ async function mostrarModalDatos(coleccion, campo, valor) {
 document.getElementById("cerrarModal").addEventListener("click", () => {
   document.getElementById("modalDetalle").style.display = "none";
 });
-
-
 
 
