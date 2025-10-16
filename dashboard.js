@@ -7,8 +7,6 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
-  query,
-  where,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -50,7 +48,9 @@ proveedorForm.addEventListener("submit", async (e) => {
   const nombre = document.getElementById("nombreProveedor").value.trim();
   const direccion = document.getElementById("direccionProveedor").value.trim();
   const telefono = document.getElementById("telefonoProveedor").value.trim();
+
   if (!ruc || !nombre) return alert("RUC y Nombre son obligatorios");
+
   await addDoc(colProveedores, { ruc, nombre, direccion, telefono: telefono || "" });
   proveedorForm.reset();
 });
@@ -79,11 +79,12 @@ productoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const nombre = document.getElementById("nombreProducto").value.trim();
   const cantidad = parseInt(document.getElementById("cantidadProducto").value);
-  const precio = parseFloat(document.getElementById("precioProducto").value);
+  const precioRaw = document.getElementById("precioProducto").value.trim();
+  const precio = parseFloat(precioRaw.replace(",", "."));
   const descripcion = document.getElementById("descripcionProducto").value.trim();
 
-  if (!nombre || isNaN(cantidad) || isNaN(precio))
-    return alert("Complete todos los campos obligatorios");
+  if (!nombre || isNaN(cantidad) || isNaN(precio) || precio < 0)
+    return alert("Introduce valores válidos (cantidad entera y precio positivo)");
 
   await addDoc(colProductos, { nombre, cantidad, precio, descripcion: descripcion || "" });
   productoForm.reset();
@@ -122,11 +123,12 @@ facturaForm.addEventListener("submit", async (e) => {
   const fecha = document.getElementById("fechaFactura").value;
   const proveedor = document.getElementById("proveedorFactura").value;
   const producto = document.getElementById("productoFactura").value;
-  const monto = parseFloat(document.getElementById("montoFactura").value);
+  const montoRaw = document.getElementById("montoFactura").value.trim();
+  const monto = parseFloat(montoRaw.replace(",", "."));
   const tipo = document.getElementById("tipoFactura").value;
 
-  if (!idFactura || !fecha || !proveedor || !producto || isNaN(monto))
-    return alert("Complete todos los campos");
+  if (!idFactura || !fecha || !proveedor || !producto || isNaN(monto) || monto < 0)
+    return alert("Introduce valores válidos para la factura");
 
   await addDoc(colFacturas, { idFactura, fecha, proveedor, producto, monto, tipo });
   facturaForm.reset();
