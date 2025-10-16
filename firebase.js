@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
-// Configuración de Firebase
+// Configuración de tu proyecto Discovery Pets
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -18,13 +18,9 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 
-// Exportar Auth y Database para usarlos en otros scripts
+// Exportar Auth y Database
 export const auth = getAuth(app);
-export const database = getDatabase(app);
-
-
-
-
+export const db = getDatabase(app);
 
 
 
