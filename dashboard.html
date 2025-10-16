@@ -4,79 +4,142 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Dashboard · Discovery Pets</title>
+
+  <!-- Bootstrap y fuente -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <style>
+    /* ---------- ESTILO PREMIUM DISCOVERY PETS ---------- */
     body {
       font-family: 'Inter', sans-serif;
-      background: #f8fafc;
+      background: linear-gradient(135deg, #e3f2fd, #ffffff);
       color: #333;
-    }
-    .sidebar {
-      width: 250px;
       min-height: 100vh;
-      background: linear-gradient(180deg, #004aad, #007bff);
-      color: white;
-      padding-top: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
       position: fixed;
-    }
-    .sidebar h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .menu-btn {
-      display: block;
-      padding: 12px 20px;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background: rgba(0, 74, 173, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.15);
       color: white;
-      text-decoration: none;
-      border: none;
-      width: 100%;
-      text-align: left;
-      background: none;
-      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 30px;
     }
+
+    .sidebar h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      text-shadow: 1px 2px 3px rgba(0,0,0,0.25);
+    }
+
+    .menu-btn {
+      width: 90%;
+      border: none;
+      padding: 12px 16px;
+      color: white;
+      background: transparent;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      text-align: left;
+      font-weight: 600;
+      transition: all .3s;
+    }
+
     .menu-btn:hover, .menu-btn.activo {
       background: rgba(255,255,255,0.15);
+      transform: translateX(3px);
     }
+
+    /* Main */
     main {
       margin-left: 260px;
-      padding: 20px;
+      padding: 30px;
+      transition: all .3s ease-in-out;
     }
+
     section {
       display: none;
       animation: fadeIn .4s ease;
     }
-    .seccion-activa {
-      display: block;
-    }
+    .seccion-activa { display: block; }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    table td, table th {
+
+    /* Tarjetas */
+    form {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(6px);
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    table {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    th {
+      background-color: #004aad;
+      color: white;
+    }
+
+    td, th {
       vertical-align: middle;
     }
-    .btn-eliminar, .btn-detalles {
+
+    .btn-eliminar {
       border: none;
       background: #ff4d4d;
       color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: .2s;
     }
+    .btn-eliminar:hover { background: #d63031; }
+
     .btn-detalles {
+      border: none;
       background: #0d6efd;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 8px;
       margin-right: 5px;
+      transition: .2s;
     }
+    .btn-detalles:hover { background: #004aad; }
+
     .search-bar {
       display: flex;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-top: 15px;
+    }
+
+    .modal-content {
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
 
+  <!-- Sidebar -->
   <aside class="sidebar">
     <h2>🐾 Discovery Pets</h2>
     <button class="menu-btn activo" data-target="secProveedores">Proveedores</button>
@@ -85,15 +148,15 @@
   </aside>
 
   <main class="container-fluid">
-    <!-- PROVEEDORES -->
+    <!-- ====== PROVEEDORES ====== -->
     <section id="secProveedores" class="seccion-activa">
-      <h3>📦 Proveedores</h3>
-      <form id="formProveedor" class="row g-3 mt-2">
+      <h3 class="fw-bold mb-3 text-primary">📦 Registro de Proveedores</h3>
+      <form id="formProveedor" class="row g-3">
         <div class="col-md-4"><input id="provNombre" class="form-control" placeholder="Nombre" required></div>
         <div class="col-md-3"><input id="provRuc" class="form-control" placeholder="RUC" required></div>
         <div class="col-md-5"><input id="provDireccion" class="form-control" placeholder="Dirección"></div>
         <div class="col-md-3"><input id="provTelefono" class="form-control" placeholder="Teléfono"></div>
-        <div class="col-md-3"><input id="provNumero" class="form-control" placeholder="N° Registro"></div>
+        <div class="col-md-3"><input id="provNumero" class="form-control" placeholder="N° Registro (opcional)"></div>
         <div class="col-md-2"><button class="btn btn-primary w-100">Guardar</button></div>
       </form>
 
@@ -103,15 +166,15 @@
       </table>
     </section>
 
-    <!-- PRODUCTOS -->
+    <!-- ====== PRODUCTOS ====== -->
     <section id="secProductos">
-      <h3>🧴 Productos</h3>
-      <form id="formProducto" class="row g-3 mt-2">
-        <div class="col-md-4"><input id="prodNombre" class="form-control" placeholder="Nombre" required></div>
-        <div class="col-md-2"><input id="prodPrecio" type="number" class="form-control" placeholder="Precio" required></div>
+      <h3 class="fw-bold mb-3 text-primary">🧴 Productos Disponibles</h3>
+      <form id="formProducto" class="row g-3">
+        <div class="col-md-3"><input id="prodNombre" class="form-control" placeholder="Nombre" required></div>
+        <div class="col-md-2"><input id="prodPrecio" type="number" step="0.01" class="form-control" placeholder="Precio" required></div>
         <div class="col-md-2"><input id="prodCantidad" type="number" class="form-control" placeholder="Cantidad" required></div>
-        <div class="col-md-4"><input id="prodDescripcion" class="form-control" placeholder="Descripción"></div>
-        <div class="col-md-2"><button class="btn btn-primary w-100">Guardar</button></div>
+        <div class="col-md-4"><input id="prodDescripcion" class="form-control" placeholder="Descripción (opcional)"></div>
+        <div class="col-md-1"><button class="btn btn-primary w-100">Guardar</button></div>
       </form>
 
       <table class="table table-striped mt-3">
@@ -120,10 +183,10 @@
       </table>
     </section>
 
-    <!-- FACTURAS -->
+    <!-- ====== FACTURAS ====== -->
     <section id="secFacturas">
-      <h3>📑 Facturas</h3>
-      <form id="formFactura" class="row g-3 mt-2">
+      <h3 class="fw-bold mb-3 text-primary">📑 Facturas</h3>
+      <form id="formFactura" class="row g-3">
         <div class="col-md-3">
           <select id="factProveedor" class="form-select" required>
             <option value="">Seleccionar proveedor</option>
@@ -135,12 +198,12 @@
           </select>
         </div>
         <div class="col-md-2"><input id="factCantidad" type="number" class="form-control" placeholder="Cantidad" required></div>
-        <div class="col-md-2"><input id="factTotal" type="number" class="form-control" placeholder="Total" required></div>
+        <div class="col-md-2"><input id="factTotal" type="number" step="0.01" class="form-control" placeholder="Total" required></div>
         <div class="col-md-2"><button class="btn btn-primary w-100">Registrar</button></div>
       </form>
 
-      <div class="search-bar mt-3">
-        <input id="buscadorFactura" class="form-control" placeholder="Buscar producto (Enter para filtrar)">
+      <div class="search-bar">
+        <input id="buscadorFactura" class="form-control" placeholder="Buscar producto y mostrar facturas...">
         <button id="btnRefresh" class="btn btn-secondary">Restablecer</button>
       </div>
 
@@ -151,12 +214,29 @@
     </section>
   </main>
 
-  <!-- FIREBASE + DASHBOARD JS -->
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <!-- Modal Detalles Factura -->
+  <div class="modal fade" id="modalDetalle" tabindex="-1" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalDetalleLabel">Detalles de Factura</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="detalleContenido"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
