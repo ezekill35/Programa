@@ -6,7 +6,6 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
-  databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.firebasestorage.app",
   messagingSenderId: "481355972999",
@@ -14,7 +13,10 @@ const firebaseConfig = {
   measurementId: "G-0WMLRY8FGM"
 };
 
-export const app = initializeApp(firebaseConfig);
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+
+// Exportar servicios
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
