@@ -8,12 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
-  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
-  --radius: 16px;
+  --bg1:#f7fbff; --bg2:#eef9ff; --card:#ffffff; --accent:#10bcd4; --muted:#6b7280;
+  --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08);
+  --radius:16px;
 }
-*{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
-html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
+*{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a;}
 .app{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:32px;min-height:100vh;align-items:start;}
 .sidebar{position:sticky;top:32px;padding:20px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.7));box-shadow:var(--shadow-lg);backdrop-filter:blur(6px);}
 .brand{display:flex;gap:12px;align-items:center;margin-bottom:18px;}
@@ -49,6 +49,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 </head>
 <body>
 <div class="app">
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand"><div class="logo">DP</div><div><h1>Discovery Pets</h1><div class="muted">Panel administrativo</div></div></div>
     <nav class="nav">
@@ -59,6 +60,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     <button id="logoutBtn" class="logout">Cerrar sesión</button>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
@@ -163,137 +165,11 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:TUP_APP_ID_AQUI"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Elementos
-const proveedorForm = document.getElementById("proveedorForm");
-const tablaProveedores = document.getElementById("tablaProveedores");
-const proveedorSelect = document.getElementById("proveedorFactura");
-
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-const productoSelect = document.getElementById("productoFactura");
-
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-
-// --------------------- FUNCIONES ---------------------
-const borrar = async (col, id) => {
-  await deleteDoc(doc(db, col, id));
-};
-
-// Crear fila y botón dinámicamente
-const crearFila = (data, tabla, col) => {
-  const tr = document.createElement("tr");
-  for (let key of Object.keys(data)) {
-    const td = document.createElement("td");
-    td.textContent = data[key];
-    tr.appendChild(td);
-  }
-  const tdBtn = document.createElement("td");
-  const btn = document.createElement("button");
-  btn.textContent = "❌";
-  btn.className = "btn secondary";
-  btn.addEventListener("click", () => borrar(col, data.idFire));
-  tdBtn.appendChild(btn);
-  tr.appendChild(tdBtn);
-  tabla.appendChild(tr);
-};
-
-// --------------------- PROVEEDORES ---------------------
-proveedorForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const docRef = await addDoc(collection(db, "proveedores"), {
-    nombre: document.getElementById("nombreProveedor").value,
-    ruc: document.getElementById("rucProveedor").value,
-    telefono: document.getElementById("telefonoProveedor").value,
-    opc: document.getElementById("numeroOpcionalProveedor").value,
-    direccion: document.getElementById("direccionProveedor").value
-  });
-  proveedorForm.reset();
-});
-
-onSnapshot(collection(db, "proveedores"), snapshot => {
-  tablaProveedores.innerHTML = "";
-  proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    d.idFire = docu.id;
-    crearFila(d, tablaProveedores, "proveedores");
-
-    const option = document.createElement("option");
-    option.value = d.nombre;
-    option.textContent = d.nombre;
-    proveedorSelect.appendChild(option);
-  });
-});
-
-// --------------------- PRODUCTOS ---------------------
-productoForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const docRef = await addDoc(collection(db, "productos"), {
-    nombre: document.getElementById("nombreProducto").value,
-    precio: document.getElementById("precioProducto").value,
-    cantidad: document.getElementById("cantidadProducto").value,
-    descripcion: document.getElementById("descripcionProducto").value
-  });
-  productoForm.reset();
-});
-
-onSnapshot(collection(db, "productos"), snapshot => {
-  tablaProductos.innerHTML = "";
-  productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    d.idFire = docu.id;
-    crearFila(d, tablaProductos, "productos");
-
-    const option = document.createElement("option");
-    option.value = d.nombre;
-    option.textContent = d.nombre;
-    productoSelect.appendChild(option);
-  });
-});
-
-// --------------------- FACTURAS ---------------------
-facturaForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  await addDoc(collection(db, "facturas"), {
-    id: document.getElementById("idFactura").value,
-    fecha: document.getElementById("fechaFactura").value,
-    proveedor: document.getElementById("proveedorFactura").value,
-    producto: document.getElementById("productoFactura").value,
-    monto: document.getElementById("montoFactura").value,
-    moneda: document.getElementById("monedaFactura").value,
-    tipo: document.getElementById("tipoFactura").value
-  });
-  facturaForm.reset();
-});
-
-onSnapshot(collection(db, "facturas"), snapshot => {
-  tablaFacturas.innerHTML = "";
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    d.idFire = docu.id;
-    crearFila(d, tablaFacturas, "facturas");
-  });
-});
-</script>
+<!-- JS modular -->
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+</html>
+
 
