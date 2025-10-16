@@ -7,14 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ===================== ESTILOS ===================== */
 :root{
-  --bg1: #f7fbff; 
-  --bg2: #eef9ff; 
-  --card: #ffffff; 
-  --accent: #10bcd4; 
-  --muted: #6b7280;
-  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); 
-  --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
+  --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
+  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
+  --radius: 16px;
 }
 *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
@@ -47,7 +44,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 .table-scroll{max-height:420px;overflow:auto;padding-right:6px}
 .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600;box-shadow:0 6px 18px rgba(16,188,212,0.12)}
 .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(16,188,212,0.12)}
-.muted{color:#6b7280;font-size:13px}
+.muted{color:var(--muted);font-size:13px}
 </style>
 </head>
 <body>
@@ -167,8 +164,13 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     </div>
   </main>
 </div>
+
+<!-- Aquí se incluirá el JS aparte -->
+<script src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
