@@ -7,9 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ===================== ESTILOS ===================== */
 :root{
-  --bg1:#f7fbff; --bg2:#eef9ff; --card:#fff; --accent:#10bcd4; --muted:#6b7280;
-  --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08); --radius:16px;
+  --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
+  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
+  --radius: 16px;
 }
 *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
@@ -22,12 +24,17 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(
 .menu-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;}
 .menu-btn:hover{transform:translateY(-3px)}
 .menu-btn.activo, .menu-btn:focus{background:linear-gradient(90deg,rgba(16,188,212,0.12),rgba(16,188,212,0.06));box-shadow:var(--shadow-md);border-left:3px solid var(--accent);}
+.menu-btn .ico{width:18px;height:18px;display:inline-block;opacity:0.9}
 .logout{margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;}
 .main{padding:28px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.82));box-shadow:var(--shadow-lg);backdrop-filter:blur(4px);}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .header h2{margin:0;font-weight:700;color:#07203a}
 .search-box{display:flex;gap:10px;align-items:center;}
 input[type="search"]{padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);min-width:280px;box-shadow:var(--shadow-md);}
+.tabs{display:flex;gap:12px;margin-bottom:18px;}
+.seccion{display:none;}
+.seccion.activa{display:block;animation:fadeIn .28s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;}
 .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.03);}
 .card h3{margin:0 0 8px 0;font-size:15px}
@@ -66,7 +73,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 
     <div class="grid">
       <div>
-        <!-- PROVEEDORES -->
+        <!-- Proveedores -->
         <section id="seccion-proveedores" class="seccion activa">
           <div class="card">
             <h3>Registrar proveedor</h3>
@@ -96,7 +103,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
           </div>
         </section>
 
-        <!-- PRODUCTOS -->
+        <!-- Productos -->
         <section id="seccion-productos" class="seccion">
           <div class="card">
             <h3>Registrar producto</h3>
@@ -123,7 +130,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
           </div>
         </section>
 
-        <!-- FACTURAS -->
+        <!-- Facturas -->
         <section id="seccion-facturas" class="seccion">
           <div class="card">
             <h3>Registrar factura</h3>
@@ -158,40 +165,29 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     </div>
   </main>
 </div>
-<script type="module">
-// --------------------- FIREBASE ---------------------
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// Configura tu proyecto Firebase
+<!-- JS con Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
     authDomain: "discovery-pets.firebaseapp.com",
     projectId: "discovery-pets",
     storageBucket: "discovery-pets.firebasestorage.app",
     messagingSenderId: "481355972999",
-    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-    measurementId: "G-0WMLRY8FGM"
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --------------------- VARIABLES ---------------------
+// ====================== PROVEEDORES ======================
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
 
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-const productoSelect = document.getElementById("productoFactura");
-
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-
-const buscadorFactura = document.getElementById("buscadorFactura");
-const btnRefresh = document.getElementById("btnRefresh");
-
-// --------------------- CRUD PROVEEDORES ---------------------
 proveedorForm.addEventListener("submit", async (e)=>{
   e.preventDefault();
   const data = {
@@ -212,7 +208,6 @@ proveedorForm.addEventListener("submit", async (e)=>{
   proveedorForm.reset();
 });
 
-// Mostrar proveedores en tiempo real
 onSnapshot(collection(db,"proveedores"), snapshot=>{
   tablaProveedores.innerHTML="";
   proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
@@ -243,7 +238,11 @@ window.editarProveedor = (id,nombre,ruc,telefono,opc,direccion)=>{
   proveedorForm.querySelector("button").textContent = "Actualizar proveedor";
 };
 
-// --------------------- CRUD PRODUCTOS ---------------------
+// ====================== PRODUCTOS ======================
+const productoForm = document.getElementById("productoForm");
+const tablaProductos = document.getElementById("tablaProductos");
+const productoSelect = document.getElementById("productoFactura");
+
 productoForm.addEventListener("submit", async (e)=>{
   e.preventDefault();
   const data = {
@@ -291,7 +290,10 @@ window.editarProducto = (id,nombre,precio,cantidad,descripcion)=>{
   productoForm.querySelector("button").textContent = "Actualizar producto";
 };
 
-// --------------------- CRUD FACTURAS ---------------------
+// ====================== FACTURAS ======================
+const facturaForm = document.getElementById("facturaForm");
+const tablaFacturas = document.getElementById("tablaFacturas");
+
 facturaForm.addEventListener("submit", async (e)=>{
   e.preventDefault();
   const data = {
@@ -314,7 +316,6 @@ facturaForm.addEventListener("submit", async (e)=>{
   facturaForm.reset();
 });
 
-// Mostrar facturas en tiempo real
 onSnapshot(collection(db,"facturas"), snapshot=>{
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
@@ -347,10 +348,12 @@ window.editarFactura = (id,fid,fecha,proveedor,producto,monto,moneda,tipo)=>{
   facturaForm.querySelector("button").textContent = "Actualizar factura";
 };
 
-// --------------------- BORRAR ---------------------
+// ====================== BORRAR ======================
 window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
 
-// --------------------- BUSCADOR ---------------------
+// ====================== BUSCADOR ======================
+const buscadorFactura = document.getElementById("buscadorFactura");
+const btnRefresh = document.getElementById("btnRefresh");
 buscadorFactura.addEventListener("input", ()=>{
   const filtro = buscadorFactura.value.toLowerCase();
   const filas = tablaFacturas.querySelectorAll("tr");
@@ -359,27 +362,32 @@ buscadorFactura.addEventListener("input", ()=>{
     fila.style.display = producto.includes(filtro) ? "" : "none";
   });
 });
+btnRefresh.addEventListener("click", ()=>{
+  buscadorFactura.value="";
+  buscadorFactura.dispatchEvent(new Event("input"));
+});
 
-btnRefresh.addEventListener("click", ()=>{ buscadorFactura.value=""; buscadorFactura.dispatchEvent(new Event("input")); });
-
-// --------------------- MENU LATERAL ---------------------
+// ====================== MENU ======================
 const menuBtns = document.querySelectorAll(".menu-btn");
 const secciones = document.querySelectorAll(".seccion");
 menuBtns.forEach(btn=>{
   btn.addEventListener("click", ()=>{
     menuBtns.forEach(b=>b.classList.remove("activo"));
     btn.classList.add("activo");
-    const target = btn.dataset.target;
     secciones.forEach(s=>s.classList.remove("activa"));
-    document.getElementById(target).classList.add("activa");
+    document.getElementById(btn.dataset.target).classList.add("activa");
   });
 });
 
-// --------------------- LOGOUT (simulado) ---------------------
+// ====================== LOGOUT ======================
 document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  alert("Sesión cerrada"); // aquí puedes redirigir a login si tienes
+  alert("Sesión cerrada"); // reemplaza con window.location.href="login.html"
 });
 </script>
+</body>
+</html>
+
+
 
 
 
