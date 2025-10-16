@@ -1,10 +1,22 @@
-// ------------------ CONFIGURACIÓN FIREBASE ------------------
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import {
-  getDatabase, ref, push, onValue, remove, update
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+/* ================================
+   DASHBOARD.JS · DISCOVERY PETS
+   PARTE 1: Configuración base Firebase
+================================= */
 
-// Tu configuración Firebase (usa la tuya)
+// Importa las funciones necesarias de Firebase v9+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  update,
+  remove,
+  onValue,
+  get
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+// ⚙️ Tu configuración de Firebase (puedes reemplazarla con la tuya)
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -12,389 +24,487 @@ const firebaseConfig = {
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:a7c7e7d6f21f0a29c7e3a1"
+  appId: "1:481355972999:web:example123"
 };
 
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ------------------ NAVEGACIÓN ENTRE SECCIONES ------------------
-const menuBtns = document.querySelectorAll('.menu-btn');
-const secciones = document.querySelectorAll('.seccion');
+// 🧩 Referencias a tablas
+const refProveedores = ref(db, "proveedores");
+const refProductos = ref(db, "productos");
+const refFacturas = ref(db, "facturas");
 
-menuBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    menuBtns.forEach(b => b.classList.remove('activo'));
-    btn.classList.add('activo');
-    const target = btn.dataset.target;
-    secciones.forEach(sec => sec.classList.remove('activa'));
-    document.getElementById(target).classList.add('activa');
+// 🧠 Utilidades básicas
+const $ = (id) => document.getElementById(id);
+const secciones = document.querySelectorAll("section");
+const botonesMenu = document.querySelectorAll(".menu-btn");
+
+// Control de cambio de secciones (Proveedores, Productos, Facturas)
+botonesMenu.forEach(btn => {
+  btn.addEventListener("click", () => {
+    botonesMenu.forEach(b => b.classList.remove("activo"));
+    btn.classList.add("activo");
+    const target = btn.getAttribute("data-target");
+    secciones.forEach(s => s.style.display = "none");
+    $(target).style.display = "block";
   });
 });
+/* =====================================
+   PARTE 2: CRUD DE PROVEEDORES (Realtime)
+===================================== */
 
-// ------------------ REFERENCIAS DOM ------------------
-const proveedorSelectFactura = document.getElementById("proveedorFactura");
-const productoSelectFactura = document.getElementById("productoFactura");
-
-// Listas dinámicas de selects
-function cargarProveedoresEnSelect() {
-  const provRef = ref(db, "proveedores");
-  onValue(provRef, snapshot => {
-    proveedorSelectFactura.innerHTML = '<option value="">Seleccione proveedor</option>';
-    snapshot.forEach(child => {
-      const data = child.val();
-      const opt = document.createElement("option");
-      opt.value = data.nombre;
-      opt.textContent = data.nombre;
-      proveedorSelectFactura.appendChild(opt);
-    });
-  });
-}
-
-function cargarProductosEnSelect() {
-  const prodRef = ref(db, "productos");
-  onValue(prodRef, snapshot => {
-    productoSelectFactura.innerHTML = '<option value="">Seleccione producto</option>';
-    snapshot.forEach(child => {
-      const data = child.val();
-      const opt = document.createElement("option");
-      opt.value = data.nombre;
-      opt.textContent = data.nombre;
-      productoSelectFactura.appendChild(opt);
-    });
-  });
-}
-
-// Ejecutar carga inicial de selects
-cargarProveedoresEnSelect();
-cargarProductosEnSelect();
-
-
-console.log("dashboard.js (particionado) cargado — listeners en tiempo real activos.");
-// ------------------ CRUD PROVEEDORES ------------------
-const proveedorForm = document.getElementById("proveedorForm");
-const tablaProveedores = document.getElementById("tablaProveedores");
-
-let proveedorEditId = null;
-
-// Añadir o actualizar proveedor
-proveedorForm.addEventListener("submit", e => {
+// --- Registrar proveedor ---
+$("formProveedor").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const ruc = document.getElementById("rucProveedor").value.trim();
-  const nombre = document.getElementById("nombreProveedor").value.trim();
-  const direccion = document.getElementById("direccionProveedor").value.trim();
-  const telefono = document.getElementById("telefonoProveedor").value.trim();
+  const proveedor = {
+    nombre: $("provNombre").value.trim(),
+    ruc: $("provRuc").value.trim(),
+    direccion: $("provDireccion").value.trim(),
+    telefono: $("provTelefono").value.trim() || "—",
+    numeroOpcional: $("provNumero").value.trim() || "—"
+  };
 
-  if (!ruc || !nombre) {
-    alert("RUC y Nombre son obligatorios");
+  if (!proveedor.nombre || !proveedor.ruc) {
+    alert("Por favor completa los campos obligatorios (nombre y RUC).");
     return;
   }
 
-  const proveedorData = { ruc, nombre, direccion, telefono };
+  const nuevoRef = push(refProveedores);
+  await set(nuevoRef, proveedor);
 
-  if (proveedorEditId) {
-    // Actualizar proveedor existente
-    update(ref(db, "proveedores/" + proveedorEditId), proveedorData);
-    proveedorEditId = null;
-  } else {
-    // Nuevo proveedor
-    push(ref(db, "proveedores"), proveedorData);
-  }
-
-  proveedorForm.reset();
+  e.target.reset();
+  alert("✅ Proveedor registrado correctamente.");
 });
 
-// Cargar proveedores en tiempo real
-onValue(ref(db, "proveedores"), snapshot => {
-  tablaProveedores.innerHTML = "";
-  snapshot.forEach(child => {
-    const data = child.val();
+// --- Mostrar proveedores en tiempo real ---
+onValue(refProveedores, (snapshot) => {
+  const tbody = $("tablaProveedores").querySelector("tbody");
+  tbody.innerHTML = "";
+  snapshot.forEach((child) => {
+    const prov = child.val();
     const id = child.key;
-
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${data.ruc}</td>
-      <td>${data.nombre}</td>
-      <td>${data.direccion || "-"}</td>
-      <td>${data.telefono || "-"}</td>
+      <td>${prov.nombre}</td>
+      <td>${prov.ruc}</td>
+      <td>${prov.direccion}</td>
+      <td>${prov.telefono}</td>
+      <td>${prov.numeroOpcional}</td>
       <td>
-        <button class="btn btn-edit" data-id="${id}">Editar</button>
-        <button class="btn btn-delete" data-id="${id}">Eliminar</button>
+        <button class="btn-editar" data-id="${id}">Editar</button>
+        <button class="btn-eliminar" data-id="${id}">Eliminar</button>
       </td>
     `;
-    tablaProveedores.appendChild(tr);
-  });
-
-  // Recargar los selects dinámicos
-  cargarProveedoresEnSelect();
-});
-
-// Detectar clic en botones de acción
-tablaProveedores.addEventListener("click", e => {
-  const id = e.target.dataset.id;
-
-  if (e.target.classList.contains("btn-delete")) {
-    if (confirm("¿Eliminar este proveedor?")) {
-      remove(ref(db, "proveedores/" + id));
-    }
-  }
-
-  if (e.target.classList.contains("btn-edit")) {
-    const provRef = ref(db, "proveedores/" + id);
-    onValue(provRef, snap => {
-      const data = snap.val();
-      if (data) {
-        document.getElementById("rucProveedor").value = data.ruc;
-        document.getElementById("nombreProveedor").value = data.nombre;
-        document.getElementById("direccionProveedor").value = data.direccion;
-        document.getElementById("telefonoProveedor").value = data.telefono;
-        proveedorEditId = id;
-      }
-    }, { onlyOnce: true });
-  }
-});
-// ------------------ CRUD PRODUCTOS ------------------
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-
-const productosRef = ref(db, "productos");
-
-productoForm.addEventListener("submit", e => {
-  e.preventDefault();
-
-  const nombre = document.getElementById("nombreProducto").value.trim();
-  const precio = document.getElementById("precioProducto").value.trim();
-  const cantidad = document.getElementById("cantidadProducto").value.trim();
-  const descripcion = document.getElementById("descripcionProducto").value.trim();
-
-  if (!nombre) {
-    alert("El nombre del producto es obligatorio");
-    return;
-  }
-
-  push(productosRef, { nombre, precio, cantidad, descripcion })
-    .then(() => productoForm.reset())
-    .catch(err => console.error("Error al guardar producto:", err));
-});
-
-// Mostrar productos en tiempo real
-onValue(productosRef, snapshot => {
-  tablaProductos.innerHTML = "";
-  snapshot.forEach(child => {
-    const id = child.key;
-    const data = child.val();
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${data.nombre}</td>
-      <td>${data.precio || '-'}</td>
-      <td>${data.cantidad || '-'}</td>
-      <td>${data.descripcion || '-'}</td>
-      <td>
-        <button class="btn btn-edit" data-id="${id}">Editar</button>
-        <button class="btn btn-delete" data-id="${id}">Eliminar</button>
-      </td>
-    `;
-    tablaProductos.appendChild(tr);
+    tbody.appendChild(tr);
   });
 });
 
-// Editar producto
-tablaProductos.addEventListener("click", e => {
-  if (e.target.classList.contains("btn-edit")) {
+// --- Eliminar proveedor ---
+$("tablaProveedores").addEventListener("click", async (e) => {
+  if (e.target.classList.contains("btn-eliminar")) {
     const id = e.target.dataset.id;
-    const row = e.target.closest("tr");
-    const celdas = row.querySelectorAll("td");
-
-    const nombre = prompt("Nuevo nombre:", celdas[0].textContent);
-    const precio = prompt("Nuevo precio:", celdas[1].textContent);
-    const cantidad = prompt("Nueva cantidad:", celdas[2].textContent);
-    const descripcion = prompt("Nueva descripción:", celdas[3].textContent);
-
-    if (nombre) {
-      update(ref(db, "productos/" + id), { nombre, precio, cantidad, descripcion });
+    if (confirm("¿Eliminar este proveedor?")) {
+      await remove(ref(db, "proveedores/" + id));
+      alert("🗑️ Proveedor eliminado correctamente.");
     }
   }
+});
 
-  if (e.target.classList.contains("btn-delete")) {
+// --- Editar proveedor ---
+$("tablaProveedores").addEventListener("click", (e) => {
+  if (e.target.classList.contains("btn-editar")) {
+    const fila = e.target.closest("tr");
+    const id = e.target.dataset.id;
+    const celdas = fila.querySelectorAll("td");
+
+    // Convertir a inputs editables
+    const campos = ["nombre", "ruc", "direccion", "telefono", "numeroOpcional"];
+    campos.forEach((campo, i) => {
+      const valor = celdas[i].innerText;
+      celdas[i].innerHTML = `<input value="${valor}" data-campo="${campo}" style="width:100%">`;
+    });
+
+    e.target.textContent = "Guardar";
+    e.target.classList.remove("btn-editar");
+    e.target.classList.add("btn-guardar");
+
+    // Desactivar el botón eliminar temporalmente
+    fila.querySelector(".btn-eliminar").disabled = true;
+
+    // Guardar cambios
+    e.target.addEventListener("click", async () => {
+      const inputs = fila.querySelectorAll("input[data-campo]");
+      const actualizacion = {};
+      inputs.forEach(input => actualizacion[input.dataset.campo] = input.value.trim());
+
+      await update(ref(db, "proveedores/" + id), actualizacion);
+      alert("✅ Cambios guardados.");
+      fila.querySelector(".btn-eliminar").disabled = false;
+    }, { once: true });
+  }
+});
+/* =====================================
+   PARTE 3: CRUD DE PRODUCTOS (Realtime)
+===================================== */
+
+// --- Registrar producto ---
+$("formProducto").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const producto = {
+    nombre: $("prodNombre").value.trim(),
+    precio: parseFloat($("prodPrecio").value.trim()) || 0,
+    cantidad: parseInt($("prodCantidad").value.trim()) || 0,
+    descripcion: $("prodDescripcion").value.trim() || "—"
+  };
+
+  if (!producto.nombre || producto.precio <= 0) {
+    alert("Por favor completa los campos obligatorios (nombre y precio).");
+    return;
+  }
+
+  const nuevoRef = push(refProductos);
+  await set(nuevoRef, producto);
+
+  e.target.reset();
+  alert("✅ Producto registrado correctamente.");
+});
+
+// --- Mostrar productos en tiempo real ---
+onValue(refProductos, (snapshot) => {
+  const tbody = $("tablaProductos").querySelector("tbody");
+  tbody.innerHTML = "";
+  snapshot.forEach((child) => {
+    const prod = child.val();
+    const id = child.key;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${prod.nombre}</td>
+      <td>${prod.precio.toFixed(2)}</td>
+      <td>${prod.cantidad}</td>
+      <td>${prod.descripcion}</td>
+      <td>
+        <button class="btn-editar" data-id="${id}">Editar</button>
+        <button class="btn-eliminar" data-id="${id}">Eliminar</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+});
+
+// --- Eliminar producto ---
+$("tablaProductos").addEventListener("click", async (e) => {
+  if (e.target.classList.contains("btn-eliminar")) {
     const id = e.target.dataset.id;
     if (confirm("¿Eliminar este producto?")) {
-      remove(ref(db, "productos/" + id));
+      await remove(ref(db, "productos/" + id));
+      alert("🗑️ Producto eliminado correctamente.");
     }
   }
 });
-// ------------------ CRUD FACTURAS ------------------
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-const facturasRef = ref(db, "facturas");
 
-// MODAL
-const modal = document.getElementById("modalDetalle");
-const modalContenido = document.getElementById("modalContenido");
-const cerrarModal = document.getElementById("cerrarModal");
-cerrarModal.addEventListener("click", () => modal.classList.remove("show"));
+// --- Editar producto ---
+$("tablaProductos").addEventListener("click", (e) => {
+  if (e.target.classList.contains("btn-editar")) {
+    const fila = e.target.closest("tr");
+    const id = e.target.dataset.id;
+    const celdas = fila.querySelectorAll("td");
 
-// Registrar factura
-facturaForm.addEventListener("submit", e => {
+    // Convertir a inputs editables
+    const campos = ["nombre", "precio", "cantidad", "descripcion"];
+    campos.forEach((campo, i) => {
+      const valor = celdas[i].innerText;
+      celdas[i].innerHTML = `<input value="${valor}" data-campo="${campo}" style="width:100%">`;
+    });
+
+    e.target.textContent = "Guardar";
+    e.target.classList.remove("btn-editar");
+    e.target.classList.add("btn-guardar");
+
+    // Desactivar el botón eliminar temporalmente
+    fila.querySelector(".btn-eliminar").disabled = true;
+
+    // Guardar cambios
+    e.target.addEventListener("click", async () => {
+      const inputs = fila.querySelectorAll("input[data-campo]");
+      const actualizacion = {};
+      inputs.forEach(input => {
+        const campo = input.dataset.campo;
+        const valor = input.value.trim();
+        actualizacion[campo] =
+          campo === "precio" ? parseFloat(valor) || 0 :
+          campo === "cantidad" ? parseInt(valor) || 0 : valor;
+      });
+
+      await update(ref(db, "productos/" + id), actualizacion);
+      alert("✅ Cambios guardados correctamente.");
+      fila.querySelector(".btn-eliminar").disabled = false;
+    }, { once: true });
+  }
+});
+/* =====================================
+   PARTE 4: CRUD DE FACTURAS
+===================================== */
+
+// --- Cargar proveedores y productos en los selects ---
+function cargarSelects() {
+  // Proveedores
+  onValue(refProveedores, (snapshot) => {
+    const select = $("facturaProveedor");
+    select.innerHTML = '<option value="">Seleccione proveedor</option>';
+    snapshot.forEach((child) => {
+      const prov = child.val();
+      const id = child.key;
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = prov.nombre + (prov.numero ? ` (${prov.numero})` : "");
+      select.appendChild(opt);
+    });
+  });
+
+  // Productos
+  onValue(refProductos, (snapshot) => {
+    const select = $("facturaProducto");
+    select.innerHTML = '<option value="">Seleccione producto</option>';
+    snapshot.forEach((child) => {
+      const prod = child.val();
+      const id = child.key;
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = `${prod.nombre} - S/${prod.precio}`;
+      select.appendChild(opt);
+    });
+  });
+}
+
+cargarSelects();
+
+// --- Registrar factura ---
+$("formFactura").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const idFactura = document.getElementById("idFactura").value.trim();
-  const numeroFactura = document.getElementById("numeroFactura").value.trim();
-  const fecha = document.getElementById("fechaEmisionFactura").value;
-  const proveedor = document.getElementById("proveedorFactura").value;
-  const producto = document.getElementById("productoFactura").value;
-  const monto = document.getElementById("montoFactura").value.trim();
-  const moneda = document.getElementById("monedaFactura").value;
-  const tipo = document.getElementById("tipoFactura").value;
+  const proveedorId = $("facturaProveedor").value;
+  const productoId = $("facturaProducto").value;
 
-  if (!idFactura || !numeroFactura || !proveedor || !producto) {
-    alert("Por favor completa los campos obligatorios");
+  if (!proveedorId || !productoId) {
+    alert("Seleccione un proveedor y un producto.");
     return;
   }
 
-  push(facturasRef, { idFactura, numeroFactura, proveedor, producto, monto, moneda, tipo, fecha })
-    .then(() => facturaForm.reset())
-    .catch(err => console.error("Error al guardar factura:", err));
+  const factura = {
+    codigo: $("facturaCodigo").value.trim(),
+    proveedorId,
+    productoId,
+    fecha: $("facturaFecha").value || new Date().toISOString().split("T")[0],
+    cantidad: parseInt($("facturaCantidad").value) || 1,
+    total: parseFloat($("facturaTotal").value) || 0
+  };
+
+  const nuevoRef = push(refFacturas);
+  await set(nuevoRef, factura);
+
+  e.target.reset();
+  alert("✅ Factura registrada correctamente.");
 });
 
-// Mostrar facturas en tiempo real
-onValue(facturasRef, snapshot => {
-  tablaFacturas.innerHTML = "";
-  snapshot.forEach(child => {
+// --- Mostrar facturas en tiempo real ---
+onValue(refFacturas, async (snapshot) => {
+  const tbody = $("tablaFacturas").querySelector("tbody");
+  tbody.innerHTML = "";
+
+  const proveedoresSnap = await get(refProveedores);
+  const productosSnap = await get(refProductos);
+
+  snapshot.forEach((child) => {
+    const fact = child.val();
     const id = child.key;
-    const data = child.val();
+
+    const prov = proveedoresSnap.child(fact.proveedorId).val() || { nombre: "—" };
+    const prod = productosSnap.child(fact.productoId).val() || { nombre: "—", precio: 0 };
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${data.idFactura}</td>
-      <td>${data.numeroFactura}</td>
-      <td>${data.proveedor}</td>
-      <td>${data.producto}</td>
-      <td>${data.moneda || ''} ${data.monto || ''}</td>
-      <td>${data.tipo}</td>
-      <td>${data.fecha}</td>
+      <td>${fact.codigo}</td>
+      <td>${prov.nombre}</td>
+      <td>${prod.nombre}</td>
+      <td>${fact.fecha}</td>
+      <td>${fact.cantidad}</td>
+      <td>S/${fact.total.toFixed(2)}</td>
       <td>
-        <button class="btn btn-edit" data-id="${id}">Editar</button>
-        <button class="btn btn-delete" data-id="${id}">Eliminar</button>
-        <button class="btn secondary btn-detalle" data-id="${id}">Ver</button>
+        <button class="btn-editar" data-id="${id}">Editar</button>
+        <button class="btn-eliminar" data-id="${id}">Eliminar</button>
       </td>
     `;
-    tablaFacturas.appendChild(tr);
+    tbody.appendChild(tr);
   });
 });
 
-// Editar factura
-tablaFacturas.addEventListener("click", e => {
-  const id = e.target.dataset.id;
-  if (e.target.classList.contains("btn-edit")) {
-    const row = e.target.closest("tr");
-    const celdas = row.querySelectorAll("td");
-
-    const idFactura = prompt("Nuevo ID:", celdas[0].textContent);
-    const numeroFactura = prompt("Nuevo número:", celdas[1].textContent);
-    const proveedor = prompt("Nuevo proveedor:", celdas[2].textContent);
-    const producto = prompt("Nuevo producto:", celdas[3].textContent);
-    const monto = prompt("Nuevo monto:", celdas[4].textContent.replace(/[^\d.]/g, ""));
-    const tipo = prompt("Nuevo tipo (FACTURA / BOLETA):", celdas[5].textContent);
-    const fecha = prompt("Nueva fecha (YYYY-MM-DD):", celdas[6].textContent);
-
-    if (idFactura && numeroFactura) {
-      update(ref(db, "facturas/" + id), {
-        idFactura, numeroFactura, proveedor, producto, monto, tipo, fecha
-      });
-    }
-  }
-
-  if (e.target.classList.contains("btn-delete")) {
+// --- Eliminar factura ---
+$("tablaFacturas").addEventListener("click", async (e) => {
+  if (e.target.classList.contains("btn-eliminar")) {
+    const id = e.target.dataset.id;
     if (confirm("¿Eliminar esta factura?")) {
-      remove(ref(db, "facturas/" + id));
+      await remove(ref(db, "facturas/" + id));
+      alert("🗑️ Factura eliminada correctamente.");
     }
   }
-
-  if (e.target.classList.contains("btn-detalle")) {
-    mostrarDetalleFactura(id);
-  }
 });
 
-// Función para mostrar detalle en el modal
-function mostrarDetalleFactura(id) {
-  const facturaRef = ref(db, "facturas/" + id);
-  onValue(facturaRef, snapshot => {
-    const f = snapshot.val();
-    modalContenido.innerHTML = `
-      <h3>📜 Detalle de Factura</h3>
-      <p><b>ID:</b> ${f.idFactura}</p>
-      <p><b>Número:</b> ${f.numeroFactura}</p>
-      <p><b>Proveedor:</b> ${f.proveedor}</p>
-      <p><b>Producto:</b> ${f.producto}</p>
-      <p><b>Monto:</b> ${f.moneda} ${f.monto}</p>
-      <p><b>Tipo:</b> ${f.tipo}</p>
-      <p><b>Fecha:</b> ${f.fecha}</p>
-    `;
-    modal.classList.add("show");
-  }, { onlyOnce: true });
-}
-// ------------------ BUSCADOR INTERACTIVO ------------------
-const buscadorFactura = document.getElementById("buscadorFactura");
-const btnRefresh = document.getElementById("btnRefresh");
+// --- Editar factura ---
+$("tablaFacturas").addEventListener("click", (e) => {
+  if (e.target.classList.contains("btn-editar")) {
+    const fila = e.target.closest("tr");
+    const id = e.target.dataset.id;
+    const celdas = fila.querySelectorAll("td");
 
-buscadorFactura.addEventListener("keypress", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const query = buscadorFactura.value.toLowerCase();
-    if (!query) return;
+    // Convertir a inputs editables
+    const campos = ["codigo", "proveedor", "producto", "fecha", "cantidad", "total"];
+    campos.forEach((campo, i) => {
+      if (campo === "proveedor" || campo === "producto") return; // no editar selects aquí
+      const valor = celdas[i].innerText.replace("S/", "").trim();
+      celdas[i].innerHTML = `<input value="${valor}" data-campo="${campo}" style="width:100%">`;
+    });
 
-    const facturaQuery = ref(db, "facturas");
-    onValue(facturaQuery, snapshot => {
-      const resultados = [];
-      snapshot.forEach(child => {
-        const f = child.val();
-        if (f.producto && f.producto.toLowerCase().includes(query)) {
-          resultados.push(f);
-        }
+    e.target.textContent = "Guardar";
+    e.target.classList.remove("btn-editar");
+    e.target.classList.add("btn-guardar");
+
+    fila.querySelector(".btn-eliminar").disabled = true;
+
+    e.target.addEventListener("click", async () => {
+      const inputs = fila.querySelectorAll("input[data-campo]");
+      const actualizacion = {};
+      inputs.forEach((input) => {
+        const campo = input.dataset.campo;
+        const valor = input.value.trim();
+        actualizacion[campo] =
+          campo === "cantidad" ? parseInt(valor) || 0 :
+          campo === "total" ? parseFloat(valor) || 0 : valor;
       });
 
-      if (resultados.length > 0) {
-        mostrarResultadosBusqueda(resultados);
-      } else {
-        modalContenido.innerHTML = `<h3>❌ No se encontraron facturas para "${query}"</h3>`;
-        modal.classList.add("show");
+      await update(ref(db, "facturas/" + id), actualizacion);
+      alert("✅ Cambios guardados correctamente.");
+      fila.querySelector(".btn-eliminar").disabled = false;
+    }, { once: true });
+  }
+});
+/* =====================================
+   PARTE 5: BUSCADOR Y MODAL DE DETALLE
+===================================== */
+
+// --- Buscar facturas por nombre de producto ---
+$("buscadorFactura").addEventListener("keypress", async (e) => {
+  if (e.key === "Enter") {
+    const texto = e.target.value.trim().toLowerCase();
+    if (!texto) return;
+
+    const snapshotFacturas = await get(refFacturas);
+    const snapshotProductos = await get(refProductos);
+    const snapshotProveedores = await get(refProveedores);
+
+    const tbody = $("tablaFacturas").querySelector("tbody");
+    tbody.innerHTML = "";
+
+    snapshotFacturas.forEach((child) => {
+      const factura = child.val();
+      const id = child.key;
+      const producto = snapshotProductos.child(factura.productoId).val();
+      const proveedor = snapshotProveedores.child(factura.proveedorId).val();
+
+      if (producto && producto.nombre.toLowerCase().includes(texto)) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${factura.codigo}</td>
+          <td>${proveedor ? proveedor.nombre : "—"}</td>
+          <td>${producto.nombre}</td>
+          <td>${factura.fecha}</td>
+          <td>${factura.cantidad}</td>
+          <td>S/${factura.total.toFixed(2)}</td>
+          <td>
+            <button class="btn-detalle" data-id="${id}">🔍 Ver</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
       }
-    }, { onlyOnce: true });
+    });
+
+    if (tbody.innerHTML === "") {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#888">No se encontraron facturas para "${texto}"</td></tr>`;
+    }
   }
 });
 
-// Mostrar resultados del buscador en el modal
-function mostrarResultadosBusqueda(resultados) {
-  modalContenido.innerHTML = `
-    <h3>🔎 Resultados de búsqueda</h3>
-    <div style="max-height:400px;overflow:auto;">
-      <table style="width:100%;border-collapse:collapse;">
-        <thead>
-          <tr><th>ID</th><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Fecha</th></tr>
-        </thead>
-        <tbody>
-          ${resultados.map(f => `
-            <tr>
-              <td>${f.idFactura}</td>
-              <td>${f.numeroFactura}</td>
-              <td>${f.proveedor}</td>
-              <td>${f.producto}</td>
-              <td>${f.moneda} ${f.monto}</td>
-              <td>${f.fecha}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-  `;
-  modal.classList.add("show");
-}
-
-// Botón para limpiar el buscador
-btnRefresh.addEventListener("click", () => {
-  buscadorFactura.value = "";
-  modal.classList.remove("show");
+// --- Botón restablecer ---
+$("btnRefresh").addEventListener("click", () => {
+  location.reload();
 });
 
+// --- Modal de detalle dinámico ---
+const modal = document.createElement("div");
+modal.id = "detalleModal";
+modal.style.cssText = `
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.4);display:none;
+  align-items:center;justify-content:center;z-index:1000;
+`;
+modal.innerHTML = `
+  <div style="
+    background:white;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.25);
+    max-width:480px;width:90%;padding:20px;text-align:left;
+    animation:fadeIn .3s ease;
+  ">
+    <h3 style="margin-top:0;color:#00bcd4">Detalles de Factura</h3>
+    <div id="detalleContenido"></div>
+    <button id="cerrarModal" class="btn" style="margin-top:14px;width:100%">Cerrar</button>
+  </div>
+`;
+document.body.appendChild(modal);
+
+// --- Mostrar detalles al hacer clic en 🔍 ---
+$("tablaFacturas").addEventListener("click", async (e) => {
+  if (e.target.classList.contains("btn-detalle")) {
+    const id = e.target.dataset.id;
+    const facturaSnap = await get(ref(db, "facturas/" + id));
+    const factura = facturaSnap.val();
+
+    const proveedorSnap = await get(ref(db, "proveedores/" + factura.proveedorId));
+    const productoSnap = await get(ref(db, "productos/" + factura.productoId));
+
+    const prov = proveedorSnap.val() || {};
+    const prod = productoSnap.val() || {};
+
+    $("detalleContenido").innerHTML = `
+      <p><strong>Código:</strong> ${factura.codigo}</p>
+      <p><strong>Proveedor:</strong> ${prov.nombre || "—"}</p>
+      <p><strong>Producto:</strong> ${prod.nombre || "—"}</p>
+      <p><strong>Fecha:</strong> ${factura.fecha}</p>
+      <p><strong>Cantidad:</strong> ${factura.cantidad}</p>
+      <p><strong>Total:</strong> S/${factura.total.toFixed(2)}</p>
+      <hr>
+      <p style="font-size:13px;color:#64748b">
+        <em>Datos en tiempo real - Discovery Pets</em>
+      </p>
+    `;
+
+    modal.style.display = "flex";
+  }
+});
+
+// --- Cerrar modal ---
+modal.querySelector("#cerrarModal").addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// --- Animación del modal ---
+const estiloModal = document.createElement("style");
+estiloModal.textContent = `
+@keyframes fadeIn {
+  from {opacity:0;transform:translateY(-10px);}
+  to {opacity:1;transform:translateY(0);}
+}
+`;
+document.head.appendChild(estiloModal);
 
