@@ -8,9 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
-  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
-  --radius: 16px;
+  --bg1:#f7fbff; --bg2:#eef9ff; --card:#ffffff; --accent:#10bcd4; --muted:#6b7280;
+  --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08);
+  --radius:16px;
 }
 *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
@@ -23,7 +23,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(
 .menu-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;}
 .menu-btn:hover{transform:translateY(-3px)}
 .menu-btn.activo, .menu-btn:focus{background:linear-gradient(90deg,rgba(16,188,212,0.12),rgba(16,188,212,0.06));box-shadow:var(--shadow-md);border-left:3px solid var(--accent);}
-.menu-btn .ico{width:18px;height:18px;display:inline-block;opacity:0.9}
 .logout{margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;}
 .main{padding:28px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.82));box-shadow:var(--shadow-lg);backdrop-filter:blur(4px);}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
@@ -95,7 +94,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
             <h3>Proveedores registrados</h3>
             <div class="table-scroll">
               <table>
-                <thead><tr><th>Nombre</th><th>RUC</th><th>Teléfono</th><th>Opc.</th><th>Dirección</th><th></th></tr></thead>
+                <thead><tr><th>Nombre</th><th>RUC</th><th>Teléfono</th><th>Opc.</th><th>Dirección</th><th></th><th></th></tr></thead>
                 <tbody id="tablaProveedores"></tbody>
               </table>
             </div>
@@ -122,7 +121,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
             <h3>Productos registrados</h3>
             <div class="table-scroll">
               <table>
-                <thead><tr><th>Nombre</th><th>Precio</th><th>Cant.</th><th>Desc.</th><th></th></tr></thead>
+                <thead><tr><th>Nombre</th><th>Precio</th><th>Cant.</th><th>Desc.</th><th></th><th></th></tr></thead>
                 <tbody id="tablaProductos"></tbody>
               </table>
             </div>
@@ -145,7 +144,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               <div class="row">
                 <input id="montoFactura" placeholder="Monto" inputmode="decimal">
                 <select id="monedaFactura"><option value="S/">S/</option><option value="$">$</option></select>
-                <select id="tipoFactura"><option value="Factura">Factura</option><option value="Boleta">Boleta</option></select>
+                <select id="tipoFactura"><option value="FACTURA">FACTURA</option><option value="BOLETA">BOLETA</option></select>
                 <button class="btn" type="submit">Guardar factura</button>
               </div>
             </form>
@@ -154,7 +153,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
             <h3>Facturas</h3>
             <div class="table-scroll">
               <table>
-                <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Moneda</th><th>Monto</th><th>Tipo</th><th></th></tr></thead>
+                <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Moneda</th><th>Monto</th><th>Tipo</th><th></th><th></th></tr></thead>
                 <tbody id="tablaFacturas"></tbody>
               </table>
             </div>
@@ -165,11 +164,12 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- Firebase CDN -->
+<!-- Firebase + JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+// Configuración de tu proyecto Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
     authDomain: "discovery-pets.firebaseapp.com",
@@ -184,7 +184,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --------------------- VARIABLES ---------------------
+// ------------------ VARIABLES ------------------
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
@@ -196,10 +196,14 @@ const productoSelect = document.getElementById("productoFactura");
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
 
-// --------------------- FUNCIONES COMUNES ---------------------
-window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
+const buscador = document.getElementById("buscadorFactura");
+const btnRefresh = document.getElementById("btnRefresh");
 
-// --------------------- CRUD PROVEEDORES ---------------------
+// ------------------ FUNCIONES ------------------
+async function borrar(col,id){ await deleteDoc(doc(db,col,id)); }
+async function editar(col,id,campos){ await updateDoc(doc(db,col,id),campos); }
+
+// ------------------ PROVEEDORES ------------------
 proveedorForm.addEventListener("submit", async e=>{
   e.preventDefault();
   await addDoc(collection(db,"proveedores"),{
@@ -218,21 +222,18 @@ onSnapshot(collection(db,"proveedores"), snapshot=>{
   snapshot.forEach(docu=>{
     const d = docu.data();
     tablaProveedores.innerHTML += `<tr>
-      <td>${d.nombre}</td>
-      <td>${d.ruc}</td>
-      <td>${d.telefono}</td>
-      <td>${d.opc}</td>
-      <td>${d.direccion}</td>
-      <td>
-        <button onclick="editarProveedor('${docu.id}','${d.nombre}','${d.ruc}','${d.telefono}','${d.opc}','${d.direccion}')">✏️</button>
-        <button onclick="borrar('proveedores','${docu.id}')">❌</button>
-      </td>
+      <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{nombre:this.innerText})">${d.nombre}</td>
+      <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{ruc:this.innerText})">${d.ruc}</td>
+      <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{telefono:this.innerText})">${d.telefono}</td>
+      <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{opc:this.innerText})">${d.opc}</td>
+      <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{direccion:this.innerText})">${d.direccion}</td>
+      <td><button onclick="borrar('proveedores','${docu.id}')">❌</button></td>
     </tr>`;
     proveedorSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
   });
 });
 
-// --------------------- CRUD PRODUCTOS ---------------------
+// ------------------ PRODUCTOS ------------------
 productoForm.addEventListener("submit", async e=>{
   e.preventDefault();
   await addDoc(collection(db,"productos"),{
@@ -250,23 +251,18 @@ onSnapshot(collection(db,"productos"), snapshot=>{
   snapshot.forEach(docu=>{
     const d = docu.data();
     tablaProductos.innerHTML += `<tr>
-      <td>${d.nombre}</td>
-      <td>${d.precio}</td>
-      <td>${d.cantidad}</td>
-      <td>${d.descripcion}</td>
-      <td>
-        <button onclick="editarProducto('${docu.id}','${d.nombre}','${d.precio}','${d.cantidad}','${d.descripcion}')">✏️</button>
-        <button onclick="borrar('productos','${docu.id}')">❌</button>
-      </td>
+      <td contenteditable="true" onblur="editar('productos','${docu.id}',{nombre:this.innerText})">${d.nombre}</td>
+      <td contenteditable="true" onblur="editar('productos','${docu.id}',{precio:this.innerText})">${d.precio}</td>
+      <td contenteditable="true" onblur="editar('productos','${docu.id}',{cantidad:this.innerText})">${d.cantidad}</td>
+      <td contenteditable="true" onblur="editar('productos','${docu.id}',{descripcion:this.innerText})">${d.descripcion}</td>
+      <td><button onclick="borrar('productos','${docu.id}')">❌</button></td>
     </tr>`;
     productoSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
   });
 });
 
-// --------------------- CRUD FACTURAS ---------------------
-facturaForm.addEventListener("submit", agregarFactura);
-
-async function agregarFactura(e){
+// ------------------ FACTURAS ------------------
+facturaForm.addEventListener("submit", async e=>{
   e.preventDefault();
   await addDoc(collection(db,"facturas"),{
     id: document.getElementById("idFactura").value,
@@ -278,137 +274,39 @@ async function agregarFactura(e){
     tipo: document.getElementById("tipoFactura").value
   });
   facturaForm.reset();
-}
+});
 
-onSnapshot(collection(db,"facturas"), snapshot=>{
+function renderFacturas(snapshot, filtro=""){
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
     const d = docu.data();
+    if(filtro && !d.producto.toLowerCase().includes(filtro.toLowerCase())) return;
     tablaFacturas.innerHTML += `<tr>
-      <td>${d.id}</td>
-      <td>${d.fecha}</td>
-      <td>${d.proveedor}</td>
-      <td>${d.producto}</td>
-      <td>${d.moneda}</td>
-      <td>${d.monto}</td>
-      <td>${d.tipo}</td>
-      <td>
-        <button onclick="editarFactura('${docu.id}','${d.id}','${d.fecha}','${d.proveedor}','${d.producto}','${d.moneda}','${d.monto}','${d.tipo}')">✏️</button>
-        <button onclick="borrar('facturas','${docu.id}')">❌</button>
-      </td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{id:this.innerText})">${d.id}</td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{fecha:this.innerText})">${d.fecha}</td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{proveedor:this.innerText})">${d.proveedor}</td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{producto:this.innerText})">${d.producto}</td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{moneda:this.innerText})">${d.moneda}</td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{monto:this.innerText})">${d.monto}</td>
+      <td contenteditable="true" onblur="editar('facturas','${docu.id}',{tipo:this.innerText})">${d.tipo}</td>
+      <td><button onclick="borrar('facturas','${docu.id}')">❌</button></td>
     </tr>`;
   });
+}
+
+const facturasRef = collection(db,"facturas");
+onSnapshot(facturasRef, snapshot => renderFacturas(snapshot));
+
+buscador.addEventListener("input", ()=> {
+  onSnapshot(facturasRef, snapshot => renderFacturas(snapshot, buscador.value));
 });
 
-// --------------------- FUNCIONES EDITAR ---------------------
-window.editarProveedor = async (id,nombre,ruc,telefono,opc,direccion)=>{
-  document.getElementById("nombreProveedor").value = nombre;
-  document.getElementById("rucProveedor").value = ruc;
-  document.getElementById("telefonoProveedor").value = telefono;
-  document.getElementById("numeroOpcionalProveedor").value = opc;
-  document.getElementById("direccionProveedor").value = direccion;
-
-  proveedorForm.onsubmit = async e=>{
-    e.preventDefault();
-    await updateDoc(doc(db,"proveedores",id),{
-      nombre: document.getElementById("nombreProveedor").value,
-      ruc: document.getElementById("rucProveedor").value,
-      telefono: document.getElementById("telefonoProveedor").value,
-      opc: document.getElementById("numeroOpcionalProveedor").value,
-      direccion: document.getElementById("direccionProveedor").value
-    });
-    proveedorForm.reset();
-    proveedorForm.onsubmit = async e=>{
-      e.preventDefault();
-      await addDoc(collection(db,"proveedores"),{
-        nombre: document.getElementById("nombreProveedor").value,
-        ruc: document.getElementById("rucProveedor").value,
-        telefono: document.getElementById("telefonoProveedor").value,
-        opc: document.getElementById("numeroOpcionalProveedor").value,
-        direccion: document.getElementById("direccionProveedor").value
-      });
-      proveedorForm.reset();
-    }
-  }
-};
-
-window.editarProducto = async (id,nombre,precio,cantidad,descripcion)=>{
-  document.getElementById("nombreProducto").value = nombre;
-  document.getElementById("precioProducto").value = precio;
-  document.getElementById("cantidadProducto").value = cantidad;
-  document.getElementById("descripcionProducto").value = descripcion;
-
-  productoForm.onsubmit = async e=>{
-    e.preventDefault();
-    await updateDoc(doc(db,"productos",id),{
-      nombre: document.getElementById("nombreProducto").value,
-      precio: document.getElementById("precioProducto").value,
-      cantidad: document.getElementById("cantidadProducto").value,
-      descripcion: document.getElementById("descripcionProducto").value
-    });
-    productoForm.reset();
-    productoForm.onsubmit = async e=>{
-      e.preventDefault();
-      await addDoc(collection(db,"productos"),{
-        nombre: document.getElementById("nombreProducto").value,
-        precio: document.getElementById("precioProducto").value,
-        cantidad: document.getElementById("cantidadProducto").value,
-        descripcion: document.getElementById("descripcionProducto").value
-      });
-      productoForm.reset();
-    }
-  }
-};
-
-window.editarFactura = async (docId,id,fecha,proveedor,producto,moneda,monto,tipo)=>{
-  document.getElementById("idFactura").value = id;
-  document.getElementById("fechaFactura").value = fecha;
-  document.getElementById("proveedorFactura").value = proveedor;
-  document.getElementById("productoFactura").value = producto;
-  document.getElementById("monedaFactura").value = moneda;
-  document.getElementById("montoFactura").value = monto;
-  document.getElementById("tipoFactura").value = tipo;
-
-  facturaForm.onsubmit = async e=>{
-    e.preventDefault();
-    await updateDoc(doc(db,"facturas",docId),{
-      id: document.getElementById("idFactura").value,
-      fecha: document.getElementById("fechaFactura").value,
-      proveedor: document.getElementById("proveedorFactura").value,
-      producto: document.getElementById("productoFactura").value,
-      monto: document.getElementById("montoFactura").value,
-      moneda: document.getElementById("monedaFactura").value,
-      tipo: document.getElementById("tipoFactura").value
-    });
-    facturaForm.reset();
-    facturaForm.onsubmit = agregarFactura;
-  }
-};
-
-// --------------------- BUSCADOR FACTURAS ---------------------
-document.getElementById("buscadorFactura").addEventListener("input",(e)=>{
-  const filtro = e.target.value.toLowerCase();
-  const filas = tablaFacturas.querySelectorAll("tr");
-  filas.forEach(fila=>{
-    const producto = fila.cells[3].textContent.toLowerCase();
-    fila.style.display = producto.includes(filtro) ? "" : "none";
-  });
+btnRefresh.addEventListener("click", ()=>{
+  buscador.value="";
+  onSnapshot(facturasRef, snapshot => renderFacturas(snapshot));
 });
 
-document.getElementById("btnRefresh").addEventListener("click", ()=>{
-  document.getElementById("buscadorFactura").value = "";
-  const filas = tablaFacturas.querySelectorAll("tr");
-  filas.forEach(fila=>fila.style.display = "");
-});
-
-// --------------------- LOGOUT ---------------------
-document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  alert("Sesión cerrada correctamente");
-  // Aquí puedes redirigir al login si lo tienes
-  window.location.href = "index.html";
-});
-
-// --------------------- SWITCH DE SECCIONES ---------------------
+// ------------------ NAV & LOGOUT ------------------
 document.querySelectorAll(".menu-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("activo"));
@@ -417,9 +315,16 @@ document.querySelectorAll(".menu-btn").forEach(btn=>{
     document.getElementById(btn.dataset.target).classList.add("activa");
   });
 });
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  alert("Sesión cerrada correctamente"); 
+  location.reload();
+});
 </script>
 </body>
 </html>
+
+
 
 
 
