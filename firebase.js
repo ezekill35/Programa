@@ -1,9 +1,9 @@
-// Importar Firebase
+// Importa las funciones necesarias de Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
-// Configuración de tu proyecto Discovery Pets
+// Configuración de tu proyecto
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -18,9 +18,11 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 
-// Exportar Auth y Database
+// Exportar Auth y Database para usar en otros scripts
 export const auth = getAuth(app);
-export const db = getDatabase(app);
+export const database = getDatabase(app);
+
+
 
 
 
