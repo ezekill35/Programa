@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ===================== ESTILOS ===================== */
 :root{
   --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
   --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
@@ -50,7 +49,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 </head>
 <body>
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand"><div class="logo">DP</div><div><h1>Discovery Pets</h1><div class="muted">Panel administrativo</div></div></div>
     <nav class="nav">
@@ -61,7 +59,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     <button id="logoutBtn" class="logout">Cerrar sesión</button>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
@@ -166,33 +163,62 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- Firebase CDN -->
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-    authDomain: "discovery-pets.firebaseapp.com",
-    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
-    projectId: "discovery-pets",
-    storageBucket: "discovery-pets.firebasestorage.app",
-    messagingSenderId: "481355972999",
-    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-    measurementId: "G-0WMLRY8FGM"
-  };
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:TUP_APP_ID_AQUI"
+};
 
 const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
-// --------------------- CRUD Proveedores ---------------------
+// Elementos
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
 
-proveedorForm.addEventListener("submit", async (e)=>{
+const productoForm = document.getElementById("productoForm");
+const tablaProductos = document.getElementById("tablaProductos");
+const productoSelect = document.getElementById("productoFactura");
+
+const facturaForm = document.getElementById("facturaForm");
+const tablaFacturas = document.getElementById("tablaFacturas");
+
+// --------------------- FUNCIONES ---------------------
+const borrar = async (col, id) => {
+  await deleteDoc(doc(db, col, id));
+};
+
+// Crear fila y botón dinámicamente
+const crearFila = (data, tabla, col) => {
+  const tr = document.createElement("tr");
+  for (let key of Object.keys(data)) {
+    const td = document.createElement("td");
+    td.textContent = data[key];
+    tr.appendChild(td);
+  }
+  const tdBtn = document.createElement("td");
+  const btn = document.createElement("button");
+  btn.textContent = "❌";
+  btn.className = "btn secondary";
+  btn.addEventListener("click", () => borrar(col, data.idFire));
+  tdBtn.appendChild(btn);
+  tr.appendChild(tdBtn);
+  tabla.appendChild(tr);
+};
+
+// --------------------- PROVEEDORES ---------------------
+proveedorForm.addEventListener("submit", async e => {
   e.preventDefault();
-  await addDoc(collection(db,"proveedores"),{
+  const docRef = await addDoc(collection(db, "proveedores"), {
     nombre: document.getElementById("nombreProveedor").value,
     ruc: document.getElementById("rucProveedor").value,
     telefono: document.getElementById("telefonoProveedor").value,
@@ -202,32 +228,25 @@ proveedorForm.addEventListener("submit", async (e)=>{
   proveedorForm.reset();
 });
 
-// Mostrar proveedores en tiempo real
-onSnapshot(collection(db,"proveedores"), snapshot=>{
-  tablaProveedores.innerHTML="";
-  proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
-  snapshot.forEach(docu=>{
+onSnapshot(collection(db, "proveedores"), snapshot => {
+  tablaProveedores.innerHTML = "";
+  proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
+  snapshot.forEach(docu => {
     const d = docu.data();
-    tablaProveedores.innerHTML += `<tr>
-      <td>${d.nombre}</td>
-      <td>${d.ruc}</td>
-      <td>${d.telefono}</td>
-      <td>${d.opc}</td>
-      <td>${d.direccion}</td>
-      <td><button onclick="borrar('proveedores','${docu.id}')">❌</button></td>
-    </tr>`;
-    proveedorSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
+    d.idFire = docu.id;
+    crearFila(d, tablaProveedores, "proveedores");
+
+    const option = document.createElement("option");
+    option.value = d.nombre;
+    option.textContent = d.nombre;
+    proveedorSelect.appendChild(option);
   });
 });
 
-// --------------------- CRUD Productos ---------------------
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-const productoSelect = document.getElementById("productoFactura");
-
-productoForm.addEventListener("submit", async (e)=>{
+// --------------------- PRODUCTOS ---------------------
+productoForm.addEventListener("submit", async e => {
   e.preventDefault();
-  await addDoc(collection(db,"productos"),{
+  const docRef = await addDoc(collection(db, "productos"), {
     nombre: document.getElementById("nombreProducto").value,
     precio: document.getElementById("precioProducto").value,
     cantidad: document.getElementById("cantidadProducto").value,
@@ -236,29 +255,25 @@ productoForm.addEventListener("submit", async (e)=>{
   productoForm.reset();
 });
 
-onSnapshot(collection(db,"productos"), snapshot=>{
-  tablaProductos.innerHTML="";
-  productoSelect.innerHTML='<option value="">Seleccione producto</option>';
-  snapshot.forEach(docu=>{
+onSnapshot(collection(db, "productos"), snapshot => {
+  tablaProductos.innerHTML = "";
+  productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
+  snapshot.forEach(docu => {
     const d = docu.data();
-    tablaProductos.innerHTML += `<tr>
-      <td>${d.nombre}</td>
-      <td>${d.precio}</td>
-      <td>${d.cantidad}</td>
-      <td>${d.descripcion}</td>
-      <td><button onclick="borrar('productos','${docu.id}')">❌</button></td>
-    </tr>`;
-    productoSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
+    d.idFire = docu.id;
+    crearFila(d, tablaProductos, "productos");
+
+    const option = document.createElement("option");
+    option.value = d.nombre;
+    option.textContent = d.nombre;
+    productoSelect.appendChild(option);
   });
 });
 
-// --------------------- CRUD Facturas ---------------------
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-
-facturaForm.addEventListener("submit", async (e)=>{
+// --------------------- FACTURAS ---------------------
+facturaForm.addEventListener("submit", async e => {
   e.preventDefault();
-  await addDoc(collection(db,"facturas"),{
+  await addDoc(collection(db, "facturas"), {
     id: document.getElementById("idFactura").value,
     fecha: document.getElementById("fechaFactura").value,
     proveedor: document.getElementById("proveedorFactura").value,
@@ -270,27 +285,15 @@ facturaForm.addEventListener("submit", async (e)=>{
   facturaForm.reset();
 });
 
-onSnapshot(collection(db,"facturas"), snapshot=>{
-  tablaFacturas.innerHTML="";
-  snapshot.forEach(docu=>{
+onSnapshot(collection(db, "facturas"), snapshot => {
+  tablaFacturas.innerHTML = "";
+  snapshot.forEach(docu => {
     const d = docu.data();
-    tablaFacturas.innerHTML += `<tr>
-      <td>${d.id}</td>
-      <td>${d.fecha}</td>
-      <td>${d.proveedor}</td>
-      <td>${d.producto}</td>
-      <td>${d.moneda}</td>
-      <td>${d.monto}</td>
-      <td>${d.tipo}</td>
-      <td><button onclick="borrar('facturas','${docu.id}')">❌</button></td>
-    </tr>`;
+    d.idFire = docu.id;
+    crearFila(d, tablaFacturas, "facturas");
   });
 });
-
-// --------------------- BORRAR ---------------------
-window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
 </script>
 </body>
 </html>
-
 
