@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ===================== ESTILOS ===================== */
 :root{
   --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
   --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
@@ -30,16 +29,16 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .header h2{margin:0;font-weight:700;color:#07203a}
 .search-box{display:flex;gap:10px;align-items:center;}
-input[type="search"]{padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);min-width:280px;box-shadow:var(--shadow-md);}
+input[type="search"], input, select{padding:10px 14px;border-radius:12px;border:1px solid rgba(10,20,30,0.06);min-width:140px;box-shadow:var(--shadow-md);}
 .tabs{display:flex;gap:12px;margin-bottom:18px;}
 .seccion{display:none;}
 .seccion.activa{display:block;animation:fadeIn .28s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;}
-.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.03);}
+.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.03);margin-bottom:12px}
 .card h3{margin:0 0 8px 0;font-size:15px}
 form .row{display:flex;gap:8px;margin-bottom:10px} 
-form input, form select{padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1}
+form input, form select{flex:1}
 table{width:100%;border-collapse:collapse}
 table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10,20,30,0.04);font-size:14px}
 .table-scroll{max-height:420px;overflow:auto;padding-right:6px}
@@ -50,7 +49,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 </head>
 <body>
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand"><div class="logo">DP</div><div><h1>Discovery Pets</h1><div class="muted">Panel administrativo</div></div></div>
     <nav class="nav">
@@ -61,12 +59,12 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     <button id="logoutBtn" class="logout">Cerrar sesión</button>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
       <div class="search-box">
         <input id="buscadorFactura" type="search" placeholder="Buscar factura por producto">
+        <button class="btn secondary" id="btnBuscar">Buscar</button>
         <button class="btn secondary" id="btnRefresh">Restablecer</button>
       </div>
     </div>
@@ -92,7 +90,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               </div>
             </form>
           </div>
-          <div class="card" style="margin-top:12px">
+          <div class="card">
             <h3>Proveedores registrados</h3>
             <div class="table-scroll">
               <table>
@@ -119,7 +117,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               </div>
             </form>
           </div>
-          <div class="card" style="margin-top:12px">
+          <div class="card">
             <h3>Productos registrados</h3>
             <div class="table-scroll">
               <table>
@@ -151,7 +149,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               </div>
             </form>
           </div>
-          <div class="card" style="margin-top:12px">
+          <div class="card">
             <h3>Facturas</h3>
             <div class="table-scroll">
               <table>
@@ -166,49 +164,51 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- JS con Firebase -->
+<!-- Firebase y JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+// Config Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
     authDomain: "discovery-pets.firebaseapp.com",
     projectId: "discovery-pets",
-    storageBucket: "discovery-pets.firebasestorage.app",
+    storageBucket: "discovery-pets.appspot.com",
     messagingSenderId: "481355972999",
     appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ====================== PROVEEDORES ======================
+// Navegación secciones
+document.querySelectorAll('.menu-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('activo'));
+    btn.classList.add('activo');
+    document.querySelectorAll('.seccion').forEach(s=>s.classList.remove('activa'));
+    document.getElementById(btn.dataset.target).classList.add('activa');
+  });
+});
+
+// -------------------- PROVEEDORES --------------------
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
 
-proveedorForm.addEventListener("submit", async (e)=>{
+proveedorForm.addEventListener("submit", async e=>{
   e.preventDefault();
-  const data = {
+  await addDoc(collection(db,"proveedores"),{
     nombre: document.getElementById("nombreProveedor").value,
     ruc: document.getElementById("rucProveedor").value,
     telefono: document.getElementById("telefonoProveedor").value,
     opc: document.getElementById("numeroOpcionalProveedor").value,
     direccion: document.getElementById("direccionProveedor").value
-  };
-  const editId = proveedorForm.getAttribute("data-edit");
-  if(editId){
-    await updateDoc(doc(db,"proveedores",editId), data);
-    proveedorForm.removeAttribute("data-edit");
-    proveedorForm.querySelector("button").textContent = "Añadir proveedor";
-  } else {
-    await addDoc(collection(db,"proveedores"), data);
-  }
+  });
   proveedorForm.reset();
 });
 
-onSnapshot(collection(db,"proveedores"), snapshot=>{
+function renderProveedores(snapshot){
   tablaProveedores.innerHTML="";
   proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
   snapshot.forEach(docu=>{
@@ -220,49 +220,32 @@ onSnapshot(collection(db,"proveedores"), snapshot=>{
       <td>${d.opc}</td>
       <td>${d.direccion}</td>
       <td>
-        <button onclick="editarProveedor('${docu.id}','${d.nombre}','${d.ruc}','${d.telefono}','${d.opc}','${d.direccion}')">✏️</button>
+        <button onclick="editar('proveedores','${docu.id}')">✏️</button>
         <button onclick="borrar('proveedores','${docu.id}')">❌</button>
       </td>
     </tr>`;
     proveedorSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
   });
-});
+}
+onSnapshot(collection(db,"proveedores"), renderProveedores);
 
-window.editarProveedor = (id,nombre,ruc,telefono,opc,direccion)=>{
-  document.getElementById("nombreProveedor").value = nombre;
-  document.getElementById("rucProveedor").value = ruc;
-  document.getElementById("telefonoProveedor").value = telefono;
-  document.getElementById("numeroOpcionalProveedor").value = opc;
-  document.getElementById("direccionProveedor").value = direccion;
-  proveedorForm.setAttribute("data-edit", id);
-  proveedorForm.querySelector("button").textContent = "Actualizar proveedor";
-};
-
-// ====================== PRODUCTOS ======================
+// -------------------- PRODUCTOS --------------------
 const productoForm = document.getElementById("productoForm");
 const tablaProductos = document.getElementById("tablaProductos");
 const productoSelect = document.getElementById("productoFactura");
 
-productoForm.addEventListener("submit", async (e)=>{
+productoForm.addEventListener("submit", async e=>{
   e.preventDefault();
-  const data = {
+  await addDoc(collection(db,"productos"),{
     nombre: document.getElementById("nombreProducto").value,
     precio: document.getElementById("precioProducto").value,
     cantidad: document.getElementById("cantidadProducto").value,
     descripcion: document.getElementById("descripcionProducto").value
-  };
-  const editId = productoForm.getAttribute("data-edit");
-  if(editId){
-    await updateDoc(doc(db,"productos",editId), data);
-    productoForm.removeAttribute("data-edit");
-    productoForm.querySelector("button").textContent = "Añadir producto";
-  } else {
-    await addDoc(collection(db,"productos"), data);
-  }
+  });
   productoForm.reset();
 });
 
-onSnapshot(collection(db,"productos"), snapshot=>{
+function renderProductos(snapshot){
   tablaProductos.innerHTML="";
   productoSelect.innerHTML='<option value="">Seleccione producto</option>';
   snapshot.forEach(docu=>{
@@ -273,30 +256,25 @@ onSnapshot(collection(db,"productos"), snapshot=>{
       <td>${d.cantidad}</td>
       <td>${d.descripcion}</td>
       <td>
-        <button onclick="editarProducto('${docu.id}','${d.nombre}','${d.precio}','${d.cantidad}','${d.descripcion}')">✏️</button>
+        <button onclick="editar('productos','${docu.id}')">✏️</button>
         <button onclick="borrar('productos','${docu.id}')">❌</button>
       </td>
     </tr>`;
     productoSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
   });
-});
+}
+onSnapshot(collection(db,"productos"), renderProductos);
 
-window.editarProducto = (id,nombre,precio,cantidad,descripcion)=>{
-  document.getElementById("nombreProducto").value = nombre;
-  document.getElementById("precioProducto").value = precio;
-  document.getElementById("cantidadProducto").value = cantidad;
-  document.getElementById("descripcionProducto").value = descripcion;
-  productoForm.setAttribute("data-edit", id);
-  productoForm.querySelector("button").textContent = "Actualizar producto";
-};
-
-// ====================== FACTURAS ======================
+// -------------------- FACTURAS --------------------
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
+const buscadorFactura = document.getElementById("buscadorFactura");
+const btnBuscar = document.getElementById("btnBuscar");
+const btnRefresh = document.getElementById("btnRefresh");
 
-facturaForm.addEventListener("submit", async (e)=>{
+async function guardarFactura(e){
   e.preventDefault();
-  const data = {
+  await addDoc(collection(db,"facturas"),{
     id: document.getElementById("idFactura").value,
     fecha: document.getElementById("fechaFactura").value,
     proveedor: document.getElementById("proveedorFactura").value,
@@ -304,19 +282,12 @@ facturaForm.addEventListener("submit", async (e)=>{
     monto: document.getElementById("montoFactura").value,
     moneda: document.getElementById("monedaFactura").value,
     tipo: document.getElementById("tipoFactura").value
-  };
-  const editId = facturaForm.getAttribute("data-edit");
-  if(editId){
-    await updateDoc(doc(db,"facturas",editId), data);
-    facturaForm.removeAttribute("data-edit");
-    facturaForm.querySelector("button").textContent = "Guardar factura";
-  } else {
-    await addDoc(collection(db,"facturas"), data);
-  }
+  });
   facturaForm.reset();
-});
+}
+facturaForm.addEventListener("submit", guardarFactura);
 
-onSnapshot(collection(db,"facturas"), snapshot=>{
+function renderFacturas(snapshot){
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
     const d = docu.data();
@@ -329,65 +300,61 @@ onSnapshot(collection(db,"facturas"), snapshot=>{
       <td>${d.monto}</td>
       <td>${d.tipo}</td>
       <td>
-        <button onclick="editarFactura('${docu.id}','${d.id}','${d.fecha}','${d.proveedor}','${d.producto}','${d.monto}','${d.moneda}','${d.tipo}')">✏️</button>
+        <button onclick="editar('facturas','${docu.id}')">✏️</button>
         <button onclick="borrar('facturas','${docu.id}')">❌</button>
       </td>
     </tr>`;
   });
+}
+onSnapshot(collection(db,"facturas"), renderFacturas);
+
+// -------------------- BUSCADOR --------------------
+btnBuscar.addEventListener("click", async ()=>{
+  const q = query(collection(db,"facturas"), where("producto","==",buscadorFactura.value));
+  onSnapshot(q, renderFacturas);
 });
+btnRefresh.addEventListener("click", ()=>onSnapshot(collection(db,"facturas"), renderFacturas));
 
-window.editarFactura = (id,fid,fecha,proveedor,producto,monto,moneda,tipo)=>{
-  document.getElementById("idFactura").value = fid;
-  document.getElementById("fechaFactura").value = fecha;
-  document.getElementById("proveedorFactura").value = proveedor;
-  document.getElementById("productoFactura").value = producto;
-  document.getElementById("montoFactura").value = monto;
-  document.getElementById("monedaFactura").value = moneda;
-  document.getElementById("tipoFactura").value = tipo;
-  facturaForm.setAttribute("data-edit", id);
-  facturaForm.querySelector("button").textContent = "Actualizar factura";
-};
-
-// ====================== BORRAR ======================
+// -------------------- BORRAR --------------------
 window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
 
-// ====================== BUSCADOR ======================
-const buscadorFactura = document.getElementById("buscadorFactura");
-const btnRefresh = document.getElementById("btnRefresh");
-buscadorFactura.addEventListener("input", ()=>{
-  const filtro = buscadorFactura.value.toLowerCase();
-  const filas = tablaFacturas.querySelectorAll("tr");
-  filas.forEach(fila=>{
-    const producto = fila.children[3].textContent.toLowerCase();
-    fila.style.display = producto.includes(filtro) ? "" : "none";
-  });
-});
-btnRefresh.addEventListener("click", ()=>{
-  buscadorFactura.value="";
-  buscadorFactura.dispatchEvent(new Event("input"));
-});
+// -------------------- EDITAR --------------------
+window.editar = async (col,id)=>{
+  const docRef = doc(db,col,id);
+  const snap = await import("https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js").then(f=>f.getDoc(docRef));
+  if(snap.exists()){
+    const d = snap.data();
+    if(col==="proveedores"){
+      document.getElementById("nombreProveedor").value=d.nombre;
+      document.getElementById("rucProveedor").value=d.ruc;
+      document.getElementById("telefonoProveedor").value=d.telefono;
+      document.getElementById("numeroOpcionalProveedor").value=d.opc;
+      document.getElementById("direccionProveedor").value=d.direccion;
+      borrar(col,id);
+    } else if(col==="productos"){
+      document.getElementById("nombreProducto").value=d.nombre;
+      document.getElementById("precioProducto").value=d.precio;
+      document.getElementById("cantidadProducto").value=d.cantidad;
+      document.getElementById("descripcionProducto").value=d.descripcion;
+      borrar(col,id);
+    } else if(col==="facturas"){
+      document.getElementById("idFactura").value=d.id;
+      document.getElementById("fechaFactura").value=d.fecha;
+      document.getElementById("proveedorFactura").value=d.proveedor;
+      document.getElementById("productoFactura").value=d.producto;
+      document.getElementById("montoFactura").value=d.monto;
+      document.getElementById("monedaFactura").value=d.moneda;
+      document.getElementById("tipoFactura").value=d.tipo;
+      borrar(col,id);
+    }
+  }
+}
 
-// ====================== MENU ======================
-const menuBtns = document.querySelectorAll(".menu-btn");
-const secciones = document.querySelectorAll(".seccion");
-menuBtns.forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    menuBtns.forEach(b=>b.classList.remove("activo"));
-    btn.classList.add("activo");
-    secciones.forEach(s=>s.classList.remove("activa"));
-    document.getElementById(btn.dataset.target).classList.add("activa");
-  });
-});
-
-// ====================== LOGOUT ======================
-document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  alert("Sesión cerrada"); // reemplaza con window.location.href="login.html"
-});
+// -------------------- LOGOUT --------------------
+document.getElementById("logoutBtn").addEventListener("click", ()=>alert("Cerrar sesión"));
 </script>
 </body>
 </html>
-
-
 
 
 
