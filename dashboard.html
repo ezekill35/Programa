@@ -6,6 +6,7 @@
 <title>Dashboard · Discovery Pets</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 /* ----------- ESTILOS PREMIUM DISCOVERY PETS ----------- */
 :root{
@@ -137,6 +138,7 @@ td button{margin-right:6px;padding:4px 8px;border-radius:6px;border:none;cursor:
 .btn-eliminar{background:#e53935;color:white}
 </style>
 </head>
+
 <body>
 <div class="app">
   <aside class="sidebar">
@@ -161,18 +163,18 @@ td button{margin-right:6px;padding:4px 8px;border-radius:6px;border:none;cursor:
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
       <div class="search-box">
-        <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto (Enter)">
+        <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto o proveedor (Enter)">
         <button class="btn secondary" id="btnRefresh">Restablecer</button>
       </div>
     </div>
 
-    <!-- =================== SECCIÓN PROVEEDORES =================== -->
+    <!-- =================== PROVEEDORES =================== -->
     <section id="seccion-proveedores" class="seccion-activa">
       <h3>Registro de Proveedores</h3>
       <form id="formProveedor" class="formulario">
         <div class="form-row">
           <input type="text" id="provNombre" placeholder="Nombre del proveedor" required>
-          <input type="text" id="provRuc" placeholder="RUC" required maxlength="11">
+          <input type="text" id="provRuc" placeholder="RUC" maxlength="11" required>
         </div>
         <div class="form-row">
           <input type="text" id="provDireccion" placeholder="Dirección" required>
@@ -201,13 +203,13 @@ td button{margin-right:6px;padding:4px 8px;border-radius:6px;border:none;cursor:
       </div>
     </section>
 
-    <!-- =================== SECCIÓN PRODUCTOS =================== -->
+    <!-- =================== PRODUCTOS =================== -->
     <section id="seccion-productos">
       <h3>Gestión de Productos</h3>
       <form id="formProducto" class="formulario">
         <div class="form-row">
           <input type="text" id="prodNombre" placeholder="Nombre del producto" required>
-          <input type="number" id="prodPrecio" placeholder="Precio" required step="0.01">
+          <input type="number" id="prodPrecio" placeholder="Precio (S/.)" step="0.01" required>
         </div>
         <div class="form-row">
           <input type="number" id="prodCantidad" placeholder="Cantidad" required>
@@ -232,7 +234,7 @@ td button{margin-right:6px;padding:4px 8px;border-radius:6px;border:none;cursor:
       </div>
     </section>
 
-    <!-- =================== SECCIÓN FACTURAS =================== -->
+    <!-- =================== FACTURAS =================== -->
     <section id="seccion-facturas">
       <h3>Registro de Facturas</h3>
       <form id="formFactura" class="formulario">
@@ -242,7 +244,7 @@ td button{margin-right:6px;padding:4px 8px;border-radius:6px;border:none;cursor:
         </div>
         <div class="form-row">
           <input type="number" id="factCantidad" placeholder="Cantidad" required>
-          <input type="number" id="factTotal" placeholder="Total (S/.)" required step="0.01">
+          <input type="number" id="factTotal" placeholder="Total (S/.)" step="0.01" required>
           <button type="submit" class="btn">Registrar factura</button>
         </div>
       </form>
@@ -268,6 +270,8 @@ td button{margin-right:6px;padding:4px 8px;border-radius:6px;border:none;cursor:
 <script src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
