@@ -6,78 +6,86 @@
 <title>Discovery Pets - Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-body { 
-  display:flex; 
-  justify-content:center; 
-  align-items:center; 
-  min-height:100vh; 
-  background: linear-gradient(135deg, #ffe0f0, #ffb3d9); 
-  font-family: 'Poppins', sans-serif; 
-  margin:0;
-}
-.container { 
-  background:#fff; 
-  padding:40px 30px; 
-  border-radius:20px; 
-  width:360px; 
-  box-shadow:0 20px 40px rgba(0,0,0,0.2); 
-  text-align:center; 
-  animation:fadeIn 0.8s ease;
-}
-@keyframes fadeIn { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
-
-.container img { 
-  width:120px; 
-  margin-bottom:20px; 
-  border-radius:50%;
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
 }
 
-.container h1 { 
-  color:#ff3399; 
-  margin-bottom:25px; 
-  font-size:26px;
+.container {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 25px;
+  width: 360px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: fadeIn 0.8s ease;
 }
 
-.container input { 
-  width:100%; 
-  padding:12px; 
-  margin:10px 0; 
-  border-radius:10px; 
-  border:1px solid #ccc; 
-  transition:0.3s;
-}
-.container input:focus { 
-  border-color:#ff3399; 
-  box-shadow:0 0 10px rgba(255,51,153,0.3);
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(-20px);}
+  to {opacity:1; transform:translateY(0);}
 }
 
-.container button { 
-  width:100%; 
-  padding:14px; 
-  background:#ff3399; 
-  color:#fff; 
-  border:none; 
-  border-radius:10px; 
-  cursor:pointer; 
-  font-weight:600; 
-  font-size:16px;
-  transition:0.3s;
-}
-.container button:hover { 
-  background:#ff66cc; 
-  transform:scale(1.03);
+.container img {
+  width: 120px;
+  margin-bottom: 15px;
 }
 
-#mensaje { 
-  margin-top:15px; 
-  font-size:14px; 
-  color:red;
-  min-height:20px;
+.container h1 {
+  color: #ff3399;
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.container input:focus {
+  border-color: #ff3399;
+  box-shadow: 0 0 10px rgba(255,51,153,0.3);
+}
+
+.container button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #ff3399, #ff66cc);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.container button:hover {
+  transform: scale(1.03);
+}
+
+#mensaje {
+  margin-top: 15px;
+  font-size: 14px;
+  color: red;
 }
 </style>
 </head>
 <body>
+
 <div class="container">
     <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
     <h1>Discovery Pets</h1>
@@ -85,16 +93,13 @@ body {
     <input id="emailLogin" type="email" placeholder="Correo" required>
     <input id="passLogin" type="password" placeholder="Contraseña" required>
     <button id="btnLogin">Iniciar sesión</button>
+
     <p id="mensaje"></p>
 </div>
 
 <script type="module" src="login.js"></script>
 </body>
 </html>
-
-
-
-
 
 
 
