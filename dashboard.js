@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, updateDoc, query, where
+  doc, deleteDoc, query, where, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
@@ -60,15 +60,15 @@ onSnapshot(colProveedores, snapshot => {
   snapshot.forEach(docu => {
     const d = docu.data();
     const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
     tr.innerHTML = `
       <td>${d.ruc}</td>
       <td>${d.nombre}</td>
       <td>${d.direccion}</td>
       <td>${d.telefono || "-"}</td>
       <td>
-        <button class="btn btn-sm editar" data-tipo="proveedor">✏️ Editar</button>
-        <button class="btn btn-sm eliminar" data-tipo="proveedor">🗑️ Eliminar</button>
+        <button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button>
+        <button class="btn btn-sm editar-prov" data-id="${docu.id}">✏️ Editar</button>
+        <button class="btn btn-sm eliminar-prov" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProveedores.appendChild(tr);
   });
@@ -110,15 +110,15 @@ onSnapshot(colProductos, snapshot => {
   snapshot.forEach(docu => {
     const d = docu.data();
     const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
     tr.innerHTML = `
       <td>${d.nombre}</td>
       <td>${d.cantidad}</td>
       <td>S/. ${d.precio.toFixed(2)}</td>
       <td>${d.descripcion || "-"}</td>
       <td>
-        <button class="btn btn-sm editar" data-tipo="producto">✏️ Editar</button>
-        <button class="btn btn-sm eliminar" data-tipo="producto">🗑️ Eliminar</button>
+        <button class="btn btn-sm ver-info" data-tipo="producto" data-nombre="${d.nombre}">🔍 Ver</button>
+        <button class="btn btn-sm editar-prod" data-id="${docu.id}">✏️ Editar</button>
+        <button class="btn btn-sm eliminar-prod" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProductos.appendChild(tr);
   });
@@ -161,7 +161,6 @@ onSnapshot(colFacturas, snapshot => {
   snapshot.forEach(docu => {
     const d = docu.data();
     const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
     tr.innerHTML = `
       <td>${d.idFactura}</td>
       <td>${d.fecha}</td>
@@ -171,8 +170,7 @@ onSnapshot(colFacturas, snapshot => {
       <td>${d.tipo}</td>
       <td>
         <button class="btn btn-sm ver-factura" data-id="${d.idFactura}">📄 Detalle</button>
-        <button class="btn btn-sm editar" data-tipo="factura">✏️ Editar</button>
-        <button class="btn btn-sm eliminar" data-tipo="factura">🗑️ Eliminar</button>
+        <button class="btn btn-sm eliminar-factura" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaFacturas.appendChild(tr);
   });
@@ -210,6 +208,11 @@ const contenidoModalFactura = document.getElementById("contenidoModalFactura");
 const cerrarModalFactura = document.getElementById("cerrarModalFactura");
 cerrarModalFactura.addEventListener("click", () => modalFactura.style.display = "none");
 
+const modalExtra = document.getElementById("modalDetalleExtra");
+const contenidoDetalleExtra = document.getElementById("contenidoDetalleExtra");
+const cerrarModalExtra = document.getElementById("cerrarModalDetalle");
+cerrarModalExtra.addEventListener("click", () => modalExtra.style.display = "none");
+
 function mostrarModalFactura(f) {
   contenidoModalFactura.innerHTML = `
     <h3>Factura ${f.idFactura}</h3>
@@ -221,74 +224,18 @@ function mostrarModalFactura(f) {
   modalFactura.style.display = "block";
 }
 
-// ================= MODAL EDICIÓN =================
-const modalEditar = document.getElementById("modalEditar");
-const contenidoModalEditar = document.getElementById("contenidoModalEditar");
-const cerrarModalEditar = document.getElementById("cerrarModalEditar");
-cerrarModalEditar.addEventListener("click", () => modalEditar.style.display = "none");
-
+// ================= DETALLE EXTRA =================
 document.addEventListener("click", async e => {
-  const tr = e.target.closest("tr");
-  const tipo = e.target.dataset.tipo;
-
-  if (e.target.classList.contains("editar") && tr) {
-    const id = tr.dataset.id;
-    let colRef;
-    let data;
-    if (tipo === "proveedor") colRef = colProveedores;
-    else if (tipo === "producto") colRef = colProductos;
-    else if (tipo === "factura") colRef = colFacturas;
-    else return;
-
-    const docRef = doc(db, colRef.path, id);
-    const snap = await getDocs(query(colRef, where("__name__", "==", id)));
-    data = snap.docs[0].data();
-
-    let html = `<h3>Editar ${tipo}</h3><form id="editarForm">`;
-    for (const key in data) {
-      html += `<div class="row"><input name="${key}" value="${data[key]}" required></div>`;
-    }
-    html += `<button class="btn" type="submit">Guardar cambios</button></form>`;
-    contenidoModalEditar.innerHTML = html;
-    modalEditar.style.display = "block";
-
-    document.getElementById("editarForm").addEventListener("submit", async ev => {
-      ev.preventDefault();
-      const formData = new FormData(ev.target);
-      const updatedData = {};
-      formData.forEach((v, k) => {
-        if (k === "precio" || k === "monto") updatedData[k] = parseFloat(v);
-        else if (k === "cantidad") updatedData[k] = parseInt(v);
-        else updatedData[k] = v;
-      });
-      await updateDoc(docRef, updatedData);
-      modalEditar.style.display = "none";
-    });
-  }
-
-  if (e.target.classList.contains("eliminar") && tr) {
-    const id = tr.dataset.id;
-    let colRef;
-    if (tipo === "proveedor") colRef = colProveedores;
-    else if (tipo === "producto") colRef = colProductos;
-    else if (tipo === "factura") colRef = colFacturas;
-    else return;
-
-    if (confirm(`¿Deseas eliminar este ${tipo}?`)) {
-      await deleteDoc(doc(db, colRef.path, id));
-    }
-  }
-
   if (e.target.classList.contains("link-info")) {
     const nombre = e.target.dataset.nombre;
     const tipo = e.target.dataset.tipo;
     if (!confirm(`¿Deseas ver información del ${tipo} "${nombre}"?`)) return;
 
-    let col = tipo === "proveedor" ? colProveedores : colProductos;
-    const q = query(col, where("nombre", "==", nombre));
-    const snap = await getDocs(q);
-    if (snap.empty) contenidoModalEditar.innerHTML = "<p>No se encontró información.</p>";
-    else {
+    let colRef = tipo === "proveedor" ? colProveedores : colProductos;
+    const snap = await getDocs(query(colRef, where("nombre", "==", nombre)));
+    if (snap.empty) {
+      contenidoDetalleExtra.innerHTML = "<p>No se encontró información.</p>";
+    } else {
       const d = snap.docs[0].data();
       let html = "";
       if (tipo === "proveedor") {
@@ -304,10 +251,9 @@ document.addEventListener("click", async e => {
           <p><b>Precio:</b> S/. ${d.precio.toFixed(2)}</p>
           <p><b>Descripción:</b> ${d.descripcion || "-"}</p>`;
       }
-      contenidoModalEditar.innerHTML = html;
-      modalEditar.style.display = "block";
+      contenidoDetalleExtra.innerHTML = html;
     }
+    modalExtra.style.display = "block";
   }
 });
-
 
