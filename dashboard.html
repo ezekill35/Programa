@@ -171,18 +171,19 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// Configura tu proyecto de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-  authDomain: "discovery-pets.firebaseapp.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
-};
+    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+    authDomain: "discovery-pets.firebaseapp.com",
+    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+    projectId: "discovery-pets",
+    storageBucket: "discovery-pets.firebasestorage.app",
+    messagingSenderId: "481355972999",
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+    measurementId: "G-0WMLRY8FGM"
+  };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const analytics = getAnalytics(app);
 
 // --------------------- CRUD Proveedores ---------------------
 const proveedorForm = document.getElementById("proveedorForm");
@@ -291,4 +292,5 @@ window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
 </script>
 </body>
 </html>
+
 
