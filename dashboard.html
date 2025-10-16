@@ -3,154 +3,370 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard · Discovery Pets</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>Dashboard · Discovery Pets — Premium</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg1:#f7fbff; --bg2:#eef9ff; --accent:#10bcd4; --muted:#64748b;
+      --bg-0: #0f172a;              /* accent for dark shadows (subtle) */
+      --bg-1: #f4fbff;             /* main background light */
+      --glass-1: rgba(255,255,255,0.70);
+      --glass-2: rgba(255,255,255,0.50);
+      --accent: #10bcd4;
+      --accent-2: #06a89a;
+      --muted: #738096;
+      --card-shadow: 0 12px 40px rgba(6,51,66,0.08);
+      --soft-shadow: 0 8px 24px rgba(6,51,66,0.06);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --glass-border: rgba(255,255,255,0.5);
+      --glass-outline: rgba(16,188,212,0.08);
+      --max-width: 1180px;
     }
+
+    /* Reset & base */
     *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
-    body{margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#07203a;padding:28px}
-    .container{max-width:1200px;margin:0 auto}
-    h1{margin:0 0 18px 0;font-size:20px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 8px 30px rgba(2,6,23,0.06);border:1px solid rgba(2,6,23,0.04)}
-    .form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-    input, select, button{padding:10px;border-radius:8px;border:1px solid rgba(2,6,23,0.06);font-size:14px}
-    button{cursor:pointer}
-    table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(2,6,23,0.06);font-size:13px}
-    .search-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
-    .btn{background:var(--accent);color:#fff;border:none}
-    .btn.secondary{background:transparent;border:1px solid var(--accent);color:var(--accent)}
-    .small{padding:6px 8px;font-size:13px;border-radius:8px}
-    /* Modal buscador - glass */
-    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1200;padding:20px}
-    .modal-backdrop.show{display:flex}
-    .modal-card{width:100%;max-width:900px;background:linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.55));backdrop-filter:blur(6px);border-radius:14px;padding:18px;box-shadow:0 30px 60px rgba(16,185,196,0.08);border:1px solid rgba(16,185,196,0.08)}
-    .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
-    .fact-card{background:#fff;border-radius:12px;padding:12px;border:1px solid rgba(2,6,23,0.04);box-shadow:0 8px 20px rgba(2,6,23,0.04)}
-    .close-x{position:absolute;right:18px;top:14px;background:transparent;border:none;font-size:18px;cursor:pointer}
-    /* detalle modal */
-    .modal-detail{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1300;padding:20px}
-    .modal-detail.show{display:flex}
-    .detail-card{width:100%;max-width:700px;background:#fff;border-radius:12px;padding:18px;box-shadow:0 30px 60px rgba(2,6,23,0.08)}
-    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    html,body{height:100%;margin:0;background:
+      radial-gradient(1200px 600px at 10% 10%, rgba(16,188,212,0.06), transparent 10%),
+      linear-gradient(180deg,var(--bg-1), #eaf8fb);
+      color:#07203a; -webkit-font-smoothing:antialiased}
+    a{color:inherit}
+
+    /* App layout */
+    .wrap{max-width:calc(var(--max-width) + 64px);margin:24px auto;padding:20px;display:grid;grid-template-columns:300px 1fr;gap:24px}
+    @media (max-width: 980px){ .wrap{grid-template-columns:1fr;padding:12px} }
+
+    /* Sidebar (glass) */
+    .sidebar{
+      background: linear-gradient(180deg, rgba(255,255,255,0.80), rgba(255,255,255,0.70));
+      border-radius:18px;padding:18px;box-shadow:var(--card-shadow);border:1px solid var(--glass-outline);
+      position:sticky;top:24px;height:calc(100vh - 48px);overflow:auto;
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#55d1e2);
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;box-shadow:0 8px 24px rgba(16,188,212,0.14)
+    }
+    .brand h1{font-size:16px;margin:0}
+    .muted{color:var(--muted);font-size:13px}
+
+    .nav{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+    .nav button{
+      display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:none;background:transparent;cursor:pointer;transition:all .14s;
+      color:#07203a;font-weight:600
+    }
+    .nav button:hover{transform:translateY(-4px);box-shadow:var(--soft-shadow)}
+    .nav button.active{background:linear-gradient(90deg, rgba(16,188,212,0.12), rgba(16,188,212,0.04));box-shadow:var(--soft-shadow);border-left:3px solid var(--accent)}
+
+    .logout{margin-top:auto;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(7,32,44,0.06);cursor:pointer}
+
+    /* Main content */
+    .main{
+      min-height:100vh;padding:22px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.80));
+      box-shadow:var(--card-shadow);border:1px solid var(--glass-outline)
+    }
+
+    .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .title{display:flex;flex-direction:column}
+    .title h2{margin:0;font-size:20px}
+    .search-bar{display:flex;align-items:center;gap:10px}
+    .search-input{
+      padding:10px 14px;border-radius:12px;border:1px solid rgba(7,32,44,0.06);min-width:340px;background:transparent;box-shadow:var(--soft-shadow)
+    }
+    .btn{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);color:white;font-weight:700;cursor:pointer;box-shadow:0 8px 28px rgba(16,188,212,0.12)}
+    .btn.ghost{background:transparent;border:1px solid rgba(7,32,44,0.06);color:#07203a}
+    .btn.small{padding:8px 10px;font-size:13px;border-radius:8px}
+
+    /* grid layout inside main */
+    .content-grid{display:grid;grid-template-columns:1fr 380px;gap:18px}
+    @media (max-width:980px){ .content-grid{grid-template-columns:1fr} }
+
+    /* cards */
+    .card{background:linear-gradient(180deg,#fff,#fbffff);border-radius:12px;padding:14px;border:1px solid rgba(10,20,30,0.03);box-shadow:var(--soft-shadow)}
+    .card h3{margin:0 0 12px 0;font-size:15px}
+
+    form .row{display:flex;gap:10px;margin-bottom:10px}
+    form input, form select, form button{padding:10px;border-radius:10px;border:1px solid rgba(7,32,44,0.06);flex:1}
+    form button{flex:0 0 auto}
+
+    .table-scroll{max-height:380px;overflow:auto;padding-right:8px}
+    table{width:100%;border-collapse:collapse}
+    table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(7,32,44,0.04);font-size:14px}
+    table th{background:linear-gradient(90deg,var(--accent),#0aa1b7);color:white;font-weight:700}
+    .action-col{white-space:nowrap}
+
+    /* Modals (glass) */
+    .modal{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:2200;padding:28px;
+    }
+    .modal.show{display:flex}
+    .modal-backdrop{position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.28), rgba(2,6,23,0.18));backdrop-filter: blur(6px)}
+    .modal-card{
+      position:relative;z-index:2;max-width:1100px;width:100%;border-radius:16px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,255,255,0.98));box-shadow:0 40px 120px rgba(6,51,66,0.12);
+      border:1px solid rgba(16,188,212,0.06);
+    }
+    .close-x{position:absolute;right:12px;top:12px;background:transparent;border:none;font-size:20px;cursor:pointer;color:#334155}
+
+    /* Results grid (cards) */
+    .results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .fact-card{
+      border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,255,255,0.95));
+      box-shadow: 0 12px 36px rgba(6,51,66,0.06);border:1px solid rgba(16,188,212,0.06);transition:transform .14s,box-shadow .14s;cursor:pointer
+    }
+    .fact-card:hover{transform:translateY(-6px);box-shadow:0 28px 80px rgba(6,51,66,0.12)}
+    .fact-card h4{margin:0 0 6px 0;font-size:15px}
+    .fact-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;color:var(--muted);font-size:13px}
+
+    /* Detail modal layout */
+    .factura-detail{display:grid;grid-template-columns:1fr 320px;gap:14px}
+    .detail-block{background:linear-gradient(180deg,#fff,#fbffff);padding:12px;border-radius:10px;border:1px solid rgba(7,32,44,0.03)}
+    .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .value{font-weight:700;color:#073642}
+
+    /* small */
+    @media (max-width:720px){
+      .factura-detail{grid-template-columns:1fr}
+      .wrap{padding:12px}
+      .nav{flex-direction:row;overflow:auto}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Dashboard · Discovery Pets</h1>
-
-    <!-- Buscador -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="search-row">
-        <input id="buscadorFactura" placeholder="Buscar facturas por producto (ej. 'tela camisera')">
-        <button id="btnBuscarFactura" class="small">Buscar</button>
-        <button id="btnReset" class="small secondary">Restablecer</button>
-      </div>
-    </div>
-
-    <div class="grid">
-      <!-- Proveedores -->
-      <div class="card">
-        <h3>Proveedores</h3>
-        <form id="proveedorForm">
-          <div class="form-row">
-            <input id="nombreProveedor" placeholder="Nombre proveedor" required>
-            <input id="rucProveedor" placeholder="RUC" required>
-          </div>
-          <div class="form-row">
-            <input id="telefonoProveedor" placeholder="Teléfono">
-            <input id="direccionProveedor" placeholder="Dirección">
-            <button class="btn small" type="submit">Añadir proveedor</button>
-          </div>
-        </form>
-
-        <div style="max-height:260px;overflow:auto">
-          <table>
-            <thead><tr><th>Nombre</th><th>RUC</th><th>Tel</th><th>Dirección</th><th>Acción</th></tr></thead>
-            <tbody id="tablaProveedores"></tbody>
-          </table>
+  <div class="wrap">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="brand">
+        <div class="logo">DP</div>
+        <div>
+          <h1>Discovery Pets</h1>
+          <div class="muted">Panel administrativo — Premium</div>
         </div>
       </div>
 
-      <!-- Productos -->
-      <div class="card">
-        <h3>Productos</h3>
-        <form id="productoForm">
-          <div class="form-row">
-            <input id="nombreProducto" placeholder="Nombre producto" required>
-            <input id="unidadProducto" placeholder="Unidad (kg, und)">
-          </div>
-          <div class="form-row">
-            <input id="maquinaria" placeholder="Maquinaria">
-            <input id="productoOf" placeholder="Producto OF">
-          </div>
-          <div class="form-row">
-            <input id="insumosExtra" placeholder="Insumos extra">
-            <input id="descripcionProducto" placeholder="Descripción">
-            <button class="btn small" type="submit">Añadir producto</button>
-          </div>
-        </form>
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <button class="active" data-target="seccion-proveedores">🏢 Proveedores</button>
+        <button data-target="seccion-productos">📦 Productos</button>
+        <button data-target="seccion-facturas">🧾 Facturas</button>
+      </nav>
 
-        <div style="max-height:260px;overflow:auto">
-          <table>
-            <thead><tr><th>Nombre</th><th>Unidad</th><th>Maquinaria</th><th>Producto OF</th><th>Insumos</th><th>Descripción</th><th>Acción</th></tr></thead>
-            <tbody id="tablaProductos"></tbody>
-          </table>
+      <button id="logoutBtn" class="logout">Cerrar sesión</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" role="main">
+      <div class="header">
+        <div class="title">
+          <h2>Dashboard · Discovery Pets</h2>
+          <div class="muted" style="margin-top:6px">Datos en tiempo real — interfaz premium</div>
+        </div>
+
+        <div class="search-bar">
+          <input id="buscadorFactura" class="search-input" type="search" placeholder="Buscar facturas por producto (escribe y presiona Enter)" aria-label="Buscar facturas">
+          <button id="btnBuscarFactura" class="btn small">Buscar</button>
+          <button id="btnRefresh" class="btn ghost small">Restablecer</button>
         </div>
       </div>
 
-      <!-- Facturas -->
-      <div class="card" style="grid-column:1 / -1">
-        <h3>Facturas</h3>
-        <form id="facturaForm">
-          <div class="form-row">
-            <input id="numeroFactura" placeholder="Número de factura" required>
-            <select id="proveedorFactura"><option value="">Seleccionar proveedor</option></select>
-            <select id="productoFactura"><option value="">Seleccionar producto</option></select>
-          </div>
-          <div class="form-row">
-            <input id="cantidadFactura" type="number" placeholder="Cantidad">
-            <input id="montoFactura" type="number" step="0.01" placeholder="Monto">
-            <select id="monedaFactura"><option value="S/">S/</option><option value="$">US$</option></select>
-            <select id="tipoFactura"><option value="FACTURA">FACTURA</option><option value="BOLETA DE VENTA">BOLETA</option></select>
-            <input id="fechaFactura" type="date">
-            <button class="btn small" type="submit">Añadir factura</button>
-          </div>
-        </form>
+      <div class="content-grid">
+        <!-- LEFT: forms & tables -->
+        <div>
+          <!-- Proveedores -->
+          <section id="seccion-proveedores" class="section-active">
+            <div class="card">
+              <h3>Registrar proveedor</h3>
+              <form id="proveedorForm">
+                <div class="row">
+                  <input id="rucProveedor" placeholder="RUC" required />
+                  <input id="nombreProveedor" placeholder="Nombre del proveedor" required />
+                </div>
+                <div class="row">
+                  <input id="direccionProveedor" placeholder="Dirección" />
+                  <button class="btn" type="submit">Añadir proveedor</button>
+                </div>
+              </form>
+            </div>
 
-        <div style="max-height:360px;overflow:auto">
-          <table>
-            <thead><tr><th>N°</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th>Acción</th></tr></thead>
-            <tbody id="tablaFacturas"></tbody>
-          </table>
+            <div class="card" style="margin-top:14px">
+              <h3>Proveedores registrados</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th></th></tr></thead>
+                  <tbody id="tablaProveedores"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Productos -->
+          <section id="seccion-productos" class="seccion" style="display:none">
+            <div class="card">
+              <h3>Registrar producto</h3>
+              <form id="productoForm">
+                <div class="row">
+                  <input id="nombreProducto" placeholder="Nombre producto" required />
+                  <input id="cantidadProducto" placeholder="Cantidad" inputmode="numeric" />
+                </div>
+                <div class="row">
+                  <input id="unidadProducto" placeholder="Unidad (ej: kg, und)" />
+                  <input id="valorUnitarioProducto" placeholder="Valor unitario" inputmode="decimal" />
+                  <button class="btn" type="submit">Añadir producto</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card" style="margin-top:14px">
+              <h3>Productos registrados</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>Nombre</th><th>Cant.</th><th>Unidad</th><th>Valor</th><th></th></tr></thead>
+                  <tbody id="tablaProductos"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Facturas -->
+          <section id="seccion-facturas" class="seccion" style="display:none">
+            <div class="card">
+              <h3>Registrar factura</h3>
+              <form id="facturaForm">
+                <div class="row">
+                  <input id="numeroFactura" placeholder="N° factura" />
+                  <input id="fechaFactura" type="date" />
+                </div>
+                <div class="row">
+                  <select id="proveedorFactura"><option value="">Seleccione proveedor</option></select>
+                  <select id="productoFactura"><option value="">Seleccione producto</option></select>
+                </div>
+                <div class="row">
+                  <input id="montoFactura" placeholder="Monto" inputmode="decimal" />
+                  <select id="monedaFactura">
+                    <option value="S/ ">S/</option>
+                    <option value="$ ">$</option>
+                  </select>
+                  <select id="tipoFactura">
+                    <option value="FACTURA">FACTURA</option>
+                    <option value="BOLETA">BOLETA</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <button class="btn" type="submit">Guardar factura</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card" style="margin-top:14px">
+              <h3>Facturas</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>Número</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Fecha</th><th></th></tr></thead>
+                  <tbody id="tablaFacturas"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
         </div>
+
+        <!-- RIGHT: info -->
+        <aside>
+          <div class="card">
+            <h3>Panel rápido</h3>
+            <p class="muted">Interfaz en tiempo real — cambios visibles para todos los usuarios conectados.</p>
+            <hr style="margin:12px 0;border:none;border-top:1px dashed rgba(7,32,44,0.04)">
+            <div>
+              <strong>Atajos</strong>
+              <ul class="muted" style="margin-top:8px">
+                <li>Enter en buscador → abrir resultados</li>
+                <li>Click en tarjeta → ver detalle</li>
+                <li>Eliminar usa confirmación</li>
+              </ul>
+            </div>
+          </div>
+        </aside>
       </div>
-    </div>
+    </main>
   </div>
 
-  <!-- Modal buscador (glass) -->
-  <div class="modal-backdrop" id="modalBuscador">
+  <!-- MODAL: Detalle (proveedor/producto) -->
+  <div id="modalDetalle" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="document.getElementById('modalDetalle').classList.remove('show')"></div>
     <div class="modal-card" role="dialog" aria-modal="true">
-      <button class="close-x" id="cerrarModalBuscador">&times;</button>
-      <h3>Resultados de búsqueda</h3>
-      <div id="resultadoBusqueda" style="margin-top:8px"></div>
+      <button id="cerrarModal" class="close-x" title="Cerrar">&times;</button>
+      <div id="modalContenido">
+        <p class="muted">Cargando...</p>
+      </div>
     </div>
   </div>
 
-  <!-- Modal detalle -->
-  <div class="modal-detail" id="modalDetalle">
-    <div class="detail-card" role="dialog" aria-modal="true">
-      <button class="close-x" id="cerrarDetalle">&times;</button>
-      <div id="detalleContenido"></div>
+  <!-- MODAL: Resultados de búsqueda (tarjetas 3D) -->
+  <div id="modalBuscador" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="document.getElementById('modalBuscador').classList.remove('show')"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" style="max-width:980px">
+      <button id="cerrarModalBuscador" class="close-x" title="Cerrar">&times;</button>
+      <h3 id="resultTitle">Resultados</h3>
+      <p id="resultSub" class="muted" style="margin-top:6px;margin-bottom:12px"></p>
+      <div id="resultadoBusqueda" class="results-grid">
+        <!-- tarjetas generadas por dashboard.js -->
+      </div>
     </div>
   </div>
 
-  <script type="module" src="dashboard.js"></script>
+  <!-- MODAL: Factura detalle -->
+  <div id="modalFactura" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="document.getElementById('modalFactura').classList.remove('show')"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" style="max-width:900px">
+      <button class="close-x" onclick="document.getElementById('modalFactura').classList.remove('show')">&times;</button>
+      <h3 id="facturaTitle">Factura</h3>
+      <div id="modalFacturaContenido" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard script (module) -->
+  <script type="module" src="./dashboard.js"></script>
+
+  <!-- Tiny script: tabs navigation (keeps same behavior expected by dashboard.js) -->
+  <script>
+    (function(){
+      const buttons = document.querySelectorAll('.nav button');
+      const secciones = {
+        'seccion-proveedores': document.getElementById('seccion-proveedores'),
+        'seccion-productos': document.getElementById('seccion-productos'),
+        'seccion-facturas': document.getElementById('seccion-facturas')
+      };
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          // hide all sections
+          Object.values(secciones).forEach(s => s.style.display = 'none');
+          const target = btn.dataset.target;
+          if (secciones[target]) secciones[target].style.display = 'block';
+          // if dashboard.js relies on seccion classes, also toggle if present
+          document.querySelectorAll('.seccion').forEach(s=>s.classList.remove('activa'));
+          document.getElementById(target)?.classList.add('activa');
+        });
+      });
+
+      // close modals when pressing ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+        }
+      });
+
+      // close buttons wiring
+      document.getElementById('cerrarModal')?.addEventListener('click', () => document.getElementById('modalDetalle').classList.remove('show'));
+      document.getElementById('cerrarModalBuscador')?.addEventListener('click', () => document.getElementById('modalBuscador').classList.remove('show'));
+    })();
+  </script>
 </body>
 </html>
+
+
 
 
 
