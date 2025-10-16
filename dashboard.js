@@ -2,11 +2,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, query, where, updateDoc
+  doc, deleteDoc, updateDoc, query, where
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import {
-  getAuth, signOut
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -14,7 +12,7 @@ const firebaseConfig = {
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:abcd1234efgh5678" // solo referencia local
+  appId: "1:481355972999:web:abcd1234efgh5678"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -57,6 +55,26 @@ formProveedor.addEventListener("submit", async e => {
   formProveedor.reset();
 });
 
+onSnapshot(colProveedores, snapshot => {
+  tablaProveedores.innerHTML = "";
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    const tr = document.createElement("tr");
+    tr.dataset.id = docu.id;
+    tr.innerHTML = `
+      <td>${d.ruc}</td>
+      <td>${d.nombre}</td>
+      <td>${d.direccion}</td>
+      <td>${d.telefono || "-"}</td>
+      <td>
+        <button class="btn btn-sm editar" data-tipo="proveedor">✏️ Editar</button>
+        <button class="btn btn-sm eliminar" data-tipo="proveedor">🗑️ Eliminar</button>
+      </td>`;
+    tablaProveedores.appendChild(tr);
+  });
+  cargarProveedoresSelect();
+});
+
 async function cargarProveedoresSelect() {
   const select = document.getElementById("proveedorFactura");
   select.innerHTML = '<option value="">Seleccionar proveedor</option>';
@@ -69,59 +87,6 @@ async function cargarProveedoresSelect() {
     select.appendChild(opt);
   });
 }
-
-onSnapshot(colProveedores, snapshot => {
-  tablaProveedores.innerHTML = "";
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${d.ruc}</td>
-      <td>${d.nombre}</td>
-      <td>${d.direccion || "-"}</td>
-      <td>${d.telefono || "-"}</td>
-      <td>
-        <button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button>
-        <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
-      </td>
-    `;
-    tablaProveedores.appendChild(tr);
-
-    // --- EDITAR ---
-    tr.querySelector(".editar").addEventListener("click", () => {
-      tr.children[0].innerHTML = `<input value="${d.ruc}">`;
-      tr.children[1].innerHTML = `<input value="${d.nombre}">`;
-      tr.children[2].innerHTML = `<input value="${d.direccion || ""}">`;
-      tr.children[3].innerHTML = `<input value="${d.telefono || ""}">`;
-      tr.children[4].innerHTML = `
-        <button class="btn btn-sm guardar">💾 Guardar</button>
-        <button class="btn btn-sm cancelar">❌ Cancelar</button>
-      `;
-
-      tr.querySelector(".guardar").addEventListener("click", async () => {
-        const nuevosDatos = {
-          ruc: tr.children[0].querySelector("input").value.trim(),
-          nombre: tr.children[1].querySelector("input").value.trim(),
-          direccion: tr.children[2].querySelector("input").value.trim(),
-          telefono: tr.children[3].querySelector("input").value.trim()
-        };
-        await updateDoc(doc(db, "proveedores", docu.id), nuevosDatos);
-      });
-
-      tr.querySelector(".cancelar").addEventListener("click", () => {
-        tr.children[0].textContent = d.ruc;
-        tr.children[1].textContent = d.nombre;
-        tr.children[2].textContent = d.direccion || "-";
-        tr.children[3].textContent = d.telefono || "-";
-        tr.children[4].innerHTML = `
-          <button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button>
-          <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
-        `;
-      });
-    });
-  });
-  cargarProveedoresSelect();
-});
 
 // ================= PRODUCTOS =================
 const formProducto = document.getElementById("productoForm");
@@ -140,6 +105,26 @@ formProducto.addEventListener("submit", async e => {
   formProducto.reset();
 });
 
+onSnapshot(colProductos, snapshot => {
+  tablaProductos.innerHTML = "";
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    const tr = document.createElement("tr");
+    tr.dataset.id = docu.id;
+    tr.innerHTML = `
+      <td>${d.nombre}</td>
+      <td>${d.cantidad}</td>
+      <td>S/. ${d.precio.toFixed(2)}</td>
+      <td>${d.descripcion || "-"}</td>
+      <td>
+        <button class="btn btn-sm editar" data-tipo="producto">✏️ Editar</button>
+        <button class="btn btn-sm eliminar" data-tipo="producto">🗑️ Eliminar</button>
+      </td>`;
+    tablaProductos.appendChild(tr);
+  });
+  cargarProductosSelect();
+});
+
 async function cargarProductosSelect() {
   const select = document.getElementById("productoFactura");
   select.innerHTML = '<option value="">Seleccionar producto</option>';
@@ -152,59 +137,6 @@ async function cargarProductosSelect() {
     select.appendChild(opt);
   });
 }
-
-onSnapshot(colProductos, snapshot => {
-  tablaProductos.innerHTML = "";
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${d.nombre}</td>
-      <td>${d.cantidad}</td>
-      <td>S/. ${d.precio.toFixed(2)}</td>
-      <td>${d.descripcion || "-"}</td>
-      <td>
-        <button class="btn btn-sm ver-info" data-tipo="producto" data-nombre="${d.nombre}">🔍 Ver</button>
-        <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
-      </td>
-    `;
-    tablaProductos.appendChild(tr);
-
-    // --- EDITAR ---
-    tr.querySelector(".editar").addEventListener("click", () => {
-      tr.children[0].innerHTML = `<input value="${d.nombre}">`;
-      tr.children[1].innerHTML = `<input type="number" value="${d.cantidad}">`;
-      tr.children[2].innerHTML = `<input type="number" step="0.01" value="${d.precio}">`;
-      tr.children[3].innerHTML = `<input value="${d.descripcion || ""}">`;
-      tr.children[4].innerHTML = `
-        <button class="btn btn-sm guardar">💾 Guardar</button>
-        <button class="btn btn-sm cancelar">❌ Cancelar</button>
-      `;
-
-      tr.querySelector(".guardar").addEventListener("click", async () => {
-        const nuevosDatos = {
-          nombre: tr.children[0].querySelector("input").value.trim(),
-          cantidad: parseInt(tr.children[1].querySelector("input").value),
-          precio: parseFloat(tr.children[2].querySelector("input").value),
-          descripcion: tr.children[3].querySelector("input").value.trim()
-        };
-        await updateDoc(doc(db, "productos", docu.id), nuevosDatos);
-      });
-
-      tr.querySelector(".cancelar").addEventListener("click", () => {
-        tr.children[0].textContent = d.nombre;
-        tr.children[1].textContent = d.cantidad;
-        tr.children[2].textContent = `S/. ${d.precio.toFixed(2)}`;
-        tr.children[3].textContent = d.descripcion || "-";
-        tr.children[4].innerHTML = `
-          <button class="btn btn-sm ver-info" data-tipo="producto" data-nombre="${d.nombre}">🔍 Ver</button>
-          <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
-        `;
-      });
-    });
-  });
-  cargarProductosSelect();
-});
 
 // ================= FACTURAS =================
 const formFactura = document.getElementById("facturaForm");
@@ -229,6 +161,7 @@ onSnapshot(colFacturas, snapshot => {
   snapshot.forEach(docu => {
     const d = docu.data();
     const tr = document.createElement("tr");
+    tr.dataset.id = docu.id;
     tr.innerHTML = `
       <td>${d.idFactura}</td>
       <td>${d.fecha}</td>
@@ -238,54 +171,10 @@ onSnapshot(colFacturas, snapshot => {
       <td>${d.tipo}</td>
       <td>
         <button class="btn btn-sm ver-factura" data-id="${d.idFactura}">📄 Detalle</button>
-        <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
-      </td>
-    `;
+        <button class="btn btn-sm editar" data-tipo="factura">✏️ Editar</button>
+        <button class="btn btn-sm eliminar" data-tipo="factura">🗑️ Eliminar</button>
+      </td>`;
     tablaFacturas.appendChild(tr);
-
-    // --- EDITAR ---
-    tr.querySelector(".editar").addEventListener("click", () => {
-      tr.children[0].innerHTML = `<input value="${d.idFactura}">`;
-      tr.children[1].innerHTML = `<input type="date" value="${d.fecha}">`;
-      tr.children[2].innerHTML = `<input value="${d.proveedor}">`;
-      tr.children[3].innerHTML = `<input value="${d.producto}">`;
-      tr.children[4].innerHTML = `<input type="number" step="0.01" value="${d.monto}">`;
-      tr.children[5].innerHTML = `
-        <select>
-          <option value="Factura" ${d.tipo==="Factura"?"selected":""}>Factura</option>
-          <option value="Boleta" ${d.tipo==="Boleta"?"selected":""}>Boleta</option>
-        </select>
-      `;
-      tr.children[6].innerHTML = `
-        <button class="btn btn-sm guardar">💾 Guardar</button>
-        <button class="btn btn-sm cancelar">❌ Cancelar</button>
-      `;
-
-      tr.querySelector(".guardar").addEventListener("click", async () => {
-        const nuevosDatos = {
-          idFactura: tr.children[0].querySelector("input").value.trim(),
-          fecha: tr.children[1].querySelector("input").value,
-          proveedor: tr.children[2].querySelector("input").value,
-          producto: tr.children[3].querySelector("input").value,
-          monto: parseFloat(tr.children[4].querySelector("input").value),
-          tipo: tr.children[5].querySelector("select").value
-        };
-        await updateDoc(doc(db, "facturas", docu.id), nuevosDatos);
-      });
-
-      tr.querySelector(".cancelar").addEventListener("click", () => {
-        tr.children[0].textContent = d.idFactura;
-        tr.children[1].textContent = d.fecha;
-        tr.children[2].textContent = d.proveedor;
-        tr.children[3].textContent = d.producto;
-        tr.children[4].textContent = `S/. ${d.monto.toFixed(2)}`;
-        tr.children[5].textContent = d.tipo;
-        tr.children[6].innerHTML = `
-          <button class="btn btn-sm ver-factura" data-id="${d.idFactura}">📄 Detalle</button>
-          <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
-        `;
-      });
-    });
   });
 });
 
@@ -303,14 +192,16 @@ buscador.addEventListener("input", async () => {
     const f = docu.data();
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
-      div.style.padding = "8px";
-      div.style.cursor = "pointer";
-      div.style.borderBottom = "1px solid rgba(0,0,0,0.05)";
       div.innerHTML = `<strong>${f.idFactura}</strong> - ${f.producto} (${f.proveedor}) - S/. ${f.monto.toFixed(2)}`;
       div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
+});
+
+document.getElementById("btnRefresh").addEventListener("click", () => {
+  buscador.value = "";
+  panelFacturas.innerHTML = "";
 });
 
 // ================= MODALES =================
@@ -330,13 +221,64 @@ function mostrarModalFactura(f) {
   modalFactura.style.display = "block";
 }
 
-// ================= MODAL DETALLE EXTRA =================
-const modalExtra = document.getElementById("modalDetalleExtra");
-const contenidoDetalleExtra = document.getElementById("contenidoDetalleExtra");
-const cerrarModalExtra = document.getElementById("cerrarModalDetalle");
-cerrarModalExtra.addEventListener("click", () => modalExtra.style.display = "none");
+// ================= MODAL EDICIÓN =================
+const modalEditar = document.getElementById("modalEditar");
+const contenidoModalEditar = document.getElementById("contenidoModalEditar");
+const cerrarModalEditar = document.getElementById("cerrarModalEditar");
+cerrarModalEditar.addEventListener("click", () => modalEditar.style.display = "none");
 
 document.addEventListener("click", async e => {
+  const tr = e.target.closest("tr");
+  const tipo = e.target.dataset.tipo;
+
+  if (e.target.classList.contains("editar") && tr) {
+    const id = tr.dataset.id;
+    let colRef;
+    let data;
+    if (tipo === "proveedor") colRef = colProveedores;
+    else if (tipo === "producto") colRef = colProductos;
+    else if (tipo === "factura") colRef = colFacturas;
+    else return;
+
+    const docRef = doc(db, colRef.path, id);
+    const snap = await getDocs(query(colRef, where("__name__", "==", id)));
+    data = snap.docs[0].data();
+
+    let html = `<h3>Editar ${tipo}</h3><form id="editarForm">`;
+    for (const key in data) {
+      html += `<div class="row"><input name="${key}" value="${data[key]}" required></div>`;
+    }
+    html += `<button class="btn" type="submit">Guardar cambios</button></form>`;
+    contenidoModalEditar.innerHTML = html;
+    modalEditar.style.display = "block";
+
+    document.getElementById("editarForm").addEventListener("submit", async ev => {
+      ev.preventDefault();
+      const formData = new FormData(ev.target);
+      const updatedData = {};
+      formData.forEach((v, k) => {
+        if (k === "precio" || k === "monto") updatedData[k] = parseFloat(v);
+        else if (k === "cantidad") updatedData[k] = parseInt(v);
+        else updatedData[k] = v;
+      });
+      await updateDoc(docRef, updatedData);
+      modalEditar.style.display = "none";
+    });
+  }
+
+  if (e.target.classList.contains("eliminar") && tr) {
+    const id = tr.dataset.id;
+    let colRef;
+    if (tipo === "proveedor") colRef = colProveedores;
+    else if (tipo === "producto") colRef = colProductos;
+    else if (tipo === "factura") colRef = colFacturas;
+    else return;
+
+    if (confirm(`¿Deseas eliminar este ${tipo}?`)) {
+      await deleteDoc(doc(db, colRef.path, id));
+    }
+  }
+
   if (e.target.classList.contains("link-info")) {
     const nombre = e.target.dataset.nombre;
     const tipo = e.target.dataset.tipo;
@@ -345,9 +287,8 @@ document.addEventListener("click", async e => {
     let col = tipo === "proveedor" ? colProveedores : colProductos;
     const q = query(col, where("nombre", "==", nombre));
     const snap = await getDocs(q);
-    if (snap.empty) {
-      contenidoDetalleExtra.innerHTML = "<p>No se encontró información.</p>";
-    } else {
+    if (snap.empty) contenidoModalEditar.innerHTML = "<p>No se encontró información.</p>";
+    else {
       const d = snap.docs[0].data();
       let html = "";
       if (tipo === "proveedor") {
@@ -363,14 +304,10 @@ document.addEventListener("click", async e => {
           <p><b>Precio:</b> S/. ${d.precio.toFixed(2)}</p>
           <p><b>Descripción:</b> ${d.descripcion || "-"}</p>`;
       }
-      contenidoDetalleExtra.innerHTML = html;
+      contenidoModalEditar.innerHTML = html;
+      modalEditar.style.display = "block";
     }
-    modalExtra.style.display = "block";
   }
 });
 
-// ================= RESTABLECER BUSCADOR =================
-document.getElementById("btnRefresh").addEventListener("click", () => {
-  buscador.value = "";
-  panelFacturas.innerHTML = "";
-});
+
