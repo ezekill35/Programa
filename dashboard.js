@@ -7,8 +7,6 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
-  query,
-  where,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -173,7 +171,7 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-// === BUSCADOR FACTURAS ===
+// === BUSCADOR DE FACTURAS (FUNCIONA) ===
 const buscador = document.getElementById("buscadorFactura");
 const panelFacturas = document.getElementById("panelFacturas");
 
@@ -182,21 +180,21 @@ buscador.addEventListener("input", async () => {
   panelFacturas.innerHTML = "";
   if (!texto) return;
 
-  const q = query(colFacturas, where("producto", "==", texto));
-  const snap = await getDocs(q);
-
+  const snap = await getDocs(colFacturas);
   snap.forEach(docu => {
     const f = docu.data();
-    const div = document.createElement("div");
-    div.style.padding = "6px 12px";
-    div.style.cursor = "pointer";
-    div.textContent = `${f.idFactura} - ${f.producto} - ${f.proveedor}`;
-    div.addEventListener("click", () => mostrarModalFactura(f));
-    panelFacturas.appendChild(div);
+    if (f.producto.toLowerCase().includes(texto)) {
+      const div = document.createElement("div");
+      div.style.padding = "6px 12px";
+      div.style.cursor = "pointer";
+      div.textContent = `${f.idFactura} - ${f.producto} - ${f.proveedor}`;
+      div.addEventListener("click", () => mostrarModalFactura(f));
+      panelFacturas.appendChild(div);
+    }
   });
 });
 
-// === BOTON RESTABLECER ===
+// === BOTÓN RESTABLECER ===
 document.getElementById("btnRefresh").addEventListener("click", () => {
   buscador.value = "";
   panelFacturas.innerHTML = "";
@@ -236,11 +234,10 @@ function mostrarModalFactura(f) {
 
 async function mostrarDetalleExtra(tipo, nombre) {
   let col = tipo === "proveedor" ? colProveedores : colProductos;
-  const q = query(col, where("nombre", "==", nombre));
-  const snap = await getDocs(q);
-  if (snap.empty) return alert(`${tipo} no encontrado`);
+  const snap = await getDocs(col);
+  const docu = snap.docs.find(d => d.data().nombre === nombre)?.data();
+  if (!docu) return alert(`${tipo} no encontrado`);
 
-  const docu = snap.docs[0].data();
   let html = "";
   if (tipo === "proveedor") {
     html = `<p><strong>RUC:</strong> ${docu.ruc}</p>
@@ -253,6 +250,7 @@ async function mostrarDetalleExtra(tipo, nombre) {
             <p><strong>Precio:</strong> ${docu.precio}</p>
             <p><strong>Descripción:</strong> ${docu.descripcion || "-"}</p>`;
   }
+
   contenidoDetalleExtra.innerHTML = html;
   modalExtra.style.display = "block";
 }
