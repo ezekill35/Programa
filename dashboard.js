@@ -4,9 +4,7 @@ import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
   doc, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import {
-  getAuth, signOut
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -14,7 +12,7 @@ const firebaseConfig = {
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:abcd1234efgh5678" // solo referencia local
+  appId: "1:481355972999:web:abcd1234efgh5678"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -70,21 +68,8 @@ onSnapshot(colProveedores, snapshot => {
       <td><button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button></td>`;
     tablaProveedores.appendChild(tr);
   });
-  cargarProveedoresSelect();
+  cargarProveedoresSelect(); // recarga select cada vez que cambia
 });
-
-async function cargarProveedoresSelect() {
-  const select = document.getElementById("proveedorFactura");
-  select.innerHTML = '<option value="">Seleccionar proveedor</option>';
-  const snap = await getDocs(colProveedores);
-  snap.forEach(docu => {
-    const d = docu.data();
-    const opt = document.createElement("option");
-    opt.value = d.nombre;
-    opt.textContent = d.nombre;
-    select.appendChild(opt);
-  });
-}
 
 // ================= PRODUCTOS =================
 const formProducto = document.getElementById("productoForm");
@@ -119,6 +104,23 @@ onSnapshot(colProductos, snapshot => {
   cargarProductosSelect();
 });
 
+// ================= CARGAR SELECTS =================
+async function cargarProveedoresSelect() {
+  const select = document.getElementById("proveedorFactura");
+  select.innerHTML = '<option value="">Seleccionar proveedor</option>';
+  const snap = await getDocs(colProveedores);
+  snap.forEach(docu => {
+    const d = docu.data();
+    const opt = document.createElement("option");
+    opt.value = d.nombre;
+    opt.textContent = d.nombre;
+    select.appendChild(opt);
+  });
+  // Forzar que el select sea seleccionable
+  select.style.position = "relative";
+  select.style.zIndex = "1";
+}
+
 async function cargarProductosSelect() {
   const select = document.getElementById("productoFactura");
   select.innerHTML = '<option value="">Seleccionar producto</option>';
@@ -130,6 +132,8 @@ async function cargarProductosSelect() {
     opt.textContent = d.nombre;
     select.appendChild(opt);
   });
+  select.style.position = "relative";
+  select.style.zIndex = "1";
 }
 
 // ================= FACTURAS =================
@@ -181,9 +185,6 @@ buscador.addEventListener("input", async () => {
     const f = docu.data();
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
-      div.style.padding = "8px";
-      div.style.cursor = "pointer";
-      div.style.borderBottom = "1px solid rgba(0,0,0,0.05)";
       div.innerHTML = `<strong>${f.idFactura}</strong> - ${f.producto} (${f.proveedor}) - S/. ${f.monto.toFixed(2)}`;
       div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
