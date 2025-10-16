@@ -4,92 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Discovery Pets · Acceso</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --accent: #10bcd4;
-      --bg: linear-gradient(180deg,#eaf9ff,#f8fdff);
-      --shadow-lg: 0 10px 30px rgba(16,188,212,0.12);
-      --glass: rgba(255,255,255,0.8);
-    }
+    :root { --accent:#10bcd4; --bg:linear-gradient(180deg,#eaf9ff,#f8fdff); --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --glass:rgba(255,255,255,0.8); }
     *{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;}
-    body{
-      margin:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100vh;
-      background: var(--bg);
-    }
-    .container {
-      position:relative;
-      width:380px;
-      padding:30px;
-      border-radius:20px;
-      background: var(--glass);
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(10px);
-      text-align:center;
-      animation: floatIn .6s ease;
-    }
-    @keyframes floatIn {
-      from{opacity:0;transform:translateY(40px) scale(.96)}
-      to{opacity:1;transform:none}
-    }
-    h1 {
-      margin:0;
-      font-weight:800;
-      font-size:24px;
-      color:#0f172a;
-    }
+    body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background: var(--bg);}
+    .container {position:relative;width:380px;padding:30px;border-radius:20px;background: var(--glass);box-shadow: var(--shadow-lg);backdrop-filter: blur(10px);text-align:center;animation: floatIn .6s ease;}
+    @keyframes floatIn { from{opacity:0;transform:translateY(40px) scale(.96)} to{opacity:1;transform:none} }
+    h1 {margin:0;font-weight:800;font-size:24px;color:#0f172a;}
     p.subtitle { color:#6b7280; font-size:14px; margin-bottom:24px; }
-    input {
-      width:100%;
-      padding:12px 14px;
-      margin-bottom:12px;
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,0.08);
-      box-shadow:0 4px 12px rgba(16,188,212,0.08);
-      font-size:14px;
-    }
-    button {
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:12px;
-      background:var(--accent);
-      color:white;
-      font-weight:600;
-      font-size:15px;
-      cursor:pointer;
-      box-shadow:0 6px 18px rgba(16,188,212,0.2);
-      transition: all .2s ease;
-    }
+    input { width:100%;padding:12px 14px;margin-bottom:12px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 12px rgba(16,188,212,0.08);font-size:14px; }
+    button { width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent);color:white;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 6px 18px rgba(16,188,212,0.2);transition: all .2s ease; }
     button:hover { transform:translateY(-2px); box-shadow:0 8px 26px rgba(16,188,212,0.3); }
-    .toggle {
-      margin-top:18px;
-      color:#0f172a;
-      font-size:13px;
-    }
-    .toggle span {
-      color:var(--accent);
-      font-weight:600;
-      cursor:pointer;
-    }
-    .logo {
-      width:72px;height:72px;
-      margin:0 auto 12px;
-      border-radius:18px;
-      background:linear-gradient(135deg,var(--accent),#55d1e2);
-      display:flex;align-items:center;justify-content:center;
-      font-size:28px;font-weight:800;color:white;
-      box-shadow:0 12px 28px rgba(16,188,212,0.25);
-    }
+    .logo { width:72px;height:72px;margin:0 auto 12px;border-radius:18px;background:linear-gradient(135deg,var(--accent),#55d1e2);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:white;box-shadow:0 12px 28px rgba(16,188,212,0.25); }
   </style>
 </head>
 <body>
-  <div class="container" id="authBox">
+  <div class="container">
     <div class="logo">DP</div>
     <h1>Discovery Pets</h1>
     <p class="subtitle">Panel administrativo</p>
@@ -98,46 +31,19 @@
       <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
       <input type="password" id="loginPassword" placeholder="Contraseña" required>
       <button id="btnLogin">Iniciar sesión</button>
-      <div class="toggle">¿No tienes cuenta? <span id="showRegister">Regístrate</span></div>
-    </div>
-
-    <div id="registerForm" style="display:none">
-      <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
-      <input type="password" id="registerPassword" placeholder="Contraseña" required>
-      <button id="btnRegister">Crear cuenta</button>
-      <div class="toggle">¿Ya tienes cuenta? <span id="showLogin">Inicia sesión</span></div>
     </div>
   </div>
 
   <script type="module">
     import { auth } from "./firebase.js";
-    import {
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const showRegister = document.getElementById("showRegister");
-    const showLogin = document.getElementById("showLogin");
     const btnLogin = document.getElementById("btnLogin");
-    const btnRegister = document.getElementById("btnRegister");
 
-    showRegister.addEventListener("click", () => {
-      loginForm.style.display = "none";
-      registerForm.style.display = "block";
-    });
-
-    showLogin.addEventListener("click", () => {
-      registerForm.style.display = "none";
-      loginForm.style.display = "block";
-    });
-
-    // Autenticación
     btnLogin.addEventListener("click", async () => {
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
+      if (!email || !password) return alert("Ingrese correo y contraseña");
       try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = "dashboard.html";
@@ -146,27 +52,15 @@
       }
     });
 
-    btnRegister.addEventListener("click", async () => {
-      const email = document.getElementById("registerEmail").value.trim();
-      const password = document.getElementById("registerPassword").value.trim();
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Cuenta creada correctamente. Ya puedes iniciar sesión.");
-        registerForm.style.display = "none";
-        loginForm.style.display = "block";
-      } catch (err) {
-        alert("Error al registrarse: " + err.message);
-      }
-    });
-
-    // Mantener sesión activa
+    // Redirigir automáticamente si ya está logueado
     onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = "dashboard.html";
+      if (user && window.location.pathname.indexOf("dashboard.html") === -1) {
+        window.location.href = "dashboard.html";
+      }
     });
   </script>
 </body>
 </html>
-
 
 
 
