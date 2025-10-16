@@ -2,9 +2,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, query, where
+  doc, deleteDoc, query, where, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getAuth, signOut
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -12,7 +14,7 @@ const firebaseConfig = {
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:abcd1234efgh5678"
+  appId: "1:481355972999:web:abcd1234efgh5678" // solo referencia local
 };
 
 const app = initializeApp(firebaseConfig);
@@ -55,6 +57,19 @@ formProveedor.addEventListener("submit", async e => {
   formProveedor.reset();
 });
 
+async function cargarProveedoresSelect() {
+  const select = document.getElementById("proveedorFactura");
+  select.innerHTML = '<option value="">Seleccionar proveedor</option>';
+  const snap = await getDocs(colProveedores);
+  snap.forEach(docu => {
+    const d = docu.data();
+    const opt = document.createElement("option");
+    opt.value = d.nombre;
+    opt.textContent = d.nombre;
+    select.appendChild(opt);
+  });
+}
+
 onSnapshot(colProveedores, snapshot => {
   tablaProveedores.innerHTML = "";
   snapshot.forEach(docu => {
@@ -63,12 +78,49 @@ onSnapshot(colProveedores, snapshot => {
     tr.innerHTML = `
       <td>${d.ruc}</td>
       <td>${d.nombre}</td>
-      <td>${d.direccion}</td>
+      <td>${d.direccion || "-"}</td>
       <td>${d.telefono || "-"}</td>
-      <td><button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button></td>`;
+      <td>
+        <button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button>
+        <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
+      </td>
+    `;
     tablaProveedores.appendChild(tr);
+
+    // --- EDITAR ---
+    tr.querySelector(".editar").addEventListener("click", () => {
+      tr.children[0].innerHTML = `<input value="${d.ruc}">`;
+      tr.children[1].innerHTML = `<input value="${d.nombre}">`;
+      tr.children[2].innerHTML = `<input value="${d.direccion || ""}">`;
+      tr.children[3].innerHTML = `<input value="${d.telefono || ""}">`;
+      tr.children[4].innerHTML = `
+        <button class="btn btn-sm guardar">💾 Guardar</button>
+        <button class="btn btn-sm cancelar">❌ Cancelar</button>
+      `;
+
+      tr.querySelector(".guardar").addEventListener("click", async () => {
+        const nuevosDatos = {
+          ruc: tr.children[0].querySelector("input").value.trim(),
+          nombre: tr.children[1].querySelector("input").value.trim(),
+          direccion: tr.children[2].querySelector("input").value.trim(),
+          telefono: tr.children[3].querySelector("input").value.trim()
+        };
+        await updateDoc(doc(db, "proveedores", docu.id), nuevosDatos);
+      });
+
+      tr.querySelector(".cancelar").addEventListener("click", () => {
+        tr.children[0].textContent = d.ruc;
+        tr.children[1].textContent = d.nombre;
+        tr.children[2].textContent = d.direccion || "-";
+        tr.children[3].textContent = d.telefono || "-";
+        tr.children[4].innerHTML = `
+          <button class="btn btn-sm ver-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍 Ver</button>
+          <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
+        `;
+      });
+    });
   });
-  cargarProveedoresSelect(); // recarga select cada vez que cambia
+  cargarProveedoresSelect();
 });
 
 // ================= PRODUCTOS =================
@@ -88,39 +140,6 @@ formProducto.addEventListener("submit", async e => {
   formProducto.reset();
 });
 
-onSnapshot(colProductos, snapshot => {
-  tablaProductos.innerHTML = "";
-  snapshot.forEach(docu => {
-    const d = docu.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${d.nombre}</td>
-      <td>${d.cantidad}</td>
-      <td>S/. ${d.precio.toFixed(2)}</td>
-      <td>${d.descripcion || "-"}</td>
-      <td><button class="btn btn-sm ver-info" data-tipo="producto" data-nombre="${d.nombre}">🔍 Ver</button></td>`;
-    tablaProductos.appendChild(tr);
-  });
-  cargarProductosSelect();
-});
-
-// ================= CARGAR SELECTS =================
-async function cargarProveedoresSelect() {
-  const select = document.getElementById("proveedorFactura");
-  select.innerHTML = '<option value="">Seleccionar proveedor</option>';
-  const snap = await getDocs(colProveedores);
-  snap.forEach(docu => {
-    const d = docu.data();
-    const opt = document.createElement("option");
-    opt.value = d.nombre;
-    opt.textContent = d.nombre;
-    select.appendChild(opt);
-  });
-  // Forzar que el select sea seleccionable
-  select.style.position = "relative";
-  select.style.zIndex = "1";
-}
-
 async function cargarProductosSelect() {
   const select = document.getElementById("productoFactura");
   select.innerHTML = '<option value="">Seleccionar producto</option>';
@@ -132,9 +151,60 @@ async function cargarProductosSelect() {
     opt.textContent = d.nombre;
     select.appendChild(opt);
   });
-  select.style.position = "relative";
-  select.style.zIndex = "1";
 }
+
+onSnapshot(colProductos, snapshot => {
+  tablaProductos.innerHTML = "";
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${d.nombre}</td>
+      <td>${d.cantidad}</td>
+      <td>S/. ${d.precio.toFixed(2)}</td>
+      <td>${d.descripcion || "-"}</td>
+      <td>
+        <button class="btn btn-sm ver-info" data-tipo="producto" data-nombre="${d.nombre}">🔍 Ver</button>
+        <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
+      </td>
+    `;
+    tablaProductos.appendChild(tr);
+
+    // --- EDITAR ---
+    tr.querySelector(".editar").addEventListener("click", () => {
+      tr.children[0].innerHTML = `<input value="${d.nombre}">`;
+      tr.children[1].innerHTML = `<input type="number" value="${d.cantidad}">`;
+      tr.children[2].innerHTML = `<input type="number" step="0.01" value="${d.precio}">`;
+      tr.children[3].innerHTML = `<input value="${d.descripcion || ""}">`;
+      tr.children[4].innerHTML = `
+        <button class="btn btn-sm guardar">💾 Guardar</button>
+        <button class="btn btn-sm cancelar">❌ Cancelar</button>
+      `;
+
+      tr.querySelector(".guardar").addEventListener("click", async () => {
+        const nuevosDatos = {
+          nombre: tr.children[0].querySelector("input").value.trim(),
+          cantidad: parseInt(tr.children[1].querySelector("input").value),
+          precio: parseFloat(tr.children[2].querySelector("input").value),
+          descripcion: tr.children[3].querySelector("input").value.trim()
+        };
+        await updateDoc(doc(db, "productos", docu.id), nuevosDatos);
+      });
+
+      tr.querySelector(".cancelar").addEventListener("click", () => {
+        tr.children[0].textContent = d.nombre;
+        tr.children[1].textContent = d.cantidad;
+        tr.children[2].textContent = `S/. ${d.precio.toFixed(2)}`;
+        tr.children[3].textContent = d.descripcion || "-";
+        tr.children[4].innerHTML = `
+          <button class="btn btn-sm ver-info" data-tipo="producto" data-nombre="${d.nombre}">🔍 Ver</button>
+          <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
+        `;
+      });
+    });
+  });
+  cargarProductosSelect();
+});
 
 // ================= FACTURAS =================
 const formFactura = document.getElementById("facturaForm");
@@ -166,8 +236,56 @@ onSnapshot(colFacturas, snapshot => {
       <td>${d.producto}</td>
       <td>S/. ${d.monto.toFixed(2)}</td>
       <td>${d.tipo}</td>
-      <td><button class="btn btn-sm ver-factura" data-id="${d.idFactura}">📄 Detalle</button></td>`;
+      <td>
+        <button class="btn btn-sm ver-factura" data-id="${d.idFactura}">📄 Detalle</button>
+        <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
+      </td>
+    `;
     tablaFacturas.appendChild(tr);
+
+    // --- EDITAR ---
+    tr.querySelector(".editar").addEventListener("click", () => {
+      tr.children[0].innerHTML = `<input value="${d.idFactura}">`;
+      tr.children[1].innerHTML = `<input type="date" value="${d.fecha}">`;
+      tr.children[2].innerHTML = `<input value="${d.proveedor}">`;
+      tr.children[3].innerHTML = `<input value="${d.producto}">`;
+      tr.children[4].innerHTML = `<input type="number" step="0.01" value="${d.monto}">`;
+      tr.children[5].innerHTML = `
+        <select>
+          <option value="Factura" ${d.tipo==="Factura"?"selected":""}>Factura</option>
+          <option value="Boleta" ${d.tipo==="Boleta"?"selected":""}>Boleta</option>
+        </select>
+      `;
+      tr.children[6].innerHTML = `
+        <button class="btn btn-sm guardar">💾 Guardar</button>
+        <button class="btn btn-sm cancelar">❌ Cancelar</button>
+      `;
+
+      tr.querySelector(".guardar").addEventListener("click", async () => {
+        const nuevosDatos = {
+          idFactura: tr.children[0].querySelector("input").value.trim(),
+          fecha: tr.children[1].querySelector("input").value,
+          proveedor: tr.children[2].querySelector("input").value,
+          producto: tr.children[3].querySelector("input").value,
+          monto: parseFloat(tr.children[4].querySelector("input").value),
+          tipo: tr.children[5].querySelector("select").value
+        };
+        await updateDoc(doc(db, "facturas", docu.id), nuevosDatos);
+      });
+
+      tr.querySelector(".cancelar").addEventListener("click", () => {
+        tr.children[0].textContent = d.idFactura;
+        tr.children[1].textContent = d.fecha;
+        tr.children[2].textContent = d.proveedor;
+        tr.children[3].textContent = d.producto;
+        tr.children[4].textContent = `S/. ${d.monto.toFixed(2)}`;
+        tr.children[5].textContent = d.tipo;
+        tr.children[6].innerHTML = `
+          <button class="btn btn-sm ver-factura" data-id="${d.idFactura}">📄 Detalle</button>
+          <button class="btn btn-sm editar" data-id="${docu.id}">✏️ Editar</button>
+        `;
+      });
+    });
   });
 });
 
@@ -185,6 +303,9 @@ buscador.addEventListener("input", async () => {
     const f = docu.data();
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
+      div.style.padding = "8px";
+      div.style.cursor = "pointer";
+      div.style.borderBottom = "1px solid rgba(0,0,0,0.05)";
       div.innerHTML = `<strong>${f.idFactura}</strong> - ${f.producto} (${f.proveedor}) - S/. ${f.monto.toFixed(2)}`;
       div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
@@ -196,7 +317,6 @@ buscador.addEventListener("input", async () => {
 const modalFactura = document.getElementById("modalFactura");
 const contenidoModalFactura = document.getElementById("contenidoModalFactura");
 const cerrarModalFactura = document.getElementById("cerrarModalFactura");
-
 cerrarModalFactura.addEventListener("click", () => modalFactura.style.display = "none");
 
 function mostrarModalFactura(f) {
@@ -214,7 +334,6 @@ function mostrarModalFactura(f) {
 const modalExtra = document.getElementById("modalDetalleExtra");
 const contenidoDetalleExtra = document.getElementById("contenidoDetalleExtra");
 const cerrarModalExtra = document.getElementById("cerrarModalDetalle");
-
 cerrarModalExtra.addEventListener("click", () => modalExtra.style.display = "none");
 
 document.addEventListener("click", async e => {
