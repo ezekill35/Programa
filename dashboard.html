@@ -24,6 +24,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(
 .menu-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:#0f172a;cursor:pointer;transition:all .18s ease;}
 .menu-btn:hover{transform:translateY(-3px)}
 .menu-btn.activo, .menu-btn:focus{background:linear-gradient(90deg,rgba(16,188,212,0.12),rgba(16,188,212,0.06));box-shadow:var(--shadow-md);border-left:3px solid var(--accent);}
+.menu-btn .ico{width:18px;height:18px;display:inline-block;opacity:0.9}
 .logout{margin-top:18px;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(15,23,42,0.06);cursor:pointer;}
 .main{padding:28px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.82));box-shadow:var(--shadow-lg);backdrop-filter:blur(4px);}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
@@ -35,7 +36,7 @@ input[type="search"]{padding:10px 14px;border-radius:12px;border:1px solid rgba(
 .seccion.activa{display:block;animation:fadeIn .28s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;}
-.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.03);}
+.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow-md);border:1px solid rgba(15,23,42,0.03);margin-bottom:12px;}
 .card h3{margin:0 0 8px 0;font-size:15px}
 form .row{display:flex;gap:8px;margin-bottom:10px} 
 form input, form select{padding:10px;border-radius:10px;border:1px solid rgba(10,20,30,0.06);flex:1}
@@ -91,7 +92,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               </div>
             </form>
           </div>
-          <div class="card" style="margin-top:12px">
+          <div class="card">
             <h3>Proveedores registrados</h3>
             <div class="table-scroll">
               <table>
@@ -118,7 +119,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               </div>
             </form>
           </div>
-          <div class="card" style="margin-top:12px">
+          <div class="card">
             <h3>Productos registrados</h3>
             <div class="table-scroll">
               <table>
@@ -150,7 +151,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               </div>
             </form>
           </div>
-          <div class="card" style="margin-top:12px">
+          <div class="card">
             <h3>Facturas</h3>
             <div class="table-scroll">
               <table>
@@ -165,17 +166,10 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- Aquí se incluirá el JS aparte -->
-<script src="dashboard.js"></script>
+<!-- Cargar JS externo -->
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
 
