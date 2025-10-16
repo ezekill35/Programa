@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discovery Pets - Login</title>
 <style>
-/* ===== Diseño moderno y limpio ===== */
+/* --- Estilos generales --- */
 body { 
   display:flex; 
   justify-content:center; 
@@ -19,9 +19,9 @@ body {
 .container { 
   background:#fff; 
   padding:40px 30px; 
-  border-radius:25px; 
-  width:360px; 
-  box-shadow:0 15px 35px rgba(0,0,0,0.2); 
+  border-radius:20px; 
+  width:350px; 
+  box-shadow:0 15px 30px rgba(0,0,0,0.2); 
   text-align:center; 
   animation:fadeIn 0.8s ease;
 }
@@ -38,22 +38,21 @@ body {
 
 .container h1 { 
   color:#ff3399; 
-  margin-bottom:25px; 
+  margin-bottom:20px; 
 }
 
 .container input { 
   width:100%; 
   padding:12px; 
-  margin:10px 0; 
-  border-radius:10px; 
+  margin:8px 0; 
+  border-radius:8px; 
   border:1px solid #ccc; 
   transition:0.3s;
-  font-size:14px;
 }
+
 .container input:focus { 
   border-color:#ff3399; 
   box-shadow:0 0 10px rgba(255,51,153,0.3);
-  outline:none;
 }
 
 .container button { 
@@ -62,27 +61,26 @@ body {
   background:#ff3399; 
   color:#fff; 
   border:none; 
-  border-radius:10px; 
+  border-radius:8px; 
   cursor:pointer; 
   font-weight:600; 
-  font-size:16px;
   transition:0.3s;
   margin-top:10px;
 }
+
 .container button:hover { 
   background:#ff66cc; 
   transform:scale(1.03);
 }
 
 #mensaje { 
-  margin-top:12px; 
-  font-size:14px; 
-  min-height:18px;
+  margin-top:15px; 
+  font-weight:500;
+  font-size:14px;
 }
 </style>
 </head>
 <body>
-
 <div class="container">
     <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
     <h1>Discovery Pets</h1>
@@ -90,66 +88,67 @@ body {
     <input id="emailLogin" type="email" placeholder="Correo" required>
     <input id="passLogin" type="password" placeholder="Contraseña" required>
     <button id="btnLogin">Iniciar sesión</button>
-
     <p id="mensaje" style="color:red;"></p>
 </div>
 
-<!-- ===== Firebase CDN ===== -->
+<!-- JS incluido -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+// --- Firebase CDN ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-    authDomain: "discovery-pets.firebaseapp.com",
-    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
-    projectId: "discovery-pets",
-    storageBucket: "discovery-pets.firebasestorage.app",
-    messagingSenderId: "481355972999",
-    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-    measurementId: "G-0WMLRY8FGM"
-  };
+// Configuración Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.firebasestorage.app",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+  measurementId: "G-0WMLRY8FGM"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  const btnLogin = document.getElementById("btnLogin");
-  const mensaje = document.getElementById("mensaje");
+// Referencias del DOM
+const btnLogin = document.getElementById("btnLogin");
+const mensaje = document.getElementById("mensaje");
 
-  btnLogin.addEventListener("click", async () => {
-    const email = document.getElementById("emailLogin").value;
-    const pass = document.getElementById("passLogin").value;
+// Evento click en login
+btnLogin.addEventListener("click", async () => {
+  const email = document.getElementById("emailLogin").value;
+  const pass = document.getElementById("passLogin").value;
 
-    if (!email || !pass) {
-      mensaje.style.color = "red";
-      mensaje.textContent = "Completa todos los campos";
-      return;
-    }
+  if (!email || !pass) {
+    mensaje.style.color = "red";
+    mensaje.textContent = "Completa todos los campos";
+    return;
+  }
 
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-      mensaje.style.color = "green";
-      mensaje.textContent = "Inicio de sesión correcto, redirigiendo...";
-      setTimeout(() => window.location.href = "dashboard.html", 1000);
-    } catch (error) {
-      mensaje.style.color = "red";
-      // Mensaje de error más legible
-      if(error.code === "auth/user-not-found") mensaje.textContent = "Usuario no encontrado";
-      else if(error.code === "auth/wrong-password") mensaje.textContent = "Contraseña incorrecta";
-      else if(error.code === "auth/invalid-email") mensaje.textContent = "Correo inválido";
-      else mensaje.textContent = error.message;
-    }
-  });
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    mensaje.style.color = "green";
+    mensaje.textContent = "Inicio de sesión correcto, redirigiendo...";
+    setTimeout(() => window.location.href = "dashboard.html", 1000);
+  } catch (error) {
+    mensaje.style.color = "red";
+    if(error.code === "auth/user-not-found") mensaje.textContent = "Usuario no encontrado";
+    else if(error.code === "auth/wrong-password") mensaje.textContent = "Contraseña incorrecta";
+    else if(error.code === "auth/invalid-email") mensaje.textContent = "Correo inválido";
+    else mensaje.textContent = error.message;
+  }
+});
 
-  onAuthStateChanged(auth, (user) => {
-    if(user) window.location.href = "dashboard.html";
-  });
+// Redirección automática si ya hay usuario logueado
+onAuthStateChanged(auth, (user) => {
+  if(user) window.location.href = "dashboard.html";
+});
 </script>
-
 </body>
 </html>
-
-
 
 
 
