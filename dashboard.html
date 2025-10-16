@@ -4,298 +4,240 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard · Discovery Pets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #ffe0f0, #ffb3d9);
+      min-height: 100vh;
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      height: 100vh;
-      background: #f6f9fc;
-      color: #333;
+      overflow-x: hidden;
     }
 
-    /* Sidebar */
     .sidebar {
-      width: 240px;
-      background: #ffffff;
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      width: 250px;
+      height: 100vh;
+      background: #fff;
+      position: fixed;
+      left: 0;
+      top: 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding: 30px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      z-index: 10;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .sidebar img {
+      width: 120px;
+      margin-bottom: 20px;
     }
 
-    .logo img {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+    .sidebar h3 {
+      color: #ff3399;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    .menu {
-      margin-top: 40px;
-    }
-
-    .menu button {
+    .nav-link {
       display: block;
-      width: 100%;
-      padding: 10px;
-      border: none;
-      background: none;
-      text-align: left;
-      cursor: pointer;
+      color: #333;
+      font-weight: 600;
+      padding: 10px 15px;
       border-radius: 8px;
+      text-decoration: none;
       margin-bottom: 8px;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
     }
 
-    .menu button.active,
-    .menu button:hover {
-      background: #e6f8ff;
-      color: #00aaff;
-      font-weight: 600;
+    .nav-link:hover, .nav-link.active {
+      background: #ff3399;
+      color: #fff;
+      transform: scale(1.03);
     }
 
     .logout-btn {
-      padding: 10px;
+      background: #ff3399;
+      color: #fff;
       border: none;
-      background: #ff4d4d;
-      color: white;
+      width: 100%;
+      padding: 12px;
       border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .logout-btn:hover {
-      background: #e03e3e;
-    }
-
-    /* Main content */
-    .main {
-      flex-grow: 1;
-      padding: 30px;
-      overflow-y: auto;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    header h1 {
-      font-size: 1.5rem;
-      color: #1a1a1a;
-    }
-
-    #searchInput {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      width: 250px;
-      font-size: 14px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .card h2 {
-      margin-top: 0;
-      color: #0077cc;
-      font-size: 18px;
-    }
-
-    input, select, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    .add-btn {
-      background: #00bfff;
-      color: white;
-      border: none;
+      font-weight: 600;
       cursor: pointer;
       transition: 0.3s;
     }
 
-    .add-btn:hover {
-      background: #0099cc;
+    .logout-btn:hover {
+      background: #ff66cc;
+      transform: scale(1.03);
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
+    .content {
+      margin-left: 270px;
+      padding: 40px;
+      color: #333;
     }
 
-    th, td {
+    h2 {
+      color: #ff3399;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border-radius: 8px;
+      border: 1px solid #ccc;
       padding: 10px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
     }
 
-    th {
-      background: #f0f8ff;
+    .search-bar button {
+      background: #ff3399;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .search-bar button:hover {
+      background: #ff66cc;
+    }
+
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 30px;
+      background: #fff;
+    }
+
+    .table th {
+      background: #ffb3d9;
     }
 
     /* Ocultar secciones */
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    /* Modal detalle */
-    #modalDetalle {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #modalDetalle .modal-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      width: 400px;
-    }
-
-    #modalDetalle button {
-      background: #00aaff;
-      color: #fff;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    .section { display: none; }
+    .section.active { display: block; }
   </style>
 </head>
 <body>
+
   <div class="sidebar">
     <div>
-      <div class="logo">
-        <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="logo">
-        <div>
-          <strong>Discovery Pets</strong><br>
-          <small>Panel administrativo</small>
-        </div>
+      <div class="text-center">
+        <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo">
       </div>
+      <h3>Discovery Pets</h3>
+      <a href="#" class="nav-link active" data-section="proveedores">Proveedores</a>
+      <a href="#" class="nav-link" data-section="productos">Productos</a>
+      <a href="#" class="nav-link" data-section="facturas">Facturas</a>
+    </div>
+    <button class="logout-btn" id="btnLogout">Cerrar Sesión</button>
+  </div>
 
-      <div class="menu">
-        <button id="btnProveedores" class="active">📦 Proveedores</button>
-        <button id="btnProductos">🐾 Productos</button>
-        <button id="btnFacturas">📄 Facturas</button>
+  <div class="content">
+    <!-- 🔹 Proveedores -->
+    <div id="proveedores" class="section active">
+      <h2>Proveedores</h2>
+      <div class="card">
+        <form id="formProveedor" class="mb-3">
+          <input type="text" id="rucProveedor" class="form-control mb-2" placeholder="RUC" required>
+          <input type="text" id="nombreProveedor" class="form-control mb-2" placeholder="Nombre" required>
+          <input type="text" id="direccionProveedor" class="form-control mb-2" placeholder="Dirección" required>
+          <input type="tel" id="telefonoProveedor" class="form-control mb-2" placeholder="Teléfono o celular (opcional)">
+          <button type="submit" class="btn btn-primary w-100">Guardar Proveedor</button>
+        </form>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>RUC</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
       </div>
     </div>
 
-    <button id="btnLogout" class="logout-btn">Cerrar sesión</button>
-  </div>
-
-  <div class="main">
-    <header>
-      <h1>Dashboard · Discovery Pets</h1>
-      <input id="searchInput" type="text" placeholder="Buscar facturas por producto...">
-    </header>
-
-    <!-- Sección Proveedores -->
-    <section id="sectionProveedores" class="section active">
+    <!-- 🔹 Productos -->
+    <div id="productos" class="section">
+      <h2>Productos</h2>
       <div class="card">
-        <h2>Registrar proveedor</h2>
-        <input id="rucProv" type="text" placeholder="RUC">
-        <input id="nombreProv" type="text" placeholder="Nombre">
-        <input id="dirProv" type="text" placeholder="Dirección">
-        <input id="telProv" type="text" placeholder="Teléfono o celular (opcional)">
-        <button id="addProv" class="add-btn">Añadir proveedor</button>
-      </div>
-
-      <div class="card">
-        <h2>Proveedores registrados</h2>
-        <table>
-          <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
-          <tbody id="listaProveedores"></tbody>
+        <form id="formProducto" class="mb-3">
+          <input type="text" id="nombreProducto" class="form-control mb-2" placeholder="Nombre del producto" required>
+          <input type="number" id="cantidadProducto" class="form-control mb-2" placeholder="Cantidad" required>
+          <input type="number" id="precioProducto" class="form-control mb-2" placeholder="Precio" required>
+          <input type="text" id="descripcionProducto" class="form-control mb-2" placeholder="Descripción (opcional)">
+          <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
+        </form>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductos"></tbody>
         </table>
       </div>
-    </section>
+    </div>
 
-    <!-- Sección Productos -->
-    <section id="sectionProductos" class="section">
-      <div class="card">
-        <h2>Registrar producto</h2>
-        <input id="nombreProd" type="text" placeholder="Nombre del producto">
-        <input id="cantidadProd" type="number" placeholder="Cantidad">
-        <input id="precioProd" type="number" placeholder="Precio">
-        <input id="descProd" type="text" placeholder="Descripción (opcional)">
-        <button id="addProd" class="add-btn">Añadir producto</button>
+    <!-- 🔹 Facturas -->
+    <div id="facturas" class="section">
+      <h2>Facturas</h2>
+      <div class="search-bar">
+        <input type="text" id="buscarProducto" placeholder="Buscar por nombre de producto">
+        <button id="btnBuscar">Buscar</button>
       </div>
-
       <div class="card">
-        <h2>Productos registrados</h2>
-        <table>
-          <thead><tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
-          <tbody id="listaProductos"></tbody>
+        <form id="formFactura" class="mb-3">
+          <input type="text" id="fechaFactura" class="form-control mb-2" placeholder="Fecha (dd/mm/aaaa)" required>
+          <input type="text" id="proveedorFactura" class="form-control mb-2" placeholder="Proveedor" required>
+          <input type="text" id="productoFactura" class="form-control mb-2" placeholder="Producto" required>
+          <input type="number" id="montoFactura" class="form-control mb-2" placeholder="Monto" required>
+          <select id="tipoFactura" class="form-select mb-2" required>
+            <option value="" disabled selected>Tipo</option>
+            <option value="FACTURA">Factura</option>
+            <option value="BOLETA">Boleta</option>
+          </select>
+          <button type="submit" class="btn btn-primary w-100">Guardar Factura</button>
+        </form>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Proveedor</th>
+              <th>Producto</th>
+              <th>Monto</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
         </table>
       </div>
-    </section>
-
-    <!-- Sección Facturas -->
-    <section id="sectionFacturas" class="section">
-      <div class="card">
-        <h2>Registrar factura</h2>
-        <input id="idFactura" type="text" placeholder="ID de factura">
-        <input id="fechaFactura" type="date">
-        <select id="proveedorFactura"><option value="">Seleccione proveedor</option></select>
-        <select id="productoFactura"><option value="">Seleccione producto</option></select>
-        <input id="montoFactura" type="number" placeholder="Monto">
-        <select id="tipoFactura">
-          <option value="FACTURA">FACTURA</option>
-          <option value="BOLETA">BOLETA</option>
-        </select>
-        <button id="addFactura" class="add-btn">Guardar factura</button>
-      </div>
-
-      <div class="card">
-        <h2>Facturas registradas</h2>
-        <table>
-          <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead>
-          <tbody id="listaFacturas"></tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-
-  <!-- Modal Detalle -->
-  <div id="modalDetalle">
-    <div class="modal-content">
-      <h3>Detalle de factura</h3>
-      <div id="detalleContenido"></div>
-      <button onclick="cerrarModal()">Cerrar</button>
     </div>
   </div>
 
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
 
 
