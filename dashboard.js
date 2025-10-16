@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 // --- CONFIG FIREBASE ---
 const firebaseConfig = {
@@ -119,12 +119,20 @@ let facturasGuardadas = [];
 
 facturaForm.addEventListener("submit", async e => {
   e.preventDefault();
+  const numero = document.getElementById("numeroFactura").value.trim();
+  const fecha = document.getElementById("fechaEmisionFactura").value;
   const proveedor = proveedorFactura.value;
   const producto = productoFactura.value;
-  const cantidad = document.getElementById("cantidadFactura").value.trim();
-  const fecha = document.getElementById("fechaFactura").value;
-  if (!proveedor || !producto) { alert("Seleccione proveedor y producto"); return; }
-  await addDoc(collection(db, "facturas"), { proveedor, producto, cantidad, fecha });
+  const monto = document.getElementById("montoFactura").value.trim();
+  const moneda = document.getElementById("monedaFactura").value;
+  const tipo = document.getElementById("tipoFactura").value;
+
+  if (!proveedor || !producto) {
+    alert("Debe seleccionar un proveedor y un producto.");
+    return;
+  }
+
+  await addDoc(collection(db, "facturas"), { numero, fecha, proveedor, producto, monto, moneda, tipo });
   facturaForm.reset();
 });
 
@@ -141,10 +149,12 @@ function mostrarFacturas(facturas) {
   facturas.forEach(f => {
     const fila = document.createElement("tr");
     fila.innerHTML = `
-      <td>${f.proveedor}</td>
-      <td>${f.producto}</td>
-      <td>${f.cantidad}</td>
-      <td>${f.fecha}</td>
+      <td>${f.id || '-'}</td>
+      <td>${f.fecha || '-'}</td>
+      <td>${f.proveedor || '-'}</td>
+      <td>${f.producto || '-'}</td>
+      <td>${f.moneda || ''}${f.monto || '-'}</td>
+      <td>${f.tipo || '-'}</td>
       <td><button class="btn-delete" data-id="${f.id}" data-tipo="facturas">🗑️</button></td>
     `;
     tablaFacturas.appendChild(fila);
@@ -154,7 +164,7 @@ function mostrarFacturas(facturas) {
 // --- BUSCADOR ---
 const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keypress", e => {
-  if(e.key === "Enter") {
+  if (e.key === "Enter") {
     const valor = buscador.value.trim().toLowerCase();
     const filtradas = facturasGuardadas.filter(f => f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
@@ -167,10 +177,10 @@ document.getElementById("btnRefresh").addEventListener("click", () => {
 
 // --- ELIMINAR ---
 document.addEventListener("click", async e => {
-  if(e.target.classList.contains("btn-delete")) {
+  if (e.target.classList.contains("btn-delete")) {
     const id = e.target.dataset.id;
     const tipo = e.target.dataset.tipo;
-    if(confirm("¿Desea eliminar este registro?")) {
+    if (confirm("¿Desea eliminar este registro?")) {
       await deleteDoc(doc(db, tipo, id));
     }
   }
