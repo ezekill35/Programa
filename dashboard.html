@@ -7,14 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ===================== ESTILOS ===================== */
 :root{
-  --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
-  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
-  --radius: 16px;
+  --bg1:#f7fbff; --bg2:#eef9ff; --card:#ffffff; --accent:#10bcd4; --muted:#6b7280;
+  --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08);
+  --radius:16px;
 }
-*{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
-html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
+*{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a;}
 .app{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:32px;min-height:100vh;align-items:start;}
 .sidebar{position:sticky;top:32px;padding:20px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.7));box-shadow:var(--shadow-lg);backdrop-filter:blur(6px);}
 .brand{display:flex;gap:12px;align-items:center;margin-bottom:18px;}
@@ -50,7 +49,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
 </head>
 <body>
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand"><div class="logo">DP</div><div><h1>Discovery Pets</h1><div class="muted">Panel administrativo</div></div></div>
     <nav class="nav">
@@ -61,7 +59,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
     <button id="logoutBtn" class="logout">Cerrar sesión</button>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
     <div class="header">
       <h2>Dashboard · Discovery Pets</h2>
@@ -166,11 +163,12 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- JS FIREBASE y CRUD -->
 <script type="module">
+// --------------------- FIREBASE ---------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+// Configuración
 const firebaseConfig = {
     apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
     authDomain: "discovery-pets.firebaseapp.com",
@@ -181,29 +179,17 @@ const firebaseConfig = {
     appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
     measurementId: "G-0WMLRY8FGM"
 };
-
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db = getFirestore(app);
 
-const proveedoresRef = ref(db, "proveedores");
-const productosRef = ref(db, "productos");
-const facturasRef = ref(db, "facturas");
-
+// --------------------- CRUD Proveedores ---------------------
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
 
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-const productoSelect = document.getElementById("productoFactura");
-
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-
-// Añadir proveedor
-proveedorForm.addEventListener("submit", e => {
+proveedorForm.addEventListener("submit", async e => {
     e.preventDefault();
-    push(proveedoresRef, {
+    await addDoc(collection(db,"proveedores"),{
         nombre: document.getElementById("nombreProveedor").value,
         ruc: document.getElementById("rucProveedor").value,
         telefono: document.getElementById("telefonoProveedor").value,
@@ -213,10 +199,32 @@ proveedorForm.addEventListener("submit", e => {
     proveedorForm.reset();
 });
 
-// Añadir producto
-productoForm.addEventListener("submit", e => {
+// Actualizar tabla y select en tiempo real
+onSnapshot(collection(db,"proveedores"), snapshot=>{
+    tablaProveedores.innerHTML="";
+    proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
+    snapshot.forEach(docu=>{
+        const d = docu.data();
+        tablaProveedores.innerHTML += `<tr>
+            <td>${d.nombre}</td>
+            <td>${d.ruc}</td>
+            <td>${d.telefono}</td>
+            <td>${d.opc}</td>
+            <td>${d.direccion}</td>
+            <td><button onclick="borrar('proveedores','${docu.id}')">❌</button></td>
+        </tr>`;
+        proveedorSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
+    });
+});
+
+// --------------------- CRUD Productos ---------------------
+const productoForm = document.getElementById("productoForm");
+const tablaProductos = document.getElementById("tablaProductos");
+const productoSelect = document.getElementById("productoFactura");
+
+productoForm.addEventListener("submit", async e=>{
     e.preventDefault();
-    push(productosRef, {
+    await addDoc(collection(db,"productos"),{
         nombre: document.getElementById("nombreProducto").value,
         precio: document.getElementById("precioProducto").value,
         cantidad: document.getElementById("cantidadProducto").value,
@@ -225,10 +233,29 @@ productoForm.addEventListener("submit", e => {
     productoForm.reset();
 });
 
-// Añadir factura
-facturaForm.addEventListener("submit", e => {
+onSnapshot(collection(db,"productos"), snapshot=>{
+    tablaProductos.innerHTML="";
+    productoSelect.innerHTML='<option value="">Seleccione producto</option>';
+    snapshot.forEach(docu=>{
+        const d = docu.data();
+        tablaProductos.innerHTML += `<tr>
+            <td>${d.nombre}</td>
+            <td>${d.precio}</td>
+            <td>${d.cantidad}</td>
+            <td>${d.descripcion}</td>
+            <td><button onclick="borrar('productos','${docu.id}')">❌</button></td>
+        </tr>`;
+        productoSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
+    });
+});
+
+// --------------------- CRUD Facturas ---------------------
+const facturaForm = document.getElementById("facturaForm");
+const tablaFacturas = document.getElementById("tablaFacturas");
+
+facturaForm.addEventListener("submit", async e=>{
     e.preventDefault();
-    push(facturasRef, {
+    await addDoc(collection(db,"facturas"),{
         id: document.getElementById("idFactura").value,
         fecha: document.getElementById("fechaFactura").value,
         proveedor: document.getElementById("proveedorFactura").value,
@@ -240,80 +267,51 @@ facturaForm.addEventListener("submit", e => {
     facturaForm.reset();
 });
 
-// Borrar
-window.borrar = (col, id) => {
-    remove(ref(db, `${col}/${id}`));
-};
-
-// Proveedores en tiempo real
-onValue(proveedoresRef, snapshot => {
-    const tablaRows = [];
-    const selectOptions = ['<option value="">Seleccione proveedor</option>'];
-    snapshot.forEach(childSnap => {
-        const d = childSnap.val();
-        const key = childSnap.key;
-        tablaRows.push(`
-            <tr>
-                <td>${d.nombre}</td>
-                <td>${d.ruc}</td>
-                <td>${d.telefono}</td>
-                <td>${d.opc}</td>
-                <td>${d.direccion}</td>
-                <td><button onclick="borrar('proveedores','${key}')">❌</button></td>
-            </tr>
-        `);
-        selectOptions.push(`<option value="${d.nombre}">${d.nombre}</option>`);
+onSnapshot(collection(db,"facturas"), snapshot=>{
+    tablaFacturas.innerHTML="";
+    snapshot.forEach(docu=>{
+        const d = docu.data();
+        tablaFacturas.innerHTML += `<tr>
+            <td>${d.id}</td>
+            <td>${d.fecha}</td>
+            <td>${d.proveedor}</td>
+            <td>${d.producto}</td>
+            <td>${d.moneda}</td>
+            <td>${d.monto}</td>
+            <td>${d.tipo}</td>
+            <td><button onclick="borrar('facturas','${docu.id}')">❌</button></td>
+        </tr>`;
     });
-    tablaProveedores.innerHTML = tablaRows.join('');
-    proveedorSelect.innerHTML = selectOptions.join('');
 });
 
-// Productos en tiempo real
-onValue(productosRef, snapshot => {
-    const tablaRows = [];
-    const selectOptions = ['<option value="">Seleccione producto</option>'];
-    snapshot.forEach(childSnap => {
-        const d = childSnap.val();
-        const key = childSnap.key;
-        tablaRows.push(`
-            <tr>
-                <td>${d.nombre}</td>
-                <td>${d.precio}</td>
-                <td>${d.cantidad}</td>
-                <td>${d.descripcion}</td>
-                <td><button onclick="borrar('productos','${key}')">❌</button></td>
-            </tr>
-        `);
-        selectOptions.push(`<option value="${d.nombre}">${d.nombre}</option>`);
+// --------------------- BORRAR ---------------------
+window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
+
+// --------------------- NAV & TABS ---------------------
+document.querySelectorAll(".menu-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+        document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("activo"));
+        btn.classList.add("activo");
+        document.querySelectorAll(".seccion").forEach(sec=>sec.classList.remove("activa"));
+        document.getElementById(btn.dataset.target).classList.add("activa");
     });
-    tablaProductos.innerHTML = tablaRows.join('');
-    productoSelect.innerHTML = selectOptions.join('');
 });
 
-// Facturas en tiempo real
-onValue(facturasRef, snapshot => {
-    const tablaRows = [];
-    snapshot.forEach(childSnap => {
-        const d = childSnap.val();
-        const key = childSnap.key;
-        tablaRows.push(`
-            <tr>
-                <td>${d.id}</td>
-                <td>${d.fecha}</td>
-                <td>${d.proveedor}</td>
-                <td>${d.producto}</td>
-                <td>${d.moneda}</td>
-                <td>${d.monto}</td>
-                <td>${d.tipo}</td>
-                <td><button onclick="borrar('facturas','${key}')">❌</button></td>
-            </tr>
-        `);
+// --------------------- BUSCADOR ---------------------
+const buscadorFactura = document.getElementById("buscadorFactura");
+const btnRefresh = document.getElementById("btnRefresh");
+buscadorFactura.addEventListener("input", ()=>{
+    const filtro = buscadorFactura.value.toLowerCase();
+    tablaFacturas.querySelectorAll("tr").forEach(tr=>{
+        tr.style.display = tr.children[3].textContent.toLowerCase().includes(filtro) ? "" : "none";
     });
-    tablaFacturas.innerHTML = tablaRows.join('');
 });
+btnRefresh.addEventListener("click", ()=>{buscadorFactura.value=""; buscadorFactura.dispatchEvent(new Event("input"));});
 </script>
 </body>
 </html>
+
+
 
 
 
