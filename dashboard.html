@@ -7,13 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ===================== ESTILOS ===================== */
 :root{
-  --bg1:#f7fbff; --bg2:#eef9ff; --card:#ffffff; --accent:#10bcd4; --muted:#6b7280;
-  --shadow-lg:0 10px 30px rgba(16,188,212,0.12); --shadow-md:0 6px 18px rgba(16,188,212,0.08);
-  --radius:16px;
+  --bg1: #f7fbff; --bg2: #eef9ff; --card: #ffffff; --accent: #10bcd4; --muted: #6b7280;
+  --shadow-lg: 0 10px 30px rgba(16,188,212,0.12); --shadow-md: 0 6px 18px rgba(16,188,212,0.08);
+  --radius: 16px;
 }
-*{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;}
-html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a;}
+*{box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
 .app{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:32px;min-height:100vh;align-items:start;}
 .sidebar{position:sticky;top:32px;padding:20px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.7));box-shadow:var(--shadow-lg);backdrop-filter:blur(6px);}
 .brand{display:flex;gap:12px;align-items:center;margin-bottom:18px;}
@@ -165,11 +166,154 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
   </main>
 </div>
 
-<!-- JS modular -->
-<script type="module" src="dashboard.js"></script>
+<!-- JS FIREBASE y CRUD -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+    authDomain: "discovery-pets.firebaseapp.com",
+    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+    projectId: "discovery-pets",
+    storageBucket: "discovery-pets.firebasestorage.app",
+    messagingSenderId: "481355972999",
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+    measurementId: "G-0WMLRY8FGM"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const proveedoresRef = ref(db, "proveedores");
+const productosRef = ref(db, "productos");
+const facturasRef = ref(db, "facturas");
+
+const proveedorForm = document.getElementById("proveedorForm");
+const tablaProveedores = document.getElementById("tablaProveedores");
+const proveedorSelect = document.getElementById("proveedorFactura");
+
+const productoForm = document.getElementById("productoForm");
+const tablaProductos = document.getElementById("tablaProductos");
+const productoSelect = document.getElementById("productoFactura");
+
+const facturaForm = document.getElementById("facturaForm");
+const tablaFacturas = document.getElementById("tablaFacturas");
+
+// Añadir proveedor
+proveedorForm.addEventListener("submit", e => {
+    e.preventDefault();
+    push(proveedoresRef, {
+        nombre: document.getElementById("nombreProveedor").value,
+        ruc: document.getElementById("rucProveedor").value,
+        telefono: document.getElementById("telefonoProveedor").value,
+        opc: document.getElementById("numeroOpcionalProveedor").value,
+        direccion: document.getElementById("direccionProveedor").value
+    });
+    proveedorForm.reset();
+});
+
+// Añadir producto
+productoForm.addEventListener("submit", e => {
+    e.preventDefault();
+    push(productosRef, {
+        nombre: document.getElementById("nombreProducto").value,
+        precio: document.getElementById("precioProducto").value,
+        cantidad: document.getElementById("cantidadProducto").value,
+        descripcion: document.getElementById("descripcionProducto").value
+    });
+    productoForm.reset();
+});
+
+// Añadir factura
+facturaForm.addEventListener("submit", e => {
+    e.preventDefault();
+    push(facturasRef, {
+        id: document.getElementById("idFactura").value,
+        fecha: document.getElementById("fechaFactura").value,
+        proveedor: document.getElementById("proveedorFactura").value,
+        producto: document.getElementById("productoFactura").value,
+        monto: document.getElementById("montoFactura").value,
+        moneda: document.getElementById("monedaFactura").value,
+        tipo: document.getElementById("tipoFactura").value
+    });
+    facturaForm.reset();
+});
+
+// Borrar
+window.borrar = (col, id) => {
+    remove(ref(db, `${col}/${id}`));
+};
+
+// Proveedores en tiempo real
+onValue(proveedoresRef, snapshot => {
+    const tablaRows = [];
+    const selectOptions = ['<option value="">Seleccione proveedor</option>'];
+    snapshot.forEach(childSnap => {
+        const d = childSnap.val();
+        const key = childSnap.key;
+        tablaRows.push(`
+            <tr>
+                <td>${d.nombre}</td>
+                <td>${d.ruc}</td>
+                <td>${d.telefono}</td>
+                <td>${d.opc}</td>
+                <td>${d.direccion}</td>
+                <td><button onclick="borrar('proveedores','${key}')">❌</button></td>
+            </tr>
+        `);
+        selectOptions.push(`<option value="${d.nombre}">${d.nombre}</option>`);
+    });
+    tablaProveedores.innerHTML = tablaRows.join('');
+    proveedorSelect.innerHTML = selectOptions.join('');
+});
+
+// Productos en tiempo real
+onValue(productosRef, snapshot => {
+    const tablaRows = [];
+    const selectOptions = ['<option value="">Seleccione producto</option>'];
+    snapshot.forEach(childSnap => {
+        const d = childSnap.val();
+        const key = childSnap.key;
+        tablaRows.push(`
+            <tr>
+                <td>${d.nombre}</td>
+                <td>${d.precio}</td>
+                <td>${d.cantidad}</td>
+                <td>${d.descripcion}</td>
+                <td><button onclick="borrar('productos','${key}')">❌</button></td>
+            </tr>
+        `);
+        selectOptions.push(`<option value="${d.nombre}">${d.nombre}</option>`);
+    });
+    tablaProductos.innerHTML = tablaRows.join('');
+    productoSelect.innerHTML = selectOptions.join('');
+});
+
+// Facturas en tiempo real
+onValue(facturasRef, snapshot => {
+    const tablaRows = [];
+    snapshot.forEach(childSnap => {
+        const d = childSnap.val();
+        const key = childSnap.key;
+        tablaRows.push(`
+            <tr>
+                <td>${d.id}</td>
+                <td>${d.fecha}</td>
+                <td>${d.proveedor}</td>
+                <td>${d.producto}</td>
+                <td>${d.moneda}</td>
+                <td>${d.monto}</td>
+                <td>${d.tipo}</td>
+                <td><button onclick="borrar('facturas','${key}')">❌</button></td>
+            </tr>
+        `);
+    });
+    tablaFacturas.innerHTML = tablaRows.join('');
+});
+</script>
 </body>
 </html>
 
-</html>
 
 
