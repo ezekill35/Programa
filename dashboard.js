@@ -1,10 +1,9 @@
-// --------------------- FIREBASE ---------------------
+// -------------------- FIREBASE --------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { 
-  getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-// Configura tu proyecto de Firebase
+// Configura tu Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
     authDomain: "discovery-pets.firebaseapp.com",
@@ -18,8 +17,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// --------------------- ELEMENTOS ---------------------
+// -------------------- ELEMENTOS --------------------
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
@@ -30,31 +30,24 @@ const productoSelect = document.getElementById("productoFactura");
 
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
-
 const buscadorFactura = document.getElementById("buscadorFactura");
 const btnRefresh = document.getElementById("btnRefresh");
 
-// --------------------- FUNCIONES GENERALES ---------------------
-async function borrar(col, id) {
-    if(confirm("¿Desea eliminar este registro?")){
-        await deleteDoc(doc(db, col, id));
-    }
+const logoutBtn = document.getElementById("logoutBtn");
+
+// -------------------- FUNCIONES GENERALES --------------------
+async function borrar(collectionName, id) {
+    await deleteDoc(doc(db, collectionName, id));
 }
 
-async function editar(col, id, data){
-    const campos = Object.keys(data);
-    const nuevos = {};
-    campos.forEach(c => {
-        const val = prompt(`Nuevo valor para ${c}:`, data[c]);
-        if(val !== null) nuevos[c] = val;
-    });
-    if(Object.keys(nuevos).length) await updateDoc(doc(db,col,id), nuevos);
+async function editar(collectionName, id, data) {
+    await updateDoc(doc(db, collectionName, id), data);
 }
 
-// --------------------- PROVEEDORES ---------------------
-proveedorForm.addEventListener("submit", async (e)=>{
+// -------------------- CRUD PROVEEDORES --------------------
+proveedorForm.addEventListener("submit", async e => {
     e.preventDefault();
-    await addDoc(collection(db,"proveedores"),{
+    await addDoc(collection(db, "proveedores"), {
         nombre: document.getElementById("nombreProveedor").value,
         ruc: document.getElementById("rucProveedor").value,
         telefono: document.getElementById("telefonoProveedor").value,
@@ -64,30 +57,27 @@ proveedorForm.addEventListener("submit", async (e)=>{
     proveedorForm.reset();
 });
 
-onSnapshot(collection(db,"proveedores"), snapshot=>{
-    tablaProveedores.innerHTML="";
-    proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
-    snapshot.forEach(docu=>{
+onSnapshot(collection(db, "proveedores"), snapshot => {
+    tablaProveedores.innerHTML = "";
+    proveedorSelect.innerHTML = '<option value="">Seleccione proveedor</option>';
+    snapshot.forEach(docu => {
         const d = docu.data();
         tablaProveedores.innerHTML += `<tr>
-            <td>${d.nombre}</td>
-            <td>${d.ruc}</td>
-            <td>${d.telefono}</td>
-            <td>${d.opc}</td>
-            <td>${d.direccion}</td>
-            <td>
-                <button onclick="editar('proveedores','${docu.id}',${JSON.stringify(d)})">✏️</button>
-                <button onclick="borrar('proveedores','${docu.id}')">❌</button>
-            </td>
+            <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{nombre:this.innerText})">${d.nombre}</td>
+            <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{ruc:this.innerText})">${d.ruc}</td>
+            <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{telefono:this.innerText})">${d.telefono}</td>
+            <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{opc:this.innerText})">${d.opc}</td>
+            <td contenteditable="true" onblur="editar('proveedores','${docu.id}',{direccion:this.innerText})">${d.direccion}</td>
+            <td><button onclick="borrar('proveedores','${docu.id}')">❌</button></td>
         </tr>`;
         proveedorSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
     });
 });
 
-// --------------------- PRODUCTOS ---------------------
-productoForm.addEventListener("submit", async (e)=>{
+// -------------------- CRUD PRODUCTOS --------------------
+productoForm.addEventListener("submit", async e => {
     e.preventDefault();
-    await addDoc(collection(db,"productos"),{
+    await addDoc(collection(db, "productos"), {
         nombre: document.getElementById("nombreProducto").value,
         precio: document.getElementById("precioProducto").value,
         cantidad: document.getElementById("cantidadProducto").value,
@@ -96,29 +86,26 @@ productoForm.addEventListener("submit", async (e)=>{
     productoForm.reset();
 });
 
-onSnapshot(collection(db,"productos"), snapshot=>{
-    tablaProductos.innerHTML="";
-    productoSelect.innerHTML='<option value="">Seleccione producto</option>';
-    snapshot.forEach(docu=>{
+onSnapshot(collection(db, "productos"), snapshot => {
+    tablaProductos.innerHTML = "";
+    productoSelect.innerHTML = '<option value="">Seleccione producto</option>';
+    snapshot.forEach(docu => {
         const d = docu.data();
         tablaProductos.innerHTML += `<tr>
-            <td>${d.nombre}</td>
-            <td>${d.precio}</td>
-            <td>${d.cantidad}</td>
-            <td>${d.descripcion}</td>
-            <td>
-                <button onclick="editar('productos','${docu.id}',${JSON.stringify(d)})">✏️</button>
-                <button onclick="borrar('productos','${docu.id}')">❌</button>
-            </td>
+            <td contenteditable="true" onblur="editar('productos','${docu.id}',{nombre:this.innerText})">${d.nombre}</td>
+            <td contenteditable="true" onblur="editar('productos','${docu.id}',{precio:this.innerText})">${d.precio}</td>
+            <td contenteditable="true" onblur="editar('productos','${docu.id}',{cantidad:this.innerText})">${d.cantidad}</td>
+            <td contenteditable="true" onblur="editar('productos','${docu.id}',{descripcion:this.innerText})">${d.descripcion}</td>
+            <td><button onclick="borrar('productos','${docu.id}')">❌</button></td>
         </tr>`;
         productoSelect.innerHTML += `<option value="${d.nombre}">${d.nombre}</option>`;
     });
 });
 
-// --------------------- FACTURAS ---------------------
-facturaForm.addEventListener("submit", async (e)=>{
+// -------------------- CRUD FACTURAS --------------------
+facturaForm.addEventListener("submit", async e => {
     e.preventDefault();
-    await addDoc(collection(db,"facturas"),{
+    await addDoc(collection(db, "facturas"), {
         id: document.getElementById("idFactura").value,
         fecha: document.getElementById("fechaFactura").value,
         proveedor: document.getElementById("proveedorFactura").value,
@@ -130,63 +117,50 @@ facturaForm.addEventListener("submit", async (e)=>{
     facturaForm.reset();
 });
 
-function mostrarFacturas(snapshot){
-    tablaFacturas.innerHTML="";
-    snapshot.forEach(docu=>{
+function mostrarFacturas(snapshot) {
+    tablaFacturas.innerHTML = "";
+    snapshot.forEach(docu => {
         const d = docu.data();
         tablaFacturas.innerHTML += `<tr>
-            <td>${d.id}</td>
-            <td>${d.fecha}</td>
-            <td>${d.proveedor}</td>
-            <td>${d.producto}</td>
-            <td>${d.moneda}</td>
-            <td>${d.monto}</td>
-            <td>${d.tipo}</td>
-            <td>
-                <button onclick="editar('facturas','${docu.id}',${JSON.stringify(d)})">✏️</button>
-                <button onclick="borrar('facturas','${docu.id}')">❌</button>
-            </td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{id:this.innerText})">${d.id}</td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{fecha:this.innerText})">${d.fecha}</td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{proveedor:this.innerText})">${d.proveedor}</td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{producto:this.innerText})">${d.producto}</td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{moneda:this.innerText})">${d.moneda}</td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{monto:this.innerText})">${d.monto}</td>
+            <td contenteditable="true" onblur="editar('facturas','${docu.id}',{tipo:this.innerText})">${d.tipo}</td>
+            <td><button onclick="borrar('facturas','${docu.id}')">❌</button></td>
         </tr>`;
     });
 }
 
-onSnapshot(collection(db,"facturas"), mostrarFacturas);
+// Mostrar todas las facturas en tiempo real
+onSnapshot(collection(db, "facturas"), snapshot => {
+    mostrarFacturas(snapshot);
+});
 
-// --------------------- BUSCADOR ---------------------
-buscadorFactura.addEventListener("input", async ()=>{
-    const texto = buscadorFactura.value.toLowerCase();
-    const q = collection(db,"facturas");
-    onSnapshot(q, snapshot=>{
-        tablaFacturas.innerHTML="";
-        snapshot.forEach(docu=>{
-            const d = docu.data();
-            if(d.producto.toLowerCase().includes(texto)){
-                tablaFacturas.innerHTML += `<tr>
-                    <td>${d.id}</td>
-                    <td>${d.fecha}</td>
-                    <td>${d.proveedor}</td>
-                    <td>${d.producto}</td>
-                    <td>${d.moneda}</td>
-                    <td>${d.monto}</td>
-                    <td>${d.tipo}</td>
-                    <td>
-                        <button onclick="editar('facturas','${docu.id}',${JSON.stringify(d)})">✏️</button>
-                        <button onclick="borrar('facturas','${docu.id}')">❌</button>
-                    </td>
-                </tr>`;
-            }
-        });
+// -------------------- BUSCADOR FACTURAS --------------------
+buscadorFactura.addEventListener("input", async () => {
+    const q = query(collection(db, "facturas"), where("producto", "==", buscadorFactura.value));
+    const snapshot = await getDocs(q);
+    mostrarFacturas(snapshot);
+});
+
+btnRefresh.addEventListener("click", () => {
+    buscadorFactura.value = "";
+    onSnapshot(collection(db, "facturas"), snapshot => {
+        mostrarFacturas(snapshot);
     });
 });
 
-btnRefresh.addEventListener("click", ()=>{
-    buscadorFactura.value="";
-    onSnapshot(collection(db,"facturas"), mostrarFacturas);
+// -------------------- LOGOUT --------------------
+logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    alert("Sesión cerrada");
+    window.location.href = "index.html";
 });
 
-// --------------------- LOGOUT ---------------------
-document.getElementById("logoutBtn").addEventListener("click", ()=>{
-    alert("Cerrar sesión"); 
-    // Redirigir a login.html si lo tienes:
-    // window.location.href = "login.html";
-});
+// -------------------- Hacer funciones globales --------------------
+window.borrar = borrar;
+window.editar = editar;
+
