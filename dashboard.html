@@ -75,7 +75,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
         <!-- Proveedores -->
         <section id="seccion-proveedores" class="seccion activa">
           <div class="card">
-            <h3 id="tituloProveedor">Registrar proveedor</h3>
+            <h3>Registrar proveedor</h3>
             <form id="proveedorForm">
               <div class="row">
                 <input id="nombreProveedor" placeholder="Nombre" required>
@@ -88,7 +88,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               <div class="row">
                 <input id="direccionProveedor" placeholder="Dirección">
                 <button class="btn" type="submit">Añadir proveedor</button>
-                <button type="button" class="btn secondary" id="cancelarProveedor" style="display:none;">Cancelar</button>
               </div>
             </form>
           </div>
@@ -106,7 +105,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
         <!-- Productos -->
         <section id="seccion-productos" class="seccion">
           <div class="card">
-            <h3 id="tituloProducto">Registrar producto</h3>
+            <h3>Registrar producto</h3>
             <form id="productoForm">
               <div class="row">
                 <input id="nombreProducto" placeholder="Nombre producto" required>
@@ -116,7 +115,6 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
                 <input id="cantidadProducto" placeholder="Cantidad" inputmode="numeric">
                 <input id="descripcionProducto" placeholder="Descripción opcional">
                 <button class="btn" type="submit">Añadir producto</button>
-                <button type="button" class="btn secondary" id="cancelarProducto" style="display:none;">Cancelar</button>
               </div>
             </form>
           </div>
@@ -134,7 +132,7 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
         <!-- Facturas -->
         <section id="seccion-facturas" class="seccion">
           <div class="card">
-            <h3 id="tituloFactura">Registrar factura</h3>
+            <h3>Registrar factura</h3>
             <form id="facturaForm">
               <div class="row">
                 <input id="idFactura" placeholder="ID de factura" required>
@@ -147,9 +145,8 @@ table th, table td{padding:10px;text-align:left;border-bottom:1px dashed rgba(10
               <div class="row">
                 <input id="montoFactura" placeholder="Monto" inputmode="decimal">
                 <select id="monedaFactura"><option value="S/">S/</option><option value="$">$</option></select>
-                <select id="tipoFactura"><option value="Compra">Compra</option><option value="Gasto">Gasto</option></select>
+                <select id="tipoFactura"><option value="Factura">Factura</option><option value="Boleta">Boleta</option></select>
                 <button class="btn" type="submit">Guardar factura</button>
-                <button type="button" class="btn secondary" id="cancelarFactura" style="display:none;">Cancelar</button>
               </div>
             </form>
           </div>
@@ -187,45 +184,36 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --------------------- Helpers ---------------------
-let editProveedorId = null, editProductoId = null, editFacturaId = null;
-
-// --------------------- Proveedores ---------------------
+// --------------------- VARIABLES ---------------------
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
-const cancelarProveedor = document.getElementById("cancelarProveedor");
-const tituloProveedor = document.getElementById("tituloProveedor");
 
+const productoForm = document.getElementById("productoForm");
+const tablaProductos = document.getElementById("tablaProductos");
+const productoSelect = document.getElementById("productoFactura");
+
+const facturaForm = document.getElementById("facturaForm");
+const tablaFacturas = document.getElementById("tablaFacturas");
+
+// --------------------- FUNCIONES COMUNES ---------------------
+window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
+
+// --------------------- CRUD PROVEEDORES ---------------------
 proveedorForm.addEventListener("submit", async e=>{
   e.preventDefault();
-  const data = {
+  await addDoc(collection(db,"proveedores"),{
     nombre: document.getElementById("nombreProveedor").value,
     ruc: document.getElementById("rucProveedor").value,
     telefono: document.getElementById("telefonoProveedor").value,
     opc: document.getElementById("numeroOpcionalProveedor").value,
     direccion: document.getElementById("direccionProveedor").value
-  };
-  if(editProveedorId){
-    await updateDoc(doc(db,"proveedores",editProveedorId), data);
-    editProveedorId=null;
-    cancelarProveedor.style.display='none';
-    tituloProveedor.textContent='Registrar proveedor';
-  } else {
-    await addDoc(collection(db,"proveedores"), data);
-  }
+  });
   proveedorForm.reset();
-});
-
-cancelarProveedor.addEventListener('click', ()=>{
-  proveedorForm.reset();
-  editProveedorId=null;
-  tituloProveedor.textContent='Registrar proveedor';
-  cancelarProveedor.style.display='none';
 });
 
 onSnapshot(collection(db,"proveedores"), snapshot=>{
-  tablaProveedores.innerHTML='';
+  tablaProveedores.innerHTML="";
   proveedorSelect.innerHTML='<option value="">Seleccione proveedor</option>';
   snapshot.forEach(docu=>{
     const d = docu.data();
@@ -244,52 +232,20 @@ onSnapshot(collection(db,"proveedores"), snapshot=>{
   });
 });
 
-window.editarProveedor = (id,nombre,ruc,telefono,opc,direccion)=>{
-  document.getElementById("nombreProveedor").value=nombre;
-  document.getElementById("rucProveedor").value=ruc;
-  document.getElementById("telefonoProveedor").value=telefono;
-  document.getElementById("numeroOpcionalProveedor").value=opc;
-  document.getElementById("direccionProveedor").value=direccion;
-  editProveedorId=id;
-  cancelarProveedor.style.display='inline-block';
-  tituloProveedor.textContent='Editar proveedor';
-};
-
-// --------------------- Productos ---------------------
-const productoForm = document.getElementById("productoForm");
-const tablaProductos = document.getElementById("tablaProductos");
-const productoSelect = document.getElementById("productoFactura");
-const cancelarProducto = document.getElementById("cancelarProducto");
-const tituloProducto = document.getElementById("tituloProducto");
-
+// --------------------- CRUD PRODUCTOS ---------------------
 productoForm.addEventListener("submit", async e=>{
   e.preventDefault();
-  const data = {
+  await addDoc(collection(db,"productos"),{
     nombre: document.getElementById("nombreProducto").value,
     precio: document.getElementById("precioProducto").value,
     cantidad: document.getElementById("cantidadProducto").value,
     descripcion: document.getElementById("descripcionProducto").value
-  };
-  if(editProductoId){
-    await updateDoc(doc(db,"productos",editProductoId), data);
-    editProductoId=null;
-    cancelarProducto.style.display='none';
-    tituloProducto.textContent='Registrar producto';
-  } else {
-    await addDoc(collection(db,"productos"), data);
-  }
+  });
   productoForm.reset();
-});
-
-cancelarProducto.addEventListener('click', ()=>{
-  productoForm.reset();
-  editProductoId=null;
-  tituloProducto.textContent='Registrar producto';
-  cancelarProducto.style.display='none';
 });
 
 onSnapshot(collection(db,"productos"), snapshot=>{
-  tablaProductos.innerHTML='';
+  tablaProductos.innerHTML="";
   productoSelect.innerHTML='<option value="">Seleccione producto</option>';
   snapshot.forEach(docu=>{
     const d = docu.data();
@@ -307,27 +263,12 @@ onSnapshot(collection(db,"productos"), snapshot=>{
   });
 });
 
-window.editarProducto=(id,nombre,precio,cantidad,descripcion)=>{
-  document.getElementById("nombreProducto").value=nombre;
-  document.getElementById("precioProducto").value=precio;
-  document.getElementById("cantidadProducto").value=cantidad;
-  document.getElementById("descripcionProducto").value=descripcion;
-  editProductoId=id;
-  cancelarProducto.style.display='inline-block';
-  tituloProducto.textContent='Editar producto';
-};
+// --------------------- CRUD FACTURAS ---------------------
+facturaForm.addEventListener("submit", agregarFactura);
 
-// --------------------- Facturas ---------------------
-const facturaForm = document.getElementById("facturaForm");
-const tablaFacturas = document.getElementById("tablaFacturas");
-const cancelarFactura = document.getElementById("cancelarFactura");
-const tituloFactura = document.getElementById("tituloFactura");
-const buscadorFactura = document.getElementById("buscadorFactura");
-const btnRefresh = document.getElementById("btnRefresh");
-
-facturaForm.addEventListener("submit", async e=>{
+async function agregarFactura(e){
   e.preventDefault();
-  const data = {
+  await addDoc(collection(db,"facturas"),{
     id: document.getElementById("idFactura").value,
     fecha: document.getElementById("fechaFactura").value,
     proveedor: document.getElementById("proveedorFactura").value,
@@ -335,33 +276,14 @@ facturaForm.addEventListener("submit", async e=>{
     monto: document.getElementById("montoFactura").value,
     moneda: document.getElementById("monedaFactura").value,
     tipo: document.getElementById("tipoFactura").value
-  };
-  if(editFacturaId){
-    await updateDoc(doc(db,"facturas",editFacturaId), data);
-    editFacturaId=null;
-    cancelarFactura.style.display='none';
-    tituloFactura.textContent='Registrar factura';
-  } else {
-    await addDoc(collection(db,"facturas"), data);
-  }
+  });
   facturaForm.reset();
-});
-
-cancelarFactura.addEventListener('click', ()=>{
-  facturaForm.reset();
-  editFacturaId=null;
-  tituloFactura.textContent='Registrar factura';
-  cancelarFactura.style.display='none';
-});
+}
 
 onSnapshot(collection(db,"facturas"), snapshot=>{
-  mostrarFacturas(snapshot.docs);
-});
-
-function mostrarFacturas(docs){
-  tablaFacturas.innerHTML='';
-  docs.forEach(docu=>{
-    const d=docu.data();
+  tablaFacturas.innerHTML="";
+  snapshot.forEach(docu=>{
+    const d = docu.data();
     tablaFacturas.innerHTML += `<tr>
       <td>${d.id}</td>
       <td>${d.fecha}</td>
@@ -371,58 +293,134 @@ function mostrarFacturas(docs){
       <td>${d.monto}</td>
       <td>${d.tipo}</td>
       <td>
-        <button onclick="editarFactura('${docu.id}','${d.id}','${d.fecha}','${d.proveedor}','${d.producto}','${d.monto}','${d.moneda}','${d.tipo}')">✏️</button>
+        <button onclick="editarFactura('${docu.id}','${d.id}','${d.fecha}','${d.proveedor}','${d.producto}','${d.moneda}','${d.monto}','${d.tipo}')">✏️</button>
         <button onclick="borrar('facturas','${docu.id}')">❌</button>
       </td>
     </tr>`;
   });
-}
+});
 
-window.editarFactura=(id,factId,fecha,proveedor,producto,monto,moneda,tipo)=>{
-  document.getElementById("idFactura").value=factId;
-  document.getElementById("fechaFactura").value=fecha;
-  document.getElementById("proveedorFactura").value=proveedor;
-  document.getElementById("productoFactura").value=producto;
-  document.getElementById("montoFactura").value=monto;
-  document.getElementById("monedaFactura").value=moneda;
-  document.getElementById("tipoFactura").value=tipo;
-  editFacturaId=id;
-  cancelarFactura.style.display='inline-block';
-  tituloFactura.textContent='Editar factura';
+// --------------------- FUNCIONES EDITAR ---------------------
+window.editarProveedor = async (id,nombre,ruc,telefono,opc,direccion)=>{
+  document.getElementById("nombreProveedor").value = nombre;
+  document.getElementById("rucProveedor").value = ruc;
+  document.getElementById("telefonoProveedor").value = telefono;
+  document.getElementById("numeroOpcionalProveedor").value = opc;
+  document.getElementById("direccionProveedor").value = direccion;
+
+  proveedorForm.onsubmit = async e=>{
+    e.preventDefault();
+    await updateDoc(doc(db,"proveedores",id),{
+      nombre: document.getElementById("nombreProveedor").value,
+      ruc: document.getElementById("rucProveedor").value,
+      telefono: document.getElementById("telefonoProveedor").value,
+      opc: document.getElementById("numeroOpcionalProveedor").value,
+      direccion: document.getElementById("direccionProveedor").value
+    });
+    proveedorForm.reset();
+    proveedorForm.onsubmit = async e=>{
+      e.preventDefault();
+      await addDoc(collection(db,"proveedores"),{
+        nombre: document.getElementById("nombreProveedor").value,
+        ruc: document.getElementById("rucProveedor").value,
+        telefono: document.getElementById("telefonoProveedor").value,
+        opc: document.getElementById("numeroOpcionalProveedor").value,
+        direccion: document.getElementById("direccionProveedor").value
+      });
+      proveedorForm.reset();
+    }
+  }
 };
 
-// --------------------- Buscador ---------------------
-buscadorFactura.addEventListener('input', async ()=>{
-  const query = buscadorFactura.value.toLowerCase();
-  const snapshot = await collection(db,"facturas");
-  onSnapshot(collection(db,"facturas"), snap=>{
-    const filtered = snap.docs.filter(d=>d.data().producto.toLowerCase().includes(query));
-    mostrarFacturas(filtered);
+window.editarProducto = async (id,nombre,precio,cantidad,descripcion)=>{
+  document.getElementById("nombreProducto").value = nombre;
+  document.getElementById("precioProducto").value = precio;
+  document.getElementById("cantidadProducto").value = cantidad;
+  document.getElementById("descripcionProducto").value = descripcion;
+
+  productoForm.onsubmit = async e=>{
+    e.preventDefault();
+    await updateDoc(doc(db,"productos",id),{
+      nombre: document.getElementById("nombreProducto").value,
+      precio: document.getElementById("precioProducto").value,
+      cantidad: document.getElementById("cantidadProducto").value,
+      descripcion: document.getElementById("descripcionProducto").value
+    });
+    productoForm.reset();
+    productoForm.onsubmit = async e=>{
+      e.preventDefault();
+      await addDoc(collection(db,"productos"),{
+        nombre: document.getElementById("nombreProducto").value,
+        precio: document.getElementById("precioProducto").value,
+        cantidad: document.getElementById("cantidadProducto").value,
+        descripcion: document.getElementById("descripcionProducto").value
+      });
+      productoForm.reset();
+    }
+  }
+};
+
+window.editarFactura = async (docId,id,fecha,proveedor,producto,moneda,monto,tipo)=>{
+  document.getElementById("idFactura").value = id;
+  document.getElementById("fechaFactura").value = fecha;
+  document.getElementById("proveedorFactura").value = proveedor;
+  document.getElementById("productoFactura").value = producto;
+  document.getElementById("monedaFactura").value = moneda;
+  document.getElementById("montoFactura").value = monto;
+  document.getElementById("tipoFactura").value = tipo;
+
+  facturaForm.onsubmit = async e=>{
+    e.preventDefault();
+    await updateDoc(doc(db,"facturas",docId),{
+      id: document.getElementById("idFactura").value,
+      fecha: document.getElementById("fechaFactura").value,
+      proveedor: document.getElementById("proveedorFactura").value,
+      producto: document.getElementById("productoFactura").value,
+      monto: document.getElementById("montoFactura").value,
+      moneda: document.getElementById("monedaFactura").value,
+      tipo: document.getElementById("tipoFactura").value
+    });
+    facturaForm.reset();
+    facturaForm.onsubmit = agregarFactura;
+  }
+};
+
+// --------------------- BUSCADOR FACTURAS ---------------------
+document.getElementById("buscadorFactura").addEventListener("input",(e)=>{
+  const filtro = e.target.value.toLowerCase();
+  const filas = tablaFacturas.querySelectorAll("tr");
+  filas.forEach(fila=>{
+    const producto = fila.cells[3].textContent.toLowerCase();
+    fila.style.display = producto.includes(filtro) ? "" : "none";
   });
 });
-btnRefresh.addEventListener('click', ()=>{ buscadorFactura.value=''; });
 
-// --------------------- Sidebar ---------------------
-document.querySelectorAll('.menu-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('activo'));
-    btn.classList.add('activo');
-    document.querySelectorAll('.seccion').forEach(sec=>sec.classList.remove('activa'));
-    document.getElementById(btn.dataset.target).classList.add('activa');
-  });
+document.getElementById("btnRefresh").addEventListener("click", ()=>{
+  document.getElementById("buscadorFactura").value = "";
+  const filas = tablaFacturas.querySelectorAll("tr");
+  filas.forEach(fila=>fila.style.display = "");
 });
 
-// --------------------- Borrar ---------------------
-window.borrar = async (col,id)=> await deleteDoc(doc(db,col,id));
+// --------------------- LOGOUT ---------------------
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  alert("Sesión cerrada correctamente");
+  // Aquí puedes redirigir al login si lo tienes
+  window.location.href = "index.html";
+});
 
-// --------------------- Logout ---------------------
-document.getElementById("logoutBtn").addEventListener('click', ()=>{
-  alert("Sesión cerrada."); 
-  window.location.href="index.html"; 
+// --------------------- SWITCH DE SECCIONES ---------------------
+document.querySelectorAll(".menu-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("activo"));
+    btn.classList.add("activo");
+    document.querySelectorAll(".seccion").forEach(sec=>sec.classList.remove("activa"));
+    document.getElementById(btn.dataset.target).classList.add("activa");
+  });
 });
 </script>
 </body>
 </html>
+
 
 
 
