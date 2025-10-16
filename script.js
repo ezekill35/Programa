@@ -2,11 +2,20 @@ import { auth } from './firebase.js';
 import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+    const emailInput = document.getElementById("emailLogin");
+    const passInput = document.getElementById("passLogin");
+    const btnLogin = document.getElementById("btnLogin");
     const mensaje = document.getElementById("mensaje");
 
-    document.getElementById("btnLogin").addEventListener("click", async () => {
-        const email = document.getElementById("emailLogin").value;
-        const pass = document.getElementById("passLogin").value;
+    btnLogin.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        const pass = passInput.value.trim();
+
+        if(!email || !pass){
+            mensaje.textContent = "Por favor ingresa correo y contraseña";
+            return;
+        }
+
         try {
             await signInWithEmailAndPassword(auth, email, pass);
             mensaje.style.color = "green";
@@ -14,17 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => window.location.href = "dashboard.html", 1000);
         } catch (e) {
             mensaje.style.color = "red";
-            mensaje.textContent = e.message;
+            if(e.code === "auth/user-not-found") mensaje.textContent = "Usuario no registrado";
+            else if(e.code === "auth/wrong-password") mensaje.textContent = "Contraseña incorrecta";
+            else mensaje.textContent = e.message;
         }
     });
 
     onAuthStateChanged(auth, user => {
-        const currentPage = window.location.pathname.split("/").pop();
-        if(user && currentPage === "index.html") window.location.href = "dashboard.html";
+        if(user) window.location.href = "dashboard.html";
     });
 });
-
-
 
 
 
