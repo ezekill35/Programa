@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const pass = passInput.value.trim();
 
         if(!email || !pass){
+            mensaje.style.color = "red";
             mensaje.textContent = "Por favor ingresa correo y contraseña";
             return;
         }
