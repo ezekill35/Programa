@@ -1,152 +1,152 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discovery Pets - Login</title>
-<style>
-/* --- Estilos generales --- */
-body { 
-  display:flex; 
-  justify-content:center; 
-  align-items:center; 
-  min-height:100vh; 
-  background: linear-gradient(135deg, #ffe0f0, #ffb3d9); 
-  font-family: 'Poppins', sans-serif; 
-  margin:0;
-}
-
-.container { 
-  background:#fff; 
-  padding:40px 30px; 
-  border-radius:20px; 
-  width:350px; 
-  box-shadow:0 15px 30px rgba(0,0,0,0.2); 
-  text-align:center; 
-  animation:fadeIn 0.8s ease;
-}
-
-@keyframes fadeIn { 
-  from {opacity:0; transform:translateY(-20px);} 
-  to {opacity:1; transform:translateY(0);} 
-}
-
-.container img { 
-  width:120px; 
-  margin-bottom:15px; 
-}
-
-.container h1 { 
-  color:#ff3399; 
-  margin-bottom:20px; 
-}
-
-.container input { 
-  width:100%; 
-  padding:12px; 
-  margin:8px 0; 
-  border-radius:8px; 
-  border:1px solid #ccc; 
-  transition:0.3s;
-}
-
-.container input:focus { 
-  border-color:#ff3399; 
-  box-shadow:0 0 10px rgba(255,51,153,0.3);
-}
-
-.container button { 
-  width:100%; 
-  padding:14px; 
-  background:#ff3399; 
-  color:#fff; 
-  border:none; 
-  border-radius:8px; 
-  cursor:pointer; 
-  font-weight:600; 
-  transition:0.3s;
-  margin-top:10px;
-}
-
-.container button:hover { 
-  background:#ff66cc; 
-  transform:scale(1.03);
-}
-
-#mensaje { 
-  margin-top:15px; 
-  font-weight:500;
-  font-size:14px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discovery Pets · Iniciar sesión</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ffebf7, #ffd1eb);
+    }
+    .login-box {
+      background: #fff;
+      width: 380px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
+      padding: 40px 30px;
+      animation: fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-box img {
+      width: 120px;
+      margin-bottom: 15px;
+    }
+    h1 {
+      color: #ff3399;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    input:focus {
+      border-color: #ff3399;
+      box-shadow: 0 0 10px rgba(255,51,153,0.2);
+      outline: none;
+    }
+    button {
+      width: 100%;
+      background: #ff3399;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #ff66cc;
+      transform: scale(1.03);
+    }
+    #mensaje {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Logo Discovery Pets">
-    <h1>Discovery Pets</h1>
+  <div class="login-box">
+    <img src="https://static.wixstatic.com/media/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png/v1/fit/w_2500,h_1330,al_c/ba54dd_7c82d35c6b0142b48d51bf0641564791~mv2.png" alt="Discovery Pets Logo" />
+    <h1>Iniciar Sesión</h1>
 
-    <input id="emailLogin" type="email" placeholder="Correo" required>
-    <input id="passLogin" type="password" placeholder="Contraseña" required>
-    <button id="btnLogin">Iniciar sesión</button>
-    <p id="mensaje" style="color:red;"></p>
-</div>
+    <input type="email" id="emailLogin" placeholder="Correo electrónico" required />
+    <input type="password" id="passLogin" placeholder="Contraseña" required />
+    <button id="btnLogin">Entrar</button>
+    <p id="mensaje"></p>
+  </div>
 
-<!-- JS incluido -->
-<script type="module">
-// --- Firebase CDN ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  <!-- --- Firebase & Script Login --- -->
+  <script type="module">
+    // --- Importar desde Firebase CDN ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-// Configuración Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-  authDomain: "discovery-pets.firebaseapp.com",
-  databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
-  projectId: "discovery-pets",
-  storageBucket: "discovery-pets.firebasestorage.app",
-  messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-  measurementId: "G-0WMLRY8FGM"
-};
+    // --- Configuración Firebase ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+      authDomain: "discovery-pets.firebaseapp.com",
+      databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+      projectId: "discovery-pets",
+      storageBucket: "discovery-pets.firebasestorage.app",
+      messagingSenderId: "481355972999",
+      appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+      measurementId: "G-0WMLRY8FGM"
+    };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    // --- Inicializar Firebase ---
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-// Referencias del DOM
-const btnLogin = document.getElementById("btnLogin");
-const mensaje = document.getElementById("mensaje");
+    // --- Referencias del DOM ---
+    const btnLogin = document.getElementById("btnLogin");
+    const mensaje = document.getElementById("mensaje");
 
-// Evento click en login
-btnLogin.addEventListener("click", async () => {
-  const email = document.getElementById("emailLogin").value;
-  const pass = document.getElementById("passLogin").value;
+    // --- Login ---
+    btnLogin.addEventListener("click", async () => {
+      const email = document.getElementById("emailLogin").value.trim();
+      const password = document.getElementById("passLogin").value.trim();
 
-  if (!email || !pass) {
-    mensaje.style.color = "red";
-    mensaje.textContent = "Completa todos los campos";
-    return;
-  }
+      if (!email || !password) {
+        mensaje.style.color = "red";
+        mensaje.textContent = "⚠️ Completa todos los campos.";
+        return;
+      }
 
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    mensaje.style.color = "green";
-    mensaje.textContent = "Inicio de sesión correcto, redirigiendo...";
-    setTimeout(() => window.location.href = "dashboard.html", 1000);
-  } catch (error) {
-    mensaje.style.color = "red";
-    if(error.code === "auth/user-not-found") mensaje.textContent = "Usuario no encontrado";
-    else if(error.code === "auth/wrong-password") mensaje.textContent = "Contraseña incorrecta";
-    else if(error.code === "auth/invalid-email") mensaje.textContent = "Correo inválido";
-    else mensaje.textContent = error.message;
-  }
-});
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        mensaje.style.color = "green";
+        mensaje.textContent = "✅ Iniciando sesión...";
+        setTimeout(() => window.location.href = "dashboard.html", 1000);
+      } catch (error) {
+        console.error("Error:", error);
+        mensaje.style.color = "red";
+        if (error.code === "auth/user-not-found") mensaje.textContent = "Usuario no encontrado.";
+        else if (error.code === "auth/wrong-password") mensaje.textContent = "Contraseña incorrecta.";
+        else if (error.code === "auth/invalid-email") mensaje.textContent = "Correo inválido.";
+        else mensaje.textContent = "Error al iniciar sesión.";
+      }
+    });
 
-// Redirección automática si ya hay usuario logueado
-onAuthStateChanged(auth, (user) => {
-  if(user) window.location.href = "dashboard.html";
-});
-</script>
+    // --- Mantener sesión activa ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
+    });
+  </script>
 </body>
 </html>
 
