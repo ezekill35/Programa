@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔥 Configuración de tu proyecto Discovery Pets
+// Configuración Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -13,63 +13,9 @@ const firebaseConfig = {
   appId: "1:481355972999:web:7c7c0c4f9a9d8f2f22b5c8"
 };
 
-// ✅ Inicializa Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-
-// 🔐 Autenticación
 const auth = getAuth(app);
-
-// 💾 Cloud Firestore
 const db = getFirestore(app);
 
-// 🚀 Exporta para usar en dashboard.js, login.js, etc.
 export { auth, db };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
