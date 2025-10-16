@@ -1,26 +1,44 @@
-import { db, auth } from "./firebase.js";
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-// ======================= NAVEGACIÓN =======================
+// --- CONFIG FIREBASE ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+  measurementId: "G-0WMLRY8FGM"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// --- NAVIGATION ---
 const botones = document.querySelectorAll(".menu-btn");
 const secciones = document.querySelectorAll(".seccion");
 botones.forEach(btn => {
   btn.addEventListener("click", () => {
     botones.forEach(b => b.classList.remove("activo"));
     btn.classList.add("activo");
-    secciones.forEach(sec => sec.classList.remove("activa"));
-    document.getElementById(btn.dataset.target).classList.add("activa");
+    secciones.forEach(sec => {
+      sec.classList.remove("activa");
+      if (sec.id === btn.dataset.target) sec.classList.add("activa");
+    });
   });
 });
 
-// ======================= CERRAR SESIÓN =======================
+// --- LOGOUT ---
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "index.html";
 });
 
-// ======================= PROVEEDORES =======================
+// --- PROVEEDORES ---
 const proveedorForm = document.getElementById("proveedorForm");
 const tablaProveedores = document.getElementById("tablaProveedores");
 const proveedorSelect = document.getElementById("proveedorFactura");
@@ -30,8 +48,9 @@ proveedorForm.addEventListener("submit", async e => {
   const ruc = document.getElementById("rucProveedor").value.trim();
   const nombre = document.getElementById("nombreProveedor").value.trim();
   const telefono = document.getElementById("telefonoProveedor").value.trim();
+  const numero = document.getElementById("numeroProveedor").value.trim();
   const direccion = document.getElementById("direccionProveedor").value.trim();
-  await addDoc(collection(db, "proveedores"), { ruc, nombre, telefono, direccion });
+  await addDoc(collection(db, "proveedores"), { ruc, nombre, telefono, numero, direccion });
   proveedorForm.reset();
 });
 
@@ -44,14 +63,12 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
     fila.innerHTML = `
       <td>${p.ruc}</td>
       <td>${p.nombre}</td>
-      <td>${p.telefono || '-'}</td>
-      <td>${p.direccion || '-'}</td>
-      <td>
-        <button class="btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️</button>
-      </td>
+      <td>${p.telefono}</td>
+      <td>${p.numero || '-'}</td>
+      <td>${p.direccion}</td>
+      <td><button class="btn-delete" data-id="${docu.id}" data-tipo="proveedores">🗑️</button></td>
     `;
     tablaProveedores.appendChild(fila);
-
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -59,7 +76,7 @@ onSnapshot(collection(db, "proveedores"), snapshot => {
   });
 });
 
-// ======================= PRODUCTOS =======================
+// --- PRODUCTOS ---
 const productoForm = document.getElementById("productoForm");
 const tablaProductos = document.getElementById("tablaProductos");
 const productoSelect = document.getElementById("productoFactura");
@@ -88,7 +105,6 @@ onSnapshot(collection(db, "productos"), snapshot => {
       <td><button class="btn-delete" data-id="${docu.id}" data-tipo="productos">🗑️</button></td>
     `;
     tablaProductos.appendChild(fila);
-
     const option = document.createElement("option");
     option.value = p.nombre;
     option.textContent = p.nombre;
@@ -96,25 +112,27 @@ onSnapshot(collection(db, "productos"), snapshot => {
   });
 });
 
-// ======================= FACTURAS =======================
+// --- FACTURAS ---
 const facturaForm = document.getElementById("facturaForm");
 const tablaFacturas = document.getElementById("tablaFacturas");
 let facturasGuardadas = [];
 
 facturaForm.addEventListener("submit", async e => {
   e.preventDefault();
-  const proveedor = document.getElementById("proveedorFactura").value;
-  const producto = document.getElementById("productoFactura").value;
+  const proveedor = proveedorFactura.value;
+  const producto = productoFactura.value;
   const cantidad = document.getElementById("cantidadFactura").value.trim();
   const fecha = document.getElementById("fechaFactura").value;
-  if (!proveedor || !producto) return alert("Seleccione proveedor y producto");
+  if (!proveedor || !producto) { alert("Seleccione proveedor y producto"); return; }
   await addDoc(collection(db, "facturas"), { proveedor, producto, cantidad, fecha });
   facturaForm.reset();
 });
 
 onSnapshot(collection(db, "facturas"), snapshot => {
   facturasGuardadas = [];
-  snapshot.forEach(docu => facturasGuardadas.push({ id: docu.id, ...docu.data() }));
+  snapshot.forEach(docu => {
+    facturasGuardadas.push({ id: docu.id, ...docu.data() });
+  });
   mostrarFacturas(facturasGuardadas);
 });
 
@@ -133,56 +151,31 @@ function mostrarFacturas(facturas) {
   });
 }
 
-// ======================= BUSCADOR =======================
+// --- BUSCADOR ---
 const buscador = document.getElementById("buscadorFactura");
 buscador.addEventListener("keypress", e => {
-  if(e.key === "Enter"){
+  if(e.key === "Enter") {
     const valor = buscador.value.trim().toLowerCase();
     const filtradas = facturasGuardadas.filter(f => f.producto.toLowerCase().includes(valor));
     mostrarFacturas(filtradas);
   }
 });
-document.getElementById("btnRefresh").addEventListener("click", ()=>{
+document.getElementById("btnRefresh").addEventListener("click", () => {
   buscador.value = '';
   mostrarFacturas(facturasGuardadas);
 });
 
-// ======================= ELIMINAR =======================
+// --- ELIMINAR ---
 document.addEventListener("click", async e => {
-  if(e.target.classList.contains("btn-delete")){
+  if(e.target.classList.contains("btn-delete")) {
     const id = e.target.dataset.id;
     const tipo = e.target.dataset.tipo;
-    if(confirm("Desea eliminar este registro?")) await deleteDoc(doc(db,tipo,id));
+    if(confirm("¿Desea eliminar este registro?")) {
+      await deleteDoc(doc(db, tipo, id));
+    }
   }
 });
 
-// ======================= MODAL DETALLE =======================
-async function mostrarModalDatos(coleccion, campo, valor){
-  const modal = document.getElementById("modalDetalle");
-  const modalContenido = document.getElementById("modalContenido");
-  modalContenido.innerHTML = "<p>Cargando...</p>";
-  onSnapshot(collection(db, coleccion), snap => {
-    snap.forEach(docu=>{
-      const data = docu.data();
-      if(data[campo]===valor){
-        modalContenido.innerHTML=`
-          <h3>${coleccion==="proveedores"?"Proveedor":"Producto"}: ${data.nombre}</h3>
-          <p><strong>RUC:</strong> ${data.ruc||'-'}</p>
-          <p><strong>Teléfono:</strong> ${data.telefono||'-'}</p>
-          <p><strong>Dirección:</strong> ${data.direccion||'-'}</p>
-          <p><strong>Cantidad:</strong> ${data.cantidad||'-'}</p>
-          <p><strong>Precio:</strong> ${data.precio||'-'}</p>
-          <p><strong>Descripción:</strong> ${data.descripcion||'-'}</p>
-        `;
-      }
-    });
-  });
-  modal.style.display="flex";
-}
-
-document.getElementById("cerrarModal").addEventListener("click", ()=>{
-  document.getElementById("modalDetalle").style.display="none";
-});
 
 
 
