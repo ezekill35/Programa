@@ -4,7 +4,7 @@ import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
   doc, deleteDoc, query, where, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -18,6 +18,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// ===================== VERIFICAR SESIÓN =====================
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    // Redirigir a login si no hay usuario
+    window.location.href = "index.html";
+  }
+});
 
 // ===================== COLECCIONES =====================
 const colProveedores = collection(db, "proveedores");
@@ -67,7 +75,6 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.classList.add("activo");
     document.getElementById(btn.dataset.target).classList.add("activa");
 
-    // Mostrar buscador solo en facturas
     if(btn.dataset.target === "facturas") buscador.style.display = "block";
     else { buscador.style.display = "none"; buscador.value=""; panelFacturas.innerHTML=""; }
   });
@@ -277,7 +284,6 @@ document.addEventListener("click", async e=>{
       `;
       modalEditar.showModal();
 
-      // Evitar duplicar eventos
       const btnGuardar = document.getElementById("guardarEdit");
       btnGuardar.replaceWith(btnGuardar.cloneNode(true));
       document.getElementById("guardarEdit").addEventListener("click", async ()=>{
