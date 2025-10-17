@@ -49,6 +49,10 @@ const modalExtra = document.getElementById("modalExtra");
 const modalExtraBody = document.getElementById("modalExtraBody");
 const cerrarModalExtra = document.getElementById("cerrarModalExtra");
 
+const modalEditar = document.getElementById("modalEditar");
+const modalEditarBody = document.getElementById("modalEditarBody");
+const cerrarModalEditar = document.getElementById("cerrarModalEditar");
+
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
@@ -108,6 +112,74 @@ function mostrarModalFactura(f) {
 // ===================== CERRAR MODALES =====================
 cerrarModalFactura.addEventListener("click", () => modalFactura.close());
 cerrarModalExtra.addEventListener("click", () => modalExtra.close());
+cerrarModalEditar.addEventListener("click", () => modalEditar.close());
+
+// ===================== FUNCION PARA EDITAR EN PANEL =====================
+async function abrirPanelEditar(tipo, id) {
+  const col = tipo === "proveedor" ? colProveedores : tipo === "producto" ? colProductos : colFacturas;
+  const snap = await getDocs(query(col, where("__name__", "==", id)));
+  if (snap.empty) return;
+
+  const data = snap.docs[0].data();
+  let html = '';
+  if(tipo === "proveedor") {
+    html = `
+      <h4>Editar Proveedor</h4>
+      <label>RUC</label><input type="text" id="editRuc" class="form-control" value="${data.ruc}">
+      <label>Nombre</label><input type="text" id="editNombre" class="form-control" value="${data.nombre}">
+      <label>Dirección</label><input type="text" id="editDireccion" class="form-control" value="${data.direccion || ''}">
+      <label>Teléfono</label><input type="text" id="editTelefono" class="form-control" value="${data.telefono || ''}">
+      <button id="btnGuardarEdit" class="btn btn-success mt-2">Guardar</button>
+    `;
+  } else if(tipo === "producto") {
+    html = `
+      <h4>Editar Producto</h4>
+      <label>Nombre</label><input type="text" id="editNombre" class="form-control" value="${data.nombre}">
+      <label>Cantidad</label><input type="number" id="editCantidad" class="form-control" value="${data.cantidad}">
+      <label>Precio</label><input type="number" step="0.01" id="editPrecio" class="form-control" value="${data.precio}">
+      <label>Descripción</label><textarea id="editDescripcion" class="form-control">${data.descripcion || ''}</textarea>
+      <button id="btnGuardarEdit" class="btn btn-success mt-2">Guardar</button>
+    `;
+  } else {
+    html = `
+      <h4>Editar Factura</h4>
+      <label>ID Factura</label><input type="text" id="editIdFactura" class="form-control" value="${data.idFactura}">
+      <label>Fecha</label><input type="date" id="editFecha" class="form-control" value="${data.fecha}">
+      <label>Proveedor</label><input type="text" id="editProveedor" class="form-control" value="${data.proveedor}">
+      <label>Producto</label><input type="text" id="editProducto" class="form-control" value="${data.producto}">
+      <label>Monto</label><input type="number" step="0.01" id="editMonto" class="form-control" value="${data.monto}">
+      <label>Tipo</label><input type="text" id="editTipo" class="form-control" value="${data.tipo}">
+      <button id="btnGuardarEdit" class="btn btn-success mt-2">Guardar</button>
+    `;
+  }
+
+  modalEditarBody.innerHTML = html;
+  modalEditar.showModal();
+
+  document.getElementById("btnGuardarEdit").addEventListener("click", async () => {
+    const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
+    const newData = tipo === "proveedor" ? {
+      ruc: document.getElementById("editRuc").value.trim(),
+      nombre: document.getElementById("editNombre").value.trim(),
+      direccion: document.getElementById("editDireccion").value.trim(),
+      telefono: document.getElementById("editTelefono").value.trim()
+    } : tipo === "producto" ? {
+      nombre: document.getElementById("editNombre").value.trim(),
+      cantidad: parseInt(document.getElementById("editCantidad").value),
+      precio: parseFloat(document.getElementById("editPrecio").value),
+      descripcion: document.getElementById("editDescripcion").value.trim()
+    } : {
+      idFactura: document.getElementById("editIdFactura").value.trim(),
+      fecha: document.getElementById("editFecha").value,
+      proveedor: document.getElementById("editProveedor").value.trim(),
+      producto: document.getElementById("editProducto").value.trim(),
+      monto: parseFloat(document.getElementById("editMonto").value),
+      tipo: document.getElementById("editTipo").value.trim()
+    };
+    await updateDoc(docRef, newData);
+    modalEditar.close();
+  });
+}
 
 // ===================== PROVEEDORES =====================
 formProveedor.addEventListener("submit", async e => {
@@ -129,13 +201,13 @@ onSnapshot(colProveedores, snapshot => {
     const tr = document.createElement("tr");
     tr.dataset.id = docu.id;
     tr.innerHTML = `
-      <td contenteditable="true" class="editable" data-field="ruc">${d.ruc}</td>
-      <td contenteditable="true" class="editable" data-field="nombre">${d.nombre}</td>
-      <td contenteditable="true" class="editable" data-field="direccion">${d.direccion || ""}</td>
-      <td contenteditable="true" class="editable" data-field="telefono">${d.telefono || ""}</td>
+      <td>${d.ruc}</td>
+      <td>${d.nombre}</td>
+      <td>${d.direccion || ""}</td>
+      <td>${d.telefono || ""}</td>
       <td>
-        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="proveedor">🗑️</button>
-        <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
+        <button class="btn-accion editar" data-tipo="proveedor" data-id="${docu.id}">✏️</button>
+        <button class="btn-accion eliminar" data-tipo="proveedor" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProveedores.appendChild(tr);
   });
@@ -163,13 +235,13 @@ onSnapshot(colProductos, snapshot => {
     const tr = document.createElement("tr");
     tr.dataset.id = docu.id;
     tr.innerHTML = `
-      <td contenteditable="true" class="editable" data-field="nombre">${d.nombre}</td>
-      <td contenteditable="true" class="editable" data-field="cantidad">${d.cantidad}</td>
-      <td contenteditable="true" class="editable" data-field="precio">${d.precio}</td>
-      <td contenteditable="true" class="editable" data-field="descripcion">${d.descripcion || ""}</td>
+      <td>${d.nombre}</td>
+      <td>${d.cantidad}</td>
+      <td>${d.precio}</td>
+      <td style="white-space: pre-wrap;">${d.descripcion || ""}</td>
       <td>
-        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="producto">🗑️</button>
-        <button class="btn-accion ver link-info" data-tipo="producto" data-nombre="${d.nombre}">🔍</button>
+        <button class="btn-accion editar" data-tipo="producto" data-id="${docu.id}">✏️</button>
+        <button class="btn-accion eliminar" data-tipo="producto" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProductos.appendChild(tr);
   });
@@ -199,15 +271,15 @@ onSnapshot(colFacturas, snapshot => {
     const tr = document.createElement("tr");
     tr.dataset.id = docu.id;
     tr.innerHTML = `
-      <td contenteditable="true" class="editable" data-field="idFactura">${f.idFactura}</td>
-      <td contenteditable="true" class="editable" data-field="fecha">${f.fecha}</td>
-      <td contenteditable="true" class="editable" data-field="proveedor">${f.proveedor}</td>
-      <td contenteditable="true" class="editable" data-field="producto">${f.producto}</td>
-      <td contenteditable="true" class="editable" data-field="monto">${f.monto}</td>
-      <td contenteditable="true" class="editable" data-field="tipo">${f.tipo}</td>
+      <td>${f.idFactura}</td>
+      <td>${f.fecha}</td>
+      <td>${f.proveedor}</td>
+      <td>${f.producto}</td>
+      <td>${f.monto}</td>
+      <td>${f.tipo}</td>
       <td>
-        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="factura">🗑️</button>
-        <button class="btn-accion ver link-info" data-tipo="factura">${f.idFactura}</button>
+        <button class="btn-accion editar" data-tipo="factura" data-id="${docu.id}">✏️</button>
+        <button class="btn-accion eliminar" data-tipo="factura" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaFacturas.appendChild(tr);
   });
@@ -215,17 +287,19 @@ onSnapshot(colFacturas, snapshot => {
 });
 
 // ===================== BUSCADOR =====================
+buscador.style.display = "none";
+
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
   if (!texto) return;
-
   const snap = await getDocs(colFacturas);
   snap.forEach(docu => {
     const f = docu.data();
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
       div.className = "resultado-item";
+      div.style.background = "#e0f2fe";
       div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong>`;
       div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
@@ -235,58 +309,45 @@ buscador.addEventListener("input", async () => {
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
-  // EDIT INLINE
-  if (e.target.classList.contains("editable")) {
-    const tr = e.target.closest("tr");
-    const tipo = tr.querySelector(".eliminar").dataset.tipo;
-    const id = tr.dataset.id;
-    const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
-
-    e.target.addEventListener("blur", async () => {
-      const celdas = tr.querySelectorAll(".editable");
-      let data = {};
-      celdas.forEach(td => {
-        const field = td.dataset.field;
-        let val = td.textContent.trim();
-        if (field === "cantidad") val = parseInt(val) || 0;
-        if (field === "precio" || field === "monto") val = parseFloat(val) || 0;
-        data[field] = val;
-      });
-      await updateDoc(docRef, data);
-    });
+  // BOTON EDITAR EN LISTA
+  if(e.target.classList.contains("editar")) {
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
+    abrirPanelEditar(tipo, id);
   }
 
-  // VER DETALLES
-  if (e.target.classList.contains("link-info")) {
+  // VER DETALLES FACTURA / PROVEEDOR / PRODUCTO
+  if(e.target.classList.contains("link-info")) {
     const tipo = e.target.dataset.tipo;
-    if (tipo === "factura") {
+    if(tipo === "factura") {
       const snap = await getDocs(query(colFacturas, where("idFactura", "==", e.target.textContent)));
-      if (!snap.empty) mostrarModalFactura(snap.docs[0].data());
+      if(!snap.empty) mostrarModalFactura(snap.docs[0].data());
       return;
     }
 
     const nombre = e.target.dataset.nombre;
-    if (!confirm(`¿Deseas ver los datos de ${nombre}?`)) return;
-
-    const col = tipo === "proveedor" ? colProveedores : colProductos;
-    const snap = await getDocs(query(col, where("nombre", "==", nombre)));
-    if (snap.empty) {
-      modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
-    } else {
-      const d = snap.docs[0].data();
-      modalExtraBody.innerHTML = tipo === "proveedor"
-        ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
-        : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
-      modalExtra.showModal();
+    if(confirm(`Deseas ver los datos de ${tipo}?`)) {
+      const col = tipo === "proveedor" ? colProveedores : colProductos;
+      const snap = await getDocs(query(col, where("nombre", "==", nombre)));
+      if(snap.empty) {
+        modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
+      } else {
+        const d = snap.docs[0].data();
+        modalExtraBody.innerHTML = tipo === "proveedor"
+          ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
+          : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
+        modalExtra.showModal();
+      }
     }
   }
 
   // ELIMINAR
-  if (e.target.classList.contains("eliminar")) {
-    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+  if(e.target.classList.contains("eliminar")) {
+    if(!confirm("¿Seguro que deseas eliminar este registro?")) return;
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
     const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
     await deleteDoc(docRef);
   }
 });
+
