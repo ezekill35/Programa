@@ -42,6 +42,10 @@ const panelDerecho = document.getElementById("panelDerecho");
 const contenidoPanel = document.getElementById("contenidoPanel");
 const cerrarPanel = document.getElementById("cerrarPanel");
 
+const panelExtra = document.getElementById("panelExtra");
+const contenidoPanelExtra = document.getElementById("contenidoPanelExtra");
+const cerrarPanelExtra = document.getElementById("cerrarPanelExtra");
+
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
@@ -58,6 +62,7 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     buscador.style.display = (btn.dataset.target === "facturas") ? "block" : "none";
     panelFacturas.innerHTML = "";
     panelDerecho.style.display = "none";
+    panelExtra.style.display = "none";
   });
 });
 
@@ -190,7 +195,7 @@ onSnapshot(colFacturas, snapshot => {
   countFacturas.textContent = snapshot.size;
 });
 
-// ===================== EDIT INLINE =====================
+// ===================== EDIT INLINE SOLO LISTAS =====================
 document.addEventListener("blur", async e => {
   if (e.target.classList.contains("editable")) {
     const tr = e.target.closest("tr");
@@ -221,11 +226,14 @@ document.addEventListener("click", async e => {
   }
 });
 
-// ===================== BUSCADOR =====================
+// ===================== BUSCADOR FACTURAS POR PRODUCTO =====================
+buscador.style.display = "none";
+
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
   panelDerecho.style.display = "none";
+  panelExtra.style.display = "none";
   if (!texto) return;
 
   const snap = await getDocs(colFacturas);
@@ -234,60 +242,51 @@ buscador.addEventListener("input", async () => {
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
       div.className = "resultado-item";
-      div.style.background="#fef9c3";
-      div.innerHTML = `<strong>${f.idFactura}</strong>`;
+      div.style.background = "#fde68a"; // color distintivo
+      div.textContent = `Factura: ${f.idFactura}`;
       div.addEventListener("click", () => mostrarFacturaPanel(f));
       panelFacturas.appendChild(div);
     }
   });
 });
 
-// ===================== MOSTRAR FACTURA EN PANEL =====================
+// ===================== FUNCIONES PANEL =====================
 function mostrarFacturaPanel(f) {
   panelDerecho.style.display = "block";
+  panelExtra.style.display = "none";
   contenidoPanel.innerHTML = `
-    <h4>Factura: ${f.idFactura}</h4>
+    <h4>Factura ${f.idFactura}</h4>
     <p><b>Fecha:</b> ${f.fecha}</p>
+    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
+    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
     <p><b>Monto:</b> S/. ${f.monto}</p>
-    <p><b>Tipo:</b> ${f.tipo}</p>
-    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316; cursor:pointer;">${f.proveedor}</span></p>
-    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6; cursor:pointer;">${f.producto}</span></p>
-  `;
+    <p><b>Tipo:</b> ${f.tipo}</p>`;
 }
 
-// ===================== PANEL PROVEEDOR/PRODUCTO =====================
+cerrarPanel.addEventListener("click", () => panelDerecho.style.display = "none");
+cerrarPanelExtra.addEventListener("click", () => panelExtra.style.display = "none");
+
+// ===================== CLICK PARA PROVEEDOR/PRODUCTO EN PANEL =====================
 document.addEventListener("click", async e => {
   if (e.target.classList.contains("link-info")) {
     const tipo = e.target.dataset.tipo;
     const nombre = e.target.dataset.nombre;
-    if (!confirm(`¿Deseas ver los datos de este ${tipo}?`)) return;
+    if (!confirm(`¿Deseas ver los datos de ${nombre}?`)) return;
+
     const col = tipo === "proveedor" ? colProveedores : colProductos;
-    const snap = await getDocs(query(col, where("nombre","==",nombre)));
+    const snap = await getDocs(query(col, where("nombre", "==", nombre)));
+
     if (snap.empty) {
-      contenidoPanel.innerHTML = `<p>No se encontró información.</p>`;
+      contenidoPanelExtra.innerHTML = "<p>No se encontró información.</p>";
     } else {
       const d = snap.docs[0].data();
-      if(tipo==="proveedor"){
-        contenidoPanel.innerHTML = `
-          <h4>Proveedor: ${d.nombre}</h4>
-          <p><b>RUC:</b> ${d.ruc}</p>
-          <p><b>Dirección:</b> ${d.direccion}</p>
-          <p><b>Teléfono:</b> ${d.telefono}</p>
-        `;
-      } else {
-        contenidoPanel.innerHTML = `
-          <h4>Producto: ${d.nombre}</h4>
-          <p><b>Cantidad:</b> ${d.cantidad}</p>
-          <p><b>Precio:</b> S/. ${d.precio}</p>
-          <p><b>Descripción:</b><br>${d.descripcion.replace(/\n/g,"<br>")}</p>
-        `;
-      }
+      contenidoPanelExtra.innerHTML = tipo === "proveedor"
+        ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
+        : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
     }
+    panelExtra.style.display = "block";
   }
 });
-
-// ===================== CERRAR PANEL =====================
-cerrarPanel.addEventListener("click",()=>{panelDerecho.style.display="none";});
 
 
 
