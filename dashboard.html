@@ -1,34 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Discovery Pets · Dashboard</title>
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
+
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
-    body { font-family: "Inter", sans-serif; background: #f8fafc; }
-    .sidebar { width: 250px; background: linear-gradient(180deg,#14b8a6 0%,#0284c7 100%); color:#fff; height:100vh; position:fixed; padding:1.5rem 1rem; border-radius:0 20px 20px 0; }
-    .sidebar h3 { text-align:center; margin-bottom:1.5rem; font-weight:700; }
-    .nav-btn { display:block; width:100%; background:transparent; color:#fff; border:none; text-align:left; padding:.75rem 1rem; border-radius:10px; margin-bottom:.5rem; font-size:15px; transition:.3s; }
-    .nav-btn:hover, .nav-btn.activo { background:rgba(255,255,255,.2); }
-    main { margin-left:270px; padding:2rem; }
-    .header-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; }
-    #searchInput { max-width:300px; display:none; }
-    .tabla-container { background:white; border-radius:15px; padding:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,.05); margin-bottom:2rem; }
-    .btn-accion { background:transparent; border:none; cursor:pointer; font-size:1rem; margin-right:5px; transition:.2s; }
-    .btn-accion:hover { transform:scale(1.2); }
-    .resultado-item { background:#e0f2fe; border-radius:10px; padding:.75rem; margin-bottom:5px; cursor:pointer; transition:.2s; }
-    .resultado-item:hover { background:#bae6fd; }
-    dialog { border:none; border-radius:15px; padding:1.5rem; max-width:400px; box-shadow:0 5px 25px rgba(0,0,0,.3); }
-    dialog::backdrop { background: rgba(0,0,0,.4); }
-    .link-info { cursor:pointer; text-decoration:underline; color:inherit; }
-    .seccion { display:none; }
-    .seccion.activa { display:block; }
+    body {
+      background: #f8fafc;
+      font-family: "Inter", sans-serif;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(180deg, #14b8a6 0%, #0284c7 100%);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 1.5rem 1rem;
+      border-radius: 0 20px 20px 0;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar h3 {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-btn {
+      display: block;
+      width: 100%;
+      background: transparent;
+      color: #fff;
+      border: none;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .nav-btn:hover, .nav-btn.activo {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    main {
+      margin-left: 270px;
+      padding: 2rem;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    #searchInput {
+      max-width: 300px;
+    }
+
+    .tabla-container {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .btn-accion {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-right: 5px;
+      transition: 0.2s;
+    }
+
+    .btn-accion:hover {
+      transform: scale(1.2);
+    }
+
+    .resultado-item {
+      background: #e0f2fe;
+      border-radius: 10px;
+      padding: 0.75rem;
+      margin-bottom: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .resultado-item:hover {
+      background: #bae6fd;
+    }
+
+    dialog {
+      border: none;
+      border-radius: 15px;
+      padding: 1.5rem;
+      max-width: 400px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .link-info {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ================= Secciones ================= */
+    .seccion {
+      display: none; /* Ocultar por defecto todas las secciones */
+    }
+
+    .seccion.activa {
+      display: block; /* Solo mostrar la sección activa */
+    }
   </style>
 </head>
 <body>
-
+  <!-- Lateral -->
   <aside class="sidebar">
     <h3>Discovery Pets</h3>
     <button class="nav-btn activo" data-target="dashboard">📊 Dashboard</button>
@@ -38,14 +138,16 @@
     <button id="btnCerrarSesion" class="nav-btn mt-4">🚪 Cerrar sesión</button>
   </aside>
 
+  <!-- Contenido -->
   <main>
+    <!-- Header general -->
     <div class="header-bar">
       <h2 class="fw-bold text-primary">Panel General</h2>
       <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto o factura...">
     </div>
     <div id="searchResults" class="mb-4"></div>
 
-    <!-- Dashboard -->
+    <!-- Dashboard principal -->
     <section id="dashboard" class="seccion activa">
       <div class="row g-4">
         <div class="col-md-4">
@@ -74,17 +176,30 @@
       <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
-          <div class="col-md-6"><input type="text" id="rucProveedor" class="form-control" placeholder="RUC" required></div>
-          <div class="col-md-6"><input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre" required></div>
-          <div class="col-md-6"><input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección"></div>
-          <div class="col-md-6"><input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono"></div>
-          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
+          <div class="col-md-6">
+            <input type="text" id="rucProveedor" class="form-control" placeholder="RUC" required>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre" required>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
         </form>
       </div>
+
       <div class="tabla-container">
         <h4>Lista de Proveedores</h4>
         <table class="table table-striped">
-          <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+          <thead>
+            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+          </thead>
           <tbody id="tablaProveedores"></tbody>
         </table>
       </div>
@@ -95,17 +210,30 @@
       <div class="tabla-container">
         <h4>Registrar Producto</h4>
         <form id="formProducto" class="row g-3">
-          <div class="col-md-6"><input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required></div>
-          <div class="col-md-3"><input type="number" id="cantidadProducto" class="form-control" placeholder="Cantidad" required></div>
-          <div class="col-md-3"><input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required></div>
-          <div class="col-12"><input type="text" id="descripcionProducto" class="form-control" placeholder="Descripción"></div>
-          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
+          <div class="col-md-6">
+            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
+          </div>
+          <div class="col-md-3">
+            <input type="number" id="cantidadProducto" class="form-control" placeholder="Cantidad" required>
+          </div>
+          <div class="col-md-3">
+            <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
+          </div>
+          <div class="col-12">
+            <input type="text" id="descripcionProducto" class="form-control" placeholder="Descripción">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
         </form>
       </div>
+
       <div class="tabla-container">
         <h4>Lista de Productos</h4>
         <table class="table table-striped">
-          <thead><tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
+          <thead>
+            <tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+          </thead>
           <tbody id="tablaProductos"></tbody>
         </table>
       </div>
@@ -116,72 +244,59 @@
       <div class="tabla-container">
         <h4>Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
-          <div class="col-md-4"><input type="text" id="idFactura" class="form-control" placeholder="ID de Factura" required></div>
-          <div class="col-md-4"><input type="date" id="fechaFactura" class="form-control" required></div>
-          <div class="col-md-4"><input type="number" id="montoFactura" class="form-control" placeholder="Monto" step="0.01" required></div>
-          <div class="col-md-6"><select id="proveedorFactura" class="form-select" required></select></div>
-          <div class="col-md-6"><select id="productoFactura" class="form-select" required></select></div>
-          <div class="col-md-6"><input type="text" id="tipoFactura" class="form-control" placeholder="Tipo (Factura, Boleta...)" required></div>
-          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
+          <div class="col-md-4">
+            <input type="text" id="idFactura" class="form-control" placeholder="ID de Factura" required>
+          </div>
+          <div class="col-md-4">
+            <input type="date" id="fechaFactura" class="form-control" required>
+          </div>
+          <div class="col-md-4">
+            <input type="number" id="montoFactura" class="form-control" placeholder="Monto" step="0.01" required>
+          </div>
+          <div class="col-md-6">
+            <select id="proveedorFactura" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <select id="productoFactura" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="tipoFactura" class="form-control" placeholder="Tipo (Factura, Boleta...)" required>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
         </form>
       </div>
+
       <div class="tabla-container">
         <h4>Lista de Facturas</h4>
         <table class="table table-striped">
-          <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead>
+          <thead>
+            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
+          </thead>
           <tbody id="tablaFacturas"></tbody>
         </table>
       </div>
     </section>
   </main>
 
-  <!-- Modales -->
+  <!-- Modal Factura -->
   <dialog id="modalFactura">
+    <h4>Detalle de Factura</h4>
     <div id="modalFacturaBody"></div>
     <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
+  <!-- Modal Extra -->
   <dialog id="modalExtra">
     <div id="modalExtraBody"></div>
     <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
-  <dialog id="modalEditar">
-    <form method="dialog" id="formEditar">
-      <h3 id="tituloEditar">Editar Registro</h3>
-      <div id="camposProveedor">
-        <label>RUC: <input type="text" id="editRuc" class="form-control"></label>
-        <label>Nombre: <input type="text" id="editNombre" class="form-control"></label>
-        <label>Dirección: <input type="text" id="editDireccion" class="form-control"></label>
-        <label>Teléfono: <input type="text" id="editTelefono" class="form-control"></label>
-      </div>
-      <div id="camposProducto">
-        <label>Nombre: <input type="text" id="editNombreProd" class="form-control"></label>
-        <label>Cantidad: <input type="number" id="editCantidad" class="form-control"></label>
-        <label>Precio: <input type="number" step="0.01" id="editPrecio" class="form-control"></label>
-        <label>Descripción: <input type="text" id="editDescripcion" class="form-control"></label>
-      </div>
-      <div id="camposFactura">
-        <label>ID Factura: <input type="text" id="editIdFactura" class="form-control"></label>
-        <label>Fecha: <input type="date" id="editFecha" class="form-control"></label>
-        <label>Proveedor: <select id="editProveedorFactura" class="form-select"></select></label>
-        <label>Producto: <select id="editProductoFactura" class="form-select"></select></label>
-        <label>Monto: <input type="number" step="0.01" id="editMonto" class="form-control"></label>
-        <label>Tipo: <select id="editTipo" class="form-select">
-          <option value="FACTURA">FACTURA</option>
-          <option value="NOTA">NOTA</option>
-        </select></label>
-      </div>
-      <div class="mt-3 d-flex justify-content-end gap-2">
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <button type="button" id="btnCerrarEditar" class="btn btn-secondary">Cancelar</button>
-      </div>
-    </form>
-  </dialog>
-
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
