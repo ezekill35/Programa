@@ -114,8 +114,9 @@ onSnapshot(colProductos, snapshot => {
   tablaProductos.innerHTML = "";
   snapshot.forEach(docu => {
     const d = docu.data();
+    const descHtml = Array.isArray(d.descripcion) ? d.descripcion.join("<br>") : d.descripcion || "";
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${d.nombre}</td><td>${d.cantidad}</td><td>${d.precio}</td><td>${d.descripcion || ""}</td>
+    tr.innerHTML = `<td>${d.nombre}</td><td>${d.cantidad}</td><td>${d.precio}</td><td>${descHtml}</td>
       <td>
         <button class="btn-accion text-primary" onclick='abrirModalEditar("productos","${docu.id}",${JSON.stringify(d).replaceAll('"','&quot;')})'>✏️</button>
         <button class="btn-accion text-danger" onclick='eliminar("productos","${docu.id}")'>🗑️</button>
@@ -151,12 +152,19 @@ window.abrirModalEditar = (tipo, id, datos) => {
   modalEditar.style.opacity = "0";
 
   for (const key in datos) {
-    const value = datos[key];
+    let value = datos[key];
+    // Si es descripcion en array, unir con saltos de línea para textarea
+    if (key === "descripcion" && Array.isArray(value)) {
+      value = value.join("\n");
+    }
     const div = document.createElement("div");
     div.className = "col-12 mb-2";
     div.innerHTML = `
       <label class="form-label">${key}</label>
-      <input type="text" class="form-control" name="${key}" value="${value}">
+      ${key === "descripcion" ? 
+        `<textarea class="form-control" name="${key}" rows="3">${value}</textarea>` :
+        `<input type="text" class="form-control" name="${key}" value="${value}">`
+      }
     `;
     camposEditar.appendChild(div);
   }
@@ -175,7 +183,14 @@ formEditar.addEventListener("submit", async e => {
   const id = modalEditar.dataset.id;
 
   const data = {};
-  new FormData(formEditar).forEach((value, key) => data[key] = value);
+  new FormData(formEditar).forEach((value, key) => {
+    if (key === "descripcion") {
+      // Guardar descripcion como array separando por salto de línea
+      data[key] = value.split("\n").map(l => l.trim()).filter(l => l);
+    } else {
+      data[key] = value;
+    }
+  });
 
   await updateDoc(doc(db, tipo, id), data);
 
@@ -192,27 +207,8 @@ cerrarModalEditar.addEventListener("click", () => {
 });
 
 // ===================== ELIMINAR =====================
-window.eliminar = async (col, id) => {
-  if (confirm("¿Deseas eliminar este registro?")) {
-    await deleteDoc(doc(db, col, id));
-  }
+window.eliminar = async (tipo, id) => {
+  if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+  await deleteDoc(doc(db, tipo, id));
 };
 
-// ===================== BUSCADOR FACTURAS =====================
-buscador.addEventListener("input", async () => {
-  const texto = buscador.value.toLowerCase();
-  panelFacturas.innerHTML = "";
-  if (!texto) return;
-
-  const snap = await getDocs(colFacturas);
-  snap.forEach(docu => {
-    const f = docu.data();
-    if (f.producto.toLowerCase().includes(texto)) {
-      const div = document.createElement("div");
-      div.className = "resultado-item";
-      div.textContent = f.idFactura;
-      div.onclick = () => abrirModalEditar("facturas", docu.id, f);
-      panelFacturas.appendChild(div);
-    }
-  });
-});
