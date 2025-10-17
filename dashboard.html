@@ -1,309 +1,293 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Discovery Pets · Dashboard</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Dashboard · Discovery Pets</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent: #10bcd4;
-      --accent-light: #68e0f1;
-      --bg: #f8fafc;
-      --sidebar-bg: linear-gradient(180deg, #10bcd4, #0091a8);
-      --card-bg: #fff;
-      --radius: 16px;
-      --shadow: 0 6px 24px rgba(0,0,0,0.08);
-      --transition: all .3s ease;
+      --accent: #00bcd4;
+      --bg1: #f2f8fc;
+      --bg2: #eaf5f9;
+      --text-dark: #0f172a;
+      --muted: #6b7280;
+      --card-bg: #ffffff;
+      --glass: rgba(255,255,255,0.8);
+      --shadow-lg: 0 10px 30px rgba(0, 188, 212, 0.15);
+      --shadow-md: 0 6px 18px rgba(0, 188, 212, 0.10);
     }
-    * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-    body { background: var(--bg); display: flex; min-height: 100vh; color: #1e293b; }
 
-    /* ==== SIDEBAR ==== */
-    .sidebar {
-      width: 240px;
-      background: var(--sidebar-bg);
-      color: white;
-      padding: 24px 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: var(--shadow);
-    }
-    .logo {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 24px;
-    }
-    .logo span {
-      display: inline-block;
-      padding: 10px 16px;
-      background: white;
-      color: var(--accent);
-      border-radius: 12px;
-    }
-    nav ul { list-style: none; }
-    nav li {
-      margin: 10px 0;
-    }
-    nav button {
-      width: 100%;
-      padding: 12px 14px;
-      border: none;
-      border-radius: 12px;
-      background: transparent;
-      color: white;
-      text-align: left;
-      font-size: 15px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    nav button:hover, nav button.activo {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateX(4px);
-    }
-    .logout {
-      background: rgba(255,255,255,0.15);
-      border: none;
-      border-radius: 12px;
-      padding: 10px;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-      transition: var(--transition);
-    }
-    .logout:hover { background: rgba(255,255,255,0.25); }
+    *{box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text-dark);}
 
-    /* ==== CONTENIDO ==== */
-    .content {
-      flex: 1;
-      padding: 30px;
-      overflow-y: auto;
+    /* ================= LAYOUT ================= */
+    .app{display:grid;grid-template-columns:260px 1fr;gap:24px;padding:28px;min-height:100vh;}
+    .sidebar{
+      position:sticky;top:28px;height:calc(100vh - 56px);
+      background:var(--glass);backdrop-filter:blur(12px);
+      border-radius:24px;padding:20px;
+      box-shadow:var(--shadow-lg);
+      display:flex;flex-direction:column;justify-content:space-between;
     }
-    h1 { font-size: 24px; font-weight: 800; margin-bottom: 18px; color: #0f172a; }
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:30px;}
+    .logo{width:52px;height:52px;border-radius:16px;
+      background:linear-gradient(135deg,var(--accent),#55e2f2);
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;font-weight:800;font-size:20px;
+      box-shadow:inset 0 2px 6px rgba(255,255,255,0.3);
+    }
+    .brand h1{font-size:18px;margin:0;}
+    .brand small{color:var(--muted);font-weight:500;}
 
-    /* ==== TARJETAS ==== */
-    .tarjetas {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+    /* ================= NAVIGATION ================= */
+    .nav{display:flex;flex-direction:column;gap:10px;}
+    .menu-btn{
+      border:none;background:none;padding:12px 14px;border-radius:12px;
+      text-align:left;cursor:pointer;font-weight:600;
+      transition:all .25s;color:var(--text-dark);font-size:15px;
     }
-    .tarjeta {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      transition: var(--transition);
+    .menu-btn:hover{background:rgba(0,188,212,0.1);transform:translateX(4px);}
+    .menu-btn.activo{background:var(--accent);color:white;box-shadow:0 4px 10px rgba(0,188,212,0.3);}
+    .logout{
+      border:none;background:white;color:var(--accent);
+      border-radius:12px;padding:10px 14px;font-weight:600;
+      cursor:pointer;box-shadow:var(--shadow-md);
+      transition:0.2s;margin-top:20px;
     }
-    .tarjeta:hover { transform: translateY(-4px); }
-    .tarjeta h3 { font-size: 16px; color: #334155; }
-    .tarjeta p { font-size: 26px; font-weight: 700; color: var(--accent); margin-top: 8px; }
+    .logout:hover{transform:translateY(-2px);background:#e0f7fa;}
 
-    /* ==== SECCIONES ==== */
-    .seccion { display: none; animation: fadeIn .4s ease; }
-    .seccion.activa { display: block; }
-    @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: none;} }
-
-    /* ==== TABLAS ==== */
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-    th { background: #f1f5f9; }
-    tr:hover { background: #f9fafb; }
-
-    .btn {
-      padding: 4px 8px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
+    /* ================= MAIN ================= */
+    .main{
+      background:var(--card-bg);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow-lg);
     }
-    .btn.editar { background: #fde68a; }
-    .btn.eliminar { background: #fca5a5; }
-    .btn.ver-info { background: #bbf7d0; }
+    .header{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
+    .header h2{margin:0;font-weight:700;}
+    .search-box{display:flex;gap:10px;align-items:center;}
+    input[type="search"]{
+      padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);
+      min-width:280px;font-size:14px;
+    }
+    .btn{
+      padding:10px 14px;border-radius:12px;border:none;
+      background:var(--accent);color:#fff;
+      font-weight:600;cursor:pointer;transition:all .2s;
+      box-shadow:var(--shadow-md);
+    }
+    .btn:hover{opacity:0.9;transform:translateY(-2px);}
+    #panelFacturas div{
+      background:white;border-radius:12px;
+      padding:10px;margin-top:8px;
+      box-shadow:var(--shadow-md);
+      transition:0.2s;cursor:pointer;
+    }
+    #panelFacturas div:hover{background:rgba(0,188,212,0.08);}
 
-    /* ==== FORMULARIOS ==== */
-    form {
-      background: white;
-      padding: 18px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
+    .grid{margin-top:20px;}
+    .card{
+      background:white;
+      border-radius:20px;
+      padding:20px;
+      box-shadow:var(--shadow-md);
+      margin-bottom:16px;
     }
-    input, select {
-      width: 100%;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      border: 1px solid #e2e8f0;
-      font-size: 14px;
+    .card h3{margin:0 0 10px 0;font-weight:700;}
+    form .row{display:flex;gap:8px;margin-bottom:10px;}
+    form input, form select{
+      padding:10px;border-radius:10px;
+      border:1px solid rgba(0,0,0,0.1);flex:1;
+      font-size:14px;
     }
-    button[type="submit"] {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    button[type="submit"]:hover { background: #0ea5b0; }
+    .table-scroll{max-height:400px;overflow:auto;border-radius:12px;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(0,0,0,0.05);}
+    th{background:#f9fafb;font-weight:600;}
+    .link-info{cursor:pointer;font-weight:600;text-decoration:underline;}
 
-    /* ==== MODALES ==== */
-    .modal {
+    /* ================= MODALES ================= */
+    .modal-float {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-    }
-    .modal-content {
+      top: 50%;left: 50%;
+      transform: translate(-50%, -50%);
       background: white;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      max-width: 400px;
-      width: 90%;
+      border-radius: 20px;
+      padding: 20px;
+      width: 420px;max-width: 90%;
+      box-shadow: 0 12px 28px rgba(0,188,212,0.3);
+      z-index: 1000;display: none;
+      animation: modalAppear 0.3s ease-out;
+      font-size: 14px;
     }
-    .modal-content h3 { margin-top: 0; }
-    .close {
-      float: right;
-      cursor: pointer;
-      color: #64748b;
-      font-size: 18px;
+    .modal-float button.close-btn {
+      background: #ef4444; color: #fff;
+      border: none;border-radius:10px;
+      padding:8px 12px;cursor:pointer;
+      font-weight:600;margin-bottom:12px;
+      transition:0.2s;
+    }
+    .modal-float button.close-btn:hover{opacity:0.85;}
+    @keyframes modalAppear {
+      from {opacity:0; transform:translate(-50%,-45%) scale(0.95);}
+      to {opacity:1; transform:translate(-50%,-50%) scale(1);}
     }
 
-    /* ==== PEQUEÑAS COSAS ==== */
-    .link-info { color: var(--accent); cursor: pointer; text-decoration: underline; }
+    .seccion{display:none;}
+    .seccion.activa{display:block;}
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div>
-      <div class="logo"><span>DP</span></div>
-      <nav>
-        <ul>
-          <li><button class="menu-btn activo" data-target="secDashboard">📊 Dashboard</button></li>
-          <li><button class="menu-btn" data-target="secFacturas">🧾 Facturas</button></li>
-          <li><button class="menu-btn" data-target="secProveedores">🏢 Proveedores</button></li>
-          <li><button class="menu-btn" data-target="secProductos">🐶 Productos</button></li>
-        </ul>
-      </nav>
-    </div>
-    <button id="logoutBtn" class="logout">Cerrar sesión</button>
-  </aside>
-
-  <main class="content">
-
-    <!-- SECCIÓN DASHBOARD -->
-    <section id="secDashboard" class="seccion activa">
-      <h1>Resumen general</h1>
-      <div class="tarjetas">
-        <div class="tarjeta">
-          <h3>Total Facturas</h3>
-          <p id="totalFacturas">0</p>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="logo">DP</div>
+          <div>
+            <h1>Discovery Pets</h1>
+            <small>Panel Administrativo</small>
+          </div>
         </div>
-        <div class="tarjeta">
-          <h3>Total Proveedores</h3>
-          <p id="totalProveedores">0</p>
-        </div>
-        <div class="tarjeta">
-          <h3>Total Productos</h3>
-          <p id="totalProductos">0</p>
-        </div>
+        <nav class="nav">
+          <button class="menu-btn activo" data-target="seccion-proveedores">🏢 Proveedores</button>
+          <button class="menu-btn" data-target="seccion-productos">📦 Productos</button>
+          <button class="menu-btn" data-target="seccion-facturas">🧾 Facturas</button>
+          <button class="menu-btn" data-target="seccion-info">📊 Dashboard</button>
+        </nav>
       </div>
-    </section>
+      <button id="logoutBtn" class="logout">Cerrar sesión</button>
+    </aside>
 
-    <!-- SECCIÓN FACTURAS -->
-    <section id="secFacturas" class="seccion">
-      <h1>Facturas</h1>
-      <form id="facturaForm">
-        <input type="text" id="idFactura" placeholder="ID de Factura" required>
-        <input type="date" id="fechaFactura" required>
-        <select id="proveedorFactura" required></select>
-        <select id="productoFactura" required></select>
-        <input type="number" id="montoFactura" placeholder="Monto (S/.)" step="0.01" required>
-        <select id="tipoFactura">
-          <option value="Compra">Compra</option>
-          <option value="Servicio">Servicio</option>
-        </select>
-        <button type="submit">Registrar Factura</button>
-      </form>
-
-      <div style="margin-bottom:10px;">
-        <input type="text" id="buscadorFactura" placeholder="Buscar por producto...">
-        <button id="btnRefresh">🔄</button>
+    <!-- Main -->
+    <main class="main">
+      <div class="header">
+        <h2>Dashboard · Discovery Pets</h2>
+        <div class="search-box">
+          <input id="buscadorFactura" type="search" placeholder="Buscar facturas por producto...">
+          <button id="btnBuscar" class="btn">Buscar</button>
+          <button id="btnRefresh" class="btn" style="background:#64748b;">Restablecer</button>
+        </div>
+        <div id="panelFacturas"></div>
       </div>
-      <div id="panelFacturas"></div>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaFacturas"></tbody>
-      </table>
-    </section>
 
-    <!-- SECCIÓN PROVEEDORES -->
-    <section id="secProveedores" class="seccion">
-      <h1>Proveedores</h1>
-      <form id="proveedorForm">
-        <input type="text" id="rucProveedor" placeholder="RUC" required>
-        <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" required>
-        <input type="text" id="direccionProveedor" placeholder="Dirección">
-        <input type="text" id="telefonoProveedor" placeholder="Teléfono">
-        <button type="submit">Registrar Proveedor</button>
-      </form>
+      <div class="grid">
+        <!-- SECCIÓN INFORMACIÓN -->
+        <section id="seccion-info" class="seccion">
+          <div class="card">
+            <h3>Resumen General</h3>
+            <div id="infoDashboard">
+              <p>Facturas totales: <b id="countFacturas">0</b></p>
+              <p>Proveedores registrados: <b id="countProveedores">0</b></p>
+              <p>Productos registrados: <b id="countProductos">0</b></p>
+            </div>
+          </div>
+        </section>
 
-      <table>
-        <thead>
-          <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaProveedores"></tbody>
-      </table>
-    </section>
+        <!-- PROVEEDORES -->
+        <section id="seccion-proveedores" class="seccion activa">
+          <div class="card">
+            <h3>Registrar proveedor</h3>
+            <form id="proveedorForm">
+              <div class="row">
+                <input id="rucProveedor" placeholder="RUC" required>
+                <input id="nombreProveedor" placeholder="Nombre" required>
+              </div>
+              <div class="row">
+                <input id="direccionProveedor" placeholder="Dirección">
+                <input id="telefonoProveedor" placeholder="Teléfono (opcional)">
+                <button class="btn" type="submit">Guardar</button>
+              </div>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Proveedores registrados</h3>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaProveedores"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-    <!-- SECCIÓN PRODUCTOS -->
-    <section id="secProductos" class="seccion">
-      <h1>Productos</h1>
-      <form id="productoForm">
-        <input type="text" id="nombreProducto" placeholder="Nombre del producto" required>
-        <input type="number" id="cantidadProducto" placeholder="Cantidad" required>
-        <input type="number" id="precioProducto" placeholder="Precio (S/.)" step="0.01" required>
-        <input type="text" id="descripcionProducto" placeholder="Descripción">
-        <button type="submit">Registrar Producto</button>
-      </form>
+        <!-- PRODUCTOS -->
+        <section id="seccion-productos" class="seccion">
+          <div class="card">
+            <h3>Registrar producto</h3>
+            <form id="productoForm">
+              <div class="row">
+                <input id="nombreProducto" placeholder="Nombre" required>
+                <input id="cantidadProducto" placeholder="Cantidad" type="number" required>
+              </div>
+              <div class="row">
+                <input id="precioProducto" placeholder="Precio (ej. 490.75)" type="number" step="0.01" required>
+                <input id="descripcionProducto" placeholder="Descripción (opcional)">
+                <button class="btn" type="submit">Guardar</button>
+              </div>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Productos registrados</h3>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaProductos"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="tablaProductos"></tbody>
-      </table>
-    </section>
-  </main>
+        <!-- FACTURAS -->
+        <section id="seccion-facturas" class="seccion">
+          <div class="card">
+            <h3>Registrar factura</h3>
+            <form id="facturaForm">
+              <div class="row">
+                <input id="idFactura" placeholder="ID factura" required>
+                <input id="fechaFactura" type="date" required>
+              </div>
+              <div class="row">
+                <select id="proveedorFactura" required><option value="">Seleccionar proveedor</option></select>
+                <select id="productoFactura" required><option value="">Seleccionar producto</option></select>
+              </div>
+              <div class="row">
+                <input id="montoFactura" placeholder="Monto" type="number" step="0.01" required>
+                <select id="tipoFactura">
+                  <option value="Factura">Factura</option>
+                  <option value="Boleta">Boleta</option>
+                </select>
+                <button class="btn" type="submit">Guardar</button>
+              </div>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Facturas registradas</h3>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaFacturas"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
   <!-- MODALES -->
-  <div id="modalFactura" class="modal">
-    <div class="modal-content">
-      <span id="cerrarModalFactura" class="close">✖</span>
-      <div id="contenidoModalFactura"></div>
-    </div>
+  <div id="modalFactura" class="modal-float">
+    <button id="cerrarModalFactura" class="close-btn">Cerrar</button>
+    <div id="contenidoModalFactura"></div>
+  </div>
+  <div id="modalDetalleExtra" class="modal-float">
+    <button id="cerrarModalDetalle" class="close-btn">Cerrar</button>
+    <div id="contenidoDetalleExtra"></div>
   </div>
 
-  <div id="modalDetalleExtra" class="modal">
-    <div class="modal-content">
-      <span id="cerrarModalDetalle" class="close">✖</span>
-      <div id="contenidoDetalleExtra"></div>
-    </div>
-  </div>
-
-  <script type="module" src="dashboard.js"></script>
+  <script type="module" src="./dashboard.js"></script>
 </body>
 </html>
 
