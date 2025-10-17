@@ -116,6 +116,15 @@
       cursor: pointer;
       text-decoration: underline;
     }
+
+    /* ================= Secciones ================= */
+    .seccion {
+      display: none; /* Ocultar por defecto todas las secciones */
+    }
+
+    .seccion.activa {
+      display: block; /* Solo mostrar la sección activa */
+    }
   </style>
 </head>
 <body>
@@ -131,6 +140,7 @@
 
   <!-- Contenido -->
   <main>
+    <!-- Header general -->
     <div class="header-bar">
       <h2 class="fw-bold text-primary">Panel General</h2>
       <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto o factura...">
@@ -286,13 +296,5 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
