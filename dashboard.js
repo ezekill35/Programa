@@ -53,25 +53,15 @@ const modalEditar = document.getElementById("modalEditar");
 const modalEditarBody = document.getElementById("modalEditarBody");
 const cerrarModalEditar = document.getElementById("cerrarModalEditar");
 
+// ===================== VERIFICAR SESIÓN =====================
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = "index.html"; // si no hay usuario, volver al login
+});
+
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
-  // Al cerrar sesión, sí se puede regresar al login
-  window.location.replace("index.html");
-});
-
-// ===================== BLOQUEAR ACCESO SI NO HAY SESIÓN =====================
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    // Usuario no logueado → redirigir login
-    window.location.replace("index.html");
-  }
-});
-
-// ===================== BLOQUEAR BOTÓN ATRÁS =====================
-history.pushState(null, null, location.href);
-window.addEventListener('popstate', function () {
-    history.pushState(null, null, location.href);
+  window.location.href = "index.html";
 });
 
 // ===================== NAVEGACIÓN =====================
@@ -251,28 +241,104 @@ buscador.addEventListener("input", async ()=>{
       const div=document.createElement("div");
       div.className="resultado-item";
       div.textContent=f.idFactura;
-      div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
 });
 
-// ===================== CLICK GLOBAL =====================
-document.addEventListener("click", async e=>{
-  // ===================== EDITAR =====================
-  if(e.target.classList.contains("editar")){
-    // ... tu código de editar aquí (igual que antes)
+// ===================== CLICK GLOBAL OPTIMIZADO =====================
+document.addEventListener("click", async (e) => {
+  const target = e.target.closest("button, .link-info, .resultado-item");
+  if (!target) return;
+
+  // --------- EDITAR ---------
+  if (target.classList.contains("editar")) {
+    const tipo = target.dataset.tipo;
+    const id = target.dataset.id;
+    let colNombre = tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas";
+    const snap = await getDocs(query(collection(db, colNombre), where("__name__", "==", id)));
+    if (!snap.empty) {
+      const d = snap.docs[0].data();
+      modalEditarBody.innerHTML = `
+        <h5>Editar ${tipo}</h5>
+        ${tipo === "proveedor" ? `
+          <label>RUC</label><input id="editRuc" class="form-control mb-1" value="${d.ruc || ''}">
+          <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre || ''}">
+          <label>Dirección</label><input id="editDir" class="form-control mb-1" value="${d.direccion || ''}">
+          <label>Teléfono</label><input id="editTel" class="form-control mb-1" value="${d.telefono || ''}">` :
+        tipo === "producto" ? `
+          <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre || ''}">
+          <label>Cantidad</label><input id="editCantidad" type="number" class="form-control mb-1" value="${d.cantidad || 0}">
+          <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio || 0}">
+          <label>Descripción</label><textarea id="editDesc" class="form-control mb-1">${d.descripcion || ''}</textarea>` :
+        tipo === "factura" ? `
+          <label>ID</label><input id="editId" class="form-control mb-1" value="${d.idFactura || ''}">
+          <label>Fecha</label><input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha || ''}">
+          <label>Proveedor</label><input id="editProv" class="form-control mb-1" value="${d.proveedor || ''}">
+          <label>Producto</label><input id="editProd" class="form-control mb-1" value="${d.producto || ''}">
+          <label>Monto</label><input id="editMonto" type="number" step="0.01" class="form-control mb-1" value="${d.monto || 0}">
+          <label>Tipo</label><input id="editTipo" class="form-control mb-1" value="${d.tipo || ''}">` : ``}
+        <button id="guardarEdit" class="btn btn-primary mt-2">Guardar</button>
+      `;
+      modalEditar.showModal();
+
+      // Guardar cambios
+      document.getElementById("guardarEdit").onclick = async () => {
+        const upd = {};
+        if (tipo === "proveedor") {
+          upd.ruc = document.getElementById("editRuc").value.trim();
+          upd.nombre = document.getElementById("editNombre").value.trim();
+          upd.direccion = document.getElementById("editDir").value.trim();
+          upd.telefono = document.getElementById("editTel").value.trim();
+        } else if (tipo === "producto") {
+          upd.nombre = document.getElementById("editNombre").value.trim();
+          upd.cantidad = parseInt(document.getElementById("editCantidad").value);
+          upd.precio = parseFloat(document.getElementById("editPrecio").value);
+          upd.descripcion = document.getElementById("editDesc").value.trim();
+        } else if (tipo === "factura") {
+          upd.idFactura = document.getElementById("editId").value.trim();
+          upd.fecha = document.getElementById("editFecha").value;
+          upd.proveedor = document.getElementById("editProv").value.trim();
+          upd.producto = document.getElementById("editProd").value.trim();
+          upd.monto = parseFloat(document.getElementById("editMonto").value);
+          upd.tipo = document.getElementById("editTipo").value.trim();
+        }
+        await updateDoc(doc(db, colNombre, id), upd);
+        modalEditar.close();
+      };
+    }
   }
-  // ===================== VER DETALLES =====================
-  if(e.target.classList.contains("link-info")){
-    // ... tu código de ver aquí (igual que antes)
+
+  // --------- VER DETALLES ---------
+  if (target.classList.contains("link-info")) {
+    const tipo = target.dataset.tipo;
+    const nombre = target.dataset.nombre;
+    let colRef = tipo === "proveedor" ? colProveedores : colProductos;
+    const snap = await getDocs(query(colRef, where("nombre", "==", nombre)));
+    if (!snap.empty) {
+      const d = snap.docs[0].data();
+      modalExtraBody.innerHTML = `
+        <h5>${tipo} ${nombre}</h5>
+        <p>${tipo === "proveedor"
+          ? `RUC: ${d.ruc}<br>Dirección: ${d.direccion || ''}<br>Tel: ${d.telefono || ''}`
+          : `Cantidad: ${d.cantidad}<br>Precio: ${d.precio}<br>Descripción: ${d.descripcion || ''}`}</p>
+      `;
+      modalExtra.showModal();
+    }
   }
-  // ===================== ELIMINAR =====================
-  if(e.target.classList.contains("eliminar")){
-    const tipo = e.target.dataset.tipo;
-    const id = e.target.dataset.id;
-    let colRef = tipo==="proveedor"?colProveedores:tipo==="producto"?colProductos:colFacturas;
-    if(confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db,colRef,id));
+
+  // --------- ELIMINAR ---------
+  if (target.classList.contains("eliminar")) {
+    const tipo = target.dataset.tipo;
+    const id = target.dataset.id;
+    let colRef = tipo === "proveedor" ? colProveedores : tipo === "producto" ? colProductos : colFacturas;
+    if (confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db, colRef.path, id));
+  }
+
+  // --------- RESULTADOS DEL BUSCADOR ---------
+  if (target.classList.contains("resultado-item")) {
+    const idFactura = target.textContent;
+    const snap = await getDocs(query(colFacturas, where("idFactura", "==", idFactura)));
+    if (!snap.empty) mostrarModalFactura(snap.docs[0].data());
   }
 });
-
