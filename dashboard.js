@@ -219,10 +219,14 @@ buscador.addEventListener("input", async () => {
     const f = docu.data();
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
-      div.className = "resultado-item";
-      // Solo mostrar ID de factura
-      div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong>`;
-      div.addEventListener("click", () => mostrarModalFactura(f));
+      div.className = "resultado-item d-flex justify-content-between align-items-center";
+
+      div.innerHTML = `
+        <span class="link-info" data-tipo="factura">${f.idFactura}</span>
+        <span class="text-secondary small">${f.producto} - ${f.proveedor} - S/. ${f.monto}</span>
+      `;
+
+      div.querySelector(".link-info").addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
@@ -230,7 +234,7 @@ buscador.addEventListener("input", async () => {
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
-  // Ver detalles
+  // Mostrar detalles extra
   if (e.target.classList.contains("link-info")) {
     const tipo = e.target.dataset.tipo;
     if (tipo === "factura") {
@@ -254,24 +258,55 @@ document.addEventListener("click", async e => {
     modalExtra.showModal();
   }
 
-  // Editar
+  // EDITAR en tiempo real
   if (e.target.classList.contains("editar")) {
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
-    const col = tipo === "proveedor" ? colProveedores : colProductos;
-    const snap = await getDocs(query(col, where("id", "==", id)));
     const docRef = doc(db, tipo === "proveedor" ? "proveedores" : "productos", id);
-    // Aquí podrías agregar edición si quieres
-    alert("Función de edición pendiente");
+
+    const snap = await getDocs(tipo === "proveedor" ? colProveedores : colProductos);
+    const d = snap.docs.find(x => x.id === id).data();
+
+    if (tipo === "proveedor") {
+      const nuevoNombre = prompt("Nuevo nombre del proveedor:", d.nombre);
+      const nuevoRUC = prompt("Nuevo RUC:", d.ruc);
+      const nuevaDireccion = prompt("Nueva dirección:", d.direccion);
+      const nuevoTelefono = prompt("Nuevo teléfono:", d.telefono);
+      await updateDoc(docRef, {
+        nombre: nuevoNombre || d.nombre,
+        ruc: nuevoRUC || d.ruc,
+        direccion: nuevaDireccion || d.direccion,
+        telefono: nuevoTelefono || d.telefono
+      });
+    } else {
+      const nuevoNombre = prompt("Nuevo nombre del producto:", d.nombre);
+      const nuevaCantidad = prompt("Nueva cantidad:", d.cantidad);
+      const nuevoPrecio = prompt("Nuevo precio:", d.precio);
+      const nuevaDescripcion = prompt("Nueva descripción:", d.descripcion);
+      await updateDoc(docRef, {
+        nombre: nuevoNombre || d.nombre,
+        cantidad: nuevaCantidad ? parseInt(nuevaCantidad) : d.cantidad,
+        precio: nuevoPrecio ? parseFloat(nuevoPrecio) : d.precio,
+        descripcion: nuevaDescripcion || d.descripcion
+      });
+    }
+    alert("Actualización realizada ✅");
   }
 
-  // Eliminar
+  // ELIMINAR
   if (e.target.classList.contains("eliminar")) {
+    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
-    const ref = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
-    await deleteDoc(ref);
+    const docRef =
+      tipo === "proveedor"
+        ? doc(db, "proveedores", id)
+        : tipo === "producto"
+        ? doc(db, "productos", id)
+        : doc(db, "facturas", id);
+    await deleteDoc(docRef);
   }
 });
+
 
 
