@@ -1,156 +1,91 @@
-// ===============================
-// 🔥 Importar módulos de Firebase
-// ===============================
+// ================== FIREBASE CONFIG ==================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { auth } from "./firebase.js";
-import {
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { app } from "./firebase.js";
+  getFirestore, collection, getDocs, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-// Inicializa Firestore
+const firebaseConfig = {
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:abcd1234efgh5678"
+};
+
+// Inicialización
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// ===============================
-// ⚙️ Referencias del DOM
-// ===============================
-const logoutBtn = document.getElementById("logoutBtn");
-const tablaFacturas = document.querySelector("#facturasTable tbody");
-const cardFacturas = document.getElementById("cardFacturas");
-const cardProveedores = document.getElementById("cardProveedores");
-const cardProductos = document.getElementById("cardProductos");
+// ================== COLECCIONES ==================
+const colFacturas = collection(db, "facturas");
+const colProveedores = collection(db, "proveedores");
+const colProductos = collection(db, "productos");
 
-// ===============================
-// 🧠 Autenticación de usuario
-// ===============================
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-  }
-});
+// ================== ELEMENTOS DEL DOM ==================
+const facturasCount = document.getElementById("facturasCount");
+const proveedoresCount = document.getElementById("proveedoresCount");
+const productosCount = document.getElementById("productosCount");
+const facturasTable = document.querySelector("#facturasTable tbody");
 
-// ===============================
-// 🚪 Cerrar sesión
-// ===============================
-logoutBtn.addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    window.location.href = "index.html";
-  } catch (error) {
-    console.error("Error al cerrar sesión:", error);
-    alert("No se pudo cerrar sesión 😕");
-  }
-});
-
-// ===============================
-// 📦 Colecciones Firestore
-// ===============================
-const facturasRef = collection(db, "facturas");
-const proveedoresRef = collection(db, "proveedores");
-const productosRef = collection(db, "productos");
-
-// ===============================
-// 📊 Escuchar Facturas en tiempo real
-// ===============================
-onSnapshot(facturasRef, (snapshot) => {
-  tablaFacturas.innerHTML = ""; // Limpia la tabla antes de volver a llenarla
-  let totalFacturas = 0;
-
-  snapshot.forEach((docSnap) => {
-    const factura = docSnap.data();
-    totalFacturas++;
-
-    const fila = document.createElement("tr");
-    fila.classList.add("tabla-fila");
-
-    fila.innerHTML = `
-      <td class="fw-bold text-accent">${factura.codigo || "-"}</td>
-      <td>${factura.proveedor || "-"}</td>
-      <td>${factura.producto || "-"}</td>
-      <td class="monto">S/. ${(factura.monto || 0).toFixed(2)}</td>
-      <td>${factura.fecha || "-"}</td>
-      <td class="acciones">
-        <button class="btn-editar" data-id="${docSnap.id}" title="Editar">✏️</button>
-        <button class="btn-eliminar" data-id="${docSnap.id}" title="Eliminar">🗑️</button>
-      </td>
-    `;
-    tablaFacturas.appendChild(fila);
+// ================== ACTUALIZAR CONTADORES ==================
+function actualizarContadores() {
+  // Facturas
+  onSnapshot(colFacturas, (snapshot) => {
+    facturasCount.textContent = snapshot.size;
   });
 
-  // Actualiza contador de facturas
-  cardFacturas.textContent = totalFacturas;
-});
+  // Proveedores
+  onSnapshot(colProveedores, (snapshot) => {
+    proveedoresCount.textContent = snapshot.size;
+  });
 
-// ===============================
-// 💼 Escuchar Proveedores y Productos
-// ===============================
-onSnapshot(proveedoresRef, (snapshot) => {
-  cardProveedores.textContent = snapshot.size;
-});
-
-onSnapshot(productosRef, (snapshot) => {
-  cardProductos.textContent = snapshot.size;
-});
-
-// ===============================
-// ✏️ Editar Factura
-// ===============================
-document.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("btn-editar")) {
-    const id = e.target.dataset.id;
-    const nuevoMonto = prompt("Ingrese el nuevo monto de la factura (ej. 125.75):");
-
-    if (nuevoMonto && !isNaN(nuevoMonto)) {
-      const facturaDoc = doc(db, "facturas", id);
-      await updateDoc(facturaDoc, { monto: parseFloat(nuevoMonto) });
-      alert("✅ Factura actualizada correctamente");
-    } else {
-      alert("❌ Ingrese un número válido");
-    }
-  }
-
-  // ===============================
-  // 🗑️ Eliminar Factura
-  // ===============================
-  if (e.target.classList.contains("btn-eliminar")) {
-    const id = e.target.dataset.id;
-    const confirmacion = confirm("¿Deseas eliminar esta factura?");
-    if (confirmacion) {
-      await deleteDoc(doc(db, "facturas", id));
-      alert("🗑️ Factura eliminada correctamente");
-    }
-  }
-});
-
-// ===============================
-// 🧾 Agregar Factura (Ejemplo de uso)
-// ===============================
-// Puedes llamar a esta función desde un formulario de registro
-export async function agregarFactura(datos) {
-  try {
-    await addDoc(facturasRef, datos);
-    alert("Factura registrada correctamente ✅");
-  } catch (error) {
-    console.error("Error al agregar factura:", error);
-  }
+  // Productos
+  onSnapshot(colProductos, (snapshot) => {
+    productosCount.textContent = snapshot.size;
+  });
 }
 
-// ===============================
-// 💅 Animaciones visuales suaves
-// ===============================
-document.addEventListener("DOMContentLoaded", () => {
-  const filas = document.querySelectorAll(".tabla-fila");
-  filas.forEach((fila, index) => {
-    fila.style.animationDelay = `${index * 0.05}s`;
-    fila.classList.add("fade-in");
+// ================== CARGAR TABLA DE FACTURAS ==================
+function cargarFacturas() {
+  onSnapshot(colFacturas, (snapshot) => {
+    facturasTable.innerHTML = "";
+    if (snapshot.empty) {
+      facturasTable.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center text-muted">No hay facturas registradas</td>
+        </tr>`;
+      return;
+    }
+
+    snapshot.forEach((docu) => {
+      const f = docu.data();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${f.idFactura || "-"}</td>
+        <td>${f.proveedor || "-"}</td>
+        <td>${f.producto || "-"}</td>
+        <td>S/. ${f.monto ? f.monto.toFixed(2) : "0.00"}</td>
+        <td>${f.fecha || "-"}</td>
+      `;
+      facturasTable.appendChild(tr);
+    });
   });
+}
+
+// ================== CERRAR SESIÓN (opcional) ==================
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
+}
+
+// ================== INICIALIZAR ==================
+document.addEventListener("DOMContentLoaded", () => {
+  actualizarContadores();
+  cargarFacturas();
 });
