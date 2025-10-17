@@ -1,10 +1,7 @@
 // ===================== FIREBASE CONFIG =====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, query, where, updateDoc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, deleteDoc, query, where, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -20,32 +17,10 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // ===================== SESIÓN =====================
-
-// Redirige a login si no hay usuario
 onAuthStateChanged(auth, user => {
-  if(!user) {
-    window.location.href = "index.html";
-  } else {
-    localStorage.setItem("lastActivity", Date.now());
-  }
+  const keep = localStorage.getItem("keepLogged");
+  if(!user && !keep) window.location.href = "index.html";
 });
-
-// Actualiza última actividad en interacciones
-["mousemove", "keydown", "click"].forEach(evt => {
-  document.addEventListener(evt, () => localStorage.setItem("lastActivity", Date.now()));
-});
-
-// Cierra sesión después de 12 horas de inactividad
-setInterval(() => {
-  const last = parseInt(localStorage.getItem("lastActivity") || 0);
-  const twelveHours = 12 * 60 * 60 * 1000;
-  if(Date.now() - last > twelveHours){
-    signOut(auth);
-    localStorage.removeItem("lastActivity");
-    alert("Sesión cerrada por inactividad");
-    window.location.href = "index.html";
-  }
-}, 60000); // revisa cada minuto
 
 // ===================== COLECCIONES =====================
 const colProveedores = collection(db, "proveedores");
@@ -80,7 +55,7 @@ const cerrarModalExtra = document.getElementById("cerrarModalExtra");
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
-  localStorage.removeItem("lastActivity");
+  localStorage.removeItem("keepLogged");
   window.location.href = "index.html";
 });
 
@@ -251,6 +226,7 @@ onSnapshot(colFacturas, snapshot => {
 
 // ===================== BUSCADOR =====================
 buscador.style.display = "none";
+
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
@@ -333,3 +309,4 @@ document.addEventListener("click", async e => {
     }
   }
 });
+
