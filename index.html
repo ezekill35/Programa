@@ -17,7 +17,6 @@
       justify-content: center;
     }
 
-    /* Card contenedor principal */
     .login-wrapper {
       width: 90%;
       max-width: 1000px;
@@ -29,7 +28,6 @@
       min-height: 520px;
     }
 
-    /* Lado formulario */
     .login-form {
       flex: 1;
       padding: 48px;
@@ -57,10 +55,13 @@
       text-align: center;
       margin-bottom: 22px;
     }
+    .input-group {
+      position: relative;
+      width: 100%;
+    }
     input {
       width: 100%;
       padding: 14px 16px;
-      margin-bottom: 12px;
       border: 1px solid #e6e9ee;
       border-radius: 12px;
       font-size: 15px;
@@ -73,6 +74,20 @@
       box-shadow: 0 0 0 6px rgba(16,188,212,0.08);
       background: #fff;
     }
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      user-select: none;
+      font-size: 16px;
+      color: #6b7280;
+    }
+    .toggle-password:hover {
+      color: #10bcd4;
+    }
+
     .actions {
       display:flex;
       align-items:center;
@@ -105,12 +120,11 @@
       text-align: center;
     }
 
- 
     .login-image {
       flex: 1;
       position: relative;
-      background: url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat;
-     
+      background: url('https://images.pexels.com/photos/3299900/pexels-photo-3299900.jpeg') center/cover no-repeat;
+      /* Puedes cambiar esta imagen libremente */
     }
     .login-image::after {
       content: "";
@@ -131,7 +145,6 @@
       text-shadow: 0 6px 18px rgba(0,0,0,0.25);
     }
 
-    /* Responsivo */
     @media (max-width: 840px) {
       .login-wrapper { flex-direction: column; max-width: 720px; }
       .login-image { height: 220px; }
@@ -141,40 +154,51 @@
 </head>
 <body>
   <div class="login-wrapper">
-    <!-- FORM -->
     <div class="login-form" role="main" aria-labelledby="login-title">
       <div class="logo">🐾 DP</div>
       <h2 id="login-title">Bienvenido a Discovery Pets</h2>
       <div class="subtitle">Accede al panel administrativo</div>
 
       <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
-      <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
-
-      <div class="actions">
-        <label style="display:flex;align-items:center;gap:8px;"><input id="keepLogged" type="checkbox"> Mantener sesión</label>
-        <!-- se eliminó "¿Olvidaste tu contraseña?" a petición -->
+      
+      <div class="input-group">
+        <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+        <span id="togglePassword" class="toggle-password">👁️</span>
       </div>
 
-      <button id="btnLogin" class="btn-login" aria-label="Iniciar sesión">Iniciar sesión</button>
+      <div class="actions">
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input id="keepLogged" type="checkbox"> Mantener sesión
+        </label>
+      </div>
 
+      <button id="btnLogin" class="btn-login">Iniciar sesión</button>
       <p class="helper">Si no tienes acceso, contacta al administrador del sistema.</p>
     </div>
 
-    <!-- IMAGE / ILLUSTRATION -->
     <div class="login-image" role="presentation">
-      <div class="text-overlay">🐶🐱</div>
+      <div class="text-overlay"> 🐶🐱</div>
     </div>
   </div>
 
   <script type="module">
-    // IMPORTA auth desde tu firebase.js (modular)
     import { auth } from "./firebase.js";
     import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const btnLogin = document.getElementById("btnLogin");
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    // Mostrar / ocultar contraseña
+    togglePassword.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+      passwordInput.type = isHidden ? "text" : "password";
+      togglePassword.textContent = isHidden ? "🙈" : "👁️";
+    });
+
     btnLogin.addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+      const password = passwordInput.value.trim();
       if (!email || !password) {
         alert("Por favor completa correo y contraseña.");
         return;
@@ -195,6 +219,7 @@
   </script>
 </body>
 </html>
+
 
 
 
