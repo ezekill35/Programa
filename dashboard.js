@@ -113,7 +113,7 @@ onSnapshot(colProductos, snapshot => {
     tr.innerHTML = `
       <td>${d.nombre}</td>
       <td>${d.cantidad}</td>
-      <td>S/. ${d.precio.toFixed(2)}</td>
+      <td>S/. ${Number(d.precio).toFixed(6)}</td>
       <td>${d.descripcion || "-"}</td>
       <td>
         <button class="btn btn-sm editar" data-id="${docu.id}" data-tipo="producto">✏️ Editar</button>
@@ -144,12 +144,13 @@ const tablaFacturas = document.getElementById("tablaFacturas");
 
 formFactura.addEventListener("submit", async e => {
   e.preventDefault();
+  const monto = parseFloat(document.getElementById("montoFactura").value);
   const data = {
     idFactura: document.getElementById("idFactura").value.trim(),
     fecha: document.getElementById("fechaFactura").value,
     proveedor: document.getElementById("proveedorFactura").value,
     producto: document.getElementById("productoFactura").value,
-    monto: parseFloat(document.getElementById("montoFactura").value),
+    monto: parseFloat(monto.toFixed(6)), // ✅ hasta 6 decimales
     tipo: document.getElementById("tipoFactura").value
   };
   await addDoc(colFacturas, data);
@@ -166,7 +167,7 @@ onSnapshot(colFacturas, snapshot => {
       <td>${f.fecha}</td>
       <td><span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></td>
       <td><span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></td>
-      <td>S/. ${f.monto.toFixed(2)}</td>
+      <td>S/. ${Number(f.monto).toFixed(6)}</td>
       <td>${f.tipo}</td>
       <td>
         <button class="btn btn-sm eliminar" data-id="${docu.id}" data-tipo="factura">🗑️ Eliminar</button>
@@ -189,7 +190,7 @@ buscador.addEventListener("input", async () => {
     const f = docu.data();
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
-      div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong> - ${f.producto} (${f.proveedor}) - S/. ${f.monto.toFixed(2)}`;
+      div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong> - ${f.producto} (${f.proveedor}) - S/. ${Number(f.monto).toFixed(6)}`;
       div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
@@ -209,7 +210,7 @@ function mostrarModalFactura(f) {
     <p><b>Fecha:</b> ${f.fecha}</p>
     <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
     <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
-    <p><b>Monto:</b> S/. ${f.monto.toFixed(2)}</p>
+    <p><b>Monto:</b> S/. ${Number(f.monto).toFixed(6)}</p>
     <p><b>Tipo:</b> ${f.tipo}</p>`;
   modalFactura.style.display = "block";
 }
@@ -223,7 +224,6 @@ cerrarModalExtra.addEventListener("click", () => modalExtra.style.display = "non
 
 // ================= CLICK GLOBAL =================
 document.addEventListener("click", async e => {
-
   // ---------- Ver detalles ----------
   if (e.target.classList.contains("link-info")) {
     const tipo = e.target.dataset.tipo;
@@ -241,7 +241,7 @@ document.addEventListener("click", async e => {
       const d = snap.docs[0].data();
       contenidoDetalleExtra.innerHTML = tipo === "proveedor"
         ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion || "-"}</p><p><b>Teléfono:</b> ${d.telefono || "-"}</p>`
-        : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio.toFixed(2)}</p><p><b>Descripción:</b> ${d.descripcion || "-"}</p>`;
+        : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${Number(d.precio).toFixed(6)}</p><p><b>Descripción:</b> ${d.descripcion || "-"}</p>`;
       modalExtra.style.display = "block";
     }
   }
@@ -279,7 +279,6 @@ document.addEventListener("click", async e => {
                      : doc(db, "facturas", id);
     await deleteDoc(docRef);
   }
-
 });
 
 // ================= RESTABLECER BUSCADOR =================
