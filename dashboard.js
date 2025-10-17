@@ -212,7 +212,9 @@ onSnapshot(colFacturas, snapshot => {
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
-  if (!texto) return;
+
+  // No buscar si estamos en Dashboard
+  if (document.getElementById("dashboard").classList.contains("activa") || !texto) return;
 
   const snap = await getDocs(colFacturas);
   snap.forEach(docu => {
@@ -220,12 +222,10 @@ buscador.addEventListener("input", async () => {
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
       div.className = "resultado-item d-flex justify-content-between align-items-center";
-
       div.innerHTML = `
         <span class="link-info" data-tipo="factura">${f.idFactura}</span>
         <span class="text-secondary small">${f.producto} - ${f.proveedor} - S/. ${f.monto}</span>
       `;
-
       div.querySelector(".link-info").addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
@@ -307,6 +307,5 @@ document.addEventListener("click", async e => {
     await deleteDoc(docRef);
   }
 });
-
 
 
