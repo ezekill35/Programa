@@ -1,7 +1,10 @@
 // ===================== FIREBASE CONFIG =====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, deleteDoc, query, where, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, getDocs, onSnapshot,
+  doc, deleteDoc, query, where, updateDoc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
@@ -15,12 +18,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
-// ===================== SESIÓN =====================
-onAuthStateChanged(auth, user => {
-  const keep = localStorage.getItem("keepLogged");
-  if(!user && !keep) window.location.href = "index.html";
-});
 
 // ===================== COLECCIONES =====================
 const colProveedores = collection(db, "proveedores");
@@ -55,7 +52,6 @@ const cerrarModalExtra = document.getElementById("cerrarModalExtra");
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
-  localStorage.removeItem("keepLogged");
   window.location.href = "index.html";
 });
 
@@ -86,7 +82,7 @@ async function cargarProveedoresSelect() {
   snap.forEach(docu => {
     const d = docu.data();
     const opt = document.createElement("option");
-    opt.value = docu.id;
+    opt.value = docu.id; // Guardamos el ID para luego obtener el documento exacto
     opt.textContent = d.nombre;
     select.appendChild(opt);
   });
@@ -99,7 +95,7 @@ async function cargarProductosSelect() {
   snap.forEach(docu => {
     const d = docu.data();
     const opt = document.createElement("option");
-    opt.value = docu.id;
+    opt.value = docu.id; // Guardamos el ID
     opt.textContent = d.nombre;
     select.appendChild(opt);
   });
@@ -309,4 +305,3 @@ document.addEventListener("click", async e => {
     }
   }
 });
-
