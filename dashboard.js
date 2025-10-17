@@ -1,4 +1,4 @@
-// ===================== FIREBASE CONFIG ===================== 
+// ===================== FIREBASE CONFIG =====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
@@ -41,13 +41,24 @@ const countProductos = document.getElementById("countProductos");
 const buscador = document.getElementById("searchInput");
 const panelFacturas = document.getElementById("searchResults");
 
-const modalFactura = document.getElementById("modalFactura");
-const contenidoModalFactura = document.getElementById("modalFacturaBody");
-const cerrarModalFactura = document.getElementById("cerrarModalFactura");
-
-const modalExtra = document.getElementById("modalExtra");
-const modalExtraBody = document.getElementById("modalExtraBody");
-const cerrarModalExtra = document.getElementById("cerrarModalExtra");
+// ===================== PANEL DERECHO =====================
+let panelDerecho = document.getElementById("panelDerecho");
+if(!panelDerecho){
+  panelDerecho = document.createElement("div");
+  panelDerecho.id = "panelDerecho";
+  panelDerecho.style.position = "fixed";
+  panelDerecho.style.top = "80px";
+  panelDerecho.style.right = "0";
+  panelDerecho.style.width = "350px";
+  panelDerecho.style.height = "80%";
+  panelDerecho.style.background = "#ffffff";
+  panelDerecho.style.borderLeft = "2px solid #ddd";
+  panelDerecho.style.padding = "1rem";
+  panelDerecho.style.overflowY = "auto";
+  panelDerecho.style.boxShadow = "-4px 0 15px rgba(0,0,0,0.1)";
+  panelDerecho.style.display = "none";
+  document.body.appendChild(panelDerecho);
+}
 
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
@@ -69,6 +80,7 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
       buscador.style.display = "none";
       buscador.value = "";
       panelFacturas.innerHTML = "";
+      panelDerecho.style.display = "none";
     }
   });
 });
@@ -100,36 +112,43 @@ async function cargarProductosSelect() {
   });
 }
 
-// ===================== MODALES =====================
-function mostrarModalFactura(f) {
-  contenidoModalFactura.innerHTML = `
-    <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
+// ===================== MOSTRAR EN PANEL DERECHO =====================
+function mostrarFacturaPanel(f){
+  panelDerecho.innerHTML = `
+    <h4>Factura ${f.idFactura}</h4>
     <p><b>Fecha:</b> ${f.fecha}</p>
-    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
-    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
+    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316; cursor:pointer;">${f.proveedor}</span></p>
+    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6; cursor:pointer;">${f.producto}</span></p>
     <p><b>Monto:</b> S/. ${f.monto}</p>
-    <p><b>Tipo:</b> ${f.tipo}</p>`;
-  modalFactura.showModal();
+    <p><b>Tipo:</b> ${f.tipo}</p>
+    <button id="cerrarPanelDerecho" class="btn btn-secondary mt-2">Cerrar</button>`;
+  panelDerecho.style.display = "block";
+
+  document.getElementById("cerrarPanelDerecho").addEventListener("click", () => {
+    panelDerecho.style.display = "none";
+  });
 }
 
-function mostrarPanelExtra(d, tipo) {
-  modalExtraBody.innerHTML = tipo === "proveedor"
+function mostrarExtraPanel(d, tipo){
+  panelDerecho.innerHTML = tipo === "proveedor"
     ? `<h4>Proveedor</h4>
        <p><b>Nombre:</b> ${d.nombre}</p>
        <p><b>RUC:</b> ${d.ruc}</p>
        <p><b>Dirección:</b> ${d.direccion}</p>
-       <p><b>Teléfono:</b> ${d.telefono}</p>`
+       <p><b>Teléfono:</b> ${d.telefono}</p>
+       <button id="cerrarPanelDerecho" class="btn btn-secondary mt-2">Cerrar</button>`
     : `<h4>Producto</h4>
        <p><b>Nombre:</b> ${d.nombre}</p>
        <p><b>Cantidad:</b> ${d.cantidad}</p>
        <p><b>Precio:</b> S/. ${d.precio}</p>
-       <p><b>Descripción:</b><br>${d.descripcion.replace(/\n/g,"<br>")}</p>`;
-  modalExtra.showModal();
-}
+       <p><b>Descripción:</b><br>${d.descripcion.replace(/\n/g,"<br>")}</p>
+       <button id="cerrarPanelDerecho" class="btn btn-secondary mt-2">Cerrar</button>`;
+  panelDerecho.style.display = "block";
 
-// ===================== CERRAR MODALES =====================
-cerrarModalFactura.addEventListener("click", () => modalFactura.close());
-cerrarModalExtra.addEventListener("click", () => modalExtra.close());
+  document.getElementById("cerrarPanelDerecho").addEventListener("click", () => {
+    panelDerecho.style.display = "none";
+  });
+}
 
 // ===================== PROVEEDORES =====================
 formProveedor.addEventListener("submit", async e => {
@@ -156,8 +175,8 @@ onSnapshot(colProveedores, snapshot => {
       <td contenteditable="true" class="editable" data-field="direccion">${d.direccion || ""}</td>
       <td contenteditable="true" class="editable" data-field="telefono">${d.telefono || ""}</td>
       <td>
-        <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
         <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="proveedor">🗑️</button>
+        <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
       </td>`;
     tablaProveedores.appendChild(tr);
   });
@@ -190,8 +209,8 @@ onSnapshot(colProductos, snapshot => {
       <td contenteditable="true" class="editable" data-field="precio">${d.precio}</td>
       <td contenteditable="true" class="editable" data-field="descripcion">${d.descripcion || ""}</td>
       <td>
-        <button class="btn-accion ver link-info" data-tipo="producto" data-nombre="${d.nombre}">🔍</button>
         <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="producto">🗑️</button>
+        <button class="btn-accion ver link-info" data-tipo="producto" data-nombre="${d.nombre}">🔍</button>
       </td>`;
     tablaProductos.appendChild(tr);
   });
@@ -228,8 +247,8 @@ onSnapshot(colFacturas, snapshot => {
       <td contenteditable="true" class="editable" data-field="monto">${f.monto}</td>
       <td contenteditable="true" class="editable" data-field="tipo">${f.tipo}</td>
       <td>
-        <button class="btn-accion ver link-info" data-tipo="factura">${f.idFactura}</button>
         <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="factura">🗑️</button>
+        <button class="btn-accion ver link-info" data-tipo="factura">${f.idFactura}</button>
       </td>`;
     tablaFacturas.appendChild(tr);
   });
@@ -247,14 +266,15 @@ buscador.addEventListener("input", async () => {
   const snap = await getDocs(colFacturas);
   snap.forEach(docu => {
     const f = docu.data();
-    if (f.producto.toLowerCase().includes(texto)) {
+    if(f.producto.toLowerCase().includes(texto)){
       const div = document.createElement("div");
       div.className = "resultado-item";
       div.style.background = "#f0f9ff"; 
-      div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong>`;
-      div.addEventListener("click", async () => {
-        if (confirm(`¿Deseas ver los datos de la factura ${f.idFactura}?`)) {
-          mostrarModalFactura(f);
+      div.style.cursor = "pointer";
+      div.innerHTML = `<strong>${f.idFactura}</strong>`;
+      div.addEventListener("click", () => {
+        if(confirm(`¿Deseas ver los datos de la factura ${f.idFactura}?`)){
+          mostrarFacturaPanel(f);
         }
       });
       panelFacturas.appendChild(div);
@@ -265,7 +285,7 @@ buscador.addEventListener("input", async () => {
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
   // EDIT INLINE
-  if (e.target.classList.contains("editable")) {
+  if(e.target.classList.contains("editable")){
     const tr = e.target.closest("tr");
     const tipo = tr.querySelector(".eliminar")?.dataset.tipo;
     const id = tr.dataset.id;
@@ -277,42 +297,37 @@ document.addEventListener("click", async e => {
       celdas.forEach(td => {
         const field = td.dataset.field;
         let val = td.textContent.trim();
-        if (field === "cantidad") val = parseInt(val) || 0;
-        if (field === "precio" || field === "monto") val = parseFloat(val) || 0;
+        if(field === "cantidad") val = parseInt(val) || 0;
+        if(field === "precio" || field === "monto") val = parseFloat(val) || 0;
         data[field] = val;
       });
       await updateDoc(docRef, data);
     });
   }
 
-  // VER DETALLES
-  if (e.target.classList.contains("link-info")) {
+  // VER DETALLES (FACTURA / PROVEEDOR / PRODUCTO)
+  if(e.target.classList.contains("link-info")){
     const tipo = e.target.dataset.tipo;
 
-    if (tipo === "factura") {
+    if(tipo === "factura"){
       const snap = await getDocs(query(colFacturas, where("idFactura", "==", e.target.textContent)));
-      if (!snap.empty && confirm(`¿Deseas ver los datos de la factura ${e.target.textContent}?`)) {
-        mostrarModalFactura(snap.docs[0].data());
+      if(!snap.empty && confirm(`¿Deseas ver los datos de la factura ${e.target.textContent}?`)){
+        mostrarFacturaPanel(snap.docs[0].data());
       }
       return;
     }
 
     const nombre = e.target.dataset.nombre;
     const col = tipo === "proveedor" ? colProveedores : colProductos;
-    const snap = await getDocs(query(col, where("nombre", "==", nombre)));
-    if (snap.empty) {
-      alert("No se encontró información.");
-      return;
-    }
-
-    if (confirm(`¿Deseas ver los datos de ${tipo} "${nombre}"?`)) {
-      mostrarPanelExtra(snap.docs[0].data(), tipo);
+    const snap = await getDocs(query(col, where("nombre","==",nombre)));
+    if(!snap.empty && confirm(`¿Deseas ver los datos de ${tipo} "${nombre}"?`)){
+      mostrarExtraPanel(snap.docs[0].data(), tipo);
     }
   }
 
   // ELIMINAR
-  if (e.target.classList.contains("eliminar")) {
-    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+  if(e.target.classList.contains("eliminar")){
+    if(!confirm("¿Seguro que deseas eliminar este registro?")) return;
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
     const docRef =
