@@ -7,12 +7,12 @@ import {
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+  authDomain: "discovery-pets.firebaseapp.com",
+  projectId: "discovery-pets",
+  storageBucket: "discovery-pets.appspot.com",
+  messagingSenderId: "481355972999",
+  appId: "1:481355972999:web:abcd1234efgh5678"
 };
 
 const app = initializeApp(firebaseConfig);
