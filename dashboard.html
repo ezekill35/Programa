@@ -104,7 +104,7 @@
       border: none;
       border-radius: 15px;
       padding: 1.5rem;
-      max-width: 400px;
+      max-width: 500px;
       box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
     }
 
@@ -293,9 +293,75 @@
     <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
+  <!-- Modal Editar -->
+  <dialog id="modalEditar">
+    <h4>Editar Registro</h4>
+    <form id="formEditar" class="row g-3">
+      <!-- Campos Proveedor -->
+      <div id="editarProveedorCampos">
+        <div class="col-md-6">
+          <input type="text" id="editRuc" class="form-control" placeholder="RUC" required>
+        </div>
+        <div class="col-md-6">
+          <input type="text" id="editNombre" class="form-control" placeholder="Nombre" required>
+        </div>
+        <div class="col-md-6">
+          <input type="text" id="editDireccion" class="form-control" placeholder="Dirección">
+        </div>
+        <div class="col-md-6">
+          <input type="text" id="editTelefono" class="form-control" placeholder="Teléfono">
+        </div>
+      </div>
+
+      <!-- Campos Producto -->
+      <div id="editarProductoCampos">
+        <div class="col-md-6">
+          <input type="text" id="editNombreProducto" class="form-control" placeholder="Nombre" required>
+        </div>
+        <div class="col-md-3">
+          <input type="number" id="editCantidad" class="form-control" placeholder="Cantidad" required>
+        </div>
+        <div class="col-md-3">
+          <input type="number" id="editPrecio" class="form-control" placeholder="Precio" step="0.01" required>
+        </div>
+        <div class="col-12">
+          <input type="text" id="editDescripcion" class="form-control" placeholder="Descripción">
+        </div>
+      </div>
+
+      <!-- Campos Factura -->
+      <div id="editarFacturaCampos">
+        <div class="col-md-4">
+          <input type="text" id="editId" class="form-control" placeholder="ID de Factura" required>
+        </div>
+        <div class="col-md-4">
+          <input type="date" id="editFecha" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <input type="number" id="editMonto" class="form-control" placeholder="Monto" step="0.01" required>
+        </div>
+        <div class="col-md-6">
+          <select id="editProveedorFactura" class="form-select" required></select>
+        </div>
+        <div class="col-md-6">
+          <select id="editProductoFactura" class="form-select" required></select>
+        </div>
+        <div class="col-md-6">
+          <input type="text" id="editTipo" class="form-control" placeholder="Tipo (Factura, Boleta...)" required>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <button class="btn btn-success">Guardar Cambios</button>
+        <button type="button" id="btnCerrarEditar" class="btn btn-secondary">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
