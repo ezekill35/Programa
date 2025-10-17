@@ -236,11 +236,7 @@ buscador.addEventListener("input", async ()=>{
       const div=document.createElement("div");
       div.className="resultado-item";
       div.textContent=f.idFactura;
-      div.style.background="#dbeafe";
-      div.style.cursor="pointer";
-      div.addEventListener("click", ()=>{
-        mostrarModalFactura(f);
-      });
+      div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
@@ -248,39 +244,44 @@ buscador.addEventListener("input", async ()=>{
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e=>{
-  // Editar
+
+  // --------- EDITAR ---------
   if(e.target.classList.contains("editar")){
-    const tipo=e.target.dataset.tipo;
-    const id=e.target.dataset.id;
-    let colRef = tipo==="proveedor"?colProveedores:tipo==="producto"?colProductos:colFacturas;
-    const snap=await getDocs(query(colRef,where("__name__","==",id)));
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
+    let colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
+    const docRef = doc(db, colNombre, id);
+    const snap = await getDocs(query(collection(db, colNombre), where("__name__","==",id)));
     if(!snap.empty){
-      const d=snap.docs[0].data();
-      modalEditarBody.innerHTML=`
+      const d = snap.docs[0].data();
+      modalEditarBody.innerHTML = `
         <h5>Editar ${tipo}</h5>
-        <div class="mb-2">${tipo==="proveedor" ? `
-          RUC: <input id="editRuc" class="form-control mb-1" value="${d.ruc||''}">
-          Nombre: <input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
-          Dirección: <input id="editDir" class="form-control mb-1" value="${d.direccion||''}">
-          Teléfono: <input id="editTel" class="form-control mb-1" value="${d.telefono||''}">`:
-          tipo==="producto"?`
-          Nombre: <input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
-          Cantidad: <input id="editCantidad" class="form-control mb-1" value="${d.cantidad||0}">
-          Precio: <input id="editPrecio" class="form-control mb-1" value="${d.precio||0}">
-          Descripción: <textarea id="editDesc" class="form-control mb-1">${d.descripcion||''}</textarea>`:
-          tipo==="factura"?`
-          ID: <input id="editId" class="form-control mb-1" value="${d.idFactura||''}">
-          Fecha: <input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha||''}">
-          Proveedor: <input id="editProv" class="form-control mb-1" value="${d.proveedor||''}">
-          Producto: <input id="editProd" class="form-control mb-1" value="${d.producto||''}">
-          Monto: <input id="editMonto" class="form-control mb-1" value="${d.monto||0}">
-          Tipo: <input id="editTipo" class="form-control mb-1" value="${d.tipo||''}">`
-        }</div>
-        <button id="guardarEdit" class="btn btn-primary mt-2">Guardar</button>`;
+        ${tipo==="proveedor"?`
+          <label>RUC</label><input id="editRuc" class="form-control mb-1" value="${d.ruc||''}">
+          <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
+          <label>Dirección</label><input id="editDir" class="form-control mb-1" value="${d.direccion||''}">
+          <label>Teléfono</label><input id="editTel" class="form-control mb-1" value="${d.telefono||''}">`:
+        tipo==="producto"?`
+          <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
+          <label>Cantidad</label><input id="editCantidad" type="number" class="form-control mb-1" value="${d.cantidad||0}">
+          <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio||0}">
+          <label>Descripción</label><textarea id="editDesc" class="form-control mb-1">${d.descripcion||''}</textarea>`:
+        tipo==="factura"?`
+          <label>ID</label><input id="editId" class="form-control mb-1" value="${d.idFactura||''}">
+          <label>Fecha</label><input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha||''}">
+          <label>Proveedor</label><input id="editProv" class="form-control mb-1" value="${d.proveedor||''}">
+          <label>Producto</label><input id="editProd" class="form-control mb-1" value="${d.producto||''}">
+          <label>Monto</label><input id="editMonto" type="number" step="0.01" class="form-control mb-1" value="${d.monto||0}">
+          <label>Tipo</label><input id="editTipo" class="form-control mb-1" value="${d.tipo||''}">`:``}
+        <button id="guardarEdit" class="btn btn-primary mt-2">Guardar</button>
+      `;
       modalEditar.showModal();
 
+      // Evitar duplicar eventos
+      const btnGuardar = document.getElementById("guardarEdit");
+      btnGuardar.replaceWith(btnGuardar.cloneNode(true));
       document.getElementById("guardarEdit").addEventListener("click", async ()=>{
-        const upd={};
+        const upd = {};
         if(tipo==="proveedor"){
           upd.ruc=document.getElementById("editRuc").value.trim();
           upd.nombre=document.getElementById("editNombre").value.trim();
@@ -299,22 +300,22 @@ document.addEventListener("click", async e=>{
           upd.monto=parseFloat(document.getElementById("editMonto").value);
           upd.tipo=document.getElementById("editTipo").value.trim();
         }
-        await updateDoc(doc(db,colRef.id,id),upd);
+        await updateDoc(doc(db,colNombre,id),upd);
         modalEditar.close();
       });
     }
   }
 
-  // Ver detalles desde tabla facturas o buscador
+  // --------- VER DETALLES ---------
   if(e.target.classList.contains("link-info")){
-    const tipo=e.target.dataset.tipo;
-    const nombre=e.target.dataset.nombre;
+    const tipo = e.target.dataset.tipo;
+    const nombre = e.target.dataset.nombre;
     if(confirm(`Deseas ver los datos de ${tipo} ${nombre}?`)){
       let colRef = tipo==="proveedor"?colProveedores:colProductos;
       const snap = await getDocs(query(colRef,where("nombre","==",nombre)));
       if(!snap.empty){
         const d = snap.docs[0].data();
-        modalExtraBody.innerHTML=`
+        modalExtraBody.innerHTML = `
           <h5>${tipo} ${nombre}</h5>
           <p>${tipo==="proveedor"?`RUC: ${d.ruc}<br>Dirección: ${d.direccion||''}<br>Tel: ${d.telefono||''}`:
           `Cantidad: ${d.cantidad}<br>Precio: ${d.precio}<br>Descripción: ${d.descripcion||''}`}</p>
@@ -324,11 +325,12 @@ document.addEventListener("click", async e=>{
     }
   }
 
-  // Eliminar
+  // --------- ELIMINAR ---------
   if(e.target.classList.contains("eliminar")){
-    const tipo=e.target.dataset.tipo;
-    const id=e.target.dataset.id;
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
     let colRef = tipo==="proveedor"?colProveedores:tipo==="producto"?colProductos:colFacturas;
     if(confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db,colRef.id,id));
   }
+
 });
