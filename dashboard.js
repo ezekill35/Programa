@@ -141,7 +141,6 @@ onSnapshot(colProveedores, snapshot => {
       <td>${d.telefono || ""}</td>
       <td>
         <button class="btn-accion editar" data-id="${docu.id}" data-tipo="proveedor">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
       </td>`;
     tablaProveedores.appendChild(tr);
   });
@@ -175,7 +174,6 @@ onSnapshot(colProductos, snapshot => {
       <td style="white-space: pre-line;">${d.descripcion}</td>
       <td>
         <button class="btn-accion editar" data-id="${docu.id}" data-tipo="producto">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="producto" data-nombre="${d.nombre}">🔍</button>
       </td>`;
     tablaProductos.appendChild(tr);
   });
@@ -213,7 +211,6 @@ onSnapshot(colFacturas, snapshot => {
       <td>${f.tipo}</td>
       <td>
         <button class="btn-accion editar" data-id="${docu.id}" data-tipo="factura">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="factura" data-idfactura="${f.idFactura}">🔍</button>
       </td>`;
     tablaFacturas.appendChild(tr);
   });
@@ -222,19 +219,19 @@ onSnapshot(colFacturas, snapshot => {
 
 // ===================== BUSCADOR =====================
 buscador.style.display = "none";
-
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
   if (!texto) return;
-
   const snap = await getDocs(colFacturas);
   snap.forEach(docu => {
     const f = docu.data();
-    if (f.producto.toLowerCase().includes(texto)) {
+    if(f.producto.toLowerCase().includes(texto)){
       const div = document.createElement("div");
       div.className = "resultado-item";
-      div.innerHTML = `<strong class="link-info" data-tipo="factura" data-idfactura="${f.idFactura}" style="cursor:pointer; color:#0284c7;">${f.idFactura}</strong>`;
+      div.textContent = f.idFactura;
+      div.style.cursor = "pointer";
+      div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
@@ -242,77 +239,102 @@ buscador.addEventListener("input", async () => {
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
+  // EDITAR EN LISTA
+  if(e.target.classList.contains("editar")){
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
+    const tr = e.target.closest("tr");
 
-  // VER DETALLES FACTURA
-  if (e.target.classList.contains("link-info") && e.target.dataset.tipo === "factura") {
-    const idFactura = e.target.dataset.idfactura || e.target.textContent;
-    const snap = await getDocs(query(colFacturas, where("idFactura", "==", idFactura)));
-    if (!snap.empty) mostrarModalFactura(snap.docs[0].data());
-    return;
+    const docRef = doc(db, tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas", id);
+    const celdas = tr.querySelectorAll("td");
+    
+    // Mostrar panel flotante con valores actuales
+    let html = `<h4>Editar ${tipo}</h4>`;
+    if(tipo==="proveedor"){
+      html += `
+        <label>RUC:<input type="text" id="editRuc" value="${celdas[0].textContent}"></label>
+        <label>Nombre:<input type="text" id="editNombre" value="${celdas[1].textContent}"></label>
+        <label>Dirección:<input type="text" id="editDireccion" value="${celdas[2].textContent}"></label>
+        <label>Teléfono:<input type="text" id="editTelefono" value="${celdas[3].textContent}"></label>`;
+    } else if(tipo==="producto"){
+      html += `
+        <label>Nombre:<input type="text" id="editNombre" value="${celdas[0].textContent}"></label>
+        <label>Cantidad:<input type="number" id="editCantidad" value="${celdas[1].textContent}"></label>
+        <label>Precio:<input type="number" id="editPrecio" value="${celdas[2].textContent}"></label>
+        <label>Descripción:<textarea id="editDescripcion">${celdas[3].textContent}</textarea></label>`;
+    } else {
+      html += `
+        <label>ID:<input type="text" id="editIdFactura" value="${celdas[0].textContent}"></label>
+        <label>Fecha:<input type="date" id="editFecha" value="${celdas[1].textContent}"></label>
+        <label>Proveedor:<input type="text" id="editProveedor" value="${celdas[2].textContent}"></label>
+        <label>Producto:<input type="text" id="editProducto" value="${celdas[3].textContent}"></label>
+        <label>Monto:<input type="number" id="editMonto" value="${celdas[4].textContent}"></label>
+        <label>Tipo:<input type="text" id="editTipo" value="${celdas[5].textContent}"></label>`;
+    }
+    html += `<button id="btnGuardarEdit">Guardar</button>`;
+    modalExtraBody.innerHTML = html;
+    modalExtra.showModal();
+
+    document.getElementById("btnGuardarEdit").addEventListener("click", async () => {
+      if(tipo==="proveedor"){
+        await updateDoc(docRef, {
+          ruc: document.getElementById("editRuc").value,
+          nombre: document.getElementById("editNombre").value,
+          direccion: document.getElementById("editDireccion").value,
+          telefono: document.getElementById("editTelefono").value
+        });
+      } else if(tipo==="producto"){
+        await updateDoc(docRef, {
+          nombre: document.getElementById("editNombre").value,
+          cantidad: parseInt(document.getElementById("editCantidad").value),
+          precio: parseFloat(document.getElementById("editPrecio").value),
+          descripcion: document.getElementById("editDescripcion").value
+        });
+      } else {
+        await updateDoc(docRef, {
+          idFactura: document.getElementById("editIdFactura").value,
+          fecha: document.getElementById("editFecha").value,
+          proveedor: document.getElementById("editProveedor").value,
+          producto: document.getElementById("editProducto").value,
+          monto: parseFloat(document.getElementById("editMonto").value),
+          tipo: document.getElementById("editTipo").value
+        });
+      }
+      modalExtra.close();
+    });
   }
 
-  // VER DETALLES PROVEEDOR O PRODUCTO
-  if (e.target.classList.contains("link-info") && (e.target.dataset.tipo === "proveedor" || e.target.dataset.tipo === "producto")) {
+  // VER PROVEEDOR / PRODUCTO DESDE MODAL FACTURA
+  if(e.target.classList.contains("link-info")){
     const tipo = e.target.dataset.tipo;
     const nombre = e.target.dataset.nombre;
-    if (!confirm(`¿Deseas ver los datos del ${tipo} ${nombre}?`)) return;
 
-    const col = tipo === "proveedor" ? colProveedores : colProductos;
-    const snap = await getDocs(query(col, where("nombre", "==", nombre)));
-    if (snap.empty) {
-      modalExtraBody.innerHTML = `<p>No se encontró información del ${tipo}.</p>`;
+    if(!confirm(`¿Deseas ver los datos del ${tipo} ${nombre}?`)) return;
+
+    const col = tipo==="proveedor"?colProveedores:colProductos;
+    const snap = await getDocs(col);
+    let docEncontrado = null;
+    snap.forEach(docu => {
+      const d = docu.data();
+      if(d.nombre.trim().toLowerCase() === nombre.trim().toLowerCase()) docEncontrado = d;
+    });
+
+    if(!docEncontrado){
+      modalExtraBody.innerHTML = `<p>No se encontró información del ${tipo} ${nombre}.</p>`;
     } else {
-      const d = snap.docs[0].data();
-      let html = `<h3>${tipo.toUpperCase()}: ${d.nombre}</h3>`;
+      let html = `<h3>${tipo.toUpperCase()}: ${docEncontrado.nombre}</h3>`;
       if(tipo==="proveedor"){
-        html += `<p><b>RUC:</b> ${d.ruc}</p>
-                 <p><b>Dirección:</b> ${d.direccion || "-"}</p>
-                 <p><b>Teléfono:</b> ${d.telefono || "-"}</p>`;
+        html += `<p><b>RUC:</b> ${docEncontrado.ruc}</p>
+                 <p><b>Dirección:</b> ${docEncontrado.direccion || "-"}</p>
+                 <p><b>Teléfono:</b> ${docEncontrado.telefono || "-"}</p>`;
       } else {
-        html += `<p><b>Cantidad:</b> ${d.cantidad}</p>
-                 <p><b>Precio:</b> ${d.precio}</p>
-                 <p><b>Descripción:</b> <span style="white-space: pre-line;">${d.descripcion}</span></p>`;
+        html += `<p><b>Cantidad:</b> ${docEncontrado.cantidad}</p>
+                 <p><b>Precio:</b> ${docEncontrado.precio}</p>
+                 <p><b>Descripción:</b> <span style="white-space: pre-line;">${docEncontrado.descripcion}</span></p>`;
       }
       modalExtraBody.innerHTML = html;
       modalExtra.showModal();
     }
-    return;
   }
-
-  // EDITAR FILAS
-  if(e.target.classList.contains("editar")){
-    const tipo = e.target.dataset.tipo;
-    const id = e.target.dataset.id;
-    let coleccion;
-    let campos = {};
-    if(tipo==="proveedor") coleccion = colProveedores;
-    if(tipo==="producto") coleccion = colProductos;
-    if(tipo==="factura") coleccion = colFacturas;
-    const docRef = doc(db, coleccion.path, id);
-    const snap = await getDocs(query(coleccion));
-    const d = snap.docs.find(docu => docu.id===id).data();
-
-    if(tipo==="proveedor"){
-      campos.ruc = prompt("RUC:", d.ruc) || d.ruc;
-      campos.nombre = prompt("Nombre:", d.nombre) || d.nombre;
-      campos.direccion = prompt("Dirección:", d.direccion) || d.direccion;
-      campos.telefono = prompt("Teléfono:", d.telefono) || d.telefono;
-    }
-    if(tipo==="producto"){
-      campos.nombre = prompt("Nombre:", d.nombre) || d.nombre;
-      campos.cantidad = parseInt(prompt("Cantidad:", d.cantidad) || d.cantidad);
-      campos.precio = parseFloat(prompt("Precio:", d.precio) || d.precio);
-      campos.descripcion = prompt("Descripción:", d.descripcion) || d.descripcion;
-    }
-    if(tipo==="factura"){
-      campos.idFactura = prompt("ID Factura:", d.idFactura) || d.idFactura;
-      campos.fecha = prompt("Fecha:", d.fecha) || d.fecha;
-      campos.proveedor = prompt("Proveedor:", d.proveedor) || d.proveedor;
-      campos.producto = prompt("Producto:", d.producto) || d.producto;
-      campos.monto = parseFloat(prompt("Monto:", d.monto) || d.monto);
-      campos.tipo = prompt("Tipo:", d.tipo) || d.tipo;
-    }
-    await updateDoc(docRef, campos);
-  }
-
 });
+
