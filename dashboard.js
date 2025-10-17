@@ -362,6 +362,3 @@ formEditar.addEventListener("submit", async e=>{
 });
 
 
-  modalEditar.close();
-});
-
