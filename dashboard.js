@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, query, where, updateDoc
+  doc, deleteDoc, query, where, updateDoc, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
@@ -62,15 +62,19 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
     btn.classList.add("activo");
     document.getElementById(btn.dataset.target).classList.add("activa");
-    // Limpiar buscador si no es facturas
-    if(btn.dataset.target !== "facturas") {
+
+    // Mostrar buscador solo en facturas
+    if(btn.dataset.target === "facturas"){
+      buscador.style.display = "block";
+    } else {
+      buscador.style.display = "none";
       buscador.value = "";
       panelFacturas.innerHTML = "";
     }
   });
 });
 
-// ===================== FUNCIONES AUXILIARES =====================
+// ===================== AUXILIARES =====================
 async function cargarProveedoresSelect() {
   const select = document.getElementById("proveedorFactura");
   select.innerHTML = '<option value="">Seleccionar proveedor</option>';
@@ -217,16 +221,39 @@ onSnapshot(colFacturas, snapshot => {
   countFacturas.textContent = snapshot.size;
 });
 
-// ===================== BUSCADOR SOLO FACTURAS =====================
+// ===================== EDITABLE INLINE =====================
+document.addEventListener("focusout", async e => {
+  if(e.target.classList.contains("editable")){
+    const tr = e.target.closest("tr");
+    const id = tr.dataset.id;
+    const tipo = tr.parentElement.id.includes("Proveedores") ? "proveedor"
+               : tr.parentElement.id.includes("Productos") ? "producto"
+               : "factura";
+    const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
+
+    let data = {};
+    tr.querySelectorAll(".editable").forEach(td => {
+      let val = td.textContent.trim();
+      if(td.dataset.field === "cantidad" || td.dataset.field === "precio" || td.dataset.field === "monto") val = parseFloat(val) || 0;
+      data[td.dataset.field] = val;
+    });
+
+    await updateDoc(docRef, data);
+  }
+});
+
+// ===================== BUSCADOR FACTURAS =====================
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
-  if (!texto || document.getElementById("facturas").classList.contains("activa") === false) return;
+  if(!texto) return;
 
-  const snap = await getDocs(colFacturas);
+  const q = query(colFacturas, orderBy("producto"), limit(50));
+  const snap = await getDocs(q);
+
   snap.forEach(docu => {
     const f = docu.data();
-    if (f.producto.toLowerCase().includes(texto)) {
+    if(f.producto.toLowerCase().includes(texto)){
       const div = document.createElement("div");
       div.className = "resultado-item";
       div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong>`;
@@ -236,52 +263,32 @@ buscador.addEventListener("input", async () => {
   });
 });
 
-// ===================== CLICK GLOBAL =====================
+// ===================== CLICK PARA VER =====================
 document.addEventListener("click", async e => {
-  // EDIT INLINE
-  if (e.target.classList.contains("editable")) {
-    e.target.addEventListener("blur", async () => {
-      const tr = e.target.closest("tr");
-      const tipo = tr.querySelector(".eliminar").dataset.tipo;
-      const id = tr.dataset.id;
-      const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
-      const celdas = tr.querySelectorAll(".editable");
-      let data = {};
-      celdas.forEach(td => {
-        const field = td.dataset.field;
-        let val = td.textContent.trim();
-        if (field === "cantidad") val = parseInt(val) || 0;
-        if (field === "precio" || field === "monto") val = parseFloat(val) || 0;
-        data[field] = val;
-      });
-      await updateDoc(docRef, data);
-    });
-  }
-
-  // MOSTRAR MODAL
-  if (e.target.classList.contains("link-info")) {
+  if(e.target.classList.contains("link-info") && !e.target.closest("tr")){
     const tipo = e.target.dataset.tipo;
-    if (tipo === "factura") {
+    if(tipo === "factura"){
       const snap = await getDocs(query(colFacturas, where("idFactura", "==", e.target.textContent)));
-      if (!snap.empty) mostrarModalFactura(snap.docs[0].data());
-      return;
-    }
-    const nombre = e.target.dataset.nombre;
-    const col = tipo === "proveedor" ? colProveedores : colProductos;
-    const snap = await getDocs(query(col, where("nombre", "==", nombre)));
-    if (snap.empty) modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
-    else {
-      const d = snap.docs[0].data();
-      modalExtraBody.innerHTML = tipo === "proveedor"
-        ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
-        : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
-      modalExtra.showModal();
+      if(!snap.empty) mostrarModalFactura(snap.docs[0].data());
+    } else {
+      const nombre = e.target.dataset.nombre;
+      const col = tipo === "proveedor" ? colProveedores : colProductos;
+      const snap = await getDocs(query(col, where("nombre", "==", nombre)));
+      if(snap.empty){
+        modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
+      } else {
+        const d = snap.docs[0].data();
+        modalExtraBody.innerHTML = tipo === "proveedor"
+          ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
+          : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
+        modalExtra.showModal();
+      }
     }
   }
 
   // ELIMINAR
-  if (e.target.classList.contains("eliminar")) {
-    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+  if(e.target.classList.contains("eliminar")){
+    if(!confirm("¿Seguro que deseas eliminar este registro?")) return;
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
     const docRef =
@@ -293,6 +300,7 @@ document.addEventListener("click", async e => {
     await deleteDoc(docRef);
   }
 });
+
 
 });
 
