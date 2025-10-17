@@ -1,260 +1,313 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Discovery Pets · Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #f5f7fb;
-      --sidebar-bg: #ffffff;
-      --accent: #8e7cff;
-      --accent-light: #d6cdff;
-      --text-dark: #2a2a2a;
-      --text-light: #6f6f6f;
-      --card-bg: #ffffff;
+      --accent: #10bcd4;
+      --accent-light: #68e0f1;
+      --bg: #f8fafc;
+      --sidebar-bg: linear-gradient(180deg, #10bcd4, #0091a8);
+      --card-bg: #fff;
+      --radius: 16px;
+      --shadow: 0 6px 24px rgba(0,0,0,0.08);
+      --transition: all .3s ease;
     }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+    body { background: var(--bg); display: flex; min-height: 100vh; color: #1e293b; }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-main);
-      display: flex;
-      margin: 0;
-      height: 100vh;
-    }
-
-    /* Sidebar */
+    /* ==== SIDEBAR ==== */
     .sidebar {
-      width: 250px;
+      width: 240px;
       background: var(--sidebar-bg);
-      border-right: 1px solid #e0e0e0;
+      color: white;
+      padding: 24px 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 20px 0;
-      position: fixed;
-      height: 100%;
-      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow);
     }
-
-    .sidebar .logo {
+    .logo {
       text-align: center;
-      margin-bottom: 30px;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 24px;
     }
-
-    .sidebar .logo img {
-      width: 100px;
-      border-radius: 50%;
+    .logo span {
+      display: inline-block;
+      padding: 10px 16px;
+      background: white;
+      color: var(--accent);
+      border-radius: 12px;
     }
-
-    .sidebar .menu a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-dark);
-      padding: 12px 20px;
-      text-decoration: none;
-      transition: all 0.3s;
-      border-radius: 8px;
-      margin: 5px 10px;
-      font-weight: 500;
+    nav ul { list-style: none; }
+    nav li {
+      margin: 10px 0;
     }
-
-    .sidebar .menu a:hover,
-    .sidebar .menu a.active {
-      background-color: var(--accent);
+    nav button {
+      width: 100%;
+      padding: 12px 14px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
       color: white;
-      transform: translateX(5px);
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+      transition: var(--transition);
     }
-
-    .sidebar .footer {
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-light);
+    nav button:hover, nav button.activo {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(4px);
     }
+    .logout {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+    .logout:hover { background: rgba(255,255,255,0.25); }
 
-    /* Main content */
-    .main {
-      margin-left: 260px;
+    /* ==== CONTENIDO ==== */
+    .content {
+      flex: 1;
       padding: 30px;
-      width: calc(100% - 260px);
       overflow-y: auto;
     }
+    h1 { font-size: 24px; font-weight: 800; margin-bottom: 18px; color: #0f172a; }
 
-    .main h1 {
-      font-weight: 700;
-      color: var(--text-dark);
-      margin-bottom: 20px;
-    }
-
-    /* Cards */
-    .stats {
+    /* ==== TARJETAS ==== */
+    .tarjetas {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
-
-    .card-stat {
+    .tarjeta {
       background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-      padding: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: transform 0.3s ease;
-    }
-
-    .card-stat:hover {
-      transform: translateY(-5px);
-    }
-
-    .card-stat i {
-      font-size: 2.5rem;
-      color: var(--accent);
-    }
-
-    .card-stat h3 {
-      font-size: 1.2rem;
-      color: var(--text-dark);
-      margin: 0;
-    }
-
-    .card-stat p {
-      color: var(--text-light);
-      margin: 0;
-    }
-
-    /* Table */
-    .table-container {
-      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+      transition: var(--transition);
     }
+    .tarjeta:hover { transform: translateY(-4px); }
+    .tarjeta h3 { font-size: 16px; color: #334155; }
+    .tarjeta p { font-size: 26px; font-weight: 700; color: var(--accent); margin-top: 8px; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    /* ==== SECCIONES ==== */
+    .seccion { display: none; animation: fadeIn .4s ease; }
+    .seccion.activa { display: block; }
+    @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: none;} }
 
-    thead {
-      background-color: var(--accent-light);
-      color: var(--text-dark);
-    }
+    /* ==== TABLAS ==== */
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f1f5f9; }
+    tr:hover { background: #f9fafb; }
 
-    th, td {
-      padding: 12px;
-      text-align: left;
-    }
-
-    tbody tr:hover {
-      background-color: #f4f2ff;
-      cursor: pointer;
-    }
-
-    /* Button */
-    .btn-primary {
-      background-color: var(--accent);
+    .btn {
+      padding: 4px 8px;
       border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn.editar { background: #fde68a; }
+    .btn.eliminar { background: #fca5a5; }
+    .btn.ver-info { background: #bbf7d0; }
+
+    /* ==== FORMULARIOS ==== */
+    form {
+      background: white;
+      padding: 18px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 10px;
       border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      font-size: 14px;
+    }
+    button[type="submit"] {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    button[type="submit"]:hover { background: #0ea5b0; }
+
+    /* ==== MODALES ==== */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal-content h3 { margin-top: 0; }
+    .close {
+      float: right;
+      cursor: pointer;
+      color: #64748b;
+      font-size: 18px;
     }
 
-    .btn-primary:hover {
-      background-color: #7b6cf8;
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    .fade-in {
-      animation: fadeInUp 0.5s ease;
-    }
-
+    /* ==== PEQUEÑAS COSAS ==== */
+    .link-info { color: var(--accent); cursor: pointer; text-decoration: underline; }
   </style>
 </head>
 <body>
-
-  <!-- Sidebar -->
-  <div class="sidebar">
+  <aside class="sidebar">
     <div>
-      <div class="logo">
-        <img src="https://static.vecteezy.com/system/resources/previews/017/181/296/non_2x/paw-icon-free-png.png" alt="Discovery Pets Logo">
-        <h5 class="mt-2">Discovery Pets</h5>
-      </div>
-      <div class="menu">
-        <a href="#" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="#"><i class="bi bi-receipt"></i> Facturas</a>
-        <a href="#"><i class="bi bi-truck"></i> Proveedores</a>
-        <a href="#"><i class="bi bi-bag"></i> Productos</a>
-        <a href="#"><i class="bi bi-box"></i> Servicios</a>
-      </div>
+      <div class="logo"><span>DP</span></div>
+      <nav>
+        <ul>
+          <li><button class="menu-btn activo" data-target="secDashboard">📊 Dashboard</button></li>
+          <li><button class="menu-btn" data-target="secFacturas">🧾 Facturas</button></li>
+          <li><button class="menu-btn" data-target="secProveedores">🏢 Proveedores</button></li>
+          <li><button class="menu-btn" data-target="secProductos">🐶 Productos</button></li>
+        </ul>
+      </nav>
     </div>
-    <div class="footer">
-      <p>© 2025 Discovery Pets</p>
-    </div>
-  </div>
+    <button id="logoutBtn" class="logout">Cerrar sesión</button>
+  </aside>
 
-  <!-- Main -->
-  <div class="main fade-in">
-    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+  <main class="content">
 
-    <!-- Stats -->
-    <div class="stats">
-      <div class="card-stat">
-        <div>
-          <h3 id="facturasCount">0</h3>
-          <p>Facturas</p>
+    <!-- SECCIÓN DASHBOARD -->
+    <section id="secDashboard" class="seccion activa">
+      <h1>Resumen general</h1>
+      <div class="tarjetas">
+        <div class="tarjeta">
+          <h3>Total Facturas</h3>
+          <p id="totalFacturas">0</p>
         </div>
-        <i class="bi bi-receipt"></i>
-      </div>
-      <div class="card-stat">
-        <div>
-          <h3 id="proveedoresCount">0</h3>
-          <p>Proveedores</p>
+        <div class="tarjeta">
+          <h3>Total Proveedores</h3>
+          <p id="totalProveedores">0</p>
         </div>
-        <i class="bi bi-truck"></i>
-      </div>
-      <div class="card-stat">
-        <div>
-          <h3 id="productosCount">0</h3>
-          <p>Productos</p>
+        <div class="tarjeta">
+          <h3>Total Productos</h3>
+          <p id="totalProductos">0</p>
         </div>
-        <i class="bi bi-bag"></i>
       </div>
-    </div>
+    </section>
 
-    <!-- Table of facturas -->
-    <div class="table-container">
-      <h4 class="mb-3">Listado de Facturas</h4>
-      <table id="facturasTable" class="table">
+    <!-- SECCIÓN FACTURAS -->
+    <section id="secFacturas" class="seccion">
+      <h1>Facturas</h1>
+      <form id="facturaForm">
+        <input type="text" id="idFactura" placeholder="ID de Factura" required>
+        <input type="date" id="fechaFactura" required>
+        <select id="proveedorFactura" required></select>
+        <select id="productoFactura" required></select>
+        <input type="number" id="montoFactura" placeholder="Monto (S/.)" step="0.01" required>
+        <select id="tipoFactura">
+          <option value="Compra">Compra</option>
+          <option value="Servicio">Servicio</option>
+        </select>
+        <button type="submit">Registrar Factura</button>
+      </form>
+
+      <div style="margin-bottom:10px;">
+        <input type="text" id="buscadorFactura" placeholder="Buscar por producto...">
+        <button id="btnRefresh">🔄</button>
+      </div>
+      <div id="panelFacturas"></div>
+      <table>
         <thead>
-          <tr>
-            <th>ID</th>
-            <th>Proveedor</th>
-            <th>Producto</th>
-            <th>Monto</th>
-            <th>Fecha</th>
-          </tr>
+          <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
         </thead>
-        <tbody>
-          <!-- Se rellena dinámicamente con JS -->
-        </tbody>
+        <tbody id="tablaFacturas"></tbody>
       </table>
+    </section>
+
+    <!-- SECCIÓN PROVEEDORES -->
+    <section id="secProveedores" class="seccion">
+      <h1>Proveedores</h1>
+      <form id="proveedorForm">
+        <input type="text" id="rucProveedor" placeholder="RUC" required>
+        <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" required>
+        <input type="text" id="direccionProveedor" placeholder="Dirección">
+        <input type="text" id="telefonoProveedor" placeholder="Teléfono">
+        <button type="submit">Registrar Proveedor</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaProveedores"></tbody>
+      </table>
+    </section>
+
+    <!-- SECCIÓN PRODUCTOS -->
+    <section id="secProductos" class="seccion">
+      <h1>Productos</h1>
+      <form id="productoForm">
+        <input type="text" id="nombreProducto" placeholder="Nombre del producto" required>
+        <input type="number" id="cantidadProducto" placeholder="Cantidad" required>
+        <input type="number" id="precioProducto" placeholder="Precio (S/.)" step="0.01" required>
+        <input type="text" id="descripcionProducto" placeholder="Descripción">
+        <button type="submit">Registrar Producto</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tablaProductos"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- MODALES -->
+  <div id="modalFactura" class="modal">
+    <div class="modal-content">
+      <span id="cerrarModalFactura" class="close">✖</span>
+      <div id="contenidoModalFactura"></div>
     </div>
   </div>
 
-  <script src="dashboard.js"></script>
+  <div id="modalDetalleExtra" class="modal">
+    <div class="modal-content">
+      <span id="cerrarModalDetalle" class="close">✖</span>
+      <div id="contenidoDetalleExtra"></div>
+    </div>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
 
 
 
