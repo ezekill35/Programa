@@ -244,13 +244,14 @@ buscador.addEventListener("input", async () => {
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
-  // EDIT INLINE
+  // EDIT INLINE EN LA CELDA
   if (e.target.classList.contains("editable")) {
+    const tr = e.target.closest("tr");
+    const tipo = tr.querySelector(".eliminar").dataset.tipo;
+    const id = tr.dataset.id;
+    const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
+
     e.target.addEventListener("blur", async () => {
-      const tr = e.target.closest("tr");
-      const tipo = tr.querySelector(".eliminar").dataset.tipo;
-      const id = tr.dataset.id;
-      const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
       const celdas = tr.querySelectorAll(".editable");
       let data = {};
       celdas.forEach(td => {
@@ -301,3 +302,4 @@ document.addEventListener("click", async e => {
     await deleteDoc(docRef);
   }
 });
+
