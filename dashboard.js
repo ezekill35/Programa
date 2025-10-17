@@ -41,13 +41,17 @@ const countProductos = document.getElementById("countProductos");
 const buscador = document.getElementById("searchInput");
 const panelFacturas = document.getElementById("searchResults");
 
-const panelDerecho = document.getElementById("panelDerecho");
-const contenidoPanel = document.getElementById("contenidoPanel");
-const cerrarPanel = document.getElementById("cerrarPanel");
+const modalEditar = document.getElementById("modalEditar");
+const modalEditarBody = document.getElementById("modalEditarBody");
+const cerrarModalEditar = document.getElementById("cerrarModalEditar");
 
-const panelExtra = document.getElementById("panelExtra");
-const contenidoPanelExtra = document.getElementById("contenidoPanelExtra");
-const cerrarPanelExtra = document.getElementById("cerrarPanelExtra");
+const modalFactura = document.getElementById("modalFactura");
+const modalFacturaBody = document.getElementById("modalFacturaBody");
+const cerrarModalFactura = document.getElementById("cerrarModalFactura");
+
+const modalExtra = document.getElementById("modalExtra");
+const modalExtraBody = document.getElementById("modalExtraBody");
+const cerrarModalExtra = document.getElementById("cerrarModalExtra");
 
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
@@ -63,7 +67,6 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.classList.add("activo");
     document.getElementById(btn.dataset.target).classList.add("activa");
 
-    // Mostrar buscador solo en facturas
     if(btn.dataset.target === "facturas"){
       buscador.style.display = "block";
     } else {
@@ -141,20 +144,45 @@ formFactura.addEventListener("submit", async e => {
 });
 
 // ===================== SNAPSHOTS =====================
+function crearFilaEditable(tr, docu, tipo) {
+  const d = docu.data();
+  tr.dataset.id = docu.id;
+  tr.innerHTML = tipo === "proveedor" ? `
+      <td>${d.ruc}</td>
+      <td>${d.nombre}</td>
+      <td>${d.direccion || ""}</td>
+      <td>${d.telefono || ""}</td>
+      <td>
+        <button class="btn-accion editar" data-id="${docu.id}" data-tipo="proveedor">✏️ Editar</button>
+        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="proveedor">🗑️</button>
+      </td>` :
+    tipo === "producto" ? `
+      <td>${d.nombre}</td>
+      <td>${d.cantidad}</td>
+      <td>${d.precio}</td>
+      <td>${d.descripcion || ""}</td>
+      <td>
+        <button class="btn-accion editar" data-id="${docu.id}" data-tipo="producto">✏️ Editar</button>
+        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="producto">🗑️</button>
+      </td>` :
+      `
+      <td>${d.idFactura}</td>
+      <td>${d.fecha}</td>
+      <td>${d.proveedor}</td>
+      <td>${d.producto}</td>
+      <td>${d.monto}</td>
+      <td>${d.tipo}</td>
+      <td>
+        <button class="btn-accion editar" data-id="${docu.id}" data-tipo="factura">✏️ Editar</button>
+        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="factura">🗑️</button>
+      </td>`;
+}
+
 onSnapshot(colProveedores, snapshot => {
   tablaProveedores.innerHTML = "";
   snapshot.forEach(docu => {
-    const d = docu.data();
     const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
-    tr.innerHTML = `
-      <td contenteditable="true" class="editable" data-field="ruc">${d.ruc}</td>
-      <td contenteditable="true" class="editable" data-field="nombre">${d.nombre}</td>
-      <td contenteditable="true" class="editable" data-field="direccion">${d.direccion || ""}</td>
-      <td contenteditable="true" class="editable" data-field="telefono">${d.telefono || ""}</td>
-      <td>
-        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="proveedor">🗑️</button>
-      </td>`;
+    crearFilaEditable(tr, docu, "proveedor");
     tablaProveedores.appendChild(tr);
   });
   countProveedores.textContent = snapshot.size;
@@ -164,17 +192,8 @@ onSnapshot(colProveedores, snapshot => {
 onSnapshot(colProductos, snapshot => {
   tablaProductos.innerHTML = "";
   snapshot.forEach(docu => {
-    const d = docu.data();
     const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
-    tr.innerHTML = `
-      <td contenteditable="true" class="editable" data-field="nombre">${d.nombre}</td>
-      <td contenteditable="true" class="editable" data-field="cantidad">${d.cantidad}</td>
-      <td contenteditable="true" class="editable" data-field="precio">${d.precio}</td>
-      <td contenteditable="true" class="editable" data-field="descripcion">${d.descripcion || ""}</td>
-      <td>
-        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="producto">🗑️</button>
-      </td>`;
+    crearFilaEditable(tr, docu, "producto");
     tablaProductos.appendChild(tr);
   });
   countProductos.textContent = snapshot.size;
@@ -184,19 +203,8 @@ onSnapshot(colProductos, snapshot => {
 onSnapshot(colFacturas, snapshot => {
   tablaFacturas.innerHTML = "";
   snapshot.forEach(docu => {
-    const f = docu.data();
     const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
-    tr.innerHTML = `
-      <td contenteditable="true" class="editable" data-field="idFactura">${f.idFactura}</td>
-      <td contenteditable="true" class="editable" data-field="fecha">${f.fecha}</td>
-      <td contenteditable="true" class="editable" data-field="proveedor">${f.proveedor}</td>
-      <td contenteditable="true" class="editable" data-field="producto">${f.producto}</td>
-      <td contenteditable="true" class="editable" data-field="monto">${f.monto}</td>
-      <td contenteditable="true" class="editable" data-field="tipo">${f.tipo}</td>
-      <td>
-        <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="factura">🗑️</button>
-      </td>`;
+    crearFilaEditable(tr, docu, "factura");
     tablaFacturas.appendChild(tr);
   });
   countFacturas.textContent = snapshot.size;
@@ -207,8 +215,6 @@ buscador.style.display = "none";
 buscador.addEventListener("input", async () => {
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
-  panelDerecho.style.display = "none";
-  panelExtra.style.display = "none";
   if (!texto) return;
 
   const snap = await getDocs(colFacturas);
@@ -217,86 +223,134 @@ buscador.addEventListener("input", async () => {
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
       div.className = "resultado-item";
-      div.textContent = `Factura: ${f.idFactura}`;
-      div.addEventListener("click", () => mostrarFacturaPanel(f));
+      div.style.cursor = "pointer";
+      div.style.background = "#e0f2fe";
+      div.style.padding = "5px";
+      div.style.marginBottom = "3px";
+      div.style.borderRadius = "5px";
+      div.innerHTML = `<strong>${f.idFactura}</strong>`;
+      div.addEventListener("click", () => {
+        modalFacturaBody.innerHTML = `
+          <h4>Factura ${f.idFactura}</h4>
+          <p><b>Fecha:</b> ${f.fecha}</p>
+          <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
+          <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
+          <p><b>Monto:</b> S/. ${f.monto}</p>
+          <p><b>Tipo:</b> ${f.tipo}</p>
+        `;
+        modalFactura.showModal();
+      });
       panelFacturas.appendChild(div);
     }
   });
 });
 
-// ===================== PANEL FACTURA =====================
-function mostrarFacturaPanel(f) {
-  panelDerecho.style.display = "block";
-  panelExtra.style.display = "none";
-  contenidoPanel.innerHTML = `
-    <h4>Factura ${f.idFactura}</h4>
-    <p><b>Fecha:</b> ${f.fecha}</p>
-    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
-    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
-    <p><b>Monto:</b> S/. ${f.monto}</p>
-    <p><b>Tipo:</b> ${f.tipo}</p>`;
-}
-
-cerrarPanel.addEventListener("click", () => panelDerecho.style.display = "none");
-
-// ===================== PANEL EXTRA =====================
-cerrarPanelExtra.addEventListener("click", () => panelExtra.style.display = "none");
+// ===================== CERRAR MODALES =====================
+cerrarModalFactura.addEventListener("click", () => modalFactura.close());
+cerrarModalExtra.addEventListener("click", () => modalExtra.close());
+cerrarModalEditar.addEventListener("click", () => modalEditar.close());
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
-  // EDITAR EN LISTA
-  if (e.target.classList.contains("editable")) {
-    const tr = e.target.closest("tr");
-    const tipo = tr.querySelector(".eliminar").dataset.tipo;
-    const id = tr.dataset.id;
+  // BOTON EDITAR LISTA
+  if(e.target.classList.contains("editar")){
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
     const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
+    const snap = await getDocs(query(tipo === "proveedor" ? colProveedores : tipo === "producto" ? colProductos : colFacturas, where("__name__", "==", id)));
+    if(snap.empty) return;
+    const d = snap.docs[0].data();
+    
+    // Generar formulario en modal
+    let html = "";
+    if(tipo === "proveedor"){
+      html = `
+        <label>RUC:</label><input type="text" id="editRuc" class="form-control" value="${d.ruc}">
+        <label>Nombre:</label><input type="text" id="editNombre" class="form-control" value="${d.nombre}">
+        <label>Dirección:</label><input type="text" id="editDireccion" class="form-control" value="${d.direccion || ''}">
+        <label>Teléfono:</label><input type="text" id="editTelefono" class="form-control" value="${d.telefono || ''}">
+        <button id="guardarEditar" class="btn btn-primary mt-2">Guardar</button>`;
+    } else if(tipo === "producto"){
+      html = `
+        <label>Nombre:</label><input type="text" id="editNombre" class="form-control" value="${d.nombre}">
+        <label>Cantidad:</label><input type="number" id="editCantidad" class="form-control" value="${d.cantidad}">
+        <label>Precio:</label><input type="number" id="editPrecio" class="form-control" value="${d.precio}" step="0.01">
+        <label>Descripción:</label><textarea id="editDescripcion" class="form-control">${d.descripcion || ''}</textarea>
+        <button id="guardarEditar" class="btn btn-primary mt-2">Guardar</button>`;
+    } else {
+      html = `
+        <label>ID Factura:</label><input type="text" id="editIdFactura" class="form-control" value="${d.idFactura}">
+        <label>Fecha:</label><input type="date" id="editFecha" class="form-control" value="${d.fecha}">
+        <label>Proveedor:</label><input type="text" id="editProveedor" class="form-control" value="${d.proveedor}">
+        <label>Producto:</label><input type="text" id="editProducto" class="form-control" value="${d.producto}">
+        <label>Monto:</label><input type="number" id="editMonto" class="form-control" value="${d.monto}" step="0.01">
+        <label>Tipo:</label><input type="text" id="editTipo" class="form-control" value="${d.tipo}">
+        <button id="guardarEditar" class="btn btn-primary mt-2">Guardar</button>`;
+    }
 
-    e.target.addEventListener("blur", async () => {
-      const celdas = tr.querySelectorAll(".editable");
-      let data = {};
-      celdas.forEach(td => {
-        const field = td.dataset.field;
-        let val = td.textContent.trim();
-        if (field === "cantidad") val = parseInt(val) || 0;
-        if (field === "precio" || field === "monto") val = parseFloat(val) || 0;
-        data[field] = val;
-      });
-      await updateDoc(docRef, data);
+    modalEditarBody.innerHTML = html;
+    modalEditar.showModal();
+
+    document.getElementById("guardarEditar").addEventListener("click", async () => {
+      let dataEdit = {};
+      if(tipo === "proveedor"){
+        dataEdit = {
+          ruc: document.getElementById("editRuc").value.trim(),
+          nombre: document.getElementById("editNombre").value.trim(),
+          direccion: document.getElementById("editDireccion").value.trim(),
+          telefono: document.getElementById("editTelefono").value.trim()
+        };
+      } else if(tipo === "producto"){
+        dataEdit = {
+          nombre: document.getElementById("editNombre").value.trim(),
+          cantidad: parseInt(document.getElementById("editCantidad").value),
+          precio: parseFloat(document.getElementById("editPrecio").value),
+          descripcion: document.getElementById("editDescripcion").value.trim()
+        };
+      } else {
+        dataEdit = {
+          idFactura: document.getElementById("editIdFactura").value.trim(),
+          fecha: document.getElementById("editFecha").value,
+          proveedor: document.getElementById("editProveedor").value.trim(),
+          producto: document.getElementById("editProducto").value.trim(),
+          monto: parseFloat(document.getElementById("editMonto").value),
+          tipo: document.getElementById("editTipo").value.trim()
+        };
+      }
+      await updateDoc(docRef, dataEdit);
+      modalEditar.close();
     }, { once: true });
   }
 
-  // VER DATOS DE PROVEEDOR O PRODUCTO DESDE PANEL FACTURA
-  if (e.target.classList.contains("link-info")) {
+  // VER DATOS DESDE PANEL FACTURA
+  if(e.target.classList.contains("link-info")){
     const tipo = e.target.dataset.tipo;
     const nombre = e.target.dataset.nombre;
-    if (!confirm(`Deseas ver los datos del ${tipo} "${nombre}"?`)) return;
-
+    if(!confirm(`Deseas ver los datos del ${tipo} "${nombre}"?`)) return;
     const col = tipo === "proveedor" ? colProveedores : colProductos;
     const snap = await getDocs(query(col, where("nombre", "==", nombre)));
-    if (snap.empty) {
-      contenidoPanelExtra.innerHTML = "<p>No se encontró información.</p>";
+    if(snap.empty){
+      modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
     } else {
       const d = snap.docs[0].data();
-      contenidoPanelExtra.innerHTML = tipo === "proveedor"
+      modalExtraBody.innerHTML = tipo === "proveedor"
         ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
         : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
-      panelExtra.style.display = "block";
+      modalExtra.showModal();
     }
   }
 
   // ELIMINAR
-  if (e.target.classList.contains("eliminar")) {
-    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+  if(e.target.classList.contains("eliminar")){
+    if(!confirm("¿Seguro que deseas eliminar este registro?")) return;
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
     const docRef =
       tipo === "proveedor"
-        ? doc(db, "proveedores", id)
+        ? doc(db,"proveedores",id)
         : tipo === "producto"
-        ? doc(db, "productos", id)
-        : doc(db, "facturas", id);
+        ? doc(db,"productos",id)
+        : doc(db,"facturas",id);
     await deleteDoc(docRef);
   }
 });
-
-
