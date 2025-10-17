@@ -55,10 +55,7 @@
       text-align: center;
       margin-bottom: 22px;
     }
-    .input-group {
-      position: relative;
-      width: 100%;
-    }
+    .input-group { position: relative; width: 100%; }
     input {
       width: 100%;
       padding: 14px 16px;
@@ -84,9 +81,7 @@
       font-size: 16px;
       color: #6b7280;
     }
-    .toggle-password:hover {
-      color: #10bcd4;
-    }
+    .toggle-password:hover { color: #10bcd4; }
 
     .actions {
       display:flex;
@@ -113,18 +108,12 @@
       box-shadow: 0 8px 24px rgba(16,188,212,0.18);
     }
 
-    .helper {
-      margin-top: 14px;
-      font-size: 13px;
-      color: #6b7280;
-      text-align: center;
-    }
+    .helper { margin-top: 14px; font-size: 13px; color: #6b7280; text-align: center; }
 
     .login-image {
       flex: 1;
       position: relative;
       background: url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat;
-      /* Puedes cambiar esta imagen libremente */
     }
     .login-image::after {
       content: "";
@@ -183,7 +172,7 @@
 
   <script type="module">
     import { auth } from "./firebase.js";
-    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const btnLogin = document.getElementById("btnLogin");
     const togglePassword = document.getElementById("togglePassword");
@@ -196,6 +185,29 @@
       togglePassword.textContent = isHidden ? "🙈" : "👁️";
     });
 
+    // Función para almacenar última actividad
+    function setLastActivity() {
+      localStorage.setItem("lastActivity", Date.now());
+    }
+
+    // Cada interacción actualiza actividad
+    document.addEventListener("mousemove", setLastActivity);
+    document.addEventListener("keydown", setLastActivity);
+    document.addEventListener("click", setLastActivity);
+
+    // Revisar sesión cada minuto
+    setInterval(() => {
+      const last = parseInt(localStorage.getItem("lastActivity") || 0);
+      const now = Date.now();
+      const twelveHours = 12 * 60 * 60 * 1000;
+      if(now - last > twelveHours){
+        signOut(auth);
+        localStorage.removeItem("lastActivity");
+        alert("Sesión cerrada por inactividad");
+        window.location.href = "login.html";
+      }
+    }, 60000); // 1 minuto
+
     btnLogin.addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim();
       const password = passwordInput.value.trim();
@@ -205,6 +217,7 @@
       }
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        setLastActivity();
         window.location.href = "dashboard.html";
       } catch (err) {
         alert("Error al iniciar sesión: " + err.message);
@@ -219,6 +232,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
