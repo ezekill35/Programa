@@ -19,7 +19,8 @@ table th, table td { padding:5px; text-align:left; }
 #searchInput { margin-bottom:10px; width:100%; padding:5px; border-radius:5px; border:1px solid #ccc; }
 .resultado-item:hover { background:#bae6fd; }
 .link-info { cursor:pointer; text-decoration:underline; }
-modal { border:none; border-radius:8px; padding:20px; background:white; box-shadow:0 0 15px rgba(0,0,0,0.3);}
+dialog { border:none; border-radius:8px; padding:20px; background:white; box-shadow:0 0 15px rgba(0,0,0,0.3);}
+dialog::backdrop { background: rgba(0,0,0,0.3); }
 </style>
 </head>
 <body>
@@ -74,33 +75,34 @@ modal { border:none; border-radius:8px; padding:20px; background:white; box-shad
       <input type="text" id="tipoFactura" placeholder="Tipo" class="form-control mb-2" required>
       <button class="btn btn-primary">Agregar Factura</button>
     </form>
+
     <input type="text" id="searchInput" placeholder="Buscar producto..." class="form-control">
-    <div id="searchResults"></div>
+    <div id="searchResults" class="mb-2"></div>
+
     <h4>Lista de Facturas (<span id="countFacturas">0</span>)</h4>
     <table class="table table-bordered"><thead><tr><th>ID Factura</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead><tbody id="tablaFacturas"></tbody></table>
   </div>
 </div>
 
 <!-- MODAL EDITAR -->
-<modal id="modalEditar">
+<dialog id="modalEditar">
   <div id="modalEditarBody"></div>
   <button id="cerrarModalEditar" class="btn btn-secondary mt-2">Cerrar</button>
-</modal>
+</dialog>
 
 <!-- MODAL FACTURA -->
-<modal id="modalFactura">
+<dialog id="modalFactura">
   <div id="modalFacturaBody"></div>
   <button id="cerrarModalFactura" class="btn btn-secondary mt-2">Cerrar</button>
-</modal>
+</dialog>
 
 <!-- MODAL EXTRA (Proveedor / Producto) -->
-<modal id="modalExtra">
+<dialog id="modalExtra">
   <div id="modalExtraBody"></div>
   <button id="cerrarModalExtra" class="btn btn-secondary mt-2">Cerrar</button>
-</modal>
+</dialog>
 
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
