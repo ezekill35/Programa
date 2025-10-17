@@ -27,10 +27,8 @@ const colFacturas = collection(db, "facturas");
 // ===================== ELEMENTOS =====================
 const formProveedor = document.getElementById("formProveedor");
 const tablaProveedores = document.getElementById("tablaProveedores");
-
 const formProducto = document.getElementById("formProducto");
 const tablaProductos = document.getElementById("tablaProductos");
-
 const formFactura = document.getElementById("formFactura");
 const tablaFacturas = document.getElementById("tablaFacturas");
 
@@ -101,20 +99,18 @@ async function cargarProductosSelect() {
   });
 }
 
-function mostrarPanelFactura(f) {
-  // Panel flotante con info de factura
+// ===================== MODALES =====================
+function mostrarModalFactura(f) {
   contenidoModalFactura.innerHTML = `
-    <h4>Factura ${f.idFactura}</h4>
+    <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
     <p><b>Fecha:</b> ${f.fecha}</p>
-    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;cursor:pointer;">${f.proveedor}</span></p>
-    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;cursor:pointer;">${f.producto}</span></p>
+    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
+    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
     <p><b>Monto:</b> S/. ${f.monto}</p>
-    <p><b>Tipo:</b> ${f.tipo}</p>
-  `;
+    <p><b>Tipo:</b> ${f.tipo}</p>`;
   modalFactura.showModal();
 }
 
-// ===================== CERRAR MODALES =====================
 cerrarModalFactura.addEventListener("click", () => modalFactura.close());
 cerrarModalExtra.addEventListener("click", () => modalExtra.close());
 
@@ -170,13 +166,11 @@ onSnapshot(colProductos, snapshot => {
     const d = docu.data();
     const tr = document.createElement("tr");
     tr.dataset.id = docu.id;
-    // Mostrar saltos de línea en descripción
-    const descripcion = d.descripcion ? d.descripcion.split(/\r?\n/).join("<br>") : "";
     tr.innerHTML = `
       <td contenteditable="true" class="editable" data-field="nombre">${d.nombre}</td>
       <td contenteditable="true" class="editable" data-field="cantidad">${d.cantidad}</td>
       <td contenteditable="true" class="editable" data-field="precio">${d.precio}</td>
-      <td contenteditable="true" class="editable" data-field="descripcion">${descripcion}</td>
+      <td contenteditable="true" class="editable" data-field="descripcion" style="white-space: pre-line;">${d.descripcion || ""}</td>
       <td>
         <button class="btn-accion eliminar" data-id="${docu.id}" data-tipo="producto">🗑️</button>
       </td>`;
@@ -237,8 +231,8 @@ buscador.addEventListener("input", async () => {
     if (f.producto.toLowerCase().includes(texto)) {
       const div = document.createElement("div");
       div.className = "resultado-item";
-      div.innerHTML = `<strong class="link-info" data-tipo="factura" data-id="${docu.id}" style="cursor:pointer;">${f.idFactura}</strong>`;
-      div.addEventListener("click", () => mostrarPanelFactura(f));
+      div.innerHTML = `<strong class="link-info" data-tipo="factura">${f.idFactura}</strong>`;
+      div.addEventListener("click", () => mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
@@ -246,62 +240,63 @@ buscador.addEventListener("input", async () => {
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e => {
-  // EDITAR LISTA
+  // EDIT INLINE SOLO EN LISTA
   if (e.target.classList.contains("editable")) {
     const tr = e.target.closest("tr");
+    const tipo = tr.querySelector(".eliminar")?.dataset.tipo;
+    if (!tipo) return; // Solo listas
     const id = tr.dataset.id;
-    const tipo = tr.querySelector(".eliminar").dataset.tipo;
-    e.target.addEventListener("blur", async ev => {
+    const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
+
+    e.target.addEventListener("blur", async () => {
       const celdas = tr.querySelectorAll(".editable");
       let data = {};
       celdas.forEach(td => {
-        let val = td.textContent.trim();
         const field = td.dataset.field;
+        let val = td.textContent.trim();
         if (field === "cantidad") val = parseInt(val) || 0;
         if (field === "precio" || field === "monto") val = parseFloat(val) || 0;
         data[field] = val;
       });
-      await updateDoc(doc(db, tipo + "s", id), data);
+      await updateDoc(docRef, data);
     }, { once: true });
+  }
+
+  // VER DETALLES
+  if (e.target.classList.contains("link-info")) {
+    const tipo = e.target.dataset.tipo;
+    if (tipo === "factura") {
+      const snap = await getDocs(query(colFacturas, where("idFactura", "==", e.target.textContent)));
+      if (!snap.empty) mostrarModalFactura(snap.docs[0].data());
+      return;
+    }
+
+    // PROVEEDOR O PRODUCTO
+    if (tipo === "proveedor" || tipo === "producto") {
+      if (!confirm(`¿Deseas ver los datos de ${tipo}?`)) return;
+
+      const nombre = e.target.dataset.nombre;
+      const col = tipo === "proveedor" ? colProveedores : colProductos;
+      const snap = await getDocs(query(col, where("nombre", "==", nombre)));
+      if (snap.empty) {
+        modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
+      } else {
+        const d = snap.docs[0].data();
+        modalExtraBody.innerHTML = tipo === "proveedor"
+          ? `<h4>Proveedor</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>RUC:</b> ${d.ruc}</p><p><b>Dirección:</b> ${d.direccion}</p><p><b>Teléfono:</b> ${d.telefono}</p>`
+          : `<h4>Producto</h4><p><b>Nombre:</b> ${d.nombre}</p><p><b>Cantidad:</b> ${d.cantidad}</p><p><b>Precio:</b> S/. ${d.precio}</p><p><b>Descripción:</b> ${d.descripcion}</p>`;
+        modalExtra.showModal();
+      }
+    }
   }
 
   // ELIMINAR
   if (e.target.classList.contains("eliminar")) {
+    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+    const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
-    const tipo = e.target.dataset.tipo;
-    if (confirm("¿Deseas eliminar este registro?")) {
-      await deleteDoc(doc(db, tipo + "s", id));
-    }
-  }
-
-  // VER DATOS PROVEEDOR/PRODUCTO DESDE FACTURA
-  if (e.target.classList.contains("link-info")) {
-    const tipo = e.target.dataset.tipo;
-    if (tipo === "proveedor" || tipo === "producto") {
-      const nombre = e.target.dataset.nombre;
-      if (!nombre) return;
-      if (!confirm(`¿Deseas ver los datos de ${tipo}: ${nombre}?`)) return;
-
-      let col = tipo === "proveedor" ? colProveedores : colProductos;
-      const snap = await getDocs(col);
-      const docEncontrado = snap.docs.find(d => d.data().nombre.trim().toLowerCase() === nombre.trim().toLowerCase());
-      if (!docEncontrado) {
-        modalExtraBody.innerHTML = "<p>No se encontró información.</p>";
-      } else {
-        const d = docEncontrado.data();
-        let html = `<h5>Detalle ${tipo}</h5>`;
-        for (const key in d) html += `<p><b>${key}:</b> ${d[key]}</p>`;
-        modalExtraBody.innerHTML = html;
-        modalExtra.showModal();
-      }
-    }
-
-    // VER FACTURA DESDE BUSCADOR O LISTA
-    if (tipo === "factura") {
-      const id = e.target.dataset.id;
-      const snap = await getDocs(colFacturas);
-      const docu = snap.docs.find(d => d.id === id);
-      if (docu) mostrarPanelFactura(docu.data());
-    }
+    const docRef = doc(db, tipo === "proveedor" ? "proveedores" : tipo === "producto" ? "productos" : "facturas", id);
+    await deleteDoc(docRef);
   }
 });
+
