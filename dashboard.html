@@ -51,10 +51,8 @@
     dialog { border:none; border-radius:15px; padding:1.5rem; max-width:400px; width:90%; box-shadow:0 5px 25px rgba(0,0,0,0.3); }
     dialog::backdrop { background: rgba(0,0,0,0.4); }
     .link-info { cursor:pointer; text-decoration:underline; color:#0284c7; }
-    /* ================= Secciones ================= */
     .seccion { display:none; }
     .seccion.activa { display:block; }
-
     @media(max-width:768px){
       main { margin-left:0; padding:1rem; }
       .sidebar { width:100%; height:auto; border-radius:0; padding:1rem; position:relative; display:flex; flex-wrap:wrap; justify-content:center; }
@@ -81,27 +79,12 @@
     </div>
     <div id="searchResults" class="mb-4"></div>
 
-    <!-- Dashboard principal -->
+    <!-- Dashboard -->
     <section id="dashboard" class="seccion activa">
       <div class="row g-4">
-        <div class="col-md-4">
-          <div class="tabla-container text-center">
-            <h5 class="text-secondary">Total Facturas</h5>
-            <h3 id="countFacturas">0</h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="tabla-container text-center">
-            <h5 class="text-secondary">Total Proveedores</h5>
-            <h3 id="countProveedores">0</h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="tabla-container text-center">
-            <h5 class="text-secondary">Total Productos</h5>
-            <h3 id="countProductos">0</h3>
-          </div>
-        </div>
+        <div class="col-md-4"><div class="tabla-container text-center"><h5>Total Facturas</h5><h3 id="countFacturas">0</h3></div></div>
+        <div class="col-md-4"><div class="tabla-container text-center"><h5>Total Proveedores</h5><h3 id="countProveedores">0</h3></div></div>
+        <div class="col-md-4"><div class="tabla-container text-center"><h5>Total Productos</h5><h3 id="countProductos">0</h3></div></div>
       </div>
     </section>
 
@@ -110,30 +93,17 @@
       <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
-          <div class="col-md-6">
-            <input type="text" id="rucProveedor" class="form-control" placeholder="RUC" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
-          </div>
+          <div class="col-md-6"><input type="text" id="rucProveedor" class="form-control" placeholder="RUC" required></div>
+          <div class="col-md-6"><input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre" required></div>
+          <div class="col-md-6"><input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección"></div>
+          <div class="col-md-6"><input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono"></div>
+          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
         </form>
       </div>
-
       <div class="tabla-container">
         <h4>Lista de Proveedores</h4>
         <table class="table table-striped">
-          <thead>
-            <tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
-          </thead>
+          <thead><tr><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
           <tbody id="tablaProveedores"></tbody>
         </table>
       </div>
@@ -144,30 +114,26 @@
       <div class="tabla-container">
         <h4>Registrar Producto</h4>
         <form id="formProducto" class="row g-3">
-          <div class="col-md-6">
-            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
-          </div>
+          <div class="col-md-6"><input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required></div>
           <div class="col-md-3">
-            <input type="number" id="cantidadProducto" class="form-control" placeholder="Cantidad" required>
+            <select id="presentacionProducto" class="form-select" required>
+              <option value="">Seleccionar presentación</option>
+              <option value="Unidad">Unidad</option>
+              <option value="Docena">Docena</option>
+              <option value="Ciento">Ciento</option>
+              <option value="Millar">Millar</option>
+            </select>
           </div>
-          <div class="col-md-3">
-            <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
-          </div>
-          <div class="col-12">
-            <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
-          </div>
+          <div class="col-md-3"><input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad" required></div>
+          <div class="col-md-3"><input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required></div>
+          <div class="col-12"><textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea></div>
+          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
         </form>
       </div>
-
       <div class="tabla-container">
         <h4>Lista de Productos</h4>
         <table class="table table-striped">
-          <thead>
-            <tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
-          </thead>
+          <thead><tr><th>Nombre</th><th>Presentación</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
           <tbody id="tablaProductos"></tbody>
         </table>
       </div>
@@ -178,61 +144,47 @@
       <div class="tabla-container">
         <h4>Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
+          <div class="col-md-4"><input type="text" id="idFactura" class="form-control" readonly></div>
+          <div class="col-md-4"><input type="date" id="fechaFactura" class="form-control" required></div>
           <div class="col-md-4">
-            <input type="text" id="idFactura" class="form-control" placeholder="ID de Factura" required>
+            <select id="tipoFactura" class="form-select" required>
+              <option value="">Seleccionar tipo</option>
+              <option value="Factura">Factura</option>
+              <option value="Boleta">Boleta</option>
+              <option value="Ticket">Ticket</option>
+              <option value="Nota de crédito">Nota de crédito</option>
+              <option value="Nota de débito">Nota de débito</option>
+            </select>
           </div>
-          <div class="col-md-4">
-            <input type="date" id="fechaFactura" class="form-control" required>
+          <div class="col-md-6" id="campoMotivo" style="display:none;">
+            <input type="text" id="motivoFactura" class="form-control" placeholder="Motivo de la nota">
           </div>
-          <div class="col-md-4">
-            <input type="number" id="montoFactura" class="form-control" placeholder="Monto" step="0.01" required>
-          </div>
-          <div class="col-md-6">
-            <select id="proveedorFactura" class="form-select" required></select>
-          </div>
-          <div class="col-md-6">
-            <select id="productoFactura" class="form-select" required></select>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="tipoFactura" class="form-control" placeholder="Tipo (Factura, Boleta...)" required>
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
-          </div>
+          <div class="col-md-6"><select id="proveedorFactura" class="form-select" required></select></div>
+          <div class="col-md-6"><select id="productoFactura" class="form-select" required></select></div>
+          <div class="col-md-4"><input type="number" id="subtotalFactura" class="form-control" placeholder="Subtotal" step="0.01" required></div>
+          <div class="col-md-4"><input type="number" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly></div>
+          <div class="col-md-4"><input type="number" id="totalFactura" class="form-control" placeholder="Total" readonly></div>
+          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
         </form>
       </div>
 
       <div class="tabla-container">
         <h4>Lista de Facturas</h4>
         <table class="table table-striped">
-          <thead>
-            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
-          </thead>
+          <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr></thead>
           <tbody id="tablaFacturas"></tbody>
         </table>
       </div>
     </section>
   </main>
 
-  <!-- Modal Factura -->
-  <dialog id="modalFactura">
-    <h4>Detalle de Factura</h4>
-    <div id="modalFacturaBody"></div>
-    <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
-  <!-- Modal Extra -->
-  <dialog id="modalExtra">
-    <div id="modalExtraBody"></div>
-    <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
-  <!-- Modal Editar -->
-  <dialog id="modalEditar">
-    <div id="modalEditarBody"></div>
-    <button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
+  <!-- Modales -->
+  <dialog id="modalFactura"><div id="modalFacturaBody"></div><button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button></dialog>
+  <dialog id="modalExtra"><div id="modalExtraBody"></div><button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button></dialog>
+  <dialog id="modalEditar"><div id="modalEditarBody"></div><button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button></dialog>
 
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
+
