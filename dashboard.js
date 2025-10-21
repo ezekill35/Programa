@@ -233,8 +233,8 @@ buscador.addEventListener("input", async ()=>{
     if(f.producto.toLowerCase().includes(texto) || f.idFactura.toLowerCase().includes(texto)){
       const div = document.createElement("div");
       div.className = "resultado-item";
-      div.textContent = `${f.idFactura} - ${f.producto}`;
-      div.addEventListener("click", ()=> mostrarModalFactura(f));
+      div.textContent = f.idFactura;
+      div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
@@ -258,6 +258,106 @@ function mostrarModalFactura(f){
   `;
   modalFactura.showModal();
 }
+
+// ===================== CLICK GLOBAL =====================
+document.addEventListener("click", async e => {
+
+  // -------- EDITAR --------
+  if(e.target.classList.contains("editar")){
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
+    const colRef = tipo === "proveedor" ? colProveedores : tipo === "producto" ? colProductos : colFacturas;
+    const snap = await getDocs(query(colRef, where("__name__", "==", id)));
+    if(!snap.empty){
+      const d = snap.docs[0].data();
+      modalEditarBody.innerHTML = "";
+      if(tipo==="proveedor"){
+        modalEditarBody.innerHTML = `
+          <h5>Editar Proveedor</h5>
+          <label>Tipo Documento</label><input class="form-control mb-1" id="editTipoDoc" value="${d.tipoDocumento||''}">
+          <label>Número</label><input class="form-control mb-1" id="editNumeroDoc" value="${d.numeroDocumento||''}">
+          <label>Nombre</label><input class="form-control mb-1" id="editNombre" value="${d.nombre||''}">
+          <label>Dirección</label><input class="form-control mb-1" id="editDireccion" value="${d.direccion||''}">
+          <label>Teléfono</label><input class="form-control mb-1" id="editTelefono" value="${d.telefono||''}">
+          <button class="btn btn-primary mt-2" id="guardarEdit">Guardar</button>`;
+      } else if(tipo==="producto"){
+        modalEditarBody.innerHTML = `
+          <h5>Editar Producto</h5>
+          <label>Nombre</label><input class="form-control mb-1" id="editNombre" value="${d.nombre||''}">
+          <label>Presentación</label><input class="form-control mb-1" id="editPresentacion" value="${d.presentacion||''}">
+          <label>Cantidad</label><input type="number" class="form-control mb-1" id="editCantidad" value="${d.cantidad||0}">
+          <label>Precio</label><input type="number" step="0.01" class="form-control mb-1" id="editPrecio" value="${d.precio||0}">
+          <label>Descripción</label><textarea class="form-control mb-1" id="editDescripcion">${d.descripcion||''}</textarea>
+          <button class="btn btn-primary mt-2" id="guardarEdit">Guardar</button>`;
+      } else if(tipo==="factura"){
+        modalEditarBody.innerHTML = `
+          <h5>Editar Factura</h5>
+          <label>ID</label><input class="form-control mb-1" id="editIdFactura" value="${d.idFactura||''}">
+          <label>Fecha</label><input type="date" class="form-control mb-1" id="editFecha" value="${d.fecha||''}">
+          <label>Proveedor</label><input class="form-control mb-1" id="editProveedor" value="${d.proveedor||''}">
+          <label>Producto</label><input class="form-control mb-1" id="editProducto" value="${d.producto||''}">
+          <label>Subtotal</label><input type="number" step="0.01" class="form-control mb-1" id="editSubtotal" value="${d.subtotal||0}">
+          <label>IGV</label><input type="number" step="0.01" class="form-control mb-1" id="editIGV" value="${d.igv||0}">
+          <label>Total</label><input type="number" step="0.01" class="form-control mb-1" id="editTotal" value="${d.total||0}">
+          <label>Tipo</label><input class="form-control mb-1" id="editTipo" value="${d.tipo||''}">
+          <button class="btn btn-primary mt-2" id="guardarEdit">Guardar</button>`;
+      }
+      modalEditar.showModal();
+
+      document.getElementById("guardarEdit").addEventListener("click", async () => {
+        const upd = {};
+        if(tipo==="proveedor"){
+          upd.tipoDocumento=document.getElementById("editTipoDoc").value;
+          upd.numeroDocumento=document.getElementById("editNumeroDoc").value;
+          upd.nombre=document.getElementById("editNombre").value;
+          upd.direccion=document.getElementById("editDireccion").value;
+          upd.telefono=document.getElementById("editTelefono").value;
+        } else if(tipo==="producto"){
+          upd.nombre=document.getElementById("editNombre").value;
+          upd.presentacion=document.getElementById("editPresentacion").value;
+          upd.cantidad=parseInt(document.getElementById("editCantidad").value);
+          upd.precio=parseFloat(document.getElementById("editPrecio").value);
+          upd.descripcion=document.getElementById("editDescripcion").value;
+        } else if(tipo==="factura"){
+          upd.idFactura=document.getElementById("editIdFactura").value;
+          upd.fecha=document.getElementById("editFecha").value;
+          upd.proveedor=document.getElementById("editProveedor").value;
+          upd.producto=document.getElementById("editProducto").value;
+          upd.subtotal=parseFloat(document.getElementById("editSubtotal").value);
+          upd.igv=parseFloat(document.getElementById("editIGV").value);
+          upd.total=parseFloat(document.getElementById("editTotal").value);
+          upd.tipo=document.getElementById("editTipo").value;
+        }
+        await updateDoc(doc(db, colRef.id, id), upd);
+        modalEditar.close();
+      });
+    }
+  }
+
+  // -------- VER DETALLES --------
+  if(e.target.classList.contains("link-info")){
+    const tipo = e.target.dataset.tipo;
+    const nombre = e.target.dataset.nombre;
+    const colRef = tipo==="proveedor"?colProveedores:colProductos;
+    const snap = await getDocs(query(colRef, where("nombre","==",nombre)));
+    if(!snap.empty){
+      const d = snap.docs[0].data();
+      modalExtraBody.innerHTML = tipo==="proveedor" ?
+        `<h5>${d.nombre}</h5>RUC: ${d.numeroDocumento}<br>Dirección: ${d.direccion||''}<br>Tel: ${d.telefono||''}` :
+        `<h5>${d.nombre}</h5>Cantidad: ${d.cantidad}<br>Presentación: ${d.presentacion}<br>Precio: ${d.precio}<br>Descripción: ${d.descripcion||''}`;
+      modalExtra.showModal();
+    }
+  }
+
+  // -------- ELIMINAR --------
+  if(e.target.classList.contains("eliminar")){
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
+    const colRef = tipo === "proveedor" ? colProveedores : tipo === "producto" ? colProductos : colFacturas;
+    if(confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db, colRef.id, id));
+  }
+
+});
 
 
 });
