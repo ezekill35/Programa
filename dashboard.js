@@ -135,17 +135,17 @@ formProveedor.addEventListener("submit", async e => {
   formProveedor.reset();
 });
 
-onSnapshot(colProveedores, snapshot=>{
-  tablaProveedores.innerHTML="";
-  snapshot.forEach(docu=>{
-    const d=docu.data();
-    const tr=document.createElement("tr");
-    tr.dataset.id=docu.id;
-    tr.innerHTML=`
-      <td>${d.ruc}</td>
-      <td>${d.nombre}</td>
-      <td>${d.direccion||""}</td>
-      <td>${d.telefono||""}</td>
+onSnapshot(colProveedores, snapshot => {
+  tablaProveedores.innerHTML = "";
+  snapshot.forEach(docu => {
+    const d = docu.data();
+    const tr = document.createElement("tr");
+    tr.dataset.id = docu.id;
+    tr.innerHTML = `
+      <td>${d.tipoDocumento || ""}</td>
+      <td>${d.nombre || ""}</td>
+      <td>${d.direccion || ""}</td>
+      <td>${d.telefono || ""}</td>
       <td>
         <button class="btn-accion editar" data-tipo="proveedor" data-id="${docu.id}">✏️</button>
         <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
@@ -153,9 +153,10 @@ onSnapshot(colProveedores, snapshot=>{
       </td>`;
     tablaProveedores.appendChild(tr);
   });
-  countProveedores.textContent=snapshot.size;
+  countProveedores.textContent = snapshot.size;
   cargarProveedoresSelect();
 });
+
 
 // ===================== PRODUCTOS =====================
 formProducto.addEventListener("submit", async e=>{
