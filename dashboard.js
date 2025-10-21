@@ -160,11 +160,14 @@ onSnapshot(colProveedores, snapshot=>{
 // ===================== PRODUCTOS =====================
 formProducto.addEventListener("submit", async e=>{
   e.preventDefault();
+  const presentacion = document.getElementById("presentacionProducto").value;
+  const cantidad = parseInt(document.getElementById("cantidadPresentacion").value);
   const data = {
     nombre: document.getElementById("nombreProducto").value.trim(),
-    cantidad: parseInt(document.getElementById("cantidadPresentacion").value), // Cambiado a cantidadPresentacion
+    cantidad,
+    presentacion,
     precio: parseFloat(document.getElementById("precioProducto").value),
-    moneda: document.getElementById("tipoMoneda").value, // Agregado para almacenar el tipo de moneda
+    moneda: document.getElementById("tipoMoneda").value,
     descripcion: document.getElementById("descripcionProducto").value.trim()
   };
   await addDoc(colProductos, data);
