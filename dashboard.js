@@ -1,6 +1,8 @@
 // ===================== FIREBASE CONFIG =====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, deleteDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, addDoc, getDocs, onSnapshot, doc, deleteDoc, query, where, updateDoc 
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -126,8 +128,8 @@ function mostrarModalFactura(f){
   modalFacturaBody.innerHTML = `
     <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
     <p><b>Fecha:</b> ${f.fecha}</p>
-    <p><b>Proveedor:</b> <span class="link-info" id="verProveedor" data-nombre="${f.proveedor}">${f.proveedor}</span></p>
-    <p><b>Producto:</b> <span class="link-info" id="verProducto" data-nombre="${f.producto}">${f.producto}</span></p>
+    <p><b>Proveedor:</b> <span class="link-info ver-detalle" data-tipo="proveedor" data-nombre="${f.proveedor}">${f.proveedor}</span></p>
+    <p><b>Producto:</b> <span class="link-info ver-detalle" data-tipo="producto" data-nombre="${f.producto}">${f.producto}</span></p>
     <p><b>Subtotal:</b> S/. ${parseFloat(f.monto).toFixed(2)}</p>
     <p><b>IGV:</b> S/. ${igv}</p>
     <p><b>Total:</b> S/. ${total}</p>
@@ -136,41 +138,37 @@ function mostrarModalFactura(f){
 
   modalFactura.showModal();
 
-  // ===== EVENTOS DINÁMICOS =====
-  const linkProv = document.getElementById("verProveedor");
-  const linkProd = document.getElementById("verProducto");
-
-  linkProv.addEventListener("click", async () => {
-    const nombre = linkProv.dataset.nombre;
-    const snap = await getDocs(query(colProveedores, where("nombre","==",nombre)));
-    if(!snap.empty){
-      const d = snap.docs[0].data();
-      panelFlotante.innerHTML = `
-        <h5>Proveedor: ${d.nombre}</h5>
-        <p><b>Tipo Documento:</b> ${d.tipoDocumento||''}</p>
-        <p><b>RUC / DNI:</b> ${d.ruc||''}</p>
-        <p><b>Dirección:</b> ${d.direccion||''}</p>
-        <p><b>Teléfono:</b> ${d.telefono||''}</p>
-      `;
-      panelFlotante.appendChild(cerrarPanel);
-      panelFlotante.style.right="0";
-    }
-  });
-
-  linkProd.addEventListener("click", async () => {
-    const nombre = linkProd.dataset.nombre;
-    const snap = await getDocs(query(colProductos, where("nombre","==",nombre)));
-    if(!snap.empty){
-      const d = snap.docs[0].data();
-      panelFlotante.innerHTML = `
-        <h5>Producto: ${d.nombre}</h5>
-        <p><b>Presentación:</b> ${d.cantidad} ${d.presentacion}</p>
-        <p><b>Precio:</b> S/. ${parseFloat(d.precio).toFixed(2)}</p>
-        <p><b>Descripción:</b> ${d.descripcion||''}</p>
-      `;
-      panelFlotante.appendChild(cerrarPanel);
-      panelFlotante.style.right="0";
-    }
+  // ===================== LISTENER DINÁMICO =====================
+  modalFacturaBody.querySelectorAll(".ver-detalle").forEach(el => {
+    el.addEventListener("click", async () => {
+      const tipo = el.dataset.tipo;
+      const nombre = el.dataset.nombre;
+      let snap;
+      if(tipo==="proveedor") snap = await getDocs(query(colProveedores, where("nombre","==",nombre)));
+      if(tipo==="producto") snap = await getDocs(query(colProductos, where("nombre","==",nombre)));
+      
+      if(!snap.empty){
+        const d = snap.docs[0].data();
+        if(tipo==="proveedor"){
+          panelFlotante.innerHTML = `
+            <h5>Proveedor: ${d.nombre}</h5>
+            <p><b>Tipo Documento:</b> ${d.tipoDocumento||''}</p>
+            <p><b>RUC / DNI:</b> ${d.ruc||''}</p>
+            <p><b>Dirección:</b> ${d.direccion||''}</p>
+            <p><b>Teléfono:</b> ${d.telefono||''}</p>
+          `;
+        } else if(tipo==="producto"){
+          panelFlotante.innerHTML = `
+            <h5>Producto: ${d.nombre}</h5>
+            <p><b>Presentación:</b> ${d.cantidad} ${d.presentacion||''}</p>
+            <p><b>Precio:</b> S/. ${parseFloat(d.precio).toFixed(2)}</p>
+            <p><b>Descripción:</b> ${d.descripcion||''}</p>
+          `;
+        }
+        panelFlotante.appendChild(cerrarPanel);
+        panelFlotante.style.right="0";
+      }
+    });
   });
 }
 
@@ -278,8 +276,8 @@ onSnapshot(colFacturas, snapshot=>{
     tr.innerHTML=`
       <td>${f.idFactura||''}</td>
       <td>${f.fecha||''}</td>
-      <td><span class="link-info" data-nombre="${f.proveedor}">${f.proveedor||''}</span></td>
-      <td><span class="link-info" data-nombre="${f.producto}">${f.producto||''}</span></td>
+      <td><span class="link-info ver-detalle" data-tipo="proveedor" data-nombre="${f.proveedor}">${f.proveedor||''}</span></td>
+      <td><span class="link-info ver-detalle" data-tipo="producto" data-nombre="${f.producto}">${f.producto||''}</span></td>
       <td>S/. ${parseFloat(f.monto||0).toFixed(2)}</td>
       <td>S/. ${igv}</td>
       <td>S/. ${total}</td>
@@ -292,8 +290,31 @@ onSnapshot(colFacturas, snapshot=>{
     tablaFacturas.appendChild(tr);
 
     // click en tabla de facturas para abrir modal
-    tr.querySelectorAll(".link-info").forEach(el=>{
-      el.addEventListener("click", ()=>mostrarModalFactura(f));
+    tr.querySelectorAll(".ver-detalle").forEach(el=>{
+      el.addEventListener("click", async ()=>{
+        const tipo = el.dataset.tipo;
+        const nombre = el.dataset.nombre;
+        let snap;
+        if(tipo==="proveedor") snap = await getDocs(query(colProveedores, where("nombre","==",nombre)));
+        if(tipo==="producto") snap = await getDocs(query(colProductos, where("nombre","==",nombre)));
+        if(!snap.empty){
+          const d = snap.docs[0].data();
+          panelFlotante.innerHTML = tipo==="proveedor" ? `
+            <h5>Proveedor: ${d.nombre}</h5>
+            <p><b>Tipo Documento:</b> ${d.tipoDocumento||''}</p>
+            <p><b>RUC / DNI:</b> ${d.ruc||''}</p>
+            <p><b>Dirección:</b> ${d.direccion||''}</p>
+            <p><b>Teléfono:</b> ${d.telefono||''}</p>
+          ` : `
+            <h5>Producto: ${d.nombre}</h5>
+            <p><b>Presentación:</b> ${d.cantidad} ${d.presentacion||''}</p>
+            <p><b>Precio:</b> S/. ${parseFloat(d.precio).toFixed(2)}</p>
+            <p><b>Descripción:</b> ${d.descripcion||''}</p>
+          `;
+          panelFlotante.appendChild(cerrarPanel);
+          panelFlotante.style.right="0";
+        }
+      });
     });
   });
   countFacturas.textContent = snapshot.size;
@@ -389,4 +410,5 @@ document.addEventListener("click", async e=>{
     await deleteDoc(doc(db,colNombre,id));
   }
 });
+
 
