@@ -182,7 +182,7 @@ onSnapshot(colProductos, snapshot=>{
     tr.dataset.id=docu.id;
     tr.innerHTML=`
       <td>${d.nombre}</td>
-      <td>${d.cantidad}</td>
+      <td>${d.cantidad || 0} ${d.presentacion || ''}</td>
       <td>${d.moneda === 'soles' ? 'S/. ' : '$ '}${d.precio}</td> <!-- Mostrar el tipo de moneda -->
       <td style="white-space: pre-line;">${d.descripcion||""}</td>
       <td>
