@@ -32,10 +32,8 @@ const colFacturas = collection(db, "facturas");
 // ===================== ELEMENTOS =====================
 const formProveedor = document.getElementById("formProveedor");
 const tablaProveedores = document.getElementById("tablaProveedores");
-
 const formProducto = document.getElementById("formProducto");
 const tablaProductos = document.getElementById("tablaProductos");
-
 const formFactura = document.getElementById("formFactura");
 const tablaFacturas = document.getElementById("tablaFacturas");
 
@@ -50,32 +48,49 @@ const modalFactura = document.getElementById("modalFactura");
 const modalFacturaBody = document.getElementById("modalFacturaBody");
 const cerrarModalFactura = document.getElementById("cerrarModalFactura");
 
-const modalExtra = document.getElementById("modalExtra");
-const modalExtraBody = document.getElementById("modalExtraBody");
-const cerrarModalExtra = document.getElementById("cerrarModalExtra");
-
 const modalEditar = document.getElementById("modalEditar");
 const modalEditarBody = document.getElementById("modalEditarBody");
 const cerrarModalEditar = document.getElementById("cerrarModalEditar");
 
-const toastContainer = document.getElementById("toastContainer");
+const panelFlotante = document.createElement("div");
+panelFlotante.id = "panelFlotante";
+panelFlotante.style.cssText = `
+  position:fixed; top:0; right:-400px; width:350px; height:100%; background:#fff;
+  box-shadow:-4px 0 15px rgba(0,0,0,0.2); padding:1.5rem; transition:0.4s; overflow-y:auto; z-index:1100;
+  border-radius:15px 0 0 15px;
+`;
+document.body.appendChild(panelFlotante);
+const cerrarPanel = document.createElement("button");
+cerrarPanel.textContent = "Cerrar";
+cerrarPanel.className = "btn btn-secondary mt-3";
+cerrarPanel.addEventListener("click", ()=>panelFlotante.style.right="-400px");
+panelFlotante.appendChild(cerrarPanel);
 
-// ===================== FUNCIONES AUXILIARES =====================
-function showToast(message, color="#14b8a6"){
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.style.backgroundColor = color;
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-  setTimeout(()=>toast.classList.add("show"),50);
-  setTimeout(()=>{ toast.classList.remove("show"); setTimeout(()=>toast.remove(),500); },3000);
-}
+// ===================== CERRAR SESIÓN =====================
+document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+});
 
+// ===================== NAVEGACIÓN =====================
+document.querySelectorAll(".nav-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("activo"));
+    document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
+    btn.classList.add("activo");
+    document.getElementById(btn.dataset.target).classList.add("activa");
+
+    if(btn.dataset.target === "facturas") buscador.style.display = "block";
+    else { buscador.style.display = "none"; buscador.value=""; panelFacturas.innerHTML=""; }
+  });
+});
+
+// ===================== AUXILIARES =====================
 async function cargarProveedoresSelect(){
   const select = document.getElementById("proveedorFactura");
   select.innerHTML = '<option value="">Seleccionar proveedor</option>';
   const snap = await getDocs(colProveedores);
-  snap.forEach(d=>{
+  snap.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d.data().nombre;
     opt.textContent = d.data().nombre;
@@ -87,56 +102,41 @@ async function cargarProductosSelect(){
   const select = document.getElementById("productoFactura");
   select.innerHTML = '<option value="">Seleccionar producto</option>';
   const snap = await getDocs(colProductos);
-  snap.forEach(d=>{
-    const data = d.data();
+  snap.forEach(d => {
     const opt = document.createElement("option");
-    opt.value = data.nombre;
-    opt.textContent = `${data.nombre} (${data.cantidad} ${data.presentacion})`;
+    opt.value = d.data().nombre;
+    opt.textContent = d.data().nombre;
     select.appendChild(opt);
   });
 }
 
-// ===================== MODAL FACTURA =====================
+function calcularIGV(subtotal){
+  return (subtotal*0.18).toFixed(2);
+}
+function calcularTotal(subtotal){
+  return (parseFloat(subtotal)+parseFloat(calcularIGV(subtotal))).toFixed(2);
+}
+
+// ===================== MOSTRAR MODAL FACTURA =====================
 function mostrarModalFactura(f){
-  const igv = (f.monto*0.18).toFixed(2);
-  const total = (parseFloat(f.monto)+parseFloat(igv)).toFixed(2);
+  const igv = calcularIGV(f.monto);
+  const total = calcularTotal(f.monto);
   modalFacturaBody.innerHTML = `
-    <div style="padding:1rem; border-radius:15px; background: linear-gradient(145deg, #ffffff, #e0f7fa); box-shadow: 5px 5px 15px rgba(0,0,0,0.2);">
-      <h5>ID Factura: <span class="text-primary">${f.idFactura}</span></h5>
-      <p><strong>Fecha:</strong> ${f.fecha}</p>
-      <p><strong>Proveedor:</strong> ${f.proveedor}</p>
-      <p><strong>Producto:</strong> ${f.producto}</p>
-      <hr style="border-top:1px solid #0284c7;">
-      <p><strong>Subtotal:</strong> S/ ${parseFloat(f.monto).toFixed(2)}</p>
-      <p><strong>IGV (18%):</strong> S/ ${igv}</p>
-      <p><strong>Total:</strong> S/ ${total}</p>
-      <p><strong>Tipo de Documento:</strong> ${f.tipo}</p>
-    </div>
+    <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
+    <p><b>Fecha:</b> ${f.fecha}</p>
+    <p><b>Proveedor:</b> <span class="link-info ver-proveedor" data-nombre="${f.proveedor}">${f.proveedor}</span></p>
+    <p><b>Producto:</b> <span class="link-info ver-producto" data-nombre="${f.producto}">${f.producto}</span></p>
+    <p><b>Subtotal:</b> S/. ${parseFloat(f.monto).toFixed(2)}</p>
+    <p><b>IGV:</b> S/. ${igv}</p>
+    <p><b>Total:</b> S/. ${total}</p>
+    <p><b>Tipo:</b> ${f.tipo}</p>
   `;
   modalFactura.showModal();
 }
 
+// ===================== CERRAR MODALES =====================
 cerrarModalFactura.addEventListener("click", ()=>modalFactura.close());
-cerrarModalExtra.addEventListener("click", ()=>modalExtra.close());
 cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
-
-// ===================== CERRAR SESIÓN =====================
-document.getElementById("btnCerrarSesion").addEventListener("click", async ()=>{
-  await signOut(auth);
-  window.location.href = "index.html";
-});
-
-// ===================== NAVEGACIÓN =====================
-document.querySelectorAll(".nav-btn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("activo"));
-    document.querySelectorAll(".seccion").forEach(s=>s.classList.remove("activa"));
-    btn.classList.add("activo");
-    document.getElementById(btn.dataset.target).classList.add("activa");
-    if(btn.dataset.target==="facturas") buscador.style.display="block";
-    else { buscador.style.display="none"; buscador.value=""; panelFacturas.innerHTML=""; }
-  });
-});
 
 // ===================== PROVEEDORES =====================
 formProveedor.addEventListener("submit", async e=>{
@@ -148,17 +148,16 @@ formProveedor.addEventListener("submit", async e=>{
     direccion: document.getElementById("direccionProveedor").value.trim(),
     telefono: document.getElementById("telefonoProveedor").value.trim()
   };
-  await addDoc(colProveedores,data);
+  await addDoc(colProveedores, data);
   formProveedor.reset();
-  showToast("Proveedor registrado");
 });
 
 onSnapshot(colProveedores, snapshot=>{
   tablaProveedores.innerHTML="";
   snapshot.forEach(docu=>{
-    const d = docu.data();
-    const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
+    const d=docu.data();
+    const tr=document.createElement("tr");
+    tr.dataset.id=docu.id;
     tr.innerHTML=`
       <td>${d.tipoDocumento}</td>
       <td>${d.ruc}</td>
@@ -167,20 +166,17 @@ onSnapshot(colProveedores, snapshot=>{
       <td>${d.telefono||""}</td>
       <td>
         <button class="btn-accion editar" data-tipo="proveedor" data-id="${docu.id}">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
-        <button class="btn-accion eliminar" data-tipo="proveedor" data-id="${docu.id}">🗑️</button>
-      </td>
-    `;
+      </td>`;
     tablaProveedores.appendChild(tr);
   });
-  countProveedores.textContent = snapshot.size;
+  countProveedores.textContent=snapshot.size;
   cargarProveedoresSelect();
 });
 
 // ===================== PRODUCTOS =====================
 formProducto.addEventListener("submit", async e=>{
   e.preventDefault();
-  const data = {
+  const data={
     nombre: document.getElementById("nombreProducto").value.trim(),
     presentacion: document.getElementById("presentacionProducto").value,
     cantidad: parseInt(document.getElementById("cantidadPresentacion").value),
@@ -189,37 +185,33 @@ formProducto.addEventListener("submit", async e=>{
   };
   await addDoc(colProductos,data);
   formProducto.reset();
-  showToast("Producto registrado");
 });
 
 onSnapshot(colProductos, snapshot=>{
   tablaProductos.innerHTML="";
   snapshot.forEach(docu=>{
-    const d = docu.data();
-    const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
+    const d=docu.data();
+    const tr=document.createElement("tr");
+    tr.dataset.id=docu.id;
     tr.innerHTML=`
       <td>${d.nombre}</td>
       <td>${d.cantidad} ${d.presentacion}</td>
-      <td>${d.precio}</td>
+      <td>S/. ${parseFloat(d.precio).toFixed(2)}</td>
       <td>${d.descripcion||""}</td>
       <td>
         <button class="btn-accion editar" data-tipo="producto" data-id="${docu.id}">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="producto" data-nombre="${d.nombre}">🔍</button>
-        <button class="btn-accion eliminar" data-tipo="producto" data-id="${docu.id}">🗑️</button>
-      </td>
-    `;
+      </td>`;
     tablaProductos.appendChild(tr);
   });
-  countProductos.textContent = snapshot.size;
+  countProductos.textContent=snapshot.size;
   cargarProductosSelect();
 });
 
 // ===================== FACTURAS =====================
 formFactura.addEventListener("submit", async e=>{
   e.preventDefault();
-  const data = {
-    idFactura: document.getElementById("idFactura").value || Date.now().toString(),
+  const data={
+    idFactura: document.getElementById("idFactura").value.trim(),
     fecha: document.getElementById("fechaFactura").value,
     proveedor: document.getElementById("proveedorFactura").value,
     producto: document.getElementById("productoFactura").value,
@@ -228,50 +220,44 @@ formFactura.addEventListener("submit", async e=>{
   };
   await addDoc(colFacturas,data);
   formFactura.reset();
-  showToast("Factura registrada");
 });
 
-onSnapshot(colFacturas, snapshot=>{
+onSnapshot(colFacturas,snapshot=>{
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
-    const f = docu.data();
-    const igv = (f.monto*0.18).toFixed(2);
-    const total = (parseFloat(f.monto)+parseFloat(igv)).toFixed(2);
-    const tr = document.createElement("tr");
-    tr.dataset.id = docu.id;
+    const f=docu.data();
+    const tr=document.createElement("tr");
+    tr.dataset.id=docu.id;
     tr.innerHTML=`
       <td>${f.idFactura}</td>
       <td>${f.fecha}</td>
       <td>${f.proveedor}</td>
       <td>${f.producto}</td>
-      <td>${f.monto.toFixed(2)}</td>
-      <td>${igv}</td>
-      <td>${total}</td>
+      <td>S/. ${parseFloat(f.monto).toFixed(2)}</td>
+      <td>S/. ${calcularIGV(f.monto)}</td>
+      <td>S/. ${calcularTotal(f.monto)}</td>
       <td>${f.tipo}</td>
       <td>
         <button class="btn-accion editar" data-tipo="factura" data-id="${docu.id}">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="factura" data-id="${docu.id}">🔍</button>
-        <button class="btn-accion eliminar" data-tipo="factura" data-id="${docu.id}">🗑️</button>
-      </td>
-    `;
+        <button class="btn-accion ver" data-id="${docu.id}">🔍</button>
+      </td>`;
     tablaFacturas.appendChild(tr);
   });
-  countFacturas.textContent = snapshot.size;
+  countFacturas.textContent=snapshot.size;
 });
 
 // ===================== BUSCADOR =====================
-buscador.style.display="none";
 buscador.addEventListener("input", async ()=>{
-  const texto = buscador.value.trim().toLowerCase();
-  panelFacturas.innerHTML = "";
+  const texto=buscador.value.trim().toLowerCase();
+  panelFacturas.innerHTML="";
   if(!texto) return;
-  const snap = await getDocs(colFacturas);
+  const snap=await getDocs(colFacturas);
   snap.forEach(docu=>{
-    const f = docu.data();
-    if(f.producto.toLowerCase().includes(texto)){
-      const div = document.createElement("div");
-      div.className = "resultado-item";
-      div.textContent = f.idFactura;
+    const f=docu.data();
+    if(f.producto.toLowerCase().includes(texto) || f.proveedor.toLowerCase().includes(texto) || f.idFactura.toLowerCase().includes(texto)){
+      const div=document.createElement("div");
+      div.className="resultado-item";
+      div.textContent=`Factura ${f.idFactura}`;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
@@ -298,7 +284,7 @@ document.addEventListener("click", async e=>{
         tipo==="producto"?`
           <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
           <label>Cantidad</label><input id="editCantidad" type="number" class="form-control mb-1" value="${d.cantidad||0}">
-          <label>Presentación</label><input id="editPres" class="form-control mb-1" value="${d.presentacion||''}">
+          <label>Presentación</label><input id="editPresentacion" class="form-control mb-1" value="${d.presentacion||''}">
           <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio||0}">
           <label>Descripción</label><textarea id="editDesc" class="form-control mb-1">${d.descripcion||''}</textarea>`:
         tipo==="factura"?`
@@ -306,11 +292,12 @@ document.addEventListener("click", async e=>{
           <label>Fecha</label><input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha||''}">
           <label>Proveedor</label><input id="editProv" class="form-control mb-1" value="${d.proveedor||''}">
           <label>Producto</label><input id="editProd" class="form-control mb-1" value="${d.producto||''}">
-          <label>Subtotal</label><input id="editMonto" type="number" step="0.01" class="form-control mb-1" value="${d.monto||0}">
+          <label>Monto</label><input id="editMonto" type="number" step="0.01" class="form-control mb-1" value="${d.monto||0}">
           <label>Tipo</label><input id="editTipo" class="form-control mb-1" value="${d.tipo||''}">`:``}
         <button id="guardarEdit" class="btn btn-primary mt-2">Guardar</button>
       `;
       modalEditar.showModal();
+
       const btnGuardar = document.getElementById("guardarEdit");
       btnGuardar.replaceWith(btnGuardar.cloneNode(true));
       document.getElementById("guardarEdit").addEventListener("click", async ()=>{
@@ -323,7 +310,7 @@ document.addEventListener("click", async e=>{
         } else if(tipo==="producto"){
           upd.nombre=document.getElementById("editNombre").value.trim();
           upd.cantidad=parseInt(document.getElementById("editCantidad").value);
-          upd.presentacion=document.getElementById("editPres").value;
+          upd.presentacion=document.getElementById("editPresentacion").value;
           upd.precio=parseFloat(document.getElementById("editPrecio").value);
           upd.descripcion=document.getElementById("editDesc").value.trim();
         } else if(tipo==="factura"){
@@ -340,35 +327,49 @@ document.addEventListener("click", async e=>{
     }
   }
 
-  // --------- ELIMINAR ---------
-  if(e.target.classList.contains("eliminar")){
-    const tipo = e.target.dataset.tipo;
-    const id = e.target.dataset.id;
-    let colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
-    if(confirm("¿Eliminar este registro?")){
-      await deleteDoc(doc(db,colNombre,id));
-      showToast("Registro eliminado","#dc2626");
-    }
-  }
-
   // --------- VER DETALLE FACTURA ---------
-  if(e.target.classList.contains("ver") && e.target.dataset.tipo==="factura"){
+  if(e.target.classList.contains("ver")){
     const id = e.target.dataset.id;
-    const snap = await getDocs(query(colFacturas,where("__name__","==",id)));
+    const snap = await getDocs(query(colFacturas, where("__name","==",id)));
     if(!snap.empty){
       mostrarModalFactura(snap.docs[0].data());
     }
   }
 
-  // --------- LINK "NO ENCUENTRAS" ---------
-  if(e.target.id==="agregarProveedorFactura"){
-    modalExtraBody.innerHTML=document.getElementById("proveedores").innerHTML;
-    modalExtra.showModal();
+  // --------- PANEL FLOTANTE PROVEEDOR/PRODUCTO ---------
+  if(e.target.classList.contains("ver-proveedor")){
+    const nombre = e.target.dataset.nombre;
+    const snap = await getDocs(query(colProveedores, where("nombre","==",nombre)));
+    if(!snap.empty){
+      const d = snap.docs[0].data();
+      panelFlotante.innerHTML=`
+        <h5>Proveedor: ${d.nombre}</h5>
+        <p><b>Tipo Documento:</b> ${d.tipoDocumento}</p>
+        <p><b>RUC / DNI:</b> ${d.ruc}</p>
+        <p><b>Dirección:</b> ${d.direccion||""}</p>
+        <p><b>Teléfono:</b> ${d.telefono||""}</p>
+      `;
+      panelFlotante.appendChild(cerrarPanel);
+      panelFlotante.style.right="0";
+    }
   }
-  if(e.target.id==="agregarProductoFactura"){
-    modalExtraBody.innerHTML=document.getElementById("productos").innerHTML;
-    modalExtra.showModal();
+
+  if(e.target.classList.contains("ver-producto")){
+    const nombre = e.target.dataset.nombre;
+    const snap = await getDocs(query(colProductos, where("nombre","==",nombre)));
+    if(!snap.empty){
+      const d = snap.docs[0].data();
+      panelFlotante.innerHTML=`
+        <h5>Producto: ${d.nombre}</h5>
+        <p><b>Presentación:</b> ${d.cantidad} ${d.presentacion}</p>
+        <p><b>Precio:</b> S/. ${parseFloat(d.precio).toFixed(2)}</p>
+        <p><b>Descripción:</b> ${d.descripcion||""}</p>
+      `;
+      panelFlotante.appendChild(cerrarPanel);
+      panelFlotante.style.right="0";
+    }
   }
 });
+
 
 
