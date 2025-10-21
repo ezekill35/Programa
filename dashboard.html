@@ -1,294 +1,345 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Dashboard · Discovery Pets</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discovery Pets · Dashboard</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: "Inter", sans-serif;
-      background: #f1f5f9;
-      color: #1e293b;
-      padding: 0;
-      margin: 0;
+    /* Fondo animado 3D premium */
+    :root{
+      --c1: #0ea5a4;
+      --c2: #60a5fa;
+      --c3: #7dd3fc;
+      --card-bg: rgba(255,255,255,0.85);
+      --glass: rgba(255,255,255,0.06);
     }
-    header {
-      background: linear-gradient(90deg, #2563eb, #0891b2);
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(14,165,164,0.12), transparent 10%),
+                  radial-gradient(900px 450px at 90% 90%, rgba(96,165,250,0.12), transparent 10%),
+                  linear-gradient(135deg,var(--c1), var(--c2) 40%, var(--c3) 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+      display:flex;
     }
-    header h1 {
-      font-weight: 700;
-      margin: 0;
+
+    /* Layout */
+    .sidebar {
+      width: 260px;
+      padding: 1.6rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      backdrop-filter: blur(6px);
+      color: #fff;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 12px 12px 40px rgba(2,6,23,0.18), inset -4px -6px 18px rgba(255,255,255,0.03);
+      border-radius: 0 30px 30px 0;
+      position:fixed;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      gap:0.6rem;
+      transform: translateZ(0);
     }
-    .btn-cerrar {
-      background: #ef4444;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: 0.3s;
+    .brand {
+      text-align:center; margin-bottom:0.6rem;
     }
-    .btn-cerrar:hover {
-      background: #dc2626;
-    }
-    nav {
-      background: white;
-      display: flex;
-      justify-content: center;
-      border-bottom: 1px solid #e2e8f0;
-    }
+    .brand h3 { margin:0; font-weight:800; color:#e6f7f7; letter-spacing:0.4px; }
     .nav-btn {
-      background: none;
-      border: none;
-      padding: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: #475569;
-      transition: 0.3s;
+      display:block; width:100%; background:transparent; color:rgba(255,255,255,0.95); border:none;
+      text-align:left; padding:0.8rem 1rem; border-radius:12px; margin-bottom:0.35rem;
+      font-size:15px; transition:all .22s ease; cursor:pointer; box-shadow: 0 6px 18px rgba(2,6,23,0.08);
     }
-    .nav-btn:hover, .nav-btn.activo {
-      color: #2563eb;
-      border-bottom: 3px solid #2563eb;
-    }
+    .nav-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.04); }
+    .nav-btn.activo { background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); box-shadow: 0 12px 30px rgba(2,6,23,0.12); }
+
     main {
+      margin-left: 300px;
       padding: 2rem;
-    }
-    .seccion { display: none; }
-    .seccion.activa { display: block; }
-
-    form {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      margin-bottom: 1.5rem;
+      width:100%;
     }
 
-    table {
-      width: 100%;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    .header-bar { display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.6rem; }
+    .header-left { display:flex; gap:1rem; align-items:center; }
+    .search-wrap { max-width:420px; width:100%; }
+
+    /* Cards 3D */
+    .panel {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 1.3rem;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+      border: 1px solid rgba(255,255,255,0.6);
+      transform: translateZ(0);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .panel:hover { transform: translateY(-6px); box-shadow: 0 22px 48px rgba(2,6,23,0.16); }
+
+    .tabla-container { margin-bottom:1.2rem; }
+
+    .btn-accion { background:transparent; border:none; cursor:pointer; font-size:1rem; margin-right:6px; transition:transform .15s; }
+    .btn-accion:hover { transform:scale(1.15); }
+
+    .resultado-item { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border-radius:10px; padding:0.65rem; margin-bottom:6px; cursor:pointer; transition:transform .12s; }
+    .resultado-item:hover { transform: translateX(6px); }
+
+    dialog { border:none; border-radius:14px; padding:1.2rem; max-width:520px; width:92%; box-shadow:0 10px 40px rgba(2,6,23,0.24); }
+    dialog::backdrop { background: rgba(2,6,23,0.45); }
+
+    /* Responsive */
+    @media(max-width:900px){
+      .sidebar { position:relative; width:100%; height:auto; border-radius:0; flex-direction:row; flex-wrap:wrap; justify-content:center; gap:0.5rem; }
+      main { margin-left:0; padding:1rem; }
     }
 
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #f8fafc;
-      color: #475569;
-    }
-    .btn-accion {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-    .resultado-item {
-      background: white;
-      padding: 0.5rem 1rem;
-      margin-bottom: 5px;
-      border-radius: 6px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-      cursor: pointer;
-    }
-    .resultado-item:hover {
-      background: #f1f5f9;
-    }
-    dialog {
-      border: none;
-      border-radius: 10px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
+    /* small helpers */
+    .muted { color:#475569; }
+    .accent { color:#075985; font-weight:700; }
+    .tiny { font-size:0.85rem; color:#334155; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Discovery Pets · Dashboard</h1>
-    <button id="btnCerrarSesion" class="btn-cerrar">Cerrar sesión</button>
-  </header>
 
-  <nav>
-    <button class="nav-btn activo" data-target="proveedores">Proveedores</button>
-    <button class="nav-btn" data-target="productos">Productos</button>
-    <button class="nav-btn" data-target="facturas">Facturas</button>
-  </nav>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h3>Discovery Pets</h3>
+      <div class="tiny">Dashboard administrativo</div>
+    </div>
+
+    <button class="nav-btn activo" data-target="dashboard">📊 Dashboard</button>
+    <button class="nav-btn" data-target="proveedores">🏢 Proveedores</button>
+    <button class="nav-btn" data-target="productos">📦 Productos</button>
+    <button class="nav-btn" data-target="facturas">🧾 Facturas</button>
+
+    <div style="flex:1"></div>
+    <button id="btnCerrarSesion" class="nav-btn" style="margin-top:auto">🚪 Cerrar sesión</button>
+  </aside>
 
   <main>
-    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar factura por producto..." style="max-width:400px; display:none;">
-    <div id="searchResults"></div>
+    <div class="header-bar">
+      <div class="header-left">
+        <h2 class="fw-bold text-dark">Panel General</h2>
+        <div class="tiny muted">Control en tiempo real · Discovery Pets</div>
+      </div>
 
-    <!-- ================== PROVEEDORES ================== -->
-    <section id="proveedores" class="seccion activa">
-      <h3>Registrar proveedor</h3>
-      <form id="formProveedor">
-        <div class="row g-2">
-          <div class="col-md-4">
-            <label>Tipo de Documento</label>
-            <select id="tipoDocumentoProveedor" class="form-select">
-              <option value="RUC">RUC</option>
-              <option value="DNI">DNI</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label>RUC / DNI</label>
-            <input type="text" id="rucProveedor" class="form-control" required>
-          </div>
-          <div class="col-md-4">
-            <label>Nombre</label>
-            <input type="text" id="nombreProveedor" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label>Dirección</label>
-            <input type="text" id="direccionProveedor" class="form-control">
-          </div>
-          <div class="col-md-6">
-            <label>Teléfono</label>
-            <input type="text" id="telefonoProveedor" class="form-control">
+      <div class="search-wrap">
+        <input id="searchInput" class="form-control" placeholder="Buscar facturas por producto o ID..." />
+      </div>
+    </div>
+
+    <div id="searchResults" class="mb-3"></div>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="seccion activa">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="panel text-center">
+            <div class="tiny muted">Total Facturas</div>
+            <h3 id="countFacturas" class="accent">0</h3>
           </div>
         </div>
-        <button class="btn btn-primary mt-3">Guardar proveedor</button>
-      </form>
-
-      <h4>Lista de proveedores (<span id="countProveedores">0</span>)</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Tipo Doc</th><th>RUC</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaProveedores"></tbody>
-      </table>
+        <div class="col-md-4">
+          <div class="panel text-center">
+            <div class="tiny muted">Total Proveedores</div>
+            <h3 id="countProveedores" class="accent">0</h3>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel text-center">
+            <div class="tiny muted">Total Productos</div>
+            <h3 id="countProductos" class="accent">0</h3>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- ================== PRODUCTOS ================== -->
-    <section id="productos" class="seccion">
-      <h3>Registrar producto</h3>
-      <form id="formProducto">
-        <div class="row g-2">
-          <div class="col-md-6">
-            <label>Nombre del producto</label>
-            <input type="text" id="nombreProducto" class="form-control" required>
-          </div>
-          <div class="col-md-3">
-            <label>Presentación</label>
-            <select id="presentacionProducto" class="form-select">
-              <option value="Unidad">Unidad</option>
-              <option value="Caja">Caja</option>
-              <option value="Paquete">Paquete</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label>Cantidad</label>
-            <input type="number" id="cantidadPresentacion" class="form-control" min="1" value="1" required>
-          </div>
+    <!-- Proveedores -->
+    <section id="proveedores" class="seccion">
+      <div class="panel tabla-container">
+        <h4>Registrar Proveedor</h4>
+        <form id="formProveedor" class="row g-3">
           <div class="col-md-4">
-            <label>Precio</label>
-            <input type="number" step="0.01" id="precioProducto" class="form-control" required>
+            <select id="tipoDocumentoProveedor" class="form-select" required>
+              <option value="">Tipo de documento</option>
+              <option>RUC</option>
+              <option>DNI</option>
+              <option>Pasaporte</option>
+              <option>CE</option>
+              <option>Otros</option>
+            </select>
           </div>
           <div class="col-md-8">
-            <label>Descripción</label>
-            <textarea id="descripcionProducto" class="form-control" rows="2"></textarea>
+            <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
           </div>
-        </div>
-        <button class="btn btn-primary mt-3">Guardar producto</button>
-      </form>
 
-      <h4>Lista de productos (<span id="countProductos">0</span>)</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Nombre</th><th>Cantidad / Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaProductos"></tbody>
-      </table>
+          <div class="col-md-6">
+            <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel tabla-container">
+        <h4>Lista de Proveedores</h4>
+        <table class="table table-borderless align-middle">
+          <thead>
+            <tr><th>Tipo</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- ================== FACTURAS ================== -->
-    <section id="facturas" class="seccion">
-      <h3>Registrar factura</h3>
-      <form id="formFactura">
-        <div class="row g-2">
-          <div class="col-md-3">
-            <label>ID Factura</label>
-            <input type="text" id="idFactura" class="form-control" required>
+    <!-- Productos -->
+    <section id="productos" class="seccion">
+      <div class="panel tabla-container">
+        <h4>Registrar Producto</h4>
+        <form id="formProducto" class="row g-3">
+          <div class="col-md-5">
+            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
           </div>
           <div class="col-md-3">
-            <label>Fecha</label>
+            <select id="presentacionProducto" class="form-select" required>
+              <option value="">Presentación</option>
+              <option>Unidad</option>
+              <option>Docena</option>
+              <option>Ciento</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cant." required>
+          </div>
+          <div class="col-md-2">
+            <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
+          </div>
+
+          <div class="col-12">
+            <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel tabla-container">
+        <h4>Lista de Productos</h4>
+        <table class="table table-borderless align-middle">
+          <thead>
+            <tr><th>Nombre</th><th>Presentación</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaProductos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Facturas -->
+    <section id="facturas" class="seccion">
+      <div class="panel tabla-container">
+        <h4>Registrar Factura</h4>
+        <form id="formFactura" class="row g-3">
+          <div class="col-md-3">
+            <input type="text" id="idFactura" class="form-control" placeholder="ID (opcional)" >
+          </div>
+          <div class="col-md-3">
             <input type="date" id="fechaFactura" class="form-control" required>
           </div>
           <div class="col-md-3">
-            <label>Proveedor</label>
-            <select id="proveedorFactura" class="form-select"></select>
-          </div>
-          <div class="col-md-3">
-            <label>Producto</label>
-            <select id="productoFactura" class="form-select"></select>
-          </div>
-          <div class="col-md-2">
-            <label>Tipo moneda</label>
-            <select id="monedaFactura" class="form-select">
-              <option value="S/.">Soles</option>
-              <option value="$">Dólares</option>
+            <select id="tipoFactura" class="form-select" required>
+              <option value="">Tipo de documento</option>
+              <option>Factura</option>
+              <option>Boleta</option>
+              <option>Ticket</option>
+              <option>Nota de Crédito</option>
+              <option>Nota de Débito</option>
             </select>
           </div>
-          <div class="col-md-2">
-            <label>Monto</label>
-            <input type="number" step="0.01" id="montoFactura" class="form-control" required>
-          </div>
-          <div class="col-md-2">
-            <label>Tipo</label>
-            <select id="tipoFactura" class="form-select">
-              <option value="Compra">Compra</option>
-              <option value="Servicio">Servicio</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-primary mt-3">Guardar factura</button>
-      </form>
 
-      <h4>Lista de facturas (<span id="countFacturas">0</span>)</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaFacturas"></tbody>
-      </table>
+          <div class="col-md-3">
+            <select id="monedaFactura" class="form-select" required>
+              <option value="PEN">PEN - S/.</option>
+              <option value="USD">USD - $</option>
+              <option value="EUR">EUR - €</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <select id="proveedorFactura" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <select id="productoFactura" class="form-select" required></select>
+          </div>
+
+          <div id="campoAdicional" class="col-md-6" style="display:none;">
+            <input type="text" id="detalleAdicional" class="form-control" placeholder="Detalle de nota de crédito/débito">
+          </div>
+
+          <div class="col-md-4">
+            <input type="number" id="montoFactura" class="form-control" placeholder="Subtotal" step="0.01" required>
+          </div>
+          <div class="col-md-4">
+            <input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly>
+          </div>
+          <div class="col-md-4">
+            <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel tabla-container">
+        <h4>Lista de Facturas</h4>
+        <table class="table table-borderless align-middle">
+          <thead>
+            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaFacturas"></tbody>
+        </table>
+      </div>
     </section>
+
   </main>
 
-  <!-- ================== MODALES ================== -->
+  <!-- Modales -->
   <dialog id="modalFactura">
+    <h4>Detalle de Factura</h4>
     <div id="modalFacturaBody"></div>
-    <button id="cerrarModalFactura" class="btn btn-secondary mt-2">Cerrar</button>
+    <div class="mt-3 text-end">
+      <button id="cerrarModalFactura" class="btn btn-secondary">Cerrar</button>
+    </div>
   </dialog>
 
   <dialog id="modalExtra">
     <div id="modalExtraBody"></div>
-    <button id="cerrarModalExtra" class="btn btn-secondary mt-2">Cerrar</button>
+    <div class="mt-3 text-end">
+      <button id="cerrarModalExtra" class="btn btn-secondary">Cerrar</button>
+    </div>
   </dialog>
 
   <dialog id="modalEditar">
     <div id="modalEditarBody"></div>
-    <button id="cerrarModalEditar" class="btn btn-secondary mt-2">Cerrar</button>
+    <div class="mt-3 text-end">
+      <button id="cerrarModalEditar" class="btn btn-secondary">Cerrar</button>
+    </div>
   </dialog>
 
-  <script type="module" src="./dashboard.js"></script>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
 
 
