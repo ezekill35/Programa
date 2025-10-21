@@ -130,45 +130,56 @@
       </div>
     </section>
 
-    <!-- Productos -->
-    <section id="productos" class="seccion">
-      <div class="tabla-container">
-        <h4>Registrar Producto</h4>
-        <form id="formProducto" class="row g-3">
-          <div class="col-md-4">
-            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
-          </div>
-          <div class="col-md-4">
-            <select id="presentacionProducto" class="form-select" required>
-              <option value="">Presentación</option>
-              <option>Unidad</option>
-              <option>Docena</option>
-              <option>Ciento</option>
-              <option>Millar</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
-          </div>
-          <div class="col-12">
-            <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
-          </div>
-        </form>
+  <!-- Productos -->
+<section id="productos" class="seccion">
+  <div class="tabla-container">
+    <h4>Registrar Producto</h4>
+    <form id="formProducto" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
       </div>
 
-      <div class="tabla-container">
-        <h4>Lista de Productos</h4>
-        <table class="table table-striped">
-          <thead>
-            <tr><th>Nombre</th><th>Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaProductos"></tbody>
-        </table>
+      <!-- Presentación + Cantidad de presentación al costado -->
+      <div class="col-md-4 d-flex gap-2">
+        <select id="presentacionProducto" class="form-select" required>
+          <option value="">Presentación</option>
+          <option>Unidad</option>
+          <option>Docena</option>
+          <option>Ciento</option>
+          <option>Millar</option>
+        </select>
+        <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cant." min="1" value="1" required>
       </div>
-    </section>
+
+      <div class="col-md-4">
+        <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
+      </div>
+      <div class="col-12">
+        <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-success">Registrar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="tabla-container">
+    <h4>Lista de Productos</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Presentación</th>
+          <th>Cantidad (pres.)</th>
+          <th>Precio</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaProductos"></tbody>
+    </table>
+  </div>
+</section>
 
     <!-- Facturas -->
     <section id="facturas" class="seccion">
@@ -226,5 +237,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
