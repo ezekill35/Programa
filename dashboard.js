@@ -123,10 +123,10 @@ cerrarModalExtra.addEventListener("click", ()=>modalExtra.close());
 cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
 
 // ===================== PROVEEDORES =====================
-formProveedor.addEventListener("submit", async e=>{
+formProveedor.addEventListener("submit", async e => {
   e.preventDefault();
   const data = {
-    ruc: document.getElementById("rucProveedor").value.trim(),
+    tipoDocumento: document.getElementById("tipoDocumentoProveedor").value,
     nombre: document.getElementById("nombreProveedor").value.trim(),
     direccion: document.getElementById("direccionProveedor").value.trim(),
     telefono: document.getElementById("telefonoProveedor").value.trim()
