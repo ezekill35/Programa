@@ -393,5 +393,5 @@ document.addEventListener("click", async e=>{
     if(confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db,colRef.id,id));
   }
 });
-});
+
 
