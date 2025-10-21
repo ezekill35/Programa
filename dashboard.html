@@ -9,7 +9,7 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #e9f5f5; /* Color de fondo más suave */
+      background: #e9f5f5;
       margin: 0;
     }
 
@@ -21,19 +21,19 @@
       position: fixed;
       padding: 1.5rem 1rem;
       border-radius: 0 20px 20px 0;
-      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
-      transition: background 0.3s; /* Transición suave */
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s;
     }
 
     .sidebar:hover {
-      background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); /* Cambio de color al pasar el mouse */
+      background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%);
     }
 
     .sidebar h3 {
       font-weight: 700;
       text-align: center;
       margin-bottom: 1.5rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra de texto */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     .nav-btn {
@@ -47,13 +47,13 @@
       border-radius: 10px;
       margin-bottom: 0.5rem;
       font-size: 15px;
-      transition: background 0.3s, transform 0.2s; /* Transiciones suaves */
+      transition: background 0.3s, transform 0.2s;
     }
 
     .nav-btn:hover,
     .nav-btn.activo {
       background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.05); /* Efecto de aumento al pasar el mouse */
+      transform: scale(1.05);
     }
 
     main {
@@ -77,13 +77,13 @@
       background: white;
       border-radius: 15px;
       padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       margin-bottom: 2rem;
-      transition: transform 0.2s; /* Transición suave */
+      transition: transform 0.2s;
     }
 
     .tabla-container:hover {
-      transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+      transform: translateY(-5px);
     }
 
     .btn-accion {
@@ -92,11 +92,11 @@
       cursor: pointer;
       font-size: 1rem;
       margin-right: 5px;
-      transition: transform 0.2s; /* Transición suave */
+      transition: transform 0.2s;
     }
 
     .btn-accion:hover {
-      transform: scale(1.2); /* Aumento al pasar el mouse */
+      transform: scale(1.2);
     }
 
     .resultado-item {
@@ -105,18 +105,18 @@
       padding: 0.75rem;
       margin-bottom: 5px;
       cursor: pointer;
-      transition: background 0.2s; /* Transición suave */
+      transition: background 0.2s;
     }
 
     .resultado-item:hover {
-      background: #bae6fd; /* Cambio de color al pasar el mouse */
+      background: #bae6fd;
     }
 
     dialog {
       border: none;
       border-radius: 15px;
       padding: 1.5rem;
-      max-width: 400px;
+      max-width: 500px;
       width: 90%;
       box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
     }
@@ -231,7 +231,7 @@
             <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
           </div>
           <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
+            <button type="submit" class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
@@ -281,7 +281,7 @@
             <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
           </div>
           <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
+            <button type="submit" class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
@@ -338,7 +338,7 @@
             <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
           </div>
           <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
+            <button type="submit" class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
@@ -375,9 +375,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
 
 
 
