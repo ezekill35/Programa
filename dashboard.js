@@ -1,9 +1,6 @@
 // ===================== FIREBASE CONFIG =====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, query, where, updateDoc
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, deleteDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -32,10 +29,8 @@ const colFacturas = collection(db, "facturas");
 // ===================== ELEMENTOS =====================
 const formProveedor = document.getElementById("formProveedor");
 const tablaProveedores = document.getElementById("tablaProveedores");
-
 const formProducto = document.getElementById("formProducto");
 const tablaProductos = document.getElementById("tablaProductos");
-
 const formFactura = document.getElementById("formFactura");
 const tablaFacturas = document.getElementById("tablaFacturas");
 
@@ -60,17 +55,22 @@ const cerrarModalEditar = document.getElementById("cerrarModalEditar");
 
 // ===================== PANEL FLOTANTE =====================
 const panelFlotante = document.createElement("div");
-panelFlotante.id="panelFlotante";
-panelFlotante.style.cssText=`
-  position:fixed; top:0; right:-400px; width:400px; height:100%; background:#fff;
-  box-shadow:-4px 0 15px rgba(0,0,0,0.2); padding:1rem; overflow-y:auto;
-  transition:0.3s; z-index:1100;`;
+panelFlotante.style.position = "fixed";
+panelFlotante.style.top = "0";
+panelFlotante.style.right = "-400px";
+panelFlotante.style.width = "350px";
+panelFlotante.style.height = "100%";
+panelFlotante.style.background = "#fff";
+panelFlotante.style.boxShadow = "-4px 0 20px rgba(0,0,0,0.2)";
+panelFlotante.style.padding = "1rem";
+panelFlotante.style.transition = "right 0.3s";
+panelFlotante.style.overflowY = "auto";
 document.body.appendChild(panelFlotante);
 
 const cerrarPanel = document.createElement("button");
-cerrarPanel.textContent="Cerrar";
-cerrarPanel.className="btn btn-secondary mt-3";
-cerrarPanel.addEventListener("click", ()=> panelFlotante.style.right="-400px");
+cerrarPanel.textContent = "Cerrar";
+cerrarPanel.className = "btn btn-secondary mt-2";
+cerrarPanel.addEventListener("click", () => { panelFlotante.style.right = "-400px"; });
 
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
@@ -85,13 +85,15 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
     btn.classList.add("activo");
     document.getElementById(btn.dataset.target).classList.add("activa");
-
-    buscador.style.display = btn.dataset.target==="facturas" ? "block" : "none";
-    if(btn.dataset.target!=="facturas"){ buscador.value=""; panelFacturas.innerHTML=""; }
+    buscador.style.display = btn.dataset.target === "facturas" ? "block" : "none";
+    if(btn.dataset.target !== "facturas") { buscador.value=""; panelFacturas.innerHTML=""; }
   });
 });
 
 // ===================== AUXILIARES =====================
+function calcularIGV(subtotal){ return (subtotal*0.18).toFixed(2); }
+function calcularTotal(subtotal){ return (subtotal*1.18).toFixed(2); }
+
 async function cargarProveedoresSelect(){
   const select = document.getElementById("proveedorFactura");
   select.innerHTML = '<option value="">Seleccionar proveedor</option>';
@@ -116,9 +118,6 @@ async function cargarProductosSelect(){
   });
 }
 
-function calcularIGV(subtotal){ return (subtotal*0.18).toFixed(2); }
-function calcularTotal(subtotal){ return (parseFloat(subtotal)*1.18).toFixed(2); }
-
 // ===================== MOSTRAR MODAL FACTURA =====================
 function mostrarModalFactura(f){
   const igv = calcularIGV(f.monto);
@@ -137,16 +136,16 @@ function mostrarModalFactura(f){
 
   modalFactura.showModal();
 
-  // PANEL FLOTANTE
+  // ===== EVENTOS DINÁMICOS =====
   const linkProv = document.getElementById("verProveedor");
   const linkProd = document.getElementById("verProducto");
 
-  linkProv.addEventListener("click", async ()=>{
+  linkProv.addEventListener("click", async () => {
     const nombre = linkProv.dataset.nombre;
     const snap = await getDocs(query(colProveedores, where("nombre","==",nombre)));
     if(!snap.empty){
       const d = snap.docs[0].data();
-      panelFlotante.innerHTML=`
+      panelFlotante.innerHTML = `
         <h5>Proveedor: ${d.nombre}</h5>
         <p><b>Tipo Documento:</b> ${d.tipoDocumento||''}</p>
         <p><b>RUC / DNI:</b> ${d.ruc||''}</p>
@@ -158,12 +157,12 @@ function mostrarModalFactura(f){
     }
   });
 
-  linkProd.addEventListener("click", async ()=>{
+  linkProd.addEventListener("click", async () => {
     const nombre = linkProd.dataset.nombre;
     const snap = await getDocs(query(colProductos, where("nombre","==",nombre)));
     if(!snap.empty){
       const d = snap.docs[0].data();
-      panelFlotante.innerHTML=`
+      panelFlotante.innerHTML = `
         <h5>Producto: ${d.nombre}</h5>
         <p><b>Presentación:</b> ${d.cantidad} ${d.presentacion}</p>
         <p><b>Precio:</b> S/. ${parseFloat(d.precio).toFixed(2)}</p>
@@ -207,13 +206,13 @@ onSnapshot(colProveedores, snapshot=>{
       <td>${d.direccion||''}</td>
       <td>${d.telefono||''}</td>
       <td>
-        <button class="btn-accion editar" data-tipo="proveedor" data-id="${docu.id}">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="proveedor" data-nombre="${d.nombre}">🔍</button>
-        <button class="btn-accion eliminar" data-tipo="proveedor" data-id="${docu.id}">🗑️</button>
-      </td>`;
+        <button class="editar btn-accion" data-id="${docu.id}" data-tipo="proveedor">✏️</button>
+        <button class="eliminar btn-accion" data-id="${docu.id}" data-tipo="proveedor">🗑️</button>
+      </td>
+    `;
     tablaProveedores.appendChild(tr);
   });
-  countProveedores.textContent=snapshot.size;
+  countProveedores.textContent = snapshot.size;
   cargarProveedoresSelect();
 });
 
@@ -238,32 +237,31 @@ onSnapshot(colProductos, snapshot=>{
     const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
-      <td>${d.nombre}</td>
-      <td>${d.cantidad} ${d.presentacion}</td>
-      <td>S/. ${parseFloat(d.precio).toFixed(2)}</td>
+      <td>${d.nombre||''}</td>
+      <td>${d.cantidad} ${d.presentacion||''}</td>
+      <td>S/. ${parseFloat(d.precio||0).toFixed(2)}</td>
       <td>${d.descripcion||''}</td>
       <td>
-        <button class="btn-accion editar" data-tipo="producto" data-id="${docu.id}">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="producto" data-nombre="${d.nombre}">🔍</button>
-        <button class="btn-accion eliminar" data-tipo="producto" data-id="${docu.id}">🗑️</button>
-      </td>`;
+        <button class="editar btn-accion" data-id="${docu.id}" data-tipo="producto">✏️</button>
+        <button class="eliminar btn-accion" data-id="${docu.id}" data-tipo="producto">🗑️</button>
+      </td>
+    `;
     tablaProductos.appendChild(tr);
   });
-  countProductos.textContent=snapshot.size;
+  countProductos.textContent = snapshot.size;
   cargarProductosSelect();
 });
 
 // ===================== FACTURAS =====================
 formFactura.addEventListener("submit", async e=>{
   e.preventDefault();
-  const monto = parseFloat(document.getElementById("montoFactura").value);
   const data = {
-    idFactura: document.getElementById("idFactura").value || `F${Date.now()}`,
+    idFactura: "F"+Date.now(),
     fecha: document.getElementById("fechaFactura").value,
-    tipo: document.getElementById("tipoFactura").value,
     proveedor: document.getElementById("proveedorFactura").value,
     producto: document.getElementById("productoFactura").value,
-    monto: monto
+    monto: parseFloat(document.getElementById("montoFactura").value),
+    tipo: document.getElementById("tipoFactura").value
   };
   await addDoc(colFacturas, data);
   formFactura.reset();
@@ -272,59 +270,57 @@ formFactura.addEventListener("submit", async e=>{
 onSnapshot(colFacturas, snapshot=>{
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
-    const f=docu.data();
-    const tr=document.createElement("tr");
+    const f = docu.data();
     const igv = calcularIGV(f.monto);
     const total = calcularTotal(f.monto);
+    const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
-      <td>${f.idFactura}</td>
-      <td>${f.fecha}</td>
-      <td>${f.proveedor}</td>
-      <td>${f.producto}</td>
-      <td>S/. ${parseFloat(f.monto).toFixed(2)}</td>
+      <td>${f.idFactura||''}</td>
+      <td>${f.fecha||''}</td>
+      <td><span class="link-info" data-nombre="${f.proveedor}">${f.proveedor||''}</span></td>
+      <td><span class="link-info" data-nombre="${f.producto}">${f.producto||''}</span></td>
+      <td>S/. ${parseFloat(f.monto||0).toFixed(2)}</td>
       <td>S/. ${igv}</td>
       <td>S/. ${total}</td>
-      <td>${f.tipo}</td>
+      <td>${f.tipo||''}</td>
       <td>
-        <button class="btn-accion editar" data-tipo="factura" data-id="${docu.id}">✏️</button>
-        <button class="btn-accion ver link-info" data-tipo="factura" data-id="${docu.id}">🔍</button>
-        <button class="btn-accion eliminar" data-tipo="factura" data-id="${docu.id}">🗑️</button>
-      </td>`;
+        <button class="editar btn-accion" data-id="${docu.id}" data-tipo="factura">✏️</button>
+        <button class="eliminar btn-accion" data-id="${docu.id}" data-tipo="factura">🗑️</button>
+      </td>
+    `;
     tablaFacturas.appendChild(tr);
+
+    // click en tabla de facturas para abrir modal
+    tr.querySelectorAll(".link-info").forEach(el=>{
+      el.addEventListener("click", ()=>mostrarModalFactura(f));
+    });
   });
-  countFacturas.textContent=snapshot.size;
+  countFacturas.textContent = snapshot.size;
 });
 
 // ===================== BUSCADOR =====================
+buscador.style.display="none";
 buscador.addEventListener("input", async ()=>{
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML="";
   if(!texto) return;
   const snap = await getDocs(colFacturas);
   snap.forEach(docu=>{
-    const f=docu.data();
-    if(f.producto.toLowerCase().includes(texto) || f.proveedor.toLowerCase().includes(texto)){
-      const div=document.createElement("div");
+    const f = docu.data();
+    if(f.producto.toLowerCase().includes(texto) || f.proveedor.toLowerCase().includes(texto) || f.idFactura.toLowerCase().includes(texto)){
+      const div = document.createElement("div");
       div.className="resultado-item";
-      div.textContent=`Factura ${f.idFactura} - ${f.producto}`;
+      div.textContent=f.idFactura;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
 });
 
-// ===================== CLICK GLOBAL PARA EDITAR / ELIMINAR =====================
+// ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e=>{
-  // ELIMINAR
-  if(e.target.classList.contains("eliminar")){
-    const tipo = e.target.dataset.tipo;
-    const id = e.target.dataset.id;
-    let colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
-    await deleteDoc(doc(db,colNombre,id));
-  }
-
-  // EDITAR
+  // --------- EDITAR ---------
   if(e.target.classList.contains("editar")){
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
@@ -335,7 +331,6 @@ document.addEventListener("click", async e=>{
       modalEditarBody.innerHTML = `
         <h5>Editar ${tipo}</h5>
         ${tipo==="proveedor"?`
-          <label>Tipo Doc</label><input id="editTipoDoc" class="form-control mb-1" value="${d.tipoDocumento||''}">
           <label>RUC</label><input id="editRuc" class="form-control mb-1" value="${d.ruc||''}">
           <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
           <label>Dirección</label><input id="editDir" class="form-control mb-1" value="${d.direccion||''}">
@@ -362,7 +357,6 @@ document.addEventListener("click", async e=>{
       document.getElementById("guardarEdit").addEventListener("click", async ()=>{
         const upd = {};
         if(tipo==="proveedor"){
-          upd.tipoDocumento=document.getElementById("editTipoDoc").value.trim();
           upd.ruc=document.getElementById("editRuc").value.trim();
           upd.nombre=document.getElementById("editNombre").value.trim();
           upd.direccion=document.getElementById("editDir").value.trim();
@@ -370,7 +364,7 @@ document.addEventListener("click", async e=>{
         } else if(tipo==="producto"){
           upd.nombre=document.getElementById("editNombre").value.trim();
           upd.cantidad=parseInt(document.getElementById("editCantidad").value);
-          upd.presentacion=document.getElementById("editPresentacion").value.trim();
+          upd.presentacion=document.getElementById("editPresentacion").value;
           upd.precio=parseFloat(document.getElementById("editPrecio").value);
           upd.descripcion=document.getElementById("editDesc").value.trim();
         } else if(tipo==="factura"){
@@ -386,9 +380,13 @@ document.addEventListener("click", async e=>{
       });
     }
   }
+
+  // --------- ELIMINAR ---------
+  if(e.target.classList.contains("eliminar")){
+    const tipo = e.target.dataset.tipo;
+    const id = e.target.dataset.id;
+    let colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
+    await deleteDoc(doc(db,colNombre,id));
+  }
 });
-
-});
-
-
 
