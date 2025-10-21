@@ -9,8 +9,9 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #e9f5f5;
+      background: linear-gradient(135deg, #e9f5f5, #cfe9e9); /* Fondo degradado */
       margin: 0;
+      overflow-x: hidden; /* Evitar el desbordamiento horizontal */
     }
 
     .sidebar {
@@ -19,21 +20,21 @@
       color: white;
       height: 100vh;
       position: fixed;
-      padding: 1.5rem 1rem;
+      padding: 2rem 1rem;
       border-radius: 0 20px 20px 0;
-      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
-      transition: background 0.3s;
+      box-shadow: 8px 0 30px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+      transition: background 0.3s; /* Transición suave */
     }
 
     .sidebar:hover {
-      background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%);
+      background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); /* Cambio de color al pasar el mouse */
     }
 
     .sidebar h3 {
       font-weight: 700;
       text-align: center;
-      margin-bottom: 1.5rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      margin-bottom: 2rem;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra de texto más pronunciada */
     }
 
     .nav-btn {
@@ -43,17 +44,39 @@
       color: white;
       border: none;
       text-align: left;
-      padding: 0.75rem 1rem;
+      padding: 1rem;
       border-radius: 10px;
       margin-bottom: 0.5rem;
-      font-size: 15px;
-      transition: background 0.3s, transform 0.2s;
+      font-size: 16px;
+      transition: background 0.3s, transform 0.2s; /* Transiciones suaves */
+      position: relative; /* Para el efecto 3D */
+      overflow: hidden; /* Para el efecto de sombra */
+    }
+
+    .nav-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 0; /* Detrás del texto */
+    }
+
+    .nav-btn:hover::after,
+    .nav-btn.activo::after {
+      transform: translateY(0); /* Efecto de elevación */
     }
 
     .nav-btn:hover,
     .nav-btn.activo {
       background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.05);
+      transform: scale(1.05); /* Efecto de aumento al pasar el mouse */
+      z-index: 1; /* Por encima del efecto de fondo */
     }
 
     main {
@@ -71,19 +94,21 @@
 
     #searchInput {
       max-width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
     .tabla-container {
       background: white;
       border-radius: 15px;
       padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
       margin-bottom: 2rem;
-      transition: transform 0.2s;
+      transition: transform 0.2s; /* Transición suave */
     }
 
     .tabla-container:hover {
-      transform: translateY(-5px);
+      transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
     }
 
     .btn-accion {
@@ -92,11 +117,11 @@
       cursor: pointer;
       font-size: 1rem;
       margin-right: 5px;
-      transition: transform 0.2s;
+      transition: transform 0.2s; /* Transición suave */
     }
 
     .btn-accion:hover {
-      transform: scale(1.2);
+      transform: scale(1.2); /* Aumento al pasar el mouse */
     }
 
     .resultado-item {
@@ -105,18 +130,18 @@
       padding: 0.75rem;
       margin-bottom: 5px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s; /* Transición suave */
     }
 
     .resultado-item:hover {
-      background: #bae6fd;
+      background: #bae6fd; /* Cambio de color al pasar el mouse */
     }
 
     dialog {
       border: none;
       border-radius: 15px;
       padding: 1.5rem;
-      max-width: 500px;
+      max-width: 400px;
       width: 90%;
       box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
     }
@@ -231,7 +256,7 @@
             <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
           </div>
           <div class="col-12">
-            <button type="submit" class="btn btn-success">Registrar</button>
+            <button class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
@@ -281,7 +306,7 @@
             <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
           </div>
           <div class="col-12">
-            <button type="submit" class="btn btn-success">Registrar</button>
+            <button class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
@@ -338,7 +363,7 @@
             <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
           </div>
           <div class="col-12">
-            <button type="submit" class="btn btn-success">Registrar</button>
+            <button class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
@@ -375,6 +400,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
