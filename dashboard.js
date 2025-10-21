@@ -349,6 +349,3 @@ document.addEventListener("click", async e=>{
 
 });
 
-  }
-});
-
