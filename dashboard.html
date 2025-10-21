@@ -1,157 +1,135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Discovery Pets · Dashboard</title>
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* Fondo animado 3D premium */
-    :root{
-      --c1: #0ea5a4;
-      --c2: #60a5fa;
-      --c3: #7dd3fc;
-      --card-bg: rgba(255,255,255,0.85);
-      --glass: rgba(255,255,255,0.06);
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #f8fafc, #e0f2fe);
+      margin: 0;
+      perspective: 1000px;
     }
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-    body{
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(14,165,164,0.12), transparent 10%),
-                  radial-gradient(900px 450px at 90% 90%, rgba(96,165,250,0.12), transparent 10%),
-                  linear-gradient(135deg,var(--c1), var(--c2) 40%, var(--c3) 100%);
-      background-attachment: fixed;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      min-height:100vh;
-      display:flex;
-    }
-
-    /* Layout */
     .sidebar {
-      width: 260px;
-      padding: 1.6rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      backdrop-filter: blur(6px);
-      color: #fff;
-      border-right: 1px solid rgba(255,255,255,0.06);
-      box-shadow: 12px 12px 40px rgba(2,6,23,0.18), inset -4px -6px 18px rgba(255,255,255,0.03);
-      border-radius: 0 30px 30px 0;
-      position:fixed;
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      gap:0.6rem;
-      transform: translateZ(0);
+      width: 250px;
+      background: linear-gradient(180deg, #14b8a6 0%, #0284c7 100%);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 1.5rem 1rem;
+      border-radius: 0 20px 20px 0;
+      box-shadow: 6px 0 20px rgba(0, 0, 0, 0.15);
+      transform: rotateY(-2deg);
+      transform-origin: left center;
     }
-    .brand {
-      text-align:center; margin-bottom:0.6rem;
-    }
-    .brand h3 { margin:0; font-weight:800; color:#e6f7f7; letter-spacing:0.4px; }
+    .sidebar h3 { font-weight: 700; text-align: center; margin-bottom: 1.5rem; }
     .nav-btn {
-      display:block; width:100%; background:transparent; color:rgba(255,255,255,0.95); border:none;
-      text-align:left; padding:0.8rem 1rem; border-radius:12px; margin-bottom:0.35rem;
-      font-size:15px; transition:all .22s ease; cursor:pointer; box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+      display: block; width: 100%;
+      background: transparent; color: white; border: none;
+      text-align: left; padding: 0.75rem 1rem;
+      border-radius: 10px; margin-bottom: 0.5rem;
+      font-size: 15px; transition: 0.3s; cursor: pointer;
     }
-    .nav-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.04); }
-    .nav-btn.activo { background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); box-shadow: 0 12px 30px rgba(2,6,23,0.12); }
-
+    .nav-btn:hover, .nav-btn.activo {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateX(5px);
+    }
     main {
-      margin-left: 300px;
-      padding: 2rem;
-      width:100%;
+      margin-left: 270px; padding: 2rem;
+      transform: rotateY(1.5deg);
+      transform-origin: left center;
     }
-
-    .header-bar { display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.6rem; }
-    .header-left { display:flex; gap:1rem; align-items:center; }
-    .search-wrap { max-width:420px; width:100%; }
-
-    /* Cards 3D */
-    .panel {
-      background: var(--card-bg);
-      border-radius: 18px;
-      padding: 1.3rem;
-      box-shadow: 0 10px 30px rgba(2,6,23,0.12);
-      border: 1px solid rgba(255,255,255,0.6);
-      transform: translateZ(0);
-      transition: transform .25s ease, box-shadow .25s ease;
+    .header-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 2rem; flex-wrap: wrap;
     }
-    .panel:hover { transform: translateY(-6px); box-shadow: 0 22px 48px rgba(2,6,23,0.16); }
+    #searchInput { max-width: 300px; }
 
-    .tabla-container { margin-bottom:1.2rem; }
-
-    .btn-accion { background:transparent; border:none; cursor:pointer; font-size:1rem; margin-right:6px; transition:transform .15s; }
-    .btn-accion:hover { transform:scale(1.15); }
-
-    .resultado-item { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border-radius:10px; padding:0.65rem; margin-bottom:6px; cursor:pointer; transition:transform .12s; }
-    .resultado-item:hover { transform: translateX(6px); }
-
-    dialog { border:none; border-radius:14px; padding:1.2rem; max-width:520px; width:92%; box-shadow:0 10px 40px rgba(2,6,23,0.24); }
-    dialog::backdrop { background: rgba(2,6,23,0.45); }
-
-    /* Responsive */
-    @media(max-width:900px){
-      .sidebar { position:relative; width:100%; height:auto; border-radius:0; flex-direction:row; flex-wrap:wrap; justify-content:center; gap:0.5rem; }
-      main { margin-left:0; padding:1rem; }
+    .tabla-container {
+      background: white; border-radius: 15px; padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem; transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+    .tabla-container:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+    .btn-accion {
+      background: transparent; border: none; cursor: pointer;
+      font-size: 1rem; margin-right: 5px; transition: 0.2s;
+    }
+    .btn-accion:hover { transform: scale(1.2); }
 
-    /* small helpers */
-    .muted { color:#475569; }
-    .accent { color:#075985; font-weight:700; }
-    .tiny { font-size:0.85rem; color:#334155; }
+    .resultado-item {
+      background: #e0f2fe; border-radius: 10px; padding: 0.75rem;
+      margin-bottom: 5px; cursor: pointer; transition: 0.2s;
+    }
+    .resultado-item:hover { background: #bae6fd; }
+
+    dialog {
+      border: none; border-radius: 15px; padding: 1.5rem;
+      max-width: 400px; width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transform: rotateX(8deg);
+    }
+    dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+
+    .seccion { display: none; }
+    .seccion.activa { display: block; }
+
+    @media(max-width: 768px) {
+      main { margin-left: 0; padding: 1rem; transform: none; }
+      .sidebar {
+        width: 100%; height: auto; border-radius: 0;
+        padding: 1rem; position: relative; display: flex;
+        flex-wrap: wrap; justify-content: center;
+        transform: none; box-shadow: none;
+      }
+      .nav-btn { margin: 0.2rem; flex: 1 1 45%; }
+    }
   </style>
 </head>
 <body>
 
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="brand">
-      <h3>Discovery Pets</h3>
-      <div class="tiny">Dashboard administrativo</div>
-    </div>
-
+    <h3>Discovery Pets</h3>
     <button class="nav-btn activo" data-target="dashboard">📊 Dashboard</button>
     <button class="nav-btn" data-target="proveedores">🏢 Proveedores</button>
     <button class="nav-btn" data-target="productos">📦 Productos</button>
     <button class="nav-btn" data-target="facturas">🧾 Facturas</button>
-
-    <div style="flex:1"></div>
-    <button id="btnCerrarSesion" class="nav-btn" style="margin-top:auto">🚪 Cerrar sesión</button>
+    <button id="btnCerrarSesion" class="nav-btn mt-4">🚪 Cerrar sesión</button>
   </aside>
 
   <main>
     <div class="header-bar">
-      <div class="header-left">
-        <h2 class="fw-bold text-dark">Panel General</h2>
-        <div class="tiny muted">Control en tiempo real · Discovery Pets</div>
-      </div>
-
-      <div class="search-wrap">
-        <input id="searchInput" class="form-control" placeholder="Buscar facturas por producto o ID..." />
-      </div>
+      <h2 class="fw-bold text-primary">Panel General</h2>
+      <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto o factura...">
     </div>
+    <div id="searchResults" class="mb-4"></div>
 
-    <div id="searchResults" class="mb-3"></div>
-
-    <!-- Dashboard -->
+    <!-- Dashboard principal -->
     <section id="dashboard" class="seccion activa">
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="panel text-center">
-            <div class="tiny muted">Total Facturas</div>
-            <h3 id="countFacturas" class="accent">0</h3>
+          <div class="tabla-container text-center">
+            <h5 class="text-secondary">Total Facturas</h5>
+            <h3 id="countFacturas">0</h3>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="panel text-center">
-            <div class="tiny muted">Total Proveedores</div>
-            <h3 id="countProveedores" class="accent">0</h3>
+          <div class="tabla-container text-center">
+            <h5 class="text-secondary">Total Proveedores</h5>
+            <h3 id="countProveedores">0</h3>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="panel text-center">
-            <div class="tiny muted">Total Productos</div>
-            <h3 id="countProductos" class="accent">0</h3>
+          <div class="tabla-container text-center">
+            <h5 class="text-secondary">Total Productos</h5>
+            <h3 id="countProductos">0</h3>
           </div>
         </div>
       </div>
@@ -159,10 +137,10 @@
 
     <!-- Proveedores -->
     <section id="proveedores" class="seccion">
-      <div class="panel tabla-container">
+      <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <select id="tipoDocumentoProveedor" class="form-select" required>
               <option value="">Tipo de documento</option>
               <option>RUC</option>
@@ -172,28 +150,26 @@
               <option>Otros</option>
             </select>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-6">
             <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
           </div>
-
           <div class="col-md-6">
             <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
           </div>
           <div class="col-md-6">
             <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
           </div>
-
           <div class="col-12">
             <button class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
 
-      <div class="panel tabla-container">
+      <div class="tabla-container">
         <h4>Lista de Proveedores</h4>
-        <table class="table table-borderless align-middle">
+        <table class="table table-striped">
           <thead>
-            <tr><th>Tipo</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+            <tr><th>Tipo Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaProveedores"></tbody>
         </table>
@@ -202,10 +178,10 @@
 
     <!-- Productos -->
     <section id="productos" class="seccion">
-      <div class="panel tabla-container">
+      <div class="tabla-container">
         <h4>Registrar Producto</h4>
         <form id="formProducto" class="row g-3">
-          <div class="col-md-5">
+          <div class="col-md-6">
             <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
           </div>
           <div class="col-md-3">
@@ -214,30 +190,29 @@
               <option>Unidad</option>
               <option>Docena</option>
               <option>Ciento</option>
+              <option>Millar</option>
             </select>
           </div>
-          <div class="col-md-2">
-            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cant." required>
+          <div class="col-md-3">
+            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad presentación" required>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
             <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
           </div>
-
           <div class="col-12">
             <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
           </div>
-
           <div class="col-12">
             <button class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
 
-      <div class="panel tabla-container">
+      <div class="tabla-container">
         <h4>Lista de Productos</h4>
-        <table class="table table-borderless align-middle">
+        <table class="table table-striped">
           <thead>
-            <tr><th>Nombre</th><th>Presentación</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+            <tr><th>Nombre</th><th>Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaProductos"></tbody>
         </table>
@@ -246,16 +221,16 @@
 
     <!-- Facturas -->
     <section id="facturas" class="seccion">
-      <div class="panel tabla-container">
+      <div class="tabla-container">
         <h4>Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
-          <div class="col-md-3">
-            <input type="text" id="idFactura" class="form-control" placeholder="ID (opcional)" >
+          <div class="col-md-4">
+            <input type="text" id="idFactura" class="form-control" placeholder="ID Automático" readonly>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <input type="date" id="fechaFactura" class="form-control" required>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <select id="tipoFactura" class="form-select" required>
               <option value="">Tipo de documento</option>
               <option>Factura</option>
@@ -265,15 +240,6 @@
               <option>Nota de Débito</option>
             </select>
           </div>
-
-          <div class="col-md-3">
-            <select id="monedaFactura" class="form-select" required>
-              <option value="PEN">PEN - S/.</option>
-              <option value="USD">USD - $</option>
-              <option value="EUR">EUR - €</option>
-            </select>
-          </div>
-
           <div class="col-md-6">
             <select id="proveedorFactura" class="form-select" required></select>
           </div>
@@ -281,29 +247,38 @@
             <select id="productoFactura" class="form-select" required></select>
           </div>
 
-          <div id="campoAdicional" class="col-md-6" style="display:none;">
+          <!-- NUEVO CAMPO: Tipo de Moneda -->
+          <div class="col-md-4">
+            <select id="tipoMonedaFactura" class="form-select" required>
+              <option value="">Tipo de moneda</option>
+              <option value="PEN">Soles (PEN)</option>
+              <option value="USD">Dólares (USD)</option>
+              <option value="EUR">Euros (EUR)</option>
+            </select>
+          </div>
+
+          <div class="col-md-4" id="campoAdicional" style="display:none;">
             <input type="text" id="detalleAdicional" class="form-control" placeholder="Detalle de nota de crédito/débito">
           </div>
 
           <div class="col-md-4">
             <input type="number" id="montoFactura" class="form-control" placeholder="Subtotal" step="0.01" required>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
           </div>
-
           <div class="col-12">
             <button class="btn btn-success">Registrar</button>
           </div>
         </form>
       </div>
 
-      <div class="panel tabla-container">
+      <div class="tabla-container">
         <h4>Lista de Facturas</h4>
-        <table class="table table-borderless align-middle">
+        <table class="table table-striped">
           <thead>
             <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr>
           </thead>
@@ -311,37 +286,27 @@
         </table>
       </div>
     </section>
-
   </main>
 
   <!-- Modales -->
   <dialog id="modalFactura">
     <h4>Detalle de Factura</h4>
     <div id="modalFacturaBody"></div>
-    <div class="mt-3 text-end">
-      <button id="cerrarModalFactura" class="btn btn-secondary">Cerrar</button>
-    </div>
+    <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
   <dialog id="modalExtra">
     <div id="modalExtraBody"></div>
-    <div class="mt-3 text-end">
-      <button id="cerrarModalExtra" class="btn btn-secondary">Cerrar</button>
-    </div>
+    <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
   <dialog id="modalEditar">
     <div id="modalEditarBody"></div>
-    <div class="mt-3 text-end">
-      <button id="cerrarModalEditar" class="btn btn-secondary">Cerrar</button>
-    </div>
+    <button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
 
 
