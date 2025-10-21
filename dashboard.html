@@ -11,12 +11,8 @@
     .sidebar {
       width: 250px;
       background: linear-gradient(180deg, #14b8a6 0%, #0284c7 100%);
-      color: white;
-      height: 100vh;
-      position: fixed;
-      padding: 1.5rem 1rem;
-      border-radius: 0 20px 20px 0;
-      box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+      color: white; height: 100vh; position: fixed; padding: 1.5rem 1rem;
+      border-radius: 0 20px 20px 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1);
     }
     .sidebar h3 { font-weight:700; text-align:center; margin-bottom:1.5rem;}
     .nav-btn {
@@ -97,7 +93,7 @@
       <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
-          <div class="col-md-6">
+          <div class="col-md-6 d-flex gap-2 align-items-center">
             <select id="tipoDocumentoProveedor" class="form-select" required>
               <option value="">Tipo de documento</option>
               <option>RUC</option>
@@ -106,6 +102,7 @@
               <option>CE</option>
               <option>Otros</option>
             </select>
+            <input type="text" id="numeroDocumentoProveedor" class="form-control" placeholder="Número" required>
           </div>
           <div class="col-md-6">
             <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
@@ -126,7 +123,7 @@
         <h4>Lista de Proveedores</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>Tipo Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+            <tr><th>Tipo Doc.</th><th>Número</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaProveedores"></tbody>
         </table>
@@ -138,10 +135,10 @@
       <div class="tabla-container">
         <h4>Registrar Producto</h4>
         <form id="formProducto" class="row g-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <select id="presentacionProducto" class="form-select" required>
               <option value="">Presentación</option>
               <option>Unidad</option>
@@ -149,9 +146,6 @@
               <option>Ciento</option>
               <option>Millar</option>
             </select>
-          </div>
-          <div class="col-md-3">
-            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad presentación" required>
           </div>
           <div class="col-md-4">
             <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
@@ -182,7 +176,7 @@
         <h4>Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
           <div class="col-md-4">
-            <input type="text" id="idFactura" class="form-control" placeholder="ID Automático" readonly>
+            <input type="text" id="idFactura" class="form-control" placeholder="ID automático (se genera)" readonly>
           </div>
           <div class="col-md-4">
             <input type="date" id="fechaFactura" class="form-control" required>
@@ -203,17 +197,8 @@
           <div class="col-md-6">
             <select id="productoFactura" class="form-select" required></select>
           </div>
-          <div class="col-md-6" id="campoAdicional" style="display:none;">
-            <input type="text" id="detalleAdicional" class="form-control" placeholder="Detalle de nota de crédito/débito">
-          </div>
           <div class="col-md-6">
-            <input type="number" id="montoFactura" class="form-control" placeholder="Subtotal" step="0.01" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
+            <input type="number" id="montoFactura" class="form-control" placeholder="Monto" step="0.01" required>
           </div>
           <div class="col-12">
             <button class="btn btn-success">Registrar</button>
@@ -225,7 +210,7 @@
         <h4>Lista de Facturas</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr>
+            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaFacturas"></tbody>
         </table>
@@ -234,23 +219,12 @@
   </main>
 
   <!-- Modales -->
-  <dialog id="modalFactura">
-    <h4>Detalle de Factura</h4>
-    <div id="modalFacturaBody"></div>
-    <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
-  <dialog id="modalExtra">
-    <div id="modalExtraBody"></div>
-    <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
-  <dialog id="modalEditar">
-    <div id="modalEditarBody"></div>
-    <button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
+  <dialog id="modalFactura"><div id="modalFacturaBody"></div><button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button></dialog>
+  <dialog id="modalExtra"><div id="modalExtraBody"></div><button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button></dialog>
+  <dialog id="modalEditar"><div id="modalEditarBody"></div><button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button></dialog>
 
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
