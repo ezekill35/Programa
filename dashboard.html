@@ -231,7 +231,6 @@
       </div>
     </section>
 
-    <!-- Proveedores -->
     <section id="proveedores" class="seccion">
       <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
@@ -247,6 +246,9 @@
             </select>
           </div>
           <div class="col-md-6">
+            <input type="text" id="rucProveedor" class="form-control" placeholder="Número de Documento / RUC" required>
+          </div>
+          <div class="col-md-6">
             <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
           </div>
           <div class="col-md-6">
@@ -260,6 +262,18 @@
           </div>
         </form>
       </div>
+
+      <div class="tabla-container">
+        <h4>Lista de Proveedores</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr><th>Tipo Documento</th><th>RUC/Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
+        <div id="mensajeProveedor" class="text-danger" style="display:none;">¿No encuentras el proveedor? Regístralo aquí.</div>
+      </div>
+    </section>
 
       <div class="tabla-container">
         <h4>Lista de Proveedores</h4>
@@ -400,6 +414,7 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
 
