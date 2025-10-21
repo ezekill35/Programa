@@ -109,7 +109,7 @@ tablaProveedores.addEventListener("click", async (e) => {
   if (idEdit) abrirModalEditar("proveedores", idEdit);
 });
 
-// ===================== CRUD PRODUCTOS =====================
+// ===================== CRUD PRODUCTOS (actualizado con cantidadPresentacion) =====================
 const formProducto = document.getElementById("formProducto");
 const tablaProductos = document.getElementById("tablaProductos");
 const countProductos = document.getElementById("countProductos");
@@ -117,15 +117,28 @@ const productoSelectFactura = document.getElementById("productoFactura");
 
 formProducto.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const nombre = formProducto.nombreProducto.value;
-  const presentacion = formProducto.presentacionProducto.value;
-  const precio = parseFloat(formProducto.precioProducto.value);
-  const descripcion = formProducto.descripcionProducto.value;
+  const nombre = document.getElementById("nombreProducto").value.trim();
+  const presentacion = document.getElementById("presentacionProducto").value;
+  const cantidadPresentacion = parseInt(document.getElementById("cantidadPresentacion").value) || 1;
+  const precio = parseFloat(document.getElementById("precioProducto").value) || 0;
+  const descripcion = document.getElementById("descripcionProducto").value.trim();
+
+  // Validaciones simples
+  if (!nombre || !presentacion) {
+    alert("Completa nombre y presentación.");
+    return;
+  }
 
   await addDoc(collection(db, "productos"), {
-    nombre, presentacion, precio, descripcion
+    nombre,
+    presentacion,
+    cantidadPresentacion,
+    precio,
+    descripcion
   });
+
   formProducto.reset();
+  document.getElementById("cantidadPresentacion").value = 1;
 });
 
 onSnapshot(collection(db, "productos"), (snapshot) => {
@@ -139,8 +152,9 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
     fila.innerHTML = `
       <td>${p.nombre}</td>
       <td>${p.presentacion}</td>
-      <td>S/. ${p.precio.toFixed(2)}</td>
-      <td>${p.descripcion || "-"}</td>
+      <td>${p.cantidadPresentacion ?? "-"}</td>
+      <td>S/. ${(p.precio || 0).toFixed(2)}</td>
+      <td style="white-space: pre-line;">${p.descripcion || "-"}</td>
       <td>
         <button class="btn-accion text-primary" data-editar-producto="${id}">✏️</button>
         <button class="btn-accion text-danger" data-eliminar-producto="${id}">🗑️</button>
@@ -149,7 +163,7 @@ onSnapshot(collection(db, "productos"), (snapshot) => {
 
     const opt = document.createElement("option");
     opt.value = id;
-    opt.textContent = p.nombre;
+    opt.textContent = `${p.nombre} (${p.presentacion}${p.cantidadPresentacion ? ' x' + p.cantidadPresentacion : ''})`;
     productoSelectFactura.appendChild(opt);
   });
 
