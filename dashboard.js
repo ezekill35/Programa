@@ -12,7 +12,7 @@ const firebaseConfig = {
   projectId: "discovery-pets",
   storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
+  appId: "1:481355972999:web:abcd1234efgh5678"
 };
 
 const app = initializeApp(firebaseConfig);
