@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, updateDoc, query, where
+  doc, deleteDoc, updateDoc, query, where, getDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // ===================== CONFIGURACIÓN DEL PROYECTO =====================
@@ -33,7 +33,6 @@ const selProdFactura = document.getElementById("facturaProducto");
 
 const modalExtra = document.getElementById("modalExtra");
 const modalExtraBody = document.getElementById("modalExtraBody");
-const modalEditar = document.getElementById("modalEditar");
 
 // ===================== RENDERIZAR DATOS =====================
 function renderProveedores(data) {
@@ -75,10 +74,10 @@ function renderFacturas(data) {
         <td>${d.fecha}</td>
         <td>${d.proveedor}</td>
         <td>${d.producto}</td>
-        <td>${d.subtotal.toFixed(2)}</td>
-        <td>${d.igv.toFixed(2)}</td>
-        <td>${d.total.toFixed(2)}</td>
-        <td>
+        <td>${Number(d.subtotal).toFixed(2)}</td>
+        <td>${Number(d.igv).toFixed(2)}</td>
+        <td>${Number(d.total).toFixed(2)}</td>
+        <td class="acciones">
           <button class="ver" data-tipo="factura" data-id="${d.id}">👁️ Ver</button>
           <button class="editar" data-tipo="factura" data-id="${d.id}">✏️</button>
           <button class="eliminar" data-tipo="factura" data-id="${d.id}">🗑️</button>
@@ -91,8 +90,6 @@ function renderFacturas(data) {
 onSnapshot(colProveedores, (snapshot) => {
   const proveedores = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   renderProveedores(proveedores);
-
-  // Actualizar select en factura
   selProvFactura.innerHTML = `<option value="">Seleccionar proveedor</option>`;
   proveedores.forEach((p) => {
     selProvFactura.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
@@ -102,8 +99,6 @@ onSnapshot(colProveedores, (snapshot) => {
 onSnapshot(colProductos, (snapshot) => {
   const productos = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   renderProductos(productos);
-
-  // Actualizar select en factura
   selProdFactura.innerHTML = `<option value="">Seleccionar producto</option>`;
   productos.forEach((p) => {
     selProdFactura.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`;
@@ -136,6 +131,7 @@ document.getElementById("formFactura").addEventListener("submit", async (e) => {
 
   if (!proveedor) {
     if (confirm("No se encontró el proveedor. ¿Deseas registrar uno nuevo?")) {
+      document.getElementById("panelProveedores").style.display = "block";
       document.getElementById("panelProveedores").scrollIntoView({ behavior: "smooth" });
     }
     return;
@@ -143,6 +139,7 @@ document.getElementById("formFactura").addEventListener("submit", async (e) => {
 
   if (!producto) {
     if (confirm("No se encontró el producto. ¿Deseas registrar uno nuevo?")) {
+      document.getElementById("panelProductos").style.display = "block";
       document.getElementById("panelProductos").scrollIntoView({ behavior: "smooth" });
     }
     return;
@@ -167,25 +164,26 @@ document.getElementById("formFactura").addEventListener("submit", async (e) => {
 // ===================== MODAL DETALLE FACTURA =====================
 function mostrarModalFactura(data) {
   modalExtraBody.innerHTML = `
-    <h3>Factura ${data.idFactura}</h3>
-    <p><b>Fecha:</b> ${data.fecha}</p>
-    <p><b>Proveedor:</b> ${data.proveedor}</p>
-    <p><b>Producto:</b> ${data.producto}</p>
+    <h3 class="titulo-modal">Factura ${data.idFactura}</h3>
+    <p><strong>Fecha:</strong> ${data.fecha}</p>
+    <p><strong>Proveedor:</strong> ${data.proveedor}</p>
+    <p><strong>Producto:</strong> ${data.producto}</p>
     <hr>
-    <p><b>Subtotal:</b> S/ ${data.subtotal.toFixed(2)}</p>
-    <p><b>IGV:</b> S/ ${data.igv.toFixed(2)}</p>
-    <p><b>Total:</b> S/ ${data.total.toFixed(2)}</p>
+    <p><strong>Subtotal:</strong> S/ ${Number(data.subtotal).toFixed(2)}</p>
+    <p><strong>IGV:</strong> S/ ${Number(data.igv).toFixed(2)}</p>
+    <p><strong>Total:</strong> S/ ${Number(data.total).toFixed(2)}</p>
   `;
   modalExtra.showModal();
 }
 
-// ===================== EDITAR / VER / ELIMINAR =====================
+// ===================== VER / EDITAR / ELIMINAR =====================
 document.addEventListener("click", async (e) => {
   // -------- VER --------
   if (e.target.classList.contains("ver")) {
     const id = e.target.dataset.id;
-    const snap = await getDocs(query(colFacturas, where("__name__", "==", id)));
-    if (!snap.empty) mostrarModalFactura(snap.docs[0].data());
+    const docRef = doc(db, "facturas", id);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) mostrarModalFactura(snap.data());
   }
 
   // -------- ELIMINAR --------
@@ -199,37 +197,31 @@ document.addEventListener("click", async (e) => {
   // -------- EDITAR --------
   if (e.target.classList.contains("editar")) {
     const id = e.target.dataset.id;
-    const snap = await getDocs(query(colFacturas, where("__name__", "==", id)));
-    if (snap.empty) return;
-    const data = snap.docs[0].data();
+    const docRef = doc(db, "facturas", id);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const f = snap.data();
+      document.getElementById("facturaFecha").value = f.fecha;
+      selProvFactura.value = f.proveedor;
+      selProdFactura.value = f.producto;
+      document.getElementById("facturaSubtotal").value = f.subtotal;
+      document.getElementById("facturaIGV").value = f.igv;
+      document.getElementById("facturaTotal").value = f.total;
+      document.getElementById("facturaTipo").value = f.tipo;
+      document.getElementById("facturaMoneda").value = f.moneda;
 
-    // Mostrar modal de edición
-    modalEditar.showModal();
-    document.getElementById("editIdFactura").value = data.idFactura;
-    document.getElementById("editFecha").value = data.fecha;
-    document.getElementById("editProveedor").value = data.proveedor;
-    document.getElementById("editProducto").value = data.producto;
-    document.getElementById("editSubtotal").value = data.subtotal;
-    document.getElementById("editIGV").value = data.igv;
-    document.getElementById("editTotal").value = data.total;
-    document.getElementById("editTipo").value = data.tipo;
-    document.getElementById("editMoneda").value = data.moneda;
-
-    // Guardar cambios
-    document.getElementById("btnGuardarEdit").onclick = async () => {
-      const docRef = doc(db, "facturas", id);
-      await updateDoc(docRef, {
-        fecha: document.getElementById("editFecha").value,
-        proveedor: document.getElementById("editProveedor").value,
-        producto: document.getElementById("editProducto").value,
-        subtotal: parseFloat(document.getElementById("editSubtotal").value) || 0,
-        igv: parseFloat(document.getElementById("editIGV").value) || 0,
-        total: parseFloat(document.getElementById("editTotal").value) || 0,
-        tipo: document.getElementById("editTipo").value,
-        moneda: document.getElementById("editMoneda").value,
-      });
-      modalEditar.close();
-    };
+      if (confirm("¿Deseas guardar los cambios?")) {
+        await updateDoc(docRef, {
+          fecha: f.fecha,
+          proveedor: f.proveedor,
+          producto: f.producto,
+          subtotal: f.subtotal,
+          igv: f.igv,
+          total: f.total,
+          tipo: f.tipo,
+          moneda: f.moneda,
+        });
+      }
+    }
   }
 });
-
