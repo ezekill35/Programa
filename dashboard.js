@@ -84,6 +84,28 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 });
 
 // ===================== AUXILIARES =====================
+async function cargarProveedoresSelect(){
+  proveedorFactura.innerHTML = '<option value="">Seleccionar proveedor</option>';
+  const snap = await getDocs(colProveedores);
+  snap.forEach(d => {
+    const opt = document.createElement("option");
+    opt.value = d.data().nombre;
+    opt.textContent = d.data().nombre;
+    proveedorFactura.appendChild(opt);
+  });
+}
+
+async function cargarProductosSelect(){
+  productoFactura.innerHTML = '<option value="">Seleccionar producto</option>';
+  const snap = await getDocs(colProductos);
+  snap.forEach(d => {
+    const opt = document.createElement("option");
+    opt.value = d.data().nombre;
+    opt.textContent = d.data().nombre;
+    productoFactura.appendChild(opt);
+  });
+}
+
 function mostrarModalFactura(f){
   modalFacturaBody.innerHTML = `
     <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
@@ -137,6 +159,7 @@ onSnapshot(colProveedores, snapshot=>{
       </td>`;
     tablaProveedores.appendChild(tr);
 
+    // actualizar select proveedor
     const opt=document.createElement("option");
     opt.value=d.nombre;
     opt.textContent=d.nombre;
@@ -180,6 +203,7 @@ onSnapshot(colProductos, snapshot=>{
       </td>`;
     tablaProductos.appendChild(tr);
 
+    // actualizar select producto
     const opt=document.createElement("option");
     opt.value=d.nombre;
     opt.textContent=d.nombre;
@@ -234,30 +258,30 @@ onSnapshot(colFacturas, snapshot=>{
     tablaFacturas.appendChild(tr);
   });
   countFacturas.textContent=snapshot.size;
-
-  // Actualizar buscador en tiempo real
-  const texto = buscador.value.trim().toLowerCase();
-  panelFacturas.innerHTML = "";
-  if(texto){
-    snapshot.forEach(docu=>{
-      const f=docu.data();
-      if(f.producto.toLowerCase().includes(texto)){
-        const div=document.createElement("div");
-        div.className="resultado-item";
-        div.textContent=f.idFactura;
-        div.addEventListener("click", ()=>mostrarModalFactura(f));
-        panelFacturas.appendChild(div);
-      }
-    });
-  }
 });
 
 // ===================== BUSCADOR =====================
-buscador.addEventListener("input", ()=>{}); // Se actualiza automáticamente por onSnapshot
+buscador.style.display="none";
+buscador.addEventListener("input", async ()=>{
+  const texto = buscador.value.trim().toLowerCase();
+  panelFacturas.innerHTML = "";
+  if(!texto) return;
+  const snap = await getDocs(colFacturas);
+  snap.forEach(docu=>{
+    const f=docu.data();
+    if(f.producto.toLowerCase().includes(texto)){
+      const div = document.createElement("div");
+      div.className="resultado-item";
+      div.textContent=f.idFactura;
+      div.addEventListener("click", ()=>mostrarModalFactura(f));
+      panelFacturas.appendChild(div);
+    }
+  });
+});
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e=>{
-  // EDITAR
+  // --------- EDITAR ---------
   if(e.target.classList.contains("editar")){
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
@@ -302,6 +326,7 @@ document.addEventListener("click", async e=>{
       `;
       modalEditar.showModal();
 
+      // Guardar cambios
       document.getElementById("guardarEdicion").addEventListener("click", async () => {
         const dataActualizada = {};
         if(tipo==="proveedor"){
@@ -328,13 +353,14 @@ document.addEventListener("click", async e=>{
           dataActualizada.tipo = document.getElementById("editTipo").value;
           dataActualizada.moneda = document.getElementById("editMoneda").value;
         }
-        await updateDoc(doc(db, colNombre, id), dataActualizada);
+        const docRef = doc(db, colNombre, id);
+        await updateDoc(docRef, dataActualizada);
         modalEditar.close();
       });
     }
   }
 
-  // ELIMINAR
+  // --------- ELIMINAR ---------
   if(e.target.classList.contains("eliminar")){
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
@@ -344,7 +370,7 @@ document.addEventListener("click", async e=>{
     }
   }
 
-  // VER DETALLE
+  // --------- VER DETALLE ---------
   if(e.target.classList.contains("ver")){
     const tipo = e.target.dataset.tipo;
     if(tipo==="factura"){
