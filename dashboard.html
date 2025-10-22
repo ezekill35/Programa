@@ -277,7 +277,7 @@
       border: none;
       border-radius: 20px;
       padding: 1.5rem;
-      max-width: 400px;
+      max-width: 600px;
       width: 90%;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       background: rgba(255, 255, 255, 0.95);
@@ -431,6 +431,25 @@
       transform: translateX(5px);
     }
     
+    /* Supplier products section */
+    .supplier-products {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 15px;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-left: 4px solid #4FD1C5;
+    }
+    
+    .product-badge {
+      background: linear-gradient(135deg, #4FD1C5 0%, #38B2AC 100%);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin: 0.25rem;
+      display: inline-block;
+    }
+    
     /* Floating pet icons */
     .floating-pet {
       position: fixed;
@@ -508,7 +527,7 @@
   <main>
     <div class="header-bar">
       <h2 class="fw-bold">Panel General</h2>
-      <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto o factura...">
+      <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto, proveedor o factura...">
     </div>
     <div id="searchResults" class="mb-4"></div>
 
@@ -534,12 +553,20 @@
           </div>
         </div>
       </div>
+      
+      <!-- Supplier-Product Relationships -->
+      <div class="tabla-container mt-4">
+        <h4>📊 Relaciones Proveedor-Producto</h4>
+        <div id="supplierProductRelations" class="row g-3">
+          <!-- This will be populated by JavaScript -->
+        </div>
+      </div>
     </section>
 
     <!-- Proveedores -->
     <section id="proveedores" class="seccion">
       <div class="tabla-container">
-        <h4>Registrar Proveedor</h4>
+        <h4>➕ Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
           <div class="col-md-3">
             <select id="tipoDocumentoProveedor" class="form-select" required>
@@ -563,14 +590,18 @@
           <div class="col-md-6">
             <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
           </div>
+          <div class="col-md-12">
+            <label class="form-label">📝 Información adicional</label>
+            <textarea id="infoAdicionalProveedor" class="form-control" placeholder="Especialización, tipos de productos que ofrece, etc." rows="2"></textarea>
+          </div>
           <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
+            <button class="btn btn-success">➕ Registrar Proveedor</button>
           </div>
         </form>
       </div>
 
       <div class="tabla-container">
-        <h4>Lista de Proveedores</h4>
+        <h4>📋 Lista de Proveedores</h4>
         <table class="table table-striped">
           <thead>
             <tr>
@@ -578,6 +609,7 @@
               <th>Nombre</th>
               <th>Dirección</th>
               <th>Teléfono</th>
+              <th>Productos</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -590,10 +622,26 @@
     <!-- Productos -->
     <section id="productos" class="seccion">
       <div class="tabla-container">
-        <h4>Registrar Producto</h4>
+        <h4>➕ Registrar Producto</h4>
         <form id="formProducto" class="row g-3">
           <div class="col-md-6">
-            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
+            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre del producto" required>
+          </div>
+          <div class="col-md-6">
+            <select id="proveedorProducto" class="form-select" required>
+              <option value="">Seleccionar proveedor</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select id="categoriaProducto" class="form-select" required>
+              <option value="">Categoría</option>
+              <option>Alimentos</option>
+              <option>Juguetes</option>
+              <option>Accesorios</option>
+              <option>Medicamentos</option>
+              <option>Higiene</option>
+              <option>Otros</option>
+            </select>
           </div>
           <div class="col-md-3">
             <select id="presentacionProducto" class="form-select" required>
@@ -602,34 +650,50 @@
               <option>Docena</option>
               <option>Ciento</option>
               <option>Millar</option>
+              <option>Kilogramo</option>
+              <option>Litro</option>
             </select>
           </div>
           <div class="col-md-3">
-            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad presentación" required>
+            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad" required>
+          </div>
+          <div class="col-md-3">
+            <input type="number" id="stockProducto" class="form-control" placeholder="Stock inicial" required>
           </div>
           <div class="col-md-4">
             <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
           </div>
           <div class="col-md-4">
             <select id="tipoMoneda" class="form-select" required>
-              <option value="soles">Soles</option>
-              <option value="dolares">Dólares</option>
+              <option value="soles">Soles (S/.)</option>
+              <option value="dolares">Dólares ($)</option>
             </select>
           </div>
           <div class="col-md-4">
-            <textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea>
+            <input type="number" id="precioCompra" class="form-control" placeholder="Precio de compra" step="0.01">
           </div>
           <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
+            <textarea id="descripcionProducto" class="form-control" placeholder="Descripción del producto" rows="3"></textarea>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success">➕ Registrar Producto</button>
           </div>
         </form>
       </div>
 
       <div class="tabla-container">
-        <h4>Lista de Productos</h4>
+        <h4>📦 Lista de Productos</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>Nombre</th><th>Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+            <tr>
+              <th>Nombre</th>
+              <th>Proveedor</th>
+              <th>Categoría</th>
+              <th>Presentación</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
           <tbody id="tablaProductos"></tbody>
         </table>
@@ -640,7 +704,7 @@
     <!-- Facturas -->
     <section id="facturas" class="seccion">
       <div class="tabla-container">
-        <h4>Registrar Factura</h4>
+        <h4>🧾 Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
           <div class="col-md-4">
             <input type="text" id="idFactura" class="form-control" placeholder="ID Automático" readonly>
@@ -662,13 +726,21 @@
             <select id="proveedorFactura" class="form-select" required></select>
           </div>
           <div class="col-md-6">
-            <select id="productoFactura" class="form-select" required></select>
+            <select id="productoFactura" class="form-select" required>
+              <option value="">Primero selecciona un proveedor</option>
+            </select>
           </div>
-          <div class="col-md-6" id="campoAdicional" style="display:none;">
-            <input type="text" id="detalleAdicional" class="form-control" placeholder="Detalle de nota de crédito/débito">
+          <div class="col-md-4">
+            <input type="number" id="cantidadFactura" class="form-control" placeholder="Cantidad" min="1" value="1" required>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <input type="number" id="montoFactura" class="form-control" placeholder="Subtotal" step="0.01" required>
+          </div>
+          <div class="col-md-4">
+            <select id="tipoMonedaFactura" class="form-select" required>
+              <option value="soles">Soles (S/.)</option>
+              <option value="dolares">Dólares ($)</option>
+            </select>
           </div>
           <div class="col-md-6">
             <input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly>
@@ -677,16 +749,27 @@
             <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
           </div>
           <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
+            <button class="btn btn-success">🧾 Registrar Factura</button>
           </div>
         </form>
       </div>
 
       <div class="tabla-container">
-        <h4>Lista de Facturas</h4>
+        <h4>📄 Lista de Facturas</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Proveedor</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+              <th>IGV</th>
+              <th>Total</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
           <tbody id="tablaFacturas"></tbody>
         </table>
@@ -696,7 +779,7 @@
 
   <!-- Modales -->
   <dialog id="modalFactura">
-    <h4>Detalle de Factura</h4>
+    <h4>🧾 Detalle de Factura</h4>
     <div id="modalFacturaBody"></div>
     <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
@@ -714,5 +797,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
 
