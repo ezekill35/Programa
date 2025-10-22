@@ -1,178 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets · Dashboard</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #e9f5f5;
-      margin: 0;
-    }
-    .sidebar {
-      width: 250px;
-      background: linear-gradient(180deg, #14b8a6 0%, #0284c7 100%);
-      color: white;
-      height: 100vh;
-      position: fixed;
-      padding: 1.5rem 1rem;
-      border-radius: 0 20px 20px 0;
-      box-shadow: 4px 0 15px rgba(0,0,0,0.2);
-      transition: background 0.3s;
-    }
-    .sidebar:hover { background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); }
-    .sidebar h3 { font-weight: 700; text-align:center; margin-bottom:1.5rem; text-shadow:1px 1px 2px rgba(0,0,0,0.2);}
-    .nav-btn { display:block; width:100%; background:transparent; color:white; border:none; text-align:left; padding:0.75rem 1rem; border-radius:10px; margin-bottom:0.5rem; font-size:15px; transition: background 0.3s, transform 0.2s;}
-    .nav-btn:hover, .nav-btn.activo { background: rgba(255,255,255,0.2); transform: scale(1.05);}
-    main { margin-left: 270px; padding:2rem;}
-    .header-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap;}
-    #searchInput { max-width:300px;}
-    .tabla-container { background:white; border-radius:15px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.1); margin-bottom:2rem; transition: transform 0.2s;}
-    .tabla-container:hover { transform: translateY(-5px);}
-    .btn-accion { background:transparent; border:none; cursor:pointer; font-size:1rem; margin-right:5px; transition: transform 0.2s;}
-    .btn-accion:hover { transform: scale(1.2);}
-    .resultado-item { background:#e0f2fe; border-radius:10px; padding:0.75rem; margin-bottom:5px; cursor:pointer; transition: background 0.2s;}
-    .resultado-item:hover { background:#bae6fd;}
-    dialog { border:none; border-radius:15px; padding:1.5rem; max-width:400px; width:90%; box-shadow:0 5px 25px rgba(0,0,0,0.3);}
-    dialog::backdrop { background: rgba(0,0,0,0.4);}
-    .link-info { cursor:pointer; text-decoration:underline; color:#0284c7;}
-    .seccion { display:none;}
-    .seccion.activa { display:block;}
-    @media(max-width:768px){
-      main { margin-left:0; padding:1rem;}
-      .sidebar { width:100%; height:auto; border-radius:0; padding:1rem; position:relative; display:flex; flex-wrap:wrap; justify-content:center;}
-      .nav-btn { margin:0.2rem; flex:1 1 45%;}
-    }
-    .form-row { display:flex; gap:0.5rem; align-items:center; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery Pets · Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body{font-family: 'Inter', sans-serif; background:#f5f6fa; color:#2f3640;}
+.navbar{background:#0f4c75; color:white;}
+.navbar a{color:white; margin-right:15px; text-decoration:none;}
+.navbar a.activo{font-weight:bold; border-bottom:2px solid #00b7c2;}
+.seccion{display:none; padding:20px; background:white; margin:20px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.1);}
+.seccion.activa{display:block;}
+.table td, .table th{vertical-align:middle;}
+.btn-accion{margin:0 2px; cursor:pointer;}
+.link-info{color:#0f4c75; cursor:pointer; text-decoration:underline;}
+.modal{position:fixed; top:0; left:0; width:100%; height:100%; display:none; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;}
+.modal[open]{display:flex;}
+.modal-content{background:white; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90%; overflow:auto;}
+.resultado-item{padding:5px 10px; cursor:pointer; border-bottom:1px solid #ccc;}
+.resultado-item:hover{background:#f0f0f0;}
+</style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h3>Discovery Pets</h3>
-    <button class="nav-btn activo" data-target="dashboard">📊 Dashboard</button>
-    <button class="nav-btn" data-target="proveedores">🏢 Proveedores</button>
-    <button class="nav-btn" data-target="productos">📦 Productos</button>
-    <button class="nav-btn" data-target="facturas">🧾 Facturas</button>
-    <button id="btnCerrarSesion" class="nav-btn mt-4">🚪 Cerrar sesión</button>
-  </aside>
+<nav class="navbar d-flex align-items-center p-3">
+  <a href="#" class="nav-btn activo" data-target="proveedores">Proveedores</a>
+  <a href="#" class="nav-btn" data-target="productos">Productos</a>
+  <a href="#" class="nav-btn" data-target="facturas">Facturas</a>
+  <button class="btn btn-danger ms-auto" id="btnCerrarSesion">Cerrar sesión</button>
+</nav>
 
-  <main>
-    <div class="header-bar">
-      <h2 class="fw-bold text-primary">Panel General</h2>
-      <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto o factura...">
-      <div id="searchResults"></div>
+<div class="seccion activa" id="proveedores">
+  <h3>Registrar Proveedor</h3>
+  <form id="formProveedor" class="mb-3">
+    <div class="d-flex gap-2 mb-2">
+      <select id="tipoDocumentoProveedor" class="form-control" required>
+        <option value="">Tipo de Documento</option>
+        <option value="RUC">RUC</option>
+        <option value="DNI">DNI</option>
+        <option value="Pasaporte">Pasaporte</option>
+      </select>
+      <input type="text" id="numeroDocumentoProveedor" placeholder="Número de documento" class="form-control" required>
     </div>
+    <input type="text" id="nombreProveedor" placeholder="Nombre" class="form-control mb-2" required>
+    <input type="text" id="direccionProveedor" placeholder="Dirección" class="form-control mb-2">
+    <input type="text" id="telefonoProveedor" placeholder="Teléfono" class="form-control mb-2">
+    <button class="btn btn-primary">Registrar</button>
+  </form>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="seccion activa">
-      <div class="row g-4">
-        <div class="col-md-4"><div class="tabla-container text-center"><h5 class="text-secondary">Total Facturas</h5><h3 id="countFacturas">0</h3></div></div>
-        <div class="col-md-4"><div class="tabla-container text-center"><h5 class="text-secondary">Total Proveedores</h5><h3 id="countProveedores">0</h3></div></div>
-        <div class="col-md-4"><div class="tabla-container text-center"><h5 class="text-secondary">Total Productos</h5><h3 id="countProductos">0</h3></div></div>
-      </div>
-    </section>
+  <h4>Lista de Proveedores (<span id="countProveedores">0</span>)</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr><th>Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaProveedores"></tbody>
+  </table>
+</div>
 
-    <!-- PROVEEDORES -->
-    <section id="proveedores" class="seccion">
-      <div class="tabla-container">
-        <h4>Registrar Proveedor</h4>
-        <form id="formProveedor">
-          <div class="form-row">
-            <select id="tipoDocumentoProveedor" class="form-select" required>
-              <option value="">Tipo Documento</option>
-              <option>RUC</option>
-              <option>DNI</option>
-              <option>Pasaporte</option>
-            </select>
-            <input type="text" id="numeroDocumentoProveedor" class="form-control" placeholder="Número Documento" required>
-          </div>
-          <input type="text" id="nombreProveedor" class="form-control mt-2" placeholder="Nombre o Razón Social" required>
-          <input type="text" id="direccionProveedor" class="form-control mt-2" placeholder="Dirección">
-          <input type="text" id="telefonoProveedor" class="form-control mt-2" placeholder="Teléfono">
-          <button class="btn btn-success mt-2">Registrar</button>
-        </form>
-      </div>
+<div class="seccion" id="productos">
+  <h3>Registrar Producto</h3>
+  <form id="formProducto" class="mb-3">
+    <input type="text" id="nombreProducto" placeholder="Nombre" class="form-control mb-2" required>
+    <input type="number" id="cantidadPresentacion" placeholder="Cantidad" class="form-control mb-2" required>
+    <input type="number" step="0.01" id="precioProducto" placeholder="Precio" class="form-control mb-2" required>
+    <select id="tipoMoneda" class="form-control mb-2">
+      <option value="soles">Soles</option>
+      <option value="dolares">Dólares</option>
+    </select>
+    <input type="text" id="descripcionProducto" placeholder="Descripción" class="form-control mb-2">
+    <button class="btn btn-primary">Registrar</button>
+  </form>
 
-      <div class="tabla-container">
-        <h4>Lista de Proveedores</h4>
-        <table class="table table-striped">
-          <thead><tr><th>Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
-          <tbody id="tablaProveedores"></tbody>
-        </table>
-      </div>
-    </section>
+  <h4>Lista de Productos (<span id="countProductos">0</span>)</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaProductos"></tbody>
+  </table>
+</div>
 
-    <!-- PRODUCTOS -->
-    <section id="productos" class="seccion">
-      <div class="tabla-container">
-        <h4>Registrar Producto</h4>
-        <form id="formProducto" class="row g-3">
-          <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required>
-          <div class="form-row mt-2">
-            <input type="text" id="presentacionProducto" class="form-control" placeholder="Presentación">
-            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad">
-          </div>
-          <div class="form-row mt-2">
-            <input type="number" id="precioProducto" class="form-control" placeholder="Precio">
-            <select id="tipoMoneda" class="form-select"><option value="soles">S/.</option><option value="dolares">$</option></select>
-          </div>
-          <textarea id="descripcionProducto" class="form-control mt-2" placeholder="Descripción"></textarea>
-          <button class="btn btn-success mt-2">Registrar</button>
-        </form>
-      </div>
-      <div class="tabla-container">
-        <h4>Lista de Productos</h4>
-        <table class="table table-striped">
-          <thead><tr><th>Nombre</th><th>Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
-          <tbody id="tablaProductos"></tbody>
-        </table>
-      </div>
-    </section>
+<div class="seccion" id="facturas">
+  <h3>Registrar Factura</h3>
+  <input type="text" id="searchInput" placeholder="Buscar por producto..." class="form-control mb-2">
+  <div id="searchResults" class="mb-2"></div>
 
-    <!-- FACTURAS -->
-    <section id="facturas" class="seccion">
-      <div class="tabla-container">
-        <h4>Registrar Factura</h4>
-        <form id="formFactura">
-          <input type="date" id="fechaFactura" class="form-control mb-2" required>
-          <select id="tipoFactura" class="form-select mb-2" required>
-            <option value="">Tipo Factura</option>
-            <option>Factura</option>
-            <option>Nota de Crédito</option>
-          </select>
-          <div id="campoAdicional"><input type="text" id="detalleAdicional" class="form-control" placeholder="Detalle adicional"></div>
-          <select id="proveedorFactura" class="form-select mb-2" required></select>
-          <select id="productoFactura" class="form-select mb-2" required></select>
-          <input type="number" id="montoFactura" class="form-control mb-2" placeholder="Monto" required>
-          <input type="number" id="igvFactura" class="form-control mb-2" placeholder="IGV" readonly>
-          <input type="number" id="totalFactura" class="form-control mb-2" placeholder="Total" readonly>
-          <button class="btn btn-success">Registrar</button>
-        </form>
-      </div>
-      <div class="tabla-container">
-        <h4>Lista de Facturas</h4>
-        <table class="table table-striped">
-          <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr></thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </div>
-    </section>
+  <form id="formFactura" class="mb-3">
+    <input type="text" id="idFactura" placeholder="ID Factura" class="form-control mb-2" required>
+    <input type="date" id="fechaFactura" class="form-control mb-2" required>
+    <select id="proveedorFactura" class="form-control mb-2" required></select>
+    <select id="productoFactura" class="form-control mb-2" required></select>
+    <input type="number" step="0.01" id="montoFactura" placeholder="Monto" class="form-control mb-2" required>
+    <select id="tipoFactura" class="form-control mb-2">
+      <option value="contado">Contado</option>
+      <option value="credito">Crédito</option>
+    </select>
+    <button class="btn btn-primary">Registrar</button>
+  </form>
 
-  </main>
+  <h4>Lista de Facturas (<span id="countFacturas">0</span>)</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
+    </thead>
+    <tbody id="tablaFacturas"></tbody>
+  </table>
+</div>
 
-  <!-- MODALES -->
-  <dialog id="modalFactura">
-    <h4>Detalle de Factura</h4>
+<!-- MODALES -->
+<dialog class="modal" id="modalFactura">
+  <div class="modal-content">
+    <button class="btn btn-secondary btn-sm mb-2" id="cerrarModalFactura">Cerrar</button>
     <div id="modalFacturaBody"></div>
-    <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
+  </div>
+</dialog>
 
-  <script type="module" src="dashboard.js"></script>
+<dialog class="modal" id="modalExtra">
+  <div class="modal-content">
+    <button class="btn btn-secondary btn-sm mb-2" id="cerrarModalExtra">Cerrar</button>
+    <div id="modalExtraBody"></div>
+  </div>
+</dialog>
+
+<dialog class="modal" id="modalEditar">
+  <div class="modal-content">
+    <button class="btn btn-secondary btn-sm mb-2" id="cerrarModalEditar">Cerrar</button>
+    <div id="modalEditarBody"></div>
+  </div>
+</dialog>
+
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>
 
