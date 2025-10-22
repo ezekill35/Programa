@@ -6,7 +6,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-// Configuración actualizada con tus datos
+// Configuración Firebase con tu appId
 const firebaseConfig = {
   apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
   authDomain: "discovery-pets.firebaseapp.com",
@@ -22,9 +22,7 @@ const auth = getAuth(app);
 
 // ===================== VERIFICAR SESIÓN =====================
 onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-  }
+  if (!user) window.location.href = "index.html";
 });
 
 // ===================== COLECCIONES =====================
@@ -47,7 +45,7 @@ const countProveedores = document.getElementById("countProveedores");
 const countProductos = document.getElementById("countProductos");
 
 const buscador = document.getElementById("searchInput");
-const panelFacturas = document.getElementById("searchResults");
+const searchResults = document.getElementById("searchResults");
 
 const modalFactura = document.getElementById("modalFactura");
 const modalFacturaBody = document.getElementById("modalFacturaBody");
@@ -76,7 +74,7 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     document.getElementById(btn.dataset.target).classList.add("activa");
 
     if(btn.dataset.target === "facturas") buscador.style.display = "block";
-    else { buscador.style.display = "none"; buscador.value=""; panelFacturas.innerHTML=""; }
+    else { buscador.style.display = "none"; buscador.value=""; searchResults.innerHTML=""; }
   });
 });
 
@@ -131,7 +129,7 @@ formProveedor.addEventListener("submit", async e=>{
   const direccion = document.getElementById("direccionProveedor").value.trim();
   const telefono = document.getElementById("telefonoProveedor").value.trim();
 
-  if(!tipoDoc || !numDoc || !nombre) {
+  if(!tipoDoc || !numDoc || !nombre){
     alert("Debe completar Tipo Documento, Número y Nombre");
     return;
   }
@@ -160,7 +158,7 @@ onSnapshot(colProveedores, snapshot=>{
       </td>`;
     tablaProveedores.appendChild(tr);
   });
-  countProveedores.textContent=snapshot.size;
+  countProveedores.textContent = snapshot.size;
   cargarProveedoresSelect();
 });
 
@@ -196,7 +194,7 @@ onSnapshot(colProductos, snapshot=>{
       </td>`;
     tablaProductos.appendChild(tr);
   });
-  countProductos.textContent=snapshot.size;
+  countProductos.textContent = snapshot.size;
   cargarProductosSelect();
 });
 
@@ -219,7 +217,7 @@ formFactura.addEventListener("submit", async e=>{
 onSnapshot(colFacturas, snapshot=>{
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
-    const f=docu.data();
+    const f = docu.data();
     const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
@@ -227,7 +225,7 @@ onSnapshot(colFacturas, snapshot=>{
       <td>${f.fecha}</td>
       <td>${f.proveedor}</td>
       <td>${f.producto}</td>
-      <td>${f.moneda === 'soles' ? 'S/. ' : '$ '}${f.monto}</td>
+      <td>${f.moneda==='soles'?'S/. ':'$ '}${f.monto}</td>
       <td>${f.tipo}</td>
       <td>
         <button class="btn-accion editar" data-tipo="factura" data-id="${docu.id}">✏️</button>
@@ -236,24 +234,24 @@ onSnapshot(colFacturas, snapshot=>{
       </td>`;
     tablaFacturas.appendChild(tr);
   });
-  countFacturas.textContent=snapshot.size;
+  countFacturas.textContent = snapshot.size;
 });
 
 // ===================== BUSCADOR =====================
 buscador.style.display="none";
 buscador.addEventListener("input", async ()=>{
-  const texto=buscador.value.trim().toLowerCase();
-  panelFacturas.innerHTML="";
+  const texto = buscador.value.trim().toLowerCase();
+  searchResults.innerHTML="";
   if(!texto) return;
   const snap = await getDocs(colFacturas);
   snap.forEach(docu=>{
     const f = docu.data();
-    if(f.producto.toLowerCase().includes(texto)){
-      const div=document.createElement("div");
+    if(f.idFactura.toLowerCase().includes(texto) || f.proveedor.toLowerCase().includes(texto) || f.producto.toLowerCase().includes(texto)){
+      const div = document.createElement("div");
       div.className="resultado-item";
-      div.textContent=f.idFactura;
+      div.textContent=`${f.idFactura} - ${f.proveedor} - ${f.producto}`;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
-      panelFacturas.appendChild(div);
+      searchResults.appendChild(div);
     }
   });
 });
@@ -265,7 +263,7 @@ document.addEventListener("click", async e=>{
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
     const colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
-    const snap = await getDocs(query(collection(db, colNombre), where("__name__","==",id)));
+    const snap = await getDocs(query(collection(db,colNombre),where("__name__","==",id)));
     if(!snap.empty){
       const d = snap.docs[0].data();
       modalEditarBody.innerHTML = `<h5>Editar ${tipo}</h5>
