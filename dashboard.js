@@ -131,7 +131,8 @@ cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
 formProveedor.addEventListener("submit", async e=>{
   e.preventDefault();
   const data = {
-    ruc: document.getElementById("rucProveedor").value.trim(),
+    tipoDocumento: document.getElementById("tipoDocumentoProveedor").value,
+    numeroDocumento: document.getElementById("numeroDocumentoProveedor").value,
     nombre: document.getElementById("nombreProveedor").value.trim(),
     direccion: document.getElementById("direccionProveedor").value.trim(),
     telefono: document.getElementById("telefonoProveedor").value.trim()
@@ -140,14 +141,16 @@ formProveedor.addEventListener("submit", async e=>{
   formProveedor.reset();
 });
 
+// Tiempo real proveedores
 onSnapshot(colProveedores, snapshot=>{
   tablaProveedores.innerHTML="";
+  proveedorFactura.innerHTML = '<option value="">Seleccionar proveedor</option>';
   snapshot.forEach(docu=>{
     const d=docu.data();
     const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
-      <td>${d.ruc}</td>
+      <td>${d.tipoDocumento} - ${d.numeroDocumento}</td>
       <td>${d.nombre}</td>
       <td>${d.direccion||""}</td>
       <td>${d.telefono||""}</td>
@@ -157,10 +160,16 @@ onSnapshot(colProveedores, snapshot=>{
         <button class="btn-accion eliminar" data-tipo="proveedor" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProveedores.appendChild(tr);
+
+    // actualizar select proveedor
+    const opt=document.createElement("option");
+    opt.value=d.nombre;
+    opt.textContent=d.nombre;
+    proveedorFactura.appendChild(opt);
   });
   countProveedores.textContent=snapshot.size;
-  cargarProveedoresSelect();
 });
+
 
 // ===================== PRODUCTOS =====================
 formProducto.addEventListener("submit", async e=>{
