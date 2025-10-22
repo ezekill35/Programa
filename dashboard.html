@@ -6,131 +6,329 @@
 <title>Discovery Pets · Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{font-family: 'Inter', sans-serif; background:#f5f6fa; color:#2f3640;}
-.navbar{background:#0f4c75; color:white;}
-.navbar a{color:white; margin-right:15px; text-decoration:none;}
-.navbar a.activo{font-weight:bold; border-bottom:2px solid #00b7c2;}
-.seccion{display:none; padding:20px; background:white; margin:20px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.1);}
-.seccion.activa{display:block;}
-.table td, .table th{vertical-align:middle;}
-.btn-accion{margin:0 2px; cursor:pointer;}
-.link-info{color:#0f4c75; cursor:pointer; text-decoration:underline;}
-.modal{position:fixed; top:0; left:0; width:100%; height:100%; display:none; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;}
-.modal[open]{display:flex;}
-.modal-content{background:white; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90%; overflow:auto;}
-.resultado-item{padding:5px 10px; cursor:pointer; border-bottom:1px solid #ccc;}
-.resultado-item:hover{background:#f0f0f0;}
+body { font-family: 'Inter', sans-serif; background:#f5f5f5; }
+.nav { display:flex; gap:10px; margin-bottom:20px; }
+.nav-btn { padding:10px 20px; background:#14b8a6; color:white; cursor:pointer; border-radius:5px; }
+.nav-btn.activo { background:#0f766e; }
+.seccion { display:none; padding:10px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+.seccion.activa { display:block; }
+table { width:100%; margin-top:10px; }
+.btn-accion { margin-right:5px; cursor:pointer; }
+.resultado-item { padding:5px; border-bottom:1px solid #ccc; cursor:pointer; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.modal-content { background:white; padding:20px; border-radius:10px; width:90%; max-width:500px; }
+.modal-content h3 { margin-bottom:10px; }
 </style>
 </head>
 <body>
 
-<nav class="navbar d-flex align-items-center p-3">
-  <a href="#" class="nav-btn activo" data-target="proveedores">Proveedores</a>
-  <a href="#" class="nav-btn" data-target="productos">Productos</a>
-  <a href="#" class="nav-btn" data-target="facturas">Facturas</a>
-  <button class="btn btn-danger ms-auto" id="btnCerrarSesion">Cerrar sesión</button>
-</nav>
+<div class="nav">
+  <div class="nav-btn activo" data-target="proveedores">Proveedores</div>
+  <div class="nav-btn" data-target="productos">Productos</div>
+  <div class="nav-btn" data-target="facturas">Facturas</div>
+  <div class="nav-btn" id="btnCerrarSesion">Cerrar sesión</div>
+</div>
 
-<div class="seccion activa" id="proveedores">
-  <h3>Registrar Proveedor</h3>
-  <form id="formProveedor" class="mb-3">
-    <div class="d-flex gap-2 mb-2">
-      <select id="tipoDocumentoProveedor" class="form-control" required>
-        <option value="">Tipo de Documento</option>
-        <option value="RUC">RUC</option>
-        <option value="DNI">DNI</option>
-        <option value="Pasaporte">Pasaporte</option>
-      </select>
-      <input type="text" id="numeroDocumentoProveedor" placeholder="Número de documento" class="form-control" required>
-    </div>
-    <input type="text" id="nombreProveedor" placeholder="Nombre" class="form-control mb-2" required>
-    <input type="text" id="direccionProveedor" placeholder="Dirección" class="form-control mb-2">
-    <input type="text" id="telefonoProveedor" placeholder="Teléfono" class="form-control mb-2">
-    <button class="btn btn-primary">Registrar</button>
+<input type="text" id="searchInput" placeholder="Buscar facturas..." class="form-control mb-2">
+
+<!-- Secciones -->
+<div id="proveedores" class="seccion activa">
+  <h2>Proveedores (<span id="countProveedores">0</span>)</h2>
+  <form id="formProveedor" class="mb-2">
+    <input type="text" id="tipoDocumentoProveedor" placeholder="Tipo de doc (RUC, DNI)" class="form-control mb-1" required>
+    <input type="text" id="numeroDocumentoProveedor" placeholder="Número de documento" class="form-control mb-1" required>
+    <input type="text" id="nombreProveedor" placeholder="Nombre" class="form-control mb-1" required>
+    <input type="text" id="direccionProveedor" placeholder="Dirección" class="form-control mb-1">
+    <input type="text" id="telefonoProveedor" placeholder="Teléfono" class="form-control mb-1">
+    <button type="submit" class="btn btn-success">Agregar proveedor</button>
   </form>
-
-  <h4>Lista de Proveedores (<span id="countProveedores">0</span>)</h4>
-  <table class="table table-striped">
-    <thead>
-      <tr><th>Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaProveedores"></tbody>
+  <table class="table table-striped" id="tablaProveedores">
+    <thead><tr><th>Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+    <tbody></tbody>
   </table>
 </div>
 
-<div class="seccion" id="productos">
-  <h3>Registrar Producto</h3>
-  <form id="formProducto" class="mb-3">
-    <input type="text" id="nombreProducto" placeholder="Nombre" class="form-control mb-2" required>
-    <input type="number" id="cantidadPresentacion" placeholder="Cantidad" class="form-control mb-2" required>
-    <input type="number" step="0.01" id="precioProducto" placeholder="Precio" class="form-control mb-2" required>
-    <select id="tipoMoneda" class="form-control mb-2">
+<div id="productos" class="seccion">
+  <h2>Productos (<span id="countProductos">0</span>)</h2>
+  <form id="formProducto" class="mb-2">
+    <input type="text" id="nombreProducto" placeholder="Nombre producto" class="form-control mb-1" required>
+    <input type="number" id="cantidadPresentacion" placeholder="Cantidad/presentación" class="form-control mb-1" required>
+    <input type="number" step="0.01" id="precioProducto" placeholder="Precio" class="form-control mb-1" required>
+    <select id="tipoMoneda" class="form-control mb-1">
       <option value="soles">Soles</option>
       <option value="dolares">Dólares</option>
     </select>
-    <input type="text" id="descripcionProducto" placeholder="Descripción" class="form-control mb-2">
-    <button class="btn btn-primary">Registrar</button>
+    <textarea id="descripcionProducto" placeholder="Descripción" class="form-control mb-1"></textarea>
+    <button type="submit" class="btn btn-success">Agregar producto</button>
   </form>
-
-  <h4>Lista de Productos (<span id="countProductos">0</span>)</h4>
-  <table class="table table-striped">
-    <thead>
-      <tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaProductos"></tbody>
+  <table class="table table-striped" id="tablaProductos">
+    <thead><tr><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
+    <tbody></tbody>
   </table>
 </div>
 
-<div class="seccion" id="facturas">
-  <h3>Registrar Factura</h3>
-  <input type="text" id="searchInput" placeholder="Buscar por producto..." class="form-control mb-2">
-  <div id="searchResults" class="mb-2"></div>
-
-  <form id="formFactura" class="mb-3">
-    <input type="text" id="idFactura" placeholder="ID Factura" class="form-control mb-2" required>
-    <input type="date" id="fechaFactura" class="form-control mb-2" required>
-    <select id="proveedorFactura" class="form-control mb-2" required></select>
-    <select id="productoFactura" class="form-control mb-2" required></select>
-    <input type="number" step="0.01" id="montoFactura" placeholder="Monto" class="form-control mb-2" required>
-    <select id="tipoFactura" class="form-control mb-2">
-      <option value="contado">Contado</option>
-      <option value="credito">Crédito</option>
+<div id="facturas" class="seccion">
+  <h2>Facturas (<span id="countFacturas">0</span>)</h2>
+  <form id="formFactura" class="mb-2">
+    <input type="text" id="idFactura" placeholder="ID Factura" class="form-control mb-1" required>
+    <input type="date" id="fechaFactura" class="form-control mb-1" required>
+    <select id="proveedorFactura" class="form-control mb-1" required></select>
+    <select id="productoFactura" class="form-control mb-1" required></select>
+    <input type="number" step="0.01" id="montoFactura" placeholder="Monto" class="form-control mb-1" required>
+    <select id="tipoFactura" class="form-control mb-1">
+      <option value="Compra">Compra</option>
+      <option value="Venta">Venta</option>
     </select>
-    <button class="btn btn-primary">Registrar</button>
+    <select id="tipoMonedaFactura" class="form-control mb-1">
+      <option value="soles">Soles</option>
+      <option value="dolares">Dólares</option>
+    </select>
+    <button type="submit" class="btn btn-success">Agregar factura</button>
   </form>
-
-  <h4>Lista de Facturas (<span id="countFacturas">0</span>)</h4>
-  <table class="table table-striped">
-    <thead>
-      <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr>
-    </thead>
-    <tbody id="tablaFacturas"></tbody>
+  <div id="searchResults" class="mb-2"></div>
+  <table class="table table-striped" id="tablaFacturas">
+    <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Monto</th><th>Tipo</th><th>Acciones</th></tr></thead>
+    <tbody></tbody>
   </table>
 </div>
 
-<!-- MODALES -->
-<dialog class="modal" id="modalFactura">
-  <div class="modal-content">
-    <button class="btn btn-secondary btn-sm mb-2" id="cerrarModalFactura">Cerrar</button>
-    <div id="modalFacturaBody"></div>
-  </div>
-</dialog>
+<!-- Modal flotante -->
+<dialog id="modalEditar" class="modal"><div class="modal-content"><button id="cerrarModalEditar" class="btn btn-danger mb-2">Cerrar</button><div id="modalEditarBody"></div></div></dialog>
+<dialog id="modalFactura" class="modal"><div class="modal-content"><button id="cerrarModalFactura" class="btn btn-danger mb-2">Cerrar</button><div id="modalFacturaBody"></div></div></dialog>
+<dialog id="modalExtra" class="modal"><div class="modal-content"><button id="cerrarModalExtra" class="btn btn-danger mb-2">Cerrar</button><div id="modalExtraBody"></div></div></dialog>
 
-<dialog class="modal" id="modalExtra">
-  <div class="modal-content">
-    <button class="btn btn-secondary btn-sm mb-2" id="cerrarModalExtra">Cerrar</button>
-    <div id="modalExtraBody"></div>
-  </div>
-</dialog>
+<script type="module">
+// ===================== FIREBASE CONFIG =====================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, getDocs, onSnapshot,
+  doc, deleteDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-<dialog class="modal" id="modalEditar">
-  <div class="modal-content">
-    <button class="btn btn-secondary btn-sm mb-2" id="cerrarModalEditar">Cerrar</button>
-    <div id="modalEditarBody"></div>
-  </div>
-</dialog>
+const firebaseConfig = {
+    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+    authDomain: "discovery-pets.firebaseapp.com",
+    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+    projectId: "discovery-pets",
+    storageBucket: "discovery-pets.firebasestorage.app",
+    messagingSenderId: "481355972999",
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+    measurementId: "G-0WMLRY8FGM"
+};
 
-<script type="module" src="dashboard.js"></script>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ===================== SESIÓN =====================
+onAuthStateChanged(auth,user=>{if(!user) window.location.href="index.html";});
+document.getElementById("btnCerrarSesion").addEventListener("click", async()=>{await signOut(auth); window.location.href="index.html";});
+
+// ===================== COLECCIONES =====================
+const colProveedores=collection(db,"proveedores");
+const colProductos=collection(db,"productos");
+const colFacturas=collection(db,"facturas");
+
+// ===================== ELEMENTOS =====================
+const formProveedor=document.getElementById("formProveedor");
+const tablaProveedores=document.getElementById("tablaProveedores").querySelector("tbody");
+
+const formProducto=document.getElementById("formProducto");
+const tablaProductos=document.getElementById("tablaProductos").querySelector("tbody");
+
+const formFactura=document.getElementById("formFactura");
+const tablaFacturas=document.getElementById("tablaFacturas").querySelector("tbody");
+
+const countProveedores=document.getElementById("countProveedores");
+const countProductos=document.getElementById("countProductos");
+const countFacturas=document.getElementById("countFacturas");
+
+const buscador=document.getElementById("searchInput");
+const panelFacturas=document.getElementById("searchResults");
+
+const modalEditar=document.getElementById("modalEditar");
+const modalEditarBody=document.getElementById("modalEditarBody");
+const cerrarModalEditar=document.getElementById("cerrarModalEditar");
+
+const modalFactura=document.getElementById("modalFactura");
+const modalFacturaBody=document.getElementById("modalFacturaBody");
+const cerrarModalFactura=document.getElementById("cerrarModalFactura");
+
+const modalExtra=document.getElementById("modalExtra");
+const modalExtraBody=document.getElementById("modalExtraBody");
+const cerrarModalExtra=document.getElementById("cerrarModalExtra");
+
+// ===================== NAV =====================
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("activo"));
+        document.querySelectorAll(".seccion").forEach(s=>s.classList.remove("activa"));
+        btn.classList.add("activo");
+        document.getElementById(btn.dataset.target).classList.add("activa");
+        buscador.style.display = btn.dataset.target==="facturas" ? "block":"none";
+        if(btn.dataset.target!=="facturas") buscador.value="", panelFacturas.innerHTML="";
+    });
+});
+
+// ===================== FUNCIONES AUX =====================
+async function cargarProveedoresSelect(){
+    const select=document.getElementById("proveedorFactura");
+    select.innerHTML='<option value="">Seleccionar proveedor</option>';
+    const snap=await getDocs(colProveedores);
+    snap.forEach(d=>{const opt=document.createElement("option"); opt.value=d.data().nombre; opt.textContent=d.data().nombre; select.appendChild(opt);});
+}
+async function cargarProductosSelect(){
+    const select=document.getElementById("productoFactura");
+    select.innerHTML='<option value="">Seleccionar producto</option>';
+    const snap=await getDocs(colProductos);
+    snap.forEach(d=>{const opt=document.createElement("option"); opt.value=d.data().nombre; opt.textContent=d.data().nombre; select.appendChild(opt);});
+}
+
+function mostrarModal(modal,bodyHTML){
+    modalEditarBody.innerHTML=bodyHTML;
+    modal.showModal();
+}
+function mostrarModalFactura(f){
+    modalFacturaBody.innerHTML=`
+      <h3>Factura ${f.idFactura}</h3>
+      <p><b>Fecha:</b> ${f.fecha}</p>
+      <p><b>Proveedor:</b> ${f.proveedor}</p>
+      <p><b>Producto:</b> ${f.producto}</p>
+      <p><b>Monto:</b> ${f.moneda==='soles'?'S/. ':'$ '}${f.monto}</p>
+      <p><b>Tipo:</b> ${f.tipo}</p>`;
+    modalFactura.showModal();
+}
+
+// ===================== CERRAR MODALES =====================
+cerrarModalEditar.addEventListener("click",()=>modalEditar.close());
+cerrarModalFactura.addEventListener("click",()=>modalFactura.close());
+cerrarModalExtra.addEventListener("click",()=>modalExtra.close());
+
+// ===================== CRUD PROVEEDORES =====================
+formProveedor.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const data={
+        ruc:document.getElementById("tipoDocumentoProveedor").value+": "+document.getElementById("numeroDocumentoProveedor").value,
+        nombre:document.getElementById("nombreProveedor").value,
+        direccion:document.getElementById("direccionProveedor").value,
+        telefono:document.getElementById("telefonoProveedor").value
+    };
+    await addDoc(colProveedores,data);
+    formProveedor.reset();
+});
+
+onSnapshot(colProveedores,snap=>{
+    tablaProveedores.innerHTML="";
+    snap.forEach(docu=>{
+        const d=docu.data();
+        const tr=document.createElement("tr");
+        tr.innerHTML=`<td>${d.ruc}</td><td>${d.nombre}</td><td>${d.direccion||""}</td><td>${d.telefono||""}</td>
+        <td>
+          <button class="btn-accion editar" data-tipo="proveedor" data-id="${docu.id}">✏️</button>
+          <button class="btn-accion eliminar" data-tipo="proveedor" data-id="${docu.id}">🗑️</button>
+        </td>`;
+        tablaProveedores.appendChild(tr);
+    });
+    countProveedores.textContent=snap.size;
+    cargarProveedoresSelect();
+});
+
+// ===================== CRUD PRODUCTOS =====================
+formProducto.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const data={
+        nombre:document.getElementById("nombreProducto").value,
+        cantidad:parseInt(document.getElementById("cantidadPresentacion").value),
+        precio:parseFloat(document.getElementById("precioProducto").value),
+        moneda:document.getElementById("tipoMoneda").value,
+        descripcion:document.getElementById("descripcionProducto").value
+    };
+    await addDoc(colProductos,data);
+    formProducto.reset();
+});
+
+onSnapshot(colProductos,snap=>{
+    tablaProductos.innerHTML="";
+    snap.forEach(docu=>{
+        const d=docu.data();
+        const tr=document.createElement("tr");
+        tr.innerHTML=`<td>${d.nombre}</td><td>${d.cantidad}</td><td>${d.moneda==='soles'?'S/. ':'$ '}${d.precio}</td><td>${d.descripcion||""}</td>
+        <td>
+          <button class="btn-accion editar" data-tipo="producto" data-id="${docu.id}">✏️</button>
+          <button class="btn-accion eliminar" data-tipo="producto" data-id="${docu.id}">🗑️</button>
+        </td>`;
+        tablaProductos.appendChild(tr);
+    });
+    countProductos.textContent=snap.size;
+    cargarProductosSelect();
+});
+
+// ===================== CRUD FACTURAS =====================
+formFactura.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const data={
+        idFactura:document.getElementById("idFactura").value,
+        fecha:document.getElementById("fechaFactura").value,
+        proveedor:document.getElementById("proveedorFactura").value,
+        producto:document.getElementById("productoFactura").value,
+        monto:parseFloat(document.getElementById("montoFactura").value),
+        tipo:document.getElementById("tipoFactura").value,
+        moneda:document.getElementById("tipoMonedaFactura").value
+    };
+    await addDoc(colFacturas,data);
+    formFactura.reset();
+});
+
+onSnapshot(colFacturas,snap=>{
+    tablaFacturas.innerHTML="";
+    snap.forEach(docu=>{
+        const f=docu.data();
+        const tr=document.createElement("tr");
+        tr.innerHTML=`<td>${f.idFactura}</td><td>${f.fecha}</td><td>${f.proveedor}</td><td>${f.producto}</td><td>${f.moneda==='soles'?'S/. ':'$ '}${f.monto}</td><td>${f.tipo}</td>
+        <td>
+          <button class="btn-accion editar" data-tipo="factura" data-id="${docu.id}">✏️</button>
+          <button class="btn-accion ver" data-tipo="factura" data-id="${docu.id}">🔍</button>
+          <button class="btn-accion eliminar" data-tipo="factura" data-id="${docu.id}">🗑️</button>
+        </td>`;
+        tablaFacturas.appendChild(tr);
+    });
+    countFacturas.textContent=snap.size;
+});
+
+// ===================== BUSCADOR =====================
+buscador.addEventListener("input",async ()=>{
+    const txt=buscador.value.trim().toLowerCase();
+    panelFacturas.innerHTML="";
+    if(!txt) return;
+    const snap=await getDocs(colFacturas);
+    snap.forEach(docu=>{
+        const f=docu.data();
+        if(f.producto.toLowerCase().includes(txt)){
+            const div=document.createElement("div");
+            div.className="resultado-item";
+            div.textContent=f.idFactura;
+            div.addEventListener("click",()=>mostrarModalFactura(f));
+            panelFacturas.appendChild(div);
+        }
+    });
+});
+
+// ===================== CLICK GLOBAL =====================
+document.addEventListener("click", async e=>{
+    if(e.target.classList.contains("eliminar")){
+        const tipo=e.target.dataset.tipo;
+        const id=e.target.dataset.id;
+        let colRef=tipo==="proveedor"?colProveedores:tipo==="producto"?colProductos:colFacturas;
+        if(confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db,colRef.id,id));
+    }
+    if(e.target.classList.contains("ver") && e.target.dataset.tipo==="factura"){
+        const id=e.target.dataset.id;
+        const snap=await getDocs(colFacturas);
+        snap.forEach(docu=>{if(docu.id===id) mostrarModalFactura(docu.data());});
+    }
+});
+</script>
+
 </body>
 </html>
-
