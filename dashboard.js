@@ -11,10 +11,9 @@ const firebaseConfig = {
   authDomain: "discovery-pets.firebaseapp.com",
   databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
   projectId: "discovery-pets",
-  storageBucket: "discovery-pets.firebasestorage.app",
+  storageBucket: "discovery-pets.appspot.com",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
-  measurementId: "G-0WMLRY8FGM"
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -60,6 +59,10 @@ const modalEditar = document.getElementById("modalEditar");
 const modalEditarBody = document.getElementById("modalEditarBody");
 const cerrarModalEditar = document.getElementById("cerrarModalEditar");
 
+const proveedorFactura = document.getElementById("proveedorFactura");
+const productoFactura = document.getElementById("productoFactura");
+const tipoMoneda = document.getElementById("tipoMoneda");
+
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
@@ -80,36 +83,29 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 });
 
 // ===================== AUXILIARES =====================
-async function cargarProveedoresSelect(){
-  const select = document.getElementById("proveedorFactura");
-  select.innerHTML = '<option value="">Seleccionar proveedor</option>';
+async function cargarProveedoresSelect(selectEl){
+  selectEl.innerHTML = '<option value="">Seleccionar proveedor</option>';
   const snap = await getDocs(colProveedores);
   snap.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d.data().nombre;
     opt.textContent = d.data().nombre;
-    select.appendChild(opt);
+    selectEl.appendChild(opt);
   });
 }
 
-async function cargarProductosSelect(){
-  const select = document.getElementById("productoFactura");
-  select.innerHTML = '<option value="">Seleccionar producto</option>';
+async function cargarProductosSelect(selectEl){
+  selectEl.innerHTML = '<option value="">Seleccionar producto</option>';
   const snap = await getDocs(colProductos);
   snap.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d.data().nombre;
     opt.textContent = d.data().nombre;
-    select.appendChild(opt);
+    selectEl.appendChild(opt);
   });
 }
 
-// ===================== FUNCION ID AUTOMATICO =====================
-async function generarIdFactura(){
-  const snap = await getDocs(colFacturas);
-  return snap.size + 1; // ID secuencial simple
-}
-
+// ===================== MOSTRAR MODAL FACTURA =====================
 function mostrarModalFactura(f){
   modalFacturaBody.innerHTML = `
     <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
@@ -161,7 +157,6 @@ onSnapshot(colProveedores, snapshot=>{
       </td>`;
     tablaProveedores.appendChild(tr);
 
-    // actualizar select proveedor
     const opt=document.createElement("option");
     opt.value=d.nombre;
     opt.textContent=d.nombre;
@@ -169,7 +164,6 @@ onSnapshot(colProveedores, snapshot=>{
   });
   countProveedores.textContent=snapshot.size;
 });
-
 
 // ===================== PRODUCTOS =====================
 formProducto.addEventListener("submit", async e=>{
@@ -186,15 +180,17 @@ formProducto.addEventListener("submit", async e=>{
   formProducto.reset();
 });
 
+// Tiempo real productos
 onSnapshot(colProductos, snapshot=>{
   tablaProductos.innerHTML="";
+  productoFactura.innerHTML = '<option value="">Seleccionar producto</option>';
   snapshot.forEach(docu=>{
     const d=docu.data();
     const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
       <td>${d.nombre}</td>
-      <td>${d.cantidad} ${d.unidad || ''}</td>
+      <td>${d.cantidad} ${d.unidad}</td>
       <td>${d.moneda === 'soles' ? 'S/. ' : '$ '}${d.precio}</td>
       <td style="white-space: pre-line;">${d.descripcion||""}</td>
       <td>
@@ -203,28 +199,33 @@ onSnapshot(colProductos, snapshot=>{
         <button class="btn-accion eliminar" data-tipo="producto" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProductos.appendChild(tr);
+
+    const opt=document.createElement("option");
+    opt.value=d.nombre;
+    opt.textContent=d.nombre;
+    productoFactura.appendChild(opt);
   });
   countProductos.textContent=snapshot.size;
-  cargarProductosSelect();
 });
 
 // ===================== FACTURAS =====================
 formFactura.addEventListener("submit", async e=>{
   e.preventDefault();
-  const idFactura = await generarIdFactura(); // id automático
+  const autoId = `F-${Date.now()}`;
   const data = {
-    idFactura: idFactura,
+    idFactura: autoId,
     fecha: document.getElementById("fechaFactura").value,
-    proveedor: document.getElementById("proveedorFactura").value,
-    producto: document.getElementById("productoFactura").value,
+    proveedor: proveedorFactura.value,
+    producto: productoFactura.value,
     monto: parseFloat(document.getElementById("montoFactura").value),
     tipo: document.getElementById("tipoFactura").value,
-    moneda: document.getElementById("tipoMoneda").value
+    moneda: tipoMoneda.value
   };
   await addDoc(colFacturas, data);
   formFactura.reset();
 });
 
+// Tiempo real facturas
 onSnapshot(colFacturas, snapshot=>{
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
@@ -251,14 +252,14 @@ onSnapshot(colFacturas, snapshot=>{
 // ===================== BUSCADOR =====================
 buscador.style.display="none";
 buscador.addEventListener("input", async ()=>{
-  const texto=buscador.value.trim().toLowerCase();
-  panelFacturas.innerHTML="";
+  const texto = buscador.value.trim().toLowerCase();
+  panelFacturas.innerHTML = "";
   if(!texto) return;
   const snap = await getDocs(colFacturas);
   snap.forEach(docu=>{
-    const f = docu.data();
+    const f=docu.data();
     if(f.producto.toLowerCase().includes(texto)){
-      const div=document.createElement("div");
+      const div = document.createElement("div");
       div.className="resultado-item";
       div.textContent=f.idFactura;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
@@ -267,22 +268,21 @@ buscador.addEventListener("input", async ()=>{
   });
 });
 
-// ===================== CLICK GLOBAL =====================
+// ===================== CLICK GLOBAL (EDITAR, VER, ELIMINAR) =====================
 document.addEventListener("click", async e=>{
-
   // --------- EDITAR ---------
   if(e.target.classList.contains("editar")){
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
-    let colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
-    const docRef = doc(db, colNombre, id);
-    const snap = await getDocs(query(collection(db, colNombre), where("__name__","==",id)));
+    let colRef = tipo==="proveedor"?colProveedores:tipo==="producto"?colProductos:colFacturas;
+    const snap = await getDocs(query(colRef, where("__name__","==",id)));
     if(!snap.empty){
       const d = snap.docs[0].data();
       modalEditarBody.innerHTML = `
         <h5>Editar ${tipo}</h5>
         ${tipo==="proveedor"?`
-          <label>RUC</label><input id="editRuc" class="form-control mb-1" value="${d.ruc||''}">
+          <label>Tipo Doc</label><input id="editTipoDoc" class="form-control mb-1" value="${d.tipoDocumento||''}">
+          <label>Número Doc</label><input id="editNumDoc" class="form-control mb-1" value="${d.numeroDocumento||''}">
           <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
           <label>Dirección</label><input id="editDir" class="form-control mb-1" value="${d.direccion||''}">
           <label>Teléfono</label><input id="editTel" class="form-control mb-1" value="${d.telefono||''}">`:
@@ -299,46 +299,55 @@ document.addEventListener("click", async e=>{
           <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio||0}">
           <label>Moneda</label>
           <select id="editMoneda" class="form-select mb-1">
-            <option value="soles" ${d.moneda === 'soles' ? 'selected' : ''}>Soles</option>
-            <option value="dolares" ${d.moneda === 'dolares' ? 'selected' : ''}>Dólares</option>
+            <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
+            <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
           </select>
           <label>Descripción</label><textarea id="editDesc" class="form-control mb-1">${d.descripcion||''}</textarea>`:
         tipo==="factura"?`
           <label>ID</label><input id="editId" class="form-control mb-1" value="${d.idFactura||''}">
           <label>Fecha</label><input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha||''}">
-          <label>Proveedor</label><input id="editProv" class="form-control mb-1" value="${d.proveedor||''}">
-          <label>Producto</label><input id="editProd" class="form-control mb-1" value="${d.producto||''}">
+          <label>Proveedor</label>
+          <select id="editProv" class="form-select mb-1"></select>
+          <label>Producto</label>
+          <select id="editProd" class="form-select mb-1"></select>
           <label>Monto</label><input id="editMonto" type="number" step="0.01" class="form-control mb-1" value="${d.monto||0}">
           <label>Tipo</label><input id="editTipo" class="form-control mb-1" value="${d.tipo||''}">`:``}
         <button id="guardarEdit" class="btn btn-primary mt-2">Guardar</button>
       `;
       modalEditar.showModal();
 
-      const btnGuardar = document.getElementById("guardarEdit");
-      btnGuardar.replaceWith(btnGuardar.cloneNode(true));
+      // cargar selects de proveedores/productos
+      if(tipo==="factura"){
+        await cargarProveedoresSelect(document.getElementById("editProv"));
+        document.getElementById("editProv").value = d.proveedor;
+        await cargarProductosSelect(document.getElementById("editProd"));
+        document.getElementById("editProd").value = d.producto;
+      }
+
       document.getElementById("guardarEdit").addEventListener("click", async ()=>{
         const upd = {};
         if(tipo==="proveedor"){
-          upd.ruc=document.getElementById("editRuc").value.trim();
-          upd.nombre=document.getElementById("editNombre").value.trim();
-          upd.direccion=document.getElementById("editDir").value.trim();
-          upd.telefono=document.getElementById("editTel").value.trim();
+          upd.tipoDocumento = document.getElementById("editTipoDoc").value;
+          upd.numeroDocumento = document.getElementById("editNumDoc").value;
+          upd.nombre = document.getElementById("editNombre").value;
+          upd.direccion = document.getElementById("editDir").value;
+          upd.telefono = document.getElementById("editTel").value;
         } else if(tipo==="producto"){
-          upd.nombre=document.getElementById("editNombre").value.trim();
-          upd.cantidad=parseInt(document.getElementById("editCantidad").value);
-          upd.unidad=document.getElementById("editUnidad").value;
-          upd.precio=parseFloat(document.getElementById("editPrecio").value);
-          upd.moneda=document.getElementById("editMoneda").value;
-          upd.descripcion=document.getElementById("editDesc").value.trim();
+          upd.nombre = document.getElementById("editNombre").value;
+          upd.cantidad = parseInt(document.getElementById("editCantidad").value);
+          upd.unidad = document.getElementById("editUnidad").value;
+          upd.precio = parseFloat(document.getElementById("editPrecio").value);
+          upd.moneda = document.getElementById("editMoneda").value;
+          upd.descripcion = document.getElementById("editDesc").value;
         } else if(tipo==="factura"){
-          upd.idFactura=document.getElementById("editId").value.trim();
-          upd.fecha=document.getElementById("editFecha").value;
-          upd.proveedor=document.getElementById("editProv").value.trim();
-          upd.producto=document.getElementById("editProd").value.trim();
-          upd.monto=parseFloat(document.getElementById("editMonto").value);
-          upd.tipo=document.getElementById("editTipo").value.trim();
+          upd.idFactura = document.getElementById("editId").value;
+          upd.fecha = document.getElementById("editFecha").value;
+          upd.proveedor = document.getElementById("editProv").value;
+          upd.producto = document.getElementById("editProd").value;
+          upd.monto = parseFloat(document.getElementById("editMonto").value);
+          upd.tipo = document.getElementById("editTipo").value;
         }
-        await updateDoc(doc(db,colNombre,id),upd);
+        await updateDoc(doc(db,colRef.id,id),upd);
         modalEditar.close();
       });
     }
@@ -348,18 +357,22 @@ document.addEventListener("click", async e=>{
   if(e.target.classList.contains("link-info")){
     const tipo = e.target.dataset.tipo;
     const nombre = e.target.dataset.nombre;
-    if(confirm(`Deseas ver los datos de ${tipo} ${nombre}?`)){
-      let colRef = tipo==="proveedor"?colProveedores:colProductos;
-      const snap = await getDocs(query(colRef,where("nombre","==",nombre)));
-      if(!snap.empty){
-        const d = snap.docs[0].data();
-        modalExtraBody.innerHTML = `
-          <h5>${tipo} ${nombre}</h5>
-          <p>${tipo==="proveedor"?`RUC: ${d.ruc}<br>Dirección: ${d.direccion||''}<br>Tel: ${d.telefono||''}`:
-          `Cantidad: ${d.cantidad} ${d.unidad || ''}<br>Precio: ${d.moneda === 'soles' ? 'S/. ' : '$ '}${d.precio}<br>Descripción: ${d.descripcion||''}`}</p>
-        `;
-        modalExtra.showModal();
-      }
+    let colRef = tipo==="proveedor"?colProveedores:colProductos;
+    const snap = await getDocs(query(colRef, where("nombre","==",nombre)));
+    if(!snap.empty){
+      const d = snap.docs[0].data();
+      let html = tipo==="proveedor"?`
+        <p><b>Tipo Doc:</b> ${d.tipoDocumento}</p>
+        <p><b>Número Doc:</b> ${d.numeroDocumento}</p>
+        <p><b>Nombre:</b> ${d.nombre}</p>
+        <p><b>Dirección:</b> ${d.direccion}</p>
+        <p><b>Teléfono:</b> ${d.telefono}</p>`:`
+        <p><b>Nombre:</b> ${d.nombre}</p>
+        <p><b>Cantidad:</b> ${d.cantidad} ${d.unidad}</p>
+        <p><b>Precio:</b> ${d.moneda==='soles'?'S/. ':'$ '}${d.precio}</p>
+        <p><b>Descripción:</b> ${d.descripcion}</p>`;
+      modalExtraBody.innerHTML = html;
+      modalExtra.showModal();
     }
   }
 
@@ -372,4 +385,3 @@ document.addEventListener("click", async e=>{
   }
 
 });
-
