@@ -158,17 +158,58 @@ async function cargarProductosSelect(){
   });
 }
 
+// ===================== MOSTRAR DETALLES DE PROVEEDOR O PRODUCTO =====================
+async function mostrarDetalleProveedor(nombreProveedor) {
+  const snap = await getDocs(query(colProveedores, where("nombre", "==", nombreProveedor)));
+  if (!snap.empty) {
+    const proveedor = snap.docs[0].data();
+    modalExtraBody.innerHTML = `
+      <h4 class="text-primary mb-3">Detalles del Proveedor</h4>
+      <div class="mb-2"><strong>Nombre:</strong> ${proveedor.nombre}</div>
+      <div class="mb-2"><strong>Documento:</strong> ${proveedor.tipoDocumento} - ${proveedor.numeroDocumento}</div>
+      <div class="mb-2"><strong>Dirección:</strong> ${proveedor.direccion || 'No especificada'}</div>
+      <div class="mb-2"><strong>Teléfono:</strong> ${proveedor.telefono || 'No especificado'}</div>
+    `;
+    modalExtra.showModal();
+  }
+}
+
+async function mostrarDetalleProducto(nombreProducto) {
+  const snap = await getDocs(query(colProductos, where("nombre", "==", nombreProducto)));
+  if (!snap.empty) {
+    const producto = snap.docs[0].data();
+    modalExtraBody.innerHTML = `
+      <h4 class="text-success mb-3">Detalles del Producto</h4>
+      <div class="mb-2"><strong>Nombre:</strong> ${producto.nombre}</div>
+      <div class="mb-2"><strong>Presentación:</strong> ${producto.cantidad} ${producto.presentacion}</div>
+      <div class="mb-2"><strong>Precio:</strong> ${producto.moneda === 'soles' ? 'S/. ' : '$ '}${producto.precio}</div>
+      <div class="mb-2"><strong>Descripción:</strong> ${producto.descripcion || 'No especificada'}</div>
+    `;
+    modalExtra.showModal();
+  }
+}
+
 function mostrarModalFactura(f){
   modalFacturaBody.innerHTML = `
-    <h3 class="text-sky-600 font-bold text-lg mb-2">Factura ${f.idFactura}</h3>
-    <p><b>Fecha:</b> ${f.fecha}</p>
-    <p><b>Proveedor:</b> <span class="link-info" data-tipo="proveedor" data-nombre="${f.proveedor}" style="color:#f97316;">${f.proveedor}</span></p>
-    <p><b>Producto:</b> <span class="link-info" data-tipo="producto" data-nombre="${f.producto}" style="color:#14b8a6;">${f.producto}</span></p>
-    <p><b>Subtotal:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.subtotal.toFixed(2)}</p>
-    <p><b>IGV (18%):</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.igv.toFixed(2)}</p>
-    <p><b>Total:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.total.toFixed(2)}</p>
-    <p><b>Tipo:</b> ${f.tipo}</p>
+    <h3 class="text-primary font-bold text-lg mb-3">Factura ${f.idFactura}</h3>
+    <div class="mb-2"><b>Fecha:</b> ${f.fecha}</div>
+    <div class="mb-2"><b>Proveedor:</b> <span class="link-info proveedor-link" data-nombre="${f.proveedor}" style="color:#f97316; cursor:pointer; text-decoration:underline;">${f.proveedor}</span></div>
+    <div class="mb-2"><b>Producto:</b> <span class="link-info producto-link" data-nombre="${f.producto}" style="color:#14b8a6; cursor:pointer; text-decoration:underline;">${f.producto}</span></div>
+    <div class="mb-2"><b>Subtotal:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.subtotal.toFixed(2)}</div>
+    <div class="mb-2"><b>IGV (18%):</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.igv.toFixed(2)}</div>
+    <div class="mb-2"><b>Total:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.total.toFixed(2)}</div>
+    <div class="mb-2"><b>Tipo:</b> ${f.tipo}</div>
   `;
+  
+  // Agregar event listeners para los links de proveedor y producto
+  modalFacturaBody.querySelector('.proveedor-link').addEventListener('click', () => {
+    mostrarDetalleProveedor(f.proveedor);
+  });
+  
+  modalFacturaBody.querySelector('.producto-link').addEventListener('click', () => {
+    mostrarDetalleProducto(f.producto);
+  });
+  
   modalFactura.showModal();
 }
 
@@ -317,26 +358,44 @@ onSnapshot(colFacturas, snapshot=>{
   countFacturas.textContent=snapshot.size;
 });
 
-// ===================== BUSCADOR =====================
+// ===================== BUSCADOR MEJORADO =====================
 buscador.style.display="none";
 buscador.addEventListener("input", async ()=>{
   const texto = buscador.value.trim().toLowerCase();
   panelFacturas.innerHTML = "";
+  
   if(!texto) return;
+  
   const snap = await getDocs(colFacturas);
+  let resultadosEncontrados = false;
+  
   snap.forEach(docu=>{
     const f=docu.data();
-    if(f.producto.toLowerCase().includes(texto) || f.idFactura.toLowerCase().includes(texto)){
+    if(f.producto.toLowerCase().includes(texto) || f.idFactura.toLowerCase().includes(texto) || f.proveedor.toLowerCase().includes(texto)){
+      resultadosEncontrados = true;
       const div = document.createElement("div");
-      div.className="resultado-item";
-      div.textContent = `${f.idFactura} - ${f.producto}`;
+      div.className="resultado-item p-3 mb-2";
+      div.innerHTML = `
+        <div class="fw-bold">Factura: ${f.idFactura}</div>
+        <div class="small">Producto: ${f.producto}</div>
+        <div class="small">Proveedor: ${f.proveedor}</div>
+        <div class="small text-muted">Fecha: ${f.fecha} | Total: ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.total.toFixed(2)}</div>
+      `;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
   });
+  
+  if (!resultadosEncontrados) {
+    panelFacturas.innerHTML = `
+      <div class="alert alert-info text-center">
+        No se encontraron facturas que coincidan con "${texto}"
+      </div>
+    `;
+  }
 });
 
-// ===================== CLICK GLOBAL =====================
+// ===================== CLICK GLOBAL MEJORADO =====================
 document.addEventListener("click", async e=>{
   // --------- EDITAR ---------
   if(e.target.classList.contains("editar")){
@@ -347,58 +406,115 @@ document.addEventListener("click", async e=>{
     if(!snap.empty){
       const d = snap.docs[0].data();
       modalEditarBody.innerHTML = `
-        <h5>Editar ${tipo}</h5>
+        <h5 class="mb-3">Editar ${tipo}</h5>
         ${tipo==="proveedor"?`
-          <label>Tipo Doc</label><input id="editTipoDoc" class="form-control mb-1" value="${d.tipoDocumento||''}">
-          <label>Número Doc</label><input id="editNumDoc" class="form-control mb-1" value="${d.numeroDocumento||''}">
-          <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
-          <label>Dirección</label><input id="editDir" class="form-control mb-1" value="${d.direccion||''}">
-          <label>Teléfono</label><input id="editTel" class="form-control mb-1" value="${d.telefono||''}">`:
+          <div class="mb-2">
+            <label class="form-label">Tipo Documento</label>
+            <input id="editTipoDoc" class="form-control" value="${d.tipoDocumento||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Número Documento</label>
+            <input id="editNumDoc" class="form-control" value="${d.numeroDocumento||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Nombre</label>
+            <input id="editNombre" class="form-control" value="${d.nombre||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Dirección</label>
+            <input id="editDir" class="form-control" value="${d.direccion||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Teléfono</label>
+            <input id="editTel" class="form-control" value="${d.telefono||''}">
+          </div>`:
         tipo==="producto"?`
-          <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
-          <label>Presentación</label>
-          <select id="editPresent" class="form-select mb-1">
-            <option value="Unidad" ${d.presentacion==='Unidad'?'selected':''}>Unidad</option>
-            <option value="Docena" ${d.presentacion==='Docena'?'selected':''}>Docena</option>
-            <option value="Ciento" ${d.presentacion==='Ciento'?'selected':''}>Ciento</option>
-            <option value="Millar" ${d.presentacion==='Millar'?'selected':''}>Millar</option>
-          </select>
-          <label>Cantidad</label><input id="editCantidad" type="number" class="form-control mb-1" value="${d.cantidad||0}">
-          <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio||0}">
-          <label>Moneda</label>
-          <select id="editMoneda" class="form-select mb-1">
-            <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
-            <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
-          </select>
-          <label>Descripción</label><textarea id="editDesc" class="form-control mb-1">${d.descripcion||''}</textarea>`:
+          <div class="mb-2">
+            <label class="form-label">Nombre</label>
+            <input id="editNombre" class="form-control" value="${d.nombre||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Presentación</label>
+            <select id="editPresent" class="form-select">
+              <option value="Unidad" ${d.presentacion==='Unidad'?'selected':''}>Unidad</option>
+              <option value="Docena" ${d.presentacion==='Docena'?'selected':''}>Docena</option>
+              <option value="Ciento" ${d.presentacion==='Ciento'?'selected':''}>Ciento</option>
+              <option value="Millar" ${d.presentacion==='Millar'?'selected':''}>Millar</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Cantidad</label>
+            <input id="editCantidad" type="number" class="form-control" value="${d.cantidad||0}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Precio</label>
+            <input id="editPrecio" type="number" step="0.01" class="form-control" value="${d.precio||0}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Moneda</label>
+            <select id="editMoneda" class="form-select">
+              <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
+              <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Descripción</label>
+            <textarea id="editDesc" class="form-control" rows="3">${d.descripcion||''}</textarea>
+          </div>`:
         tipo==="factura"?`
-          <label>ID</label><input id="editId" class="form-control mb-1" value="${d.idFactura||''}">
-          <label>Fecha</label><input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha||''}">
-          <label>Proveedor</label>
-          <select id="editProv" class="form-select mb-1">
-            ${await cargarOpcionesProveedores(d.proveedor)}
-          </select>
-          <label>Producto</label>
-          <select id="editProd" class="form-select mb-1">
-            ${await cargarOpcionesProductos(d.producto)}
-          </select>
-          <label>Subtotal</label><input id="editSub" type="number" step="0.01" class="form-control mb-1" value="${d.subtotal||0}">
-          <label>IGV</label><input id="editIGV" type="number" step="0.01" class="form-control mb-1" value="${d.igv||0}">
-          <label>Total</label><input id="editTotal" type="number" step="0.01" class="form-control mb-1" value="${d.total||0}">
-          <label>Tipo</label>
-          <select id="editTipo" class="form-select mb-1">
-            <option value="Factura" ${d.tipo==='Factura'?'selected':''}>Factura</option>
-            <option value="Boleta" ${d.tipo==='Boleta'?'selected':''}>Boleta</option>
-            <option value="Ticket" ${d.tipo==='Ticket'?'selected':''}>Ticket</option>
-            <option value="Nota de Crédito" ${d.tipo==='Nota de Crédito'?'selected':''}>Nota de Crédito</option>
-            <option value="Nota de Débito" ${d.tipo==='Nota de Débito'?'selected':''}>Nota de Débito</option>
-          </select>
-          <label>Moneda</label>
-          <select id="editMoneda" class="form-select mb-1">
-            <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
-            <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
-          </select>` : ''}
-        <button id="guardarEdicion" class="btn btn-primary mt-2">Guardar cambios</button>
+          <div class="mb-2">
+            <label class="form-label">ID</label>
+            <input id="editId" class="form-control" value="${d.idFactura||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Fecha</label>
+            <input id="editFecha" type="date" class="form-control" value="${d.fecha||''}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Proveedor</label>
+            <select id="editProv" class="form-select">
+              ${await cargarOpcionesProveedores(d.proveedor)}
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Producto</label>
+            <select id="editProd" class="form-select">
+              ${await cargarOpcionesProductos(d.producto)}
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Subtotal</label>
+            <input id="editSub" type="number" step="0.01" class="form-control" value="${d.subtotal||0}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">IGV</label>
+            <input id="editIGV" type="number" step="0.01" class="form-control" value="${d.igv||0}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Total</label>
+            <input id="editTotal" type="number" step="0.01" class="form-control" value="${d.total||0}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Tipo</label>
+            <select id="editTipo" class="form-select">
+              <option value="Factura" ${d.tipo==='Factura'?'selected':''}>Factura</option>
+              <option value="Boleta" ${d.tipo==='Boleta'?'selected':''}>Boleta</option>
+              <option value="Ticket" ${d.tipo==='Ticket'?'selected':''}>Ticket</option>
+              <option value="Nota de Crédito" ${d.tipo==='Nota de Crédito'?'selected':''}>Nota de Crédito</option>
+              <option value="Nota de Débito" ${d.tipo==='Nota de Débito'?'selected':''}>Nota de Débito</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Moneda</label>
+            <select id="editMoneda" class="form-select">
+              <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
+              <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
+            </select>
+          </div>` : ''}
+        <div class="d-flex gap-2 mt-3">
+          <button id="guardarEdicion" class="btn btn-primary flex-fill">Guardar cambios</button>
+          <button id="cerrarModalEditar" class="btn btn-secondary">Cancelar</button>
+        </div>
       `;
       modalEditar.showModal();
 
@@ -455,10 +571,12 @@ document.addEventListener("click", async e=>{
       if(!snap.empty){
         mostrarModalFactura(snap.docs[0].data());
       }
-    } else {
+    } else if (tipo === "proveedor") {
       const nombre = e.target.dataset.nombre;
-      modalExtraBody.innerHTML = `<p>${tipo.toUpperCase()}: ${nombre}</p>`;
-      modalExtra.showModal();
+      mostrarDetalleProveedor(nombre);
+    } else if (tipo === "producto") {
+      const nombre = e.target.dataset.nombre;
+      mostrarDetalleProducto(nombre);
     }
   }
 });
