@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, onSnapshot,
-  doc, deleteDoc, query, where, updateDoc
+  doc, deleteDoc, query, where, updateDoc, orderBy
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
@@ -63,6 +63,12 @@ const proveedorFactura = document.getElementById("proveedorFactura");
 const productoFactura = document.getElementById("productoFactura");
 const tipoMoneda = document.getElementById("tipoMoneda");
 const presentacionProducto = document.getElementById("presentacionProducto");
+const idFactura = document.getElementById("idFactura");
+const montoFactura = document.getElementById("montoFactura");
+const igvFactura = document.getElementById("igvFactura");
+const totalFactura = document.getElementById("totalFactura");
+const tipoFactura = document.getElementById("tipoFactura");
+const campoAdicional = document.getElementById("campoAdicional");
 
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
@@ -78,10 +84,56 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.classList.add("activo");
     document.getElementById(btn.dataset.target).classList.add("activa");
 
-    if(btn.dataset.target === "facturas") buscador.style.display = "block";
-    else { buscador.style.display = "none"; buscador.value=""; panelFacturas.innerHTML=""; }
+    if(btn.dataset.target === "facturas") {
+      buscador.style.display = "block";
+      generarIdFactura();
+    } else { 
+      buscador.style.display = "none"; 
+      buscador.value=""; 
+      panelFacturas.innerHTML=""; 
+    }
   });
 });
+
+// ===================== GENERAR ID DE FACTURA AUTOMÁTICO =====================
+async function generarIdFactura() {
+  try {
+    const q = query(colFacturas, orderBy("idFactura", "desc"));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      idFactura.value = "F-0001";
+    } else {
+      const lastId = querySnapshot.docs[0].data().idFactura;
+      const lastNumber = parseInt(lastId.split('-')[1]);
+      const newNumber = (lastNumber + 1).toString().padStart(4, '0');
+      idFactura.value = `F-${newNumber}`;
+    }
+  } catch (error) {
+    console.error("Error generando ID de factura:", error);
+    // Fallback: usar timestamp como ID
+    idFactura.value = `F-${Date.now()}`;
+  }
+}
+
+// ===================== CALCULAR IGV Y TOTAL =====================
+function calcularTotales() {
+  const subtotal = parseFloat(montoFactura.value) || 0;
+  const igv = subtotal * 0.18;
+  const total = subtotal + igv;
+  
+  igvFactura.value = igv.toFixed(2);
+  totalFactura.value = total.toFixed(2);
+}
+
+// ===================== MOSTRAR/OCULTAR CAMPO ADICIONAL =====================
+function toggleCampoAdicional() {
+  if (tipoFactura.value === "Nota de Crédito" || tipoFactura.value === "Nota de Débito") {
+    campoAdicional.style.display = "block";
+  } else {
+    campoAdicional.style.display = "none";
+  }
+}
 
 // ===================== AUXILIARES =====================
 async function cargarProveedoresSelect(){
@@ -124,6 +176,10 @@ function mostrarModalFactura(f){
 cerrarModalFactura.addEventListener("click", ()=>modalFactura.close());
 cerrarModalExtra.addEventListener("click", ()=>modalExtra.close());
 cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
+
+// ===================== EVENT LISTENERS =====================
+montoFactura.addEventListener("input", calcularTotales);
+tipoFactura.addEventListener("change", toggleCampoAdicional);
 
 // ===================== PROVEEDORES =====================
 formProveedor.addEventListener("submit", async e=>{
@@ -232,6 +288,7 @@ formFactura.addEventListener("submit", async e=>{
   };
   await addDoc(colFacturas, data);
   formFactura.reset();
+  generarIdFactura();
 });
 
 // Tiempo real facturas
@@ -269,10 +326,10 @@ buscador.addEventListener("input", async ()=>{
   const snap = await getDocs(colFacturas);
   snap.forEach(docu=>{
     const f=docu.data();
-    if(f.producto.toLowerCase().includes(texto)){
+    if(f.producto.toLowerCase().includes(texto) || f.idFactura.toLowerCase().includes(texto)){
       const div = document.createElement("div");
       div.className="resultado-item";
-      div.textContent=f.idFactura;
+      div.textContent = `${f.idFactura} - ${f.producto}`;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
       panelFacturas.appendChild(div);
     }
@@ -299,7 +356,13 @@ document.addEventListener("click", async e=>{
           <label>Teléfono</label><input id="editTel" class="form-control mb-1" value="${d.telefono||''}">`:
         tipo==="producto"?`
           <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
-          <label>Presentación</label><input id="editPresent" class="form-control mb-1" value="${d.presentacion||''}">
+          <label>Presentación</label>
+          <select id="editPresent" class="form-select mb-1">
+            <option value="Unidad" ${d.presentacion==='Unidad'?'selected':''}>Unidad</option>
+            <option value="Docena" ${d.presentacion==='Docena'?'selected':''}>Docena</option>
+            <option value="Ciento" ${d.presentacion==='Ciento'?'selected':''}>Ciento</option>
+            <option value="Millar" ${d.presentacion==='Millar'?'selected':''}>Millar</option>
+          </select>
           <label>Cantidad</label><input id="editCantidad" type="number" class="form-control mb-1" value="${d.cantidad||0}">
           <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio||0}">
           <label>Moneda</label>
@@ -311,12 +374,25 @@ document.addEventListener("click", async e=>{
         tipo==="factura"?`
           <label>ID</label><input id="editId" class="form-control mb-1" value="${d.idFactura||''}">
           <label>Fecha</label><input id="editFecha" type="date" class="form-control mb-1" value="${d.fecha||''}">
-          <label>Proveedor</label><input id="editProv" class="form-control mb-1" value="${d.proveedor||''}">
-          <label>Producto</label><input id="editProd" class="form-control mb-1" value="${d.producto||''}">
+          <label>Proveedor</label>
+          <select id="editProv" class="form-select mb-1">
+            ${await cargarOpcionesProveedores(d.proveedor)}
+          </select>
+          <label>Producto</label>
+          <select id="editProd" class="form-select mb-1">
+            ${await cargarOpcionesProductos(d.producto)}
+          </select>
           <label>Subtotal</label><input id="editSub" type="number" step="0.01" class="form-control mb-1" value="${d.subtotal||0}">
           <label>IGV</label><input id="editIGV" type="number" step="0.01" class="form-control mb-1" value="${d.igv||0}">
           <label>Total</label><input id="editTotal" type="number" step="0.01" class="form-control mb-1" value="${d.total||0}">
-          <label>Tipo</label><input id="editTipo" class="form-control mb-1" value="${d.tipo||''}">
+          <label>Tipo</label>
+          <select id="editTipo" class="form-select mb-1">
+            <option value="Factura" ${d.tipo==='Factura'?'selected':''}>Factura</option>
+            <option value="Boleta" ${d.tipo==='Boleta'?'selected':''}>Boleta</option>
+            <option value="Ticket" ${d.tipo==='Ticket'?'selected':''}>Ticket</option>
+            <option value="Nota de Crédito" ${d.tipo==='Nota de Crédito'?'selected':''}>Nota de Crédito</option>
+            <option value="Nota de Débito" ${d.tipo==='Nota de Débito'?'selected':''}>Nota de Débito</option>
+          </select>
           <label>Moneda</label>
           <select id="editMoneda" class="form-select mb-1">
             <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
@@ -387,3 +463,34 @@ document.addEventListener("click", async e=>{
   }
 });
 
+// ===================== FUNCIONES AUXILIARES =====================
+async function cargarOpcionesProveedores(seleccionado) {
+  let opciones = '<option value="">Seleccionar proveedor</option>';
+  const snap = await getDocs(colProveedores);
+  snap.forEach(d => {
+    const selected = d.data().nombre === seleccionado ? 'selected' : '';
+    opciones += `<option value="${d.data().nombre}" ${selected}>${d.data().nombre}</option>`;
+  });
+  return opciones;
+}
+
+async function cargarOpcionesProductos(seleccionado) {
+  let opciones = '<option value="">Seleccionar producto</option>';
+  const snap = await getDocs(colProductos);
+  snap.forEach(d => {
+    const selected = d.data().nombre === seleccionado ? 'selected' : '';
+    opciones += `<option value="${d.data().nombre}" ${selected}>${d.data().nombre}</option>`;
+  });
+  return opciones;
+}
+
+// ===================== INICIALIZACIÓN =====================
+// Establecer fecha actual por defecto
+document.getElementById("fechaFactura").valueAsDate = new Date();
+
+// Inicializar generación de ID de factura
+generarIdFactura();
+
+// Cargar selects
+cargarProveedoresSelect();
+cargarProductosSelect();
