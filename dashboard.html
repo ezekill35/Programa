@@ -7,35 +7,34 @@
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #e9f5f5; /* Color de fondo más suave */
+      background: linear-gradient(135deg,#e0f7fa,#b2ebf2);
       margin: 0;
     }
 
+    /* Sidebar */
     .sidebar {
-      width: 250px;
+      width: 270px;
       background: linear-gradient(180deg, #14b8a6 0%, #0284c7 100%);
       color: white;
       height: 100vh;
       position: fixed;
       padding: 1.5rem 1rem;
       border-radius: 0 20px 20px 0;
-      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
-      transition: background 0.3s; /* Transición suave */
+      box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+      transition: background 0.3s, transform 0.3s;
+      z-index: 1000;
     }
-
-    .sidebar:hover {
-      background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); /* Cambio de color al pasar el mouse */
-    }
-
+    .sidebar:hover { background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); }
     .sidebar h3 {
       font-weight: 700;
       text-align: center;
       margin-bottom: 1.5rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra de texto */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-
     .nav-btn {
       display: block;
       width: 100%;
@@ -44,21 +43,25 @@
       border: none;
       text-align: left;
       padding: 0.75rem 1rem;
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 0.5rem;
       font-size: 15px;
-      transition: background 0.3s, transform 0.2s; /* Transiciones suaves */
+      transition: background 0.3s, transform 0.2s;
+    }
+    .nav-btn:hover, .nav-btn.activo {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+    #btnCerrarSesion {
+      margin-top: 2rem;
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
     }
 
-    .nav-btn:hover,
-    .nav-btn.activo {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.05); /* Efecto de aumento al pasar el mouse */
-    }
-
+    /* Main */
     main {
       margin-left: 270px;
       padding: 2rem;
+      transition: margin-left 0.3s;
     }
 
     .header-bar {
@@ -67,99 +70,65 @@
       align-items: center;
       margin-bottom: 2rem;
       flex-wrap: wrap;
+      gap: 1rem;
     }
-
     #searchInput {
       max-width: 300px;
     }
 
+    /* Tarjetas */
     .tabla-container {
       background: white;
       border-radius: 15px;
       padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
       margin-bottom: 2rem;
-      transition: transform 0.2s; /* Transición suave */
+      transition: transform 0.2s;
     }
+    .tabla-container:hover { transform: translateY(-5px); }
+    .tabla-container h4, .tabla-container h5 { font-weight: 600; }
 
-    .tabla-container:hover {
-      transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
-    }
-
+    /* Botones de acción */
     .btn-accion {
       background: transparent;
       border: none;
       cursor: pointer;
       font-size: 1rem;
       margin-right: 5px;
-      transition: transform 0.2s; /* Transición suave */
+      transition: transform 0.2s;
     }
+    .btn-accion:hover { transform: scale(1.2); }
 
-    .btn-accion:hover {
-      transform: scale(1.2); /* Aumento al pasar el mouse */
-    }
-
+    /* Resultados de búsqueda */
     .resultado-item {
       background: #e0f2fe;
       border-radius: 10px;
       padding: 0.75rem;
       margin-bottom: 5px;
       cursor: pointer;
-      transition: background 0.2s; /* Transición suave */
+      transition: background 0.2s;
     }
+    .resultado-item:hover { background: #bae6fd; }
 
-    .resultado-item:hover {
-      background: #bae6fd; /* Cambio de color al pasar el mouse */
-    }
-
+    /* Dialog modales */
     dialog {
       border: none;
       border-radius: 15px;
       padding: 1.5rem;
       max-width: 400px;
       width: 90%;
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
     }
+    dialog::backdrop { background: rgba(0,0,0,0.4); }
 
-    dialog::backdrop {
-      background: rgba(0, 0, 0, 0.4);
-    }
-
-    .link-info {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #0284c7;
-    }
-
-    .seccion {
-      display: none;
-    }
-
-    .seccion.activa {
-      display: block;
-    }
+    /* Secciones */
+    .seccion { display: none; }
+    .seccion.activa { display: block; }
 
     @media (max-width: 768px) {
-      main {
-        margin-left: 0;
-        padding: 1rem;
-      }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
-        border-radius: 0;
-        padding: 1rem;
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .nav-btn {
-        margin: 0.2rem;
-        flex: 1 1 45%;
-      }
+      main { margin-left: 0; padding: 1rem; }
+      .sidebar { width: 100%; height: auto; border-radius: 0; position: relative; display: flex; flex-wrap: wrap; justify-content: center; }
+      .nav-btn { margin: 0.2rem; flex: 1 1 45%; }
     }
   </style>
 </head>
@@ -207,51 +176,46 @@
     </section>
 
     <!-- Proveedores -->
-   <section id="proveedores" class="seccion">
-    <div class="tabla-container">
-        <h4>Registrar Proveedor</h4>
-        <form id="formProveedor" class="row g-3">
-          <div class="col-md-6">
-            <select id="tipoDocumentoProveedor" class="form-select" required>
-              <option value="">Tipo de documento</option>
-              <option>RUC</option>
-              <option>DNI</option>
-              <option>Pasaporte</option>
-              <option>CE</option>
-              <option>Otros</option>
-            </select>
-          </div>
-          
-                    <div class="col-md-6">
-            <input type="text" id="rucProveedor" class="form-control" placeholder="Número de Documento / RUC" required>
-          </div>
-          
-          <div class="col-md-6">
-            <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">Registrar</button>
-          </div>
-        </form>
-      </div>
+    <section id="proveedores" class="seccion">
+      <div class="tabla-container">
+        <h4>Registrar Proveedor</h4>
+        <form id="formProveedor" class="row g-3">
+          <div class="col-md-6">
+            <select id="tipoDocumentoProveedor" class="form-select" required>
+              <option value="">Tipo de documento</option>
+              <option>RUC</option>
+              <option>DNI</option>
+              <option>Pasaporte</option>
+              <option>CE</option>
+              <option>Otros</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success">Registrar</button>
+          </div>
+        </form>
+      </div>
 
-      <div class="tabla-container">
-        <h4>Lista de Proveedores</h4>
-        <table class="table table-striped">
-          <thead>
-                        <tr><th>Tipo Documento</th><th>RUC/Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
-          </thead>
-          <tbody id="tablaProveedores"></tbody>
-        </table>
-        <div id="mensajeProveedor" class="text-danger" style="display:none;">¿No encuentras el proveedor? Regístralo aquí.</div>
-      </div>
-    </section>
+      <div class="tabla-container">
+        <h4>Lista de Proveedores</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr><th>Tipo Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaProveedores"></tbody>
+        </table>
+        <div id="mensajeProveedor" class="text-danger" style="display:none;">¿No encuentras el proveedor? Regístralo aquí.</div>
+      </div>
+    </section>
 
     <!-- Productos -->
     <section id="productos" class="seccion">
@@ -380,4 +344,3 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
