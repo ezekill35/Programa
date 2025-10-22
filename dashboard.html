@@ -9,10 +9,9 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #e9f5f5; /* Color de fondo más suave */
+      background: #e9f5f5;
       margin: 0;
     }
-
     .sidebar {
       width: 250px;
       background: linear-gradient(180deg, #14b8a6 0%, #0284c7 100%);
@@ -21,150 +20,35 @@
       position: fixed;
       padding: 1.5rem 1rem;
       border-radius: 0 20px 20px 0;
-      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
-      transition: background 0.3s; /* Transición suave */
+      box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+      transition: background 0.3s;
     }
-
-    .sidebar:hover {
-      background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); /* Cambio de color al pasar el mouse */
-    }
-
-    .sidebar h3 {
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra de texto */
-    }
-
-    .nav-btn {
-      display: block;
-      width: 100%;
-      background: transparent;
-      color: white;
-      border: none;
-      text-align: left;
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-      font-size: 15px;
-      transition: background 0.3s, transform 0.2s; /* Transiciones suaves */
-    }
-
-    .nav-btn:hover,
-    .nav-btn.activo {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.05); /* Efecto de aumento al pasar el mouse */
-    }
-
-    main {
-      margin-left: 270px;
-      padding: 2rem;
-    }
-
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    #searchInput {
-      max-width: 300px;
-    }
-
-    .tabla-container {
-      background: white;
-      border-radius: 15px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
-      margin-bottom: 2rem;
-      transition: transform 0.2s; /* Transición suave */
-    }
-
-    .tabla-container:hover {
-      transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
-    }
-
-    .btn-accion {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-right: 5px;
-      transition: transform 0.2s; /* Transición suave */
-    }
-
-    .btn-accion:hover {
-      transform: scale(1.2); /* Aumento al pasar el mouse */
-    }
-
-    .resultado-item {
-      background: #e0f2fe;
-      border-radius: 10px;
-      padding: 0.75rem;
-      margin-bottom: 5px;
-      cursor: pointer;
-      transition: background 0.2s; /* Transición suave */
-    }
-
-    .resultado-item:hover {
-      background: #bae6fd; /* Cambio de color al pasar el mouse */
-    }
-
-    dialog {
-      border: none;
-      border-radius: 15px;
-      padding: 1.5rem;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-    }
-
-    dialog::backdrop {
-      background: rgba(0, 0, 0, 0.4);
-    }
-
-    .link-info {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #0284c7;
-    }
-
-    .seccion {
-      display: none;
-    }
-
-    .seccion.activa {
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      main {
-        margin-left: 0;
-        padding: 1rem;
-      }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
-        border-radius: 0;
-        padding: 1rem;
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .nav-btn {
-        margin: 0.2rem;
-        flex: 1 1 45%;
-      }
+    .sidebar:hover { background: linear-gradient(180deg, #0284c7 0%, #14b8a6 100%); }
+    .sidebar h3 { font-weight: 700; text-align: center; margin-bottom: 1.5rem; text-shadow:1px 1px 2px rgba(0,0,0,0.2);}
+    .nav-btn { display:block; width:100%; background:transparent; color:white; border:none; text-align:left; padding:0.75rem 1rem; border-radius:10px; margin-bottom:0.5rem; font-size:15px; transition:background 0.3s, transform 0.2s;}
+    .nav-btn:hover, .nav-btn.activo { background: rgba(255,255,255,0.2); transform: scale(1.05);}
+    main { margin-left:270px; padding:2rem; }
+    .header-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap;}
+    #searchInput { max-width: 300px; }
+    .tabla-container { background:white; border-radius:15px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.1); margin-bottom:2rem; transition: transform 0.2s;}
+    .tabla-container:hover { transform: translateY(-5px);}
+    .btn-accion { background:transparent; border:none; cursor:pointer; font-size:1rem; margin-right:5px; transition:transform 0.2s;}
+    .btn-accion:hover { transform:scale(1.2);}
+    .resultado-item { background:#e0f2fe; border-radius:10px; padding:0.75rem; margin-bottom:5px; cursor:pointer; transition: background 0.2s;}
+    .resultado-item:hover { background:#bae6fd; }
+    dialog { border:none; border-radius:15px; padding:1.5rem; max-width:400px; width:90%; box-shadow:0 5px 25px rgba(0,0,0,0.3);}
+    dialog::backdrop { background: rgba(0,0,0,0.4);}
+    .link-info { cursor:pointer; text-decoration:underline; color:#0284c7; }
+    .seccion { display:none;}
+    .seccion.activa { display:block;}
+    @media (max-width:768px){
+      main{ margin-left:0; padding:1rem; }
+      .sidebar{ width:100%; height:auto; border-radius:0; padding:1rem; position:relative; display:flex; flex-wrap:wrap; justify-content:center;}
+      .nav-btn{ margin:0.2rem; flex:1 1 45%;}
     }
   </style>
 </head>
 <body>
-
   <!-- Sidebar -->
   <aside class="sidebar">
     <h3>Discovery Pets</h3>
@@ -182,7 +66,7 @@
     </div>
     <div id="searchResults" class="mb-4"></div>
 
-    <!-- Dashboard principal -->
+    <!-- Dashboard -->
     <section id="dashboard" class="seccion activa">
       <div class="row g-4">
         <div class="col-md-4">
@@ -211,7 +95,7 @@
       <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
-          <div class="col-md-6">
+          <div class="col-md-6 d-flex gap-2">
             <select id="tipoDocumentoProveedor" class="form-select" required>
               <option value="">Tipo de documento</option>
               <option>RUC</option>
@@ -220,6 +104,7 @@
               <option>CE</option>
               <option>Otros</option>
             </select>
+            <input type="text" id="numeroDocumentoProveedor" class="form-control" placeholder="Número" required>
           </div>
           <div class="col-md-6">
             <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
@@ -240,11 +125,16 @@
         <h4>Lista de Proveedores</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>Tipo Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr>
+            <tr>
+              <th>Documento</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
           <tbody id="tablaProveedores"></tbody>
         </table>
-        <div id="mensajeProveedor" class="text-danger" style="display:none;">¿No encuentras el proveedor? Regístralo aquí.</div>
       </div>
     </section>
 
@@ -290,11 +180,16 @@
         <h4>Lista de Productos</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>Nombre</th><th>Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+            <tr>
+              <th>Nombre</th>
+              <th>Presentación</th>
+              <th>Precio</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
           <tbody id="tablaProductos"></tbody>
         </table>
-        <div id="mensajeProducto" class="text-danger" style="display:none;">¿No encuentras el producto? Regístralo aquí.</div>
       </div>
     </section>
 
@@ -347,7 +242,17 @@
         <h4>Lista de Facturas</h4>
         <table class="table table-striped">
           <thead>
-            <tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Proveedor</th>
+              <th>Producto</th>
+              <th>Subtotal</th>
+              <th>IGV</th>
+              <th>Total</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
           <tbody id="tablaFacturas"></tbody>
         </table>
@@ -375,10 +280,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
 
 
 
