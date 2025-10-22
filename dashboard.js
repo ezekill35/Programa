@@ -214,8 +214,7 @@ async function mostrarDetalleProducto(nombreProducto) {
       <div class="mb-2"><strong>Nombre:</strong> ${producto.nombre}</div>
       <div class="mb-2"><strong>Proveedor:</strong> ${producto.proveedor || 'No asignado'}</div>
       <div class="mb-2"><strong>Presentación:</strong> ${producto.cantidad} ${producto.presentacion}</div>
-      <div class="mb-2"><strong>Precio de venta:</strong> ${producto.moneda === 'soles' ? 'S/. ' : '$ '}${producto.precio}</div>
-      <div class="mb-2"><strong>Precio de compra:</strong> ${producto.precioCompra ? (producto.moneda === 'soles' ? 'S/. ' : '$ ') + producto.precioCompra : 'No especificado'}</div>
+      <div class="mb-2"><strong>Precio:</strong> ${producto.moneda === 'soles' ? 'S/. ' : '$ '}${producto.precio}</div>
       <div class="mb-2"><strong>Descripción:</strong> ${producto.descripcion || 'No especificada'}</div>
     `;
     modalExtra.showModal();
@@ -316,7 +315,6 @@ formProducto.addEventListener("submit", async e=>{
     presentacion: document.getElementById("presentacionProducto").value,
     cantidad: parseInt(document.getElementById("cantidadPresentacion").value),
     precio: parseFloat(document.getElementById("precioProducto").value),
-    precioCompra: parseFloat(document.getElementById("precioCompra").value) || null,
     moneda: document.getElementById("tipoMoneda").value,
     descripcion: document.getElementById("descripcionProducto").value.trim(),
     fechaRegistro: new Date().toISOString().split('T')[0]
@@ -538,10 +536,6 @@ document.addEventListener("click", async e=>{
             <input id="editPrecio" type="number" step="0.01" class="form-control" value="${d.precio||0}">
           </div>
           <div class="mb-2">
-            <label class="form-label">Precio de Compra</label>
-            <input id="editPrecioCompra" type="number" step="0.01" class="form-control" value="${d.precioCompra||''}">
-          </div>
-          <div class="mb-2">
             <label class="form-label">Moneda</label>
             <select id="editMoneda" class="form-select">
               <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
@@ -628,7 +622,6 @@ document.addEventListener("click", async e=>{
           dataActualizada.presentacion = document.getElementById("editPresent").value;
           dataActualizada.cantidad = parseInt(document.getElementById("editCantidad").value);
           dataActualizada.precio = parseFloat(document.getElementById("editPrecio").value);
-          dataActualizada.precioCompra = parseFloat(document.getElementById("editPrecioCompra").value) || null;
           dataActualizada.moneda = document.getElementById("editMoneda").value;
           dataActualizada.descripcion = document.getElementById("editDesc").value;
         } else if(tipo==="factura"){
