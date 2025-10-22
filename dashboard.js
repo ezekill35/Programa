@@ -11,9 +11,10 @@ const firebaseConfig = {
   authDomain: "discovery-pets.firebaseapp.com",
   databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
   projectId: "discovery-pets",
-  storageBucket: "discovery-pets.appspot.com",
+  storageBucket: "discovery-pets.firebasestorage.app",
   messagingSenderId: "481355972999",
-  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
+  appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322",
+  measurementId: "G-0WMLRY8FGM"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -59,10 +60,6 @@ const modalEditar = document.getElementById("modalEditar");
 const modalEditarBody = document.getElementById("modalEditarBody");
 const cerrarModalEditar = document.getElementById("cerrarModalEditar");
 
-const proveedorFactura = document.getElementById("proveedorFactura");
-const productoFactura = document.getElementById("productoFactura");
-const tipoMoneda = document.getElementById("tipoMoneda");
-
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
@@ -84,25 +81,33 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 
 // ===================== AUXILIARES =====================
 async function cargarProveedoresSelect(){
-  proveedorFactura.innerHTML = '<option value="">Seleccionar proveedor</option>';
+  const select = document.getElementById("proveedorFactura");
+  select.innerHTML = '<option value="">Seleccionar proveedor</option>';
   const snap = await getDocs(colProveedores);
   snap.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d.data().nombre;
     opt.textContent = d.data().nombre;
-    proveedorFactura.appendChild(opt);
+    select.appendChild(opt);
   });
 }
 
 async function cargarProductosSelect(){
-  productoFactura.innerHTML = '<option value="">Seleccionar producto</option>';
+  const select = document.getElementById("productoFactura");
+  select.innerHTML = '<option value="">Seleccionar producto</option>';
   const snap = await getDocs(colProductos);
   snap.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d.data().nombre;
     opt.textContent = d.data().nombre;
-    productoFactura.appendChild(opt);
+    select.appendChild(opt);
   });
+}
+
+// ===================== FUNCION ID AUTOMATICO =====================
+async function generarIdFactura(){
+  const snap = await getDocs(colFacturas);
+  return snap.size + 1; // ID secuencial simple
 }
 
 function mostrarModalFactura(f){
@@ -126,8 +131,7 @@ cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
 formProveedor.addEventListener("submit", async e=>{
   e.preventDefault();
   const data = {
-    tipoDocumento: document.getElementById("tipoDocumentoProveedor").value,
-    numeroDocumento: document.getElementById("numeroDocumentoProveedor").value,
+    ruc: document.getElementById("rucProveedor").value.trim(),
     nombre: document.getElementById("nombreProveedor").value.trim(),
     direccion: document.getElementById("direccionProveedor").value.trim(),
     telefono: document.getElementById("telefonoProveedor").value.trim()
@@ -136,16 +140,14 @@ formProveedor.addEventListener("submit", async e=>{
   formProveedor.reset();
 });
 
-// Tiempo real proveedores
 onSnapshot(colProveedores, snapshot=>{
   tablaProveedores.innerHTML="";
-  proveedorFactura.innerHTML = '<option value="">Seleccionar proveedor</option>';
   snapshot.forEach(docu=>{
     const d=docu.data();
     const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
-      <td>${d.tipoDocumento} - ${d.numeroDocumento}</td>
+      <td>${d.ruc}</td>
       <td>${d.nombre}</td>
       <td>${d.direccion||""}</td>
       <td>${d.telefono||""}</td>
@@ -155,14 +157,9 @@ onSnapshot(colProveedores, snapshot=>{
         <button class="btn-accion eliminar" data-tipo="proveedor" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProveedores.appendChild(tr);
-
-    // actualizar select proveedor
-    const opt=document.createElement("option");
-    opt.value=d.nombre;
-    opt.textContent=d.nombre;
-    proveedorFactura.appendChild(opt);
   });
   countProveedores.textContent=snapshot.size;
+  cargarProveedoresSelect();
 });
 
 // ===================== PRODUCTOS =====================
@@ -171,6 +168,7 @@ formProducto.addEventListener("submit", async e=>{
   const data = {
     nombre: document.getElementById("nombreProducto").value.trim(),
     cantidad: parseInt(document.getElementById("cantidadPresentacion").value),
+    unidad: document.getElementById("unidadPresentacion").value,
     precio: parseFloat(document.getElementById("precioProducto").value),
     moneda: document.getElementById("tipoMoneda").value,
     descripcion: document.getElementById("descripcionProducto").value.trim()
@@ -179,17 +177,15 @@ formProducto.addEventListener("submit", async e=>{
   formProducto.reset();
 });
 
-// Tiempo real productos
 onSnapshot(colProductos, snapshot=>{
   tablaProductos.innerHTML="";
-  productoFactura.innerHTML = '<option value="">Seleccionar producto</option>';
   snapshot.forEach(docu=>{
     const d=docu.data();
     const tr=document.createElement("tr");
     tr.dataset.id=docu.id;
     tr.innerHTML=`
       <td>${d.nombre}</td>
-      <td>${d.cantidad}</td>
+      <td>${d.cantidad} ${d.unidad || ''}</td>
       <td>${d.moneda === 'soles' ? 'S/. ' : '$ '}${d.precio}</td>
       <td style="white-space: pre-line;">${d.descripcion||""}</td>
       <td>
@@ -198,33 +194,28 @@ onSnapshot(colProductos, snapshot=>{
         <button class="btn-accion eliminar" data-tipo="producto" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaProductos.appendChild(tr);
-
-    // actualizar select producto
-    const opt=document.createElement("option");
-    opt.value=d.nombre;
-    opt.textContent=d.nombre;
-    productoFactura.appendChild(opt);
   });
   countProductos.textContent=snapshot.size;
+  cargarProductosSelect();
 });
 
 // ===================== FACTURAS =====================
 formFactura.addEventListener("submit", async e=>{
   e.preventDefault();
+  const idFactura = await generarIdFactura(); // id automático
   const data = {
-    idFactura: document.getElementById("idFactura").value.trim(),
+    idFactura: idFactura,
     fecha: document.getElementById("fechaFactura").value,
-    proveedor: proveedorFactura.value,
-    producto: productoFactura.value,
+    proveedor: document.getElementById("proveedorFactura").value,
+    producto: document.getElementById("productoFactura").value,
     monto: parseFloat(document.getElementById("montoFactura").value),
     tipo: document.getElementById("tipoFactura").value,
-    moneda: tipoMoneda.value
+    moneda: document.getElementById("tipoMoneda").value
   };
   await addDoc(colFacturas, data);
   formFactura.reset();
 });
 
-// Tiempo real facturas
 onSnapshot(colFacturas, snapshot=>{
   tablaFacturas.innerHTML="";
   snapshot.forEach(docu=>{
@@ -251,14 +242,14 @@ onSnapshot(colFacturas, snapshot=>{
 // ===================== BUSCADOR =====================
 buscador.style.display="none";
 buscador.addEventListener("input", async ()=>{
-  const texto = buscador.value.trim().toLowerCase();
-  panelFacturas.innerHTML = "";
+  const texto=buscador.value.trim().toLowerCase();
+  panelFacturas.innerHTML="";
   if(!texto) return;
   const snap = await getDocs(colFacturas);
   snap.forEach(docu=>{
-    const f=docu.data();
+    const f = docu.data();
     if(f.producto.toLowerCase().includes(texto)){
-      const div = document.createElement("div");
+      const div=document.createElement("div");
       div.className="resultado-item";
       div.textContent=f.idFactura;
       div.addEventListener("click", ()=>mostrarModalFactura(f));
@@ -269,30 +260,38 @@ buscador.addEventListener("input", async ()=>{
 
 // ===================== CLICK GLOBAL =====================
 document.addEventListener("click", async e=>{
+
   // --------- EDITAR ---------
   if(e.target.classList.contains("editar")){
     const tipo = e.target.dataset.tipo;
     const id = e.target.dataset.id;
     let colNombre = tipo==="proveedor"?"proveedores":tipo==="producto"?"productos":"facturas";
+    const docRef = doc(db, colNombre, id);
     const snap = await getDocs(query(collection(db, colNombre), where("__name__","==",id)));
     if(!snap.empty){
       const d = snap.docs[0].data();
       modalEditarBody.innerHTML = `
         <h5>Editar ${tipo}</h5>
         ${tipo==="proveedor"?`
-          <label>Tipo Doc</label><input id="editTipoDoc" class="form-control mb-1" value="${d.tipoDocumento||''}">
-          <label>Número Doc</label><input id="editNumDoc" class="form-control mb-1" value="${d.numeroDocumento||''}">
+          <label>RUC</label><input id="editRuc" class="form-control mb-1" value="${d.ruc||''}">
           <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
           <label>Dirección</label><input id="editDir" class="form-control mb-1" value="${d.direccion||''}">
           <label>Teléfono</label><input id="editTel" class="form-control mb-1" value="${d.telefono||''}">`:
         tipo==="producto"?`
           <label>Nombre</label><input id="editNombre" class="form-control mb-1" value="${d.nombre||''}">
           <label>Cantidad</label><input id="editCantidad" type="number" class="form-control mb-1" value="${d.cantidad||0}">
+          <label>Unidad</label>
+          <select id="editUnidad" class="form-select mb-1">
+            <option value="unidad" ${d.unidad==='unidad'?'selected':''}>Unidad</option>
+            <option value="docena" ${d.unidad==='docena'?'selected':''}>Docena</option>
+            <option value="centena" ${d.unidad==='centena'?'selected':''}>Centena</option>
+            <option value="millar" ${d.unidad==='millar'?'selected':''}>Millar</option>
+          </select>
           <label>Precio</label><input id="editPrecio" type="number" step="0.01" class="form-control mb-1" value="${d.precio||0}">
           <label>Moneda</label>
           <select id="editMoneda" class="form-select mb-1">
-            <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
-            <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
+            <option value="soles" ${d.moneda === 'soles' ? 'selected' : ''}>Soles</option>
+            <option value="dolares" ${d.moneda === 'dolares' ? 'selected' : ''}>Dólares</option>
           </select>
           <label>Descripción</label><textarea id="editDesc" class="form-control mb-1">${d.descripcion||''}</textarea>`:
         tipo==="factura"?`
@@ -306,27 +305,29 @@ document.addEventListener("click", async e=>{
       `;
       modalEditar.showModal();
 
+      const btnGuardar = document.getElementById("guardarEdit");
+      btnGuardar.replaceWith(btnGuardar.cloneNode(true));
       document.getElementById("guardarEdit").addEventListener("click", async ()=>{
         const upd = {};
         if(tipo==="proveedor"){
-          upd.tipoDocumento = document.getElementById("editTipoDoc").value;
-          upd.numeroDocumento = document.getElementById("editNumDoc").value;
-          upd.nombre = document.getElementById("editNombre").value;
-          upd.direccion = document.getElementById("editDir").value;
-          upd.telefono = document.getElementById("editTel").value;
+          upd.ruc=document.getElementById("editRuc").value.trim();
+          upd.nombre=document.getElementById("editNombre").value.trim();
+          upd.direccion=document.getElementById("editDir").value.trim();
+          upd.telefono=document.getElementById("editTel").value.trim();
         } else if(tipo==="producto"){
-          upd.nombre = document.getElementById("editNombre").value;
-          upd.cantidad = parseInt(document.getElementById("editCantidad").value);
-          upd.precio = parseFloat(document.getElementById("editPrecio").value);
-          upd.moneda = document.getElementById("editMoneda").value;
-          upd.descripcion = document.getElementById("editDesc").value;
+          upd.nombre=document.getElementById("editNombre").value.trim();
+          upd.cantidad=parseInt(document.getElementById("editCantidad").value);
+          upd.unidad=document.getElementById("editUnidad").value;
+          upd.precio=parseFloat(document.getElementById("editPrecio").value);
+          upd.moneda=document.getElementById("editMoneda").value;
+          upd.descripcion=document.getElementById("editDesc").value.trim();
         } else if(tipo==="factura"){
-          upd.idFactura = document.getElementById("editId").value;
-          upd.fecha = document.getElementById("editFecha").value;
-          upd.proveedor = document.getElementById("editProv").value;
-          upd.producto = document.getElementById("editProd").value;
-          upd.monto = parseFloat(document.getElementById("editMonto").value);
-          upd.tipo = document.getElementById("editTipo").value;
+          upd.idFactura=document.getElementById("editId").value.trim();
+          upd.fecha=document.getElementById("editFecha").value;
+          upd.proveedor=document.getElementById("editProv").value.trim();
+          upd.producto=document.getElementById("editProd").value.trim();
+          upd.monto=parseFloat(document.getElementById("editMonto").value);
+          upd.tipo=document.getElementById("editTipo").value.trim();
         }
         await updateDoc(doc(db,colNombre,id),upd);
         modalEditar.close();
@@ -345,8 +346,8 @@ document.addEventListener("click", async e=>{
         const d = snap.docs[0].data();
         modalExtraBody.innerHTML = `
           <h5>${tipo} ${nombre}</h5>
-          <p>${tipo==="proveedor"?`RUC: ${d.numeroDocumento}<br>Dirección: ${d.direccion||''}<br>Tel: ${d.telefono||''}`:
-          `Cantidad: ${d.cantidad}<br>Precio: ${d.moneda==='soles'?'S/. ':'$ '}${d.precio}<br>Descripción: ${d.descripcion||''}`}</p>
+          <p>${tipo==="proveedor"?`RUC: ${d.ruc}<br>Dirección: ${d.direccion||''}<br>Tel: ${d.telefono||''}`:
+          `Cantidad: ${d.cantidad} ${d.unidad || ''}<br>Precio: ${d.moneda === 'soles' ? 'S/. ' : '$ '}${d.precio}<br>Descripción: ${d.descripcion||''}`}</p>
         `;
         modalExtra.showModal();
       }
@@ -360,6 +361,6 @@ document.addEventListener("click", async e=>{
     let colRef = tipo==="proveedor"?colProveedores:tipo==="producto"?colProductos:colFacturas;
     if(confirm("¿Deseas eliminar este registro?")) await deleteDoc(doc(db,colRef.id,id));
   }
-});
 
+});
 
