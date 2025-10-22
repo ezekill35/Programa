@@ -10,8 +10,6 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#e0f7fa 0%,#80deea 100%);min-height:100vh;overflow-x:hidden;position:relative;}
-
-    /* Floating shapes decorativos */
     .floating-shapes{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
     .shape{position:absolute;opacity:0.15;animation:float 20s infinite ease-in-out;}
     .shape:nth-child(1){top:10%;left:10%;font-size:80px;animation-delay:0s;}
@@ -21,7 +19,7 @@
     @keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}25%{transform:translateY(-30px) rotate(5deg);}50%{transform:translateY(-60px) rotate(-5deg);}75%{transform:translateY(-30px) rotate(3deg);}}
 
     /* Sidebar */
-    .sidebar{width:250px;background:linear-gradient(180deg,#14b8a6 0%,#0284c7 100%);color:white;height:100vh;position:fixed;padding:1.5rem 1rem;border-radius:0 20px 20px 0;box-shadow:4px 0 20px rgba(0,0,0,0.2);transition:all 0.3s;z-index:1000;transform-style:preserve-3d;}
+    .sidebar{width:250px;background:linear-gradient(180deg,#14b8a6 0%,#0284c7 100%);color:white;height:100vh;position:fixed;padding:1.5rem 1rem;border-radius:0 20px 20px 0;box-shadow:4px 0 20px rgba(0,0,0,0.2);transition:all 0.3s;transform-style:preserve-3d;z-index:1000;}
     .sidebar h3{text-align:center;font-weight:700;margin-bottom:1.5rem;text-shadow:1px 1px 2px rgba(0,0,0,0.3);}
     .nav-btn{display:block;width:100%;background:transparent;color:white;border:none;text-align:left;padding:0.75rem 1rem;border-radius:12px;margin-bottom:0.5rem;font-weight:600;font-size:15px;transition:all 0.3s;cursor:pointer;transform-style:preserve-3d;}
     .nav-btn:hover,.nav-btn.activo{background:rgba(255,255,255,0.2);transform:translateX(5px) translateZ(10px) scale(1.05);box-shadow:0 10px 20px rgba(0,0,0,0.15);}
@@ -38,8 +36,6 @@
     .tabla-container{background:white;border-radius:20px;padding:1.5rem;margin-bottom:2rem;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:transform 0.2s;transform-style:preserve-3d;}
     .tabla-container:hover{transform:translateY(-5px);}
     .tabla-container h4{margin-bottom:1rem;font-weight:700;color:#0284c7;}
-    .tabla-container h5{margin-bottom:0.5rem;color:#4a5568;}
-    .tabla-container h3{font-size:2rem;font-weight:700;color:#0284c7;}
     .form-control,.form-select,textarea{border-radius:10px;border:2px solid rgba(2,132,199,0.3);padding:0.5rem 1rem;margin-bottom:1rem;}
     .btn{border-radius:12px;font-weight:600;transition:all 0.3s;}
     .btn-success{background:linear-gradient(135deg,#14b8a6 0%,#0284c7 100%);border:none;color:white;}
@@ -104,7 +100,7 @@
       <div class="tabla-container">
         <h4>Registrar Proveedor</h4>
         <form id="formProveedor" class="row g-3">
-          <div class="col-md-6">
+          <div class="col-md-3">
             <select id="tipoDocumentoProveedor" class="form-select" required>
               <option value="">Tipo de documento</option>
               <option>RUC</option>
@@ -114,6 +110,9 @@
               <option>Otros</option>
             </select>
           </div>
+          <div class="col-md-3">
+            <input type="text" id="numeroDocumentoProveedor" class="form-control" placeholder="Número de documento" required>
+          </div>
           <div class="col-md-6">
             <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
           </div>
@@ -122,83 +121,61 @@
           <div class="col-12"><button class="btn btn-success">Registrar</button></div>
         </form>
       </div>
+
       <div class="tabla-container">
         <h4>Lista de Proveedores</h4>
         <table class="table table-striped">
-          <thead><tr><th>Tipo Documento</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Tipo Documento</th>
+              <th>Número</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
           <tbody id="tablaProveedores"></tbody>
         </table>
-        <div id="mensajeProveedor" class="text-danger" style="display:none;">¿No encuentras el proveedor? Regístralo aquí.</div>
       </div>
     </section>
 
-    <!-- Productos -->
-    <section id="productos" class="seccion">
-      <div class="tabla-container">
-        <h4>Registrar Producto</h4>
-        <form id="formProducto" class="row g-3">
-          <div class="col-md-6"><input type="text" id="nombreProducto" class="form-control" placeholder="Nombre" required></div>
-          <div class="col-md-3"><select id="presentacionProducto" class="form-select" required><option value="">Presentación</option><option>Unidad</option><option>Docena</option><option>Ciento</option><option>Millar</option></select></div>
-          <div class="col-md-3"><input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad presentación" required></div>
-          <div class="col-md-4"><input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required></div>
-          <div class="col-md-4"><select id="tipoMoneda" class="form-select" required><option value="soles">Soles</option><option value="dolares">Dólares</option></select></div>
-          <div class="col-md-4"><textarea id="descripcionProducto" class="form-control" placeholder="Descripción"></textarea></div>
-          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
-        </form>
-      </div>
-      <div class="tabla-container">
-        <h4>Lista de Productos</h4>
-        <table class="table table-striped">
-          <thead><tr><th>Nombre</th><th>Presentación</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr></thead>
-          <tbody id="tablaProductos"></tbody>
-        </table>
-        <div id="mensajeProducto" class="text-danger" style="display:none;">¿No encuentras el producto? Regístralo aquí.</div>
-      </div>
-    </section>
+    <!-- Modal flotante para editar proveedor -->
+    <dialog id="modalEditarProveedor">
+      <h4>Editar Proveedor</h4>
+      <form id="formEditarProveedor" class="row g-2">
+        <div class="col-md-6">
+          <label>Tipo Documento</label>
+          <input type="text" id="editTipoDoc" class="form-control mb-1">
+        </div>
+        <div class="col-md-6">
+          <label>Número Documento</label>
+          <input type="text" id="editNumDoc" class="form-control mb-1">
+        </div>
+        <div class="col-12">
+          <label>Nombre</label>
+          <input type="text" id="editNombre" class="form-control mb-1">
+        </div>
+        <div class="col-md-6">
+          <label>Dirección</label>
+          <input type="text" id="editDir" class="form-control mb-1">
+        </div>
+        <div class="col-md-6">
+          <label>Teléfono</label>
+          <input type="text" id="editTel" class="form-control mb-1">
+        </div>
+        <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+          <button type="button" id="cerrarModalEditarProveedor" class="btn btn-secondary">Cerrar</button>
+          <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        </div>
+      </form>
+    </dialog>
 
-    <!-- Facturas -->
-    <section id="facturas" class="seccion">
-      <div class="tabla-container">
-        <h4>Registrar Factura</h4>
-        <form id="formFactura" class="row g-3">
-          <div class="col-md-4"><input type="text" id="idFactura" class="form-control" placeholder="ID Automático" readonly></div>
-          <div class="col-md-4"><input type="date" id="fechaFactura" class="form-control" required></div>
-          <div class="col-md-4"><select id="tipoFactura" class="form-select" required><option value="">Tipo de documento</option><option>Factura</option><option>Boleta</option><option>Ticket</option><option>Nota de Crédito</option><option>Nota de Débito</option></select></div>
-          <div class="col-md-6"><select id="proveedorFactura" class="form-select" required></select></div>
-          <div class="col-md-6"><select id="productoFactura" class="form-select" required></select></div>
-          <div class="col-md-6" id="campoAdicional" style="display:none;"><input type="text" id="detalleAdicional" class="form-control" placeholder="Detalle de nota de crédito/débito"></div>
-          <div class="col-md-6"><input type="number" id="montoFactura" class="form-control" placeholder="Subtotal" step="0.01" required></div>
-          <div class="col-md-6"><input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly></div>
-          <div class="col-md-6"><input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly></div>
-          <div class="col-12"><button class="btn btn-success">Registrar</button></div>
-        </form>
-      </div>
-      <div class="tabla-container">
-        <h4>Lista de Facturas</h4>
-        <table class="table table-striped">
-          <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Tipo</th><th>Acciones</th></tr></thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </div>
-    </section>
   </main>
 
-  <!-- Modales -->
-  <dialog id="modalFactura">
-    <h4>Detalle de Factura</h4>
-    <div id="modalFacturaBody"></div>
-    <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-  <dialog id="modalExtra">
-    <div id="modalExtraBody"></div>
-    <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-  <dialog id="modalEditar">
-    <div id="modalEditarBody"></div>
-    <button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
+  <!-- Conectar JS externo -->
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
