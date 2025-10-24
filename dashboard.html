@@ -468,6 +468,34 @@
       0%, 100% { transform: translateY(0px) rotate(0deg); }
       50% { transform: translateY(-20px) rotate(5deg); }
     }
+
+    /* Print Styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-invoice, #printable-invoice * {
+        visibility: visible;
+      }
+      #printable-invoice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        padding: 20px;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+    }
+
+    .print-only {
+      display: none;
+    }
     
     @media (max-width: 768px) {
       main {
@@ -751,7 +779,10 @@
   <dialog id="modalFactura">
     <h4>🧾 Detalle de Factura</h4>
     <div id="modalFacturaBody"></div>
-    <button id="cerrarModalFactura" class="btn btn-secondary mt-3">Cerrar</button>
+    <div class="d-flex gap-2 mt-3">
+      <button id="imprimirFactura" class="btn btn-primary">🖨️ Imprimir Factura</button>
+      <button id="cerrarModalFactura" class="btn btn-secondary">Cerrar</button>
+    </div>
   </dialog>
 
   <dialog id="modalExtra">
@@ -764,9 +795,13 @@
     <button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button>
   </dialog>
 
+  <!-- Printable Invoice Template (Hidden) -->
+  <div id="printable-invoice" class="print-only" style="display: none;">
+    <!-- This will be populated dynamically -->
+  </div>
+
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
 
 
