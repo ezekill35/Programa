@@ -620,7 +620,7 @@
               <option value="">Seleccionar proveedor</option>
             </select>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <select id="presentacionProducto" class="form-select" required>
               <option value="">Presentación</option>
               <option>Unidad</option>
@@ -629,17 +629,20 @@
               <option>Millar</option>
             </select>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad" required>
           </div>
           <div class="col-md-4">
             <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <select id="tipoMoneda" class="form-select" required>
               <option value="soles">Soles (S/.)</option>
               <option value="dolares">Dólares ($)</option>
             </select>
+          </div>
+          <div class="col-md-4">
+            <input type="number" id="precioCompra" class="form-control" placeholder="Precio de compra" step="0.01">
           </div>
           <div class="col-12">
             <textarea id="descripcionProducto" class="form-control" placeholder="Descripción del producto" rows="3"></textarea>
@@ -674,7 +677,7 @@
         <h4>🧾 Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
           <div class="col-md-4">
-            <input type="text" id="idFactura" class="form-control" placeholder="ID Automático" readonly>
+            <input type="text" id="idFactura" class="form-control" placeholder="ID de Factura" required>
           </div>
           <div class="col-md-4">
             <input type="date" id="fechaFactura" class="form-control" required>
@@ -764,8 +767,6 @@
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
-
-
 
 
 
