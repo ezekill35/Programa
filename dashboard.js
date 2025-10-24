@@ -59,6 +59,7 @@ const igvFactura = document.getElementById("igvFactura");
 const totalFactura = document.getElementById("totalFactura");
 const cantidadFactura = document.getElementById("cantidadFactura");
 const idFactura = document.getElementById("idFactura");
+const imprimirFactura = document.getElementById("imprimirFactura");
 
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
@@ -212,7 +213,12 @@ async function mostrarDetalleProducto(nombreProducto) {
   }
 }
 
+// Variable global para almacenar la factura actual
+let facturaActual = null;
+
 function mostrarModalFactura(f){
+  facturaActual = f;
+  
   modalFacturaBody.innerHTML = `
     <h3 class="text-primary font-bold text-lg mb-3">🧾 Factura ${f.idFactura}</h3>
     <div class="mb-2"><b>Fecha:</b> ${f.fecha}</div>
@@ -237,6 +243,83 @@ function mostrarModalFactura(f){
   modalFactura.showModal();
 }
 
+// ===================== IMPRIMIR FACTURA =====================
+function imprimirFacturaFuncion(factura) {
+  const printableInvoice = document.getElementById('printable-invoice');
+  
+  const invoiceHTML = `
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #333; font-family: Arial, sans-serif;">
+      <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px;">
+        <h1 style="color: #FF6B95; margin: 0; font-size: 28px;">DISCOVERY PETS</h1>
+        <p style="margin: 5px 0; color: #666;">Tienda de Mascotas</p>
+        <p style="margin: 5px 0; color: #666;">Tel: +51 123 456 789 | Email: info@discoverypets.com</p>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+        <div>
+          <h3 style="color: #333; margin-bottom: 10px;">INFORMACIÓN DE LA FACTURA</h3>
+          <p><strong>Número:</strong> ${factura.idFactura}</p>
+          <p><strong>Fecha:</strong> ${factura.fecha}</p>
+          <p><strong>Tipo:</strong> ${factura.tipo}</p>
+        </div>
+        <div style="text-align: right;">
+          <h3 style="color: #333; margin-bottom: 10px;">PROVEEDOR</h3>
+          <p><strong>Nombre:</strong> ${factura.proveedor}</p>
+        </div>
+      </div>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <thead>
+          <tr style="background-color: #FF6B95; color: white;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Descripción</th>
+            <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Cantidad</th>
+            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Precio Unitario</th>
+            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #ddd;">${factura.producto}</td>
+            <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${factura.cantidad || 1}</td>
+            <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${(factura.subtotal / (factura.cantidad || 1)).toFixed(2)}</td>
+            <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.subtotal.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div style="display: flex; justify-content: flex-end;">
+        <div style="width: 300px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Subtotal:</strong></td>
+              <td style="padding: 8px; text-align: right; border-bottom: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.subtotal.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>IGV (18%):</strong></td>
+              <td style="padding: 8px; text-align: right; border-bottom: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.igv.toFixed(2)}</td>
+            </tr>
+            <tr style="background-color: #f8f9fa;">
+              <td style="padding: 12px;"><strong>TOTAL:</strong></td>
+              <td style="padding: 12px; text-align: right;"><strong>${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.total.toFixed(2)}</strong></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #333; text-align: center;">
+        <p style="color: #666; font-size: 14px;">¡Gracias por su compra!</p>
+        <p style="color: #666; font-size: 12px;">Discovery Pets - Cuidando a tus mejores amigos</p>
+        <p style="color: #666; font-size: 12px;">Documento generado el ${new Date().toLocaleDateString()}</p>
+      </div>
+    </div>
+  `;
+  
+  printableInvoice.innerHTML = invoiceHTML;
+  
+  // Trigger print
+  window.print();
+}
+
 // ===================== CERRAR MODALES =====================
 cerrarModalFactura.addEventListener("click", ()=>modalFactura.close());
 cerrarModalExtra.addEventListener("click", ()=>modalExtra.close());
@@ -246,6 +329,13 @@ cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
 montoFactura.addEventListener("input", calcularTotales);
 proveedorFactura.addEventListener("change", function() {
   cargarProductosPorProveedor(this.value);
+});
+
+// Event listener para imprimir factura
+imprimirFactura.addEventListener("click", () => {
+  if (facturaActual) {
+    imprimirFacturaFuncion(facturaActual);
+  }
 });
 
 // ===================== PROVEEDORES =====================
@@ -394,6 +484,7 @@ onSnapshot(colFacturas, snapshot=>{
       <td>
         <button class="btn-accion editar" data-tipo="factura" data-id="${docu.id}">✏️</button>
         <button class="btn-accion ver link-info" data-tipo="factura" data-id="${docu.id}">🔍</button>
+        <button class="btn-accion imprimir" data-tipo="factura" data-id="${docu.id}">🖨️</button>
         <button class="btn-accion eliminar" data-tipo="factura" data-id="${docu.id}">🗑️</button>
       </td>`;
     tablaFacturas.appendChild(tr);
@@ -678,6 +769,16 @@ document.addEventListener("click", async e=>{
     } else if (tipo === "producto") {
       const nombre = e.target.dataset.nombre;
       mostrarDetalleProducto(nombre);
+    }
+  }
+
+  // --------- IMPRIMIR FACTURA ---------
+  if(e.target.classList.contains("imprimir")){
+    const id = e.target.dataset.id;
+    const snap = await getDocs(query(colFacturas, where("__name__","==",id)));
+    if(!snap.empty){
+      const factura = snap.docs[0].data();
+      imprimirFacturaFuncion(factura);
     }
   }
 });
