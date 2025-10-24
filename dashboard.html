@@ -1,807 +1,848 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discovery Pets · Dashboard</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
-      background-attachment: fixed;
-      margin: 0;
-      overflow-x: hidden;
-      position: relative;
-      min-height: 100vh;
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Discovery Pets · Acceso</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Inter', sans-serif; 
+  }
+  
+  body, html { 
+    width:100%; 
+    height:100%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Animated background particles */
+  .particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .particle {
+    position: absolute;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    animation: floatParticle 15s infinite linear;
+  }
+  
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+  
+  /* 3D Floating elements */
+  .floating-3d {
+    position: absolute;
+    font-size: 2rem;
+    z-index: 2;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+    animation: float3D 6s ease-in-out infinite;
+  }
+  
+  .pet-1 { 
+    top: 12%; 
+    left: 8%; 
+    animation-delay: 0s; 
+    color: #FF9E7D;
+  }
+  .pet-2 { 
+    top: 20%; 
+    right: 10%; 
+    animation-delay: 1.5s; 
+    color: #FF6B95;
+  }
+  .pet-3 { 
+    bottom: 25%; 
+    left: 10%; 
+    animation-delay: 3s; 
+    color: #4FD1C5;
+  }
+  .pet-4 { 
+    bottom: 12%; 
+    right: 8%; 
+    animation-delay: 4.5s; 
+    color: #667eea;
+  }
+  
+  @keyframes float3D {
+    0%, 100% { 
+      transform: translateY(0px) scale(1);
+    }
+    50% { 
+      transform: translateY(-15px) scale(1.1);
+    }
+  }
+  
+  .login-wrapper { 
+    width:90%; 
+    max-width:1000px; 
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    box-shadow: 
+      0 15px 35px rgba(0,0,0,0.2),
+      0 0 0 1px rgba(255,255,255,0.1);
+    display:flex; 
+    min-height:520px; 
+    overflow:hidden; 
+    position: relative;
+    z-index: 10;
+    animation: slideInUp 0.6s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .login-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF9E7D, #FF6B95, #4FD1C5);
+    z-index: 11;
+  }
+  
+  .login-form { 
+    flex:1; 
+    padding:40px; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:center; 
+    gap:20px; 
+    position: relative;
+  }
+  
+  .form-header {
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+  .logo { 
+    font-size:36px; 
+    font-weight:800; 
+    background: linear-gradient(135deg, #FF9E7D, #FF6B95, #4FD1C5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align:center; 
+    margin-bottom:10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .logo::before {
+    content: '🐾';
+    font-size: 28px;
+    animation: pawLeft 2s ease-in-out infinite;
+  }
+  
+  .logo::after {
+    content: '🐾';
+    font-size: 28px;
+    animation: pawRight 2s ease-in-out infinite;
+  }
+  
+  @keyframes pawLeft {
+    0%, 100% { transform: rotate(-10deg) scale(1); }
+    50% { transform: rotate(-15deg) scale(1.1); }
+  }
+  
+  @keyframes pawRight {
+    0%, 100% { transform: rotate(10deg) scale(1); }
+    50% { transform: rotate(15deg) scale(1.1); }
+  }
+  
+  h2 { 
+    font-size:24px; 
+    color:#111827; 
+    text-align:center; 
+    margin-bottom:8px; 
+    font-weight: 700;
+  }
+  
+  .subtitle { 
+    color:#6b7280; 
+    font-size:14px; 
+    text-align:center; 
+    margin-bottom:25px; 
+    line-height: 1.5;
+  }
+  
+  .input-group { 
+    position:relative; 
+    width:100%; 
+    margin-bottom: 8px;
+  }
+  
+  input { 
+    width:100%; 
+    padding:14px 50px 14px 50px; 
+    border: 2px solid rgba(230, 233, 238, 0.8);
+    border-radius:12px; 
+    font-size:15px; 
+    background: rgba(250, 250, 250, 0.9);
+    transition: all 0.3s ease;
+    box-shadow: 
+      0 2px 8px rgba(0,0,0,0.05),
+      inset 0 1px 2px rgba(255,255,255,0.8);
+  }
+  
+  input:focus { 
+    outline:none; 
+    border-color:#FF6B95; 
+    box-shadow: 
+      0 4px 15px rgba(255, 107, 149, 0.15),
+      inset 0 1px 2px rgba(255,255,255,0.9); 
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 16px;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus + .input-icon {
+    color: #FF6B95;
+  }
+  
+  .toggle-password { 
+    position:absolute; 
+    right:18px; 
+    top:50%; 
+    transform:translateY(-50%); 
+    cursor:pointer; 
+    font-size:16px; 
+    color:#6b7280; 
+    transition: all 0.3s ease;
+    z-index: 2;
+    background: rgba(255,255,255,0.8);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .toggle-password:hover { 
+    color:#FF6B95; 
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .attempts-counter {
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+    margin: 5px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+  }
+  
+  .attempts-warning {
+    color: #e74c3c;
+    font-weight: 600;
+  }
+  
+  .actions { 
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between; 
+    font-size:13px; 
+    color:#6b7280; 
+    margin:8px 0 15px; 
+  }
+  
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  
+  .checkbox-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #FF6B95;
+  }
+  
+  .btn-login { 
+    padding:14px; 
+    border:none; 
+    border-radius:12px; 
+    background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
+    color:white; 
+    font-size:15px; 
+    font-weight:600; 
+    cursor:pointer; 
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+      0 4px 15px rgba(255, 107, 149, 0.3);
+  }
+  
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  .btn-login:hover::before {
+    left: 100%;
+  }
+  
+  .btn-login:hover { 
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 20px rgba(255, 107, 149, 0.4);
+  }
+  
+  .btn-login:active {
+    transform: translateY(0);
+  }
+  
+  .btn-login:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .btn-login:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .helper { 
+    margin-top:15px; 
+    font-size:13px; 
+    color:#6b7280; 
+    text-align:center; 
+    line-height: 1.5;
+  }
+  
+  .login-image { 
+    flex:1; 
+    position:relative; 
+    background: 
+      radial-gradient(circle at 30% 70%, rgba(255,158,125,0.2) 0%, transparent 50%),
+      radial-gradient(circle at 70% 30%, rgba(79,209,197,0.2) 0%, transparent 50%),
+      url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat; 
+    overflow: hidden;
+  }
+  
+  .login-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      rgba(255, 158, 125, 0.15) 0%, 
+      rgba(255, 107, 149, 0.15) 50%, 
+      rgba(79, 209, 197, 0.15) 100%);
+    z-index: 1;
+  }
+  
+  .login-image::after { 
+    content:""; 
+    position:absolute; 
+    inset:0; 
+    background: linear-gradient(135deg, 
+      rgba(102, 126, 234, 0.3) 0%, 
+      rgba(118, 75, 162, 0.3) 100%);
+    z-index: 1;
+  }
+  
+  .login-image .text-overlay { 
+    position:absolute; 
+    bottom:30px; 
+    left:30px; 
+    color:white; 
+    font-size:20px; 
+    font-weight:700; 
+    line-height:1.3; 
+    z-index:2; 
+    max-width:300px; 
+    text-shadow:0 4px 12px rgba(0,0,0,0.3);
+  }
+  
+  .text-overlay span {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 8px;
+    opacity: 0.9;
+  }
+  
+  /* Loading animation */
+  .loading {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Enhanced messages */
+  .error-message {
+    color: #e74c3c;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+    padding: 10px;
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #e74c3c;
+  }
+  
+  .success-message {
+    color: #2ecc71;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+    padding: 10px;
+    background: rgba(46, 204, 113, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #2ecc71;
+  }
+  
+  .lockout-message {
+    color: #e67e22;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+    padding: 12px;
+    background: rgba(230, 126, 34, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #e67e22;
+    line-height: 1.5;
+  }
+  
+  .countdown {
+    font-weight: 700;
+    font-size: 14px;
+    color: #e74c3c;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 968px){ 
+    .login-wrapper { 
+      flex-direction:column; 
+      max-width:500px; 
+      min-height: auto;
+    } 
+    
+    .login-image { 
+      height:180px; 
+      flex: none;
+    } 
+    
+    .login-form { 
+      padding:30px 25px; 
+    } 
+    
+    .logo { 
+      font-size:32px; 
     }
     
-    /* Elementos decorativos 3D con temática de mascotas */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 105, 180, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.1) 0%, transparent 50%),
-        url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0icGF3IiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmZmYiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyMCIgZmlsbD0iI2ZmZDAwMCIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdykiLz48L3N2Zz4=');
-      background-size: 200px 200px;
-      opacity: 0.3;
-      z-index: -1;
-      animation: float 20s ease-in-out infinite;
+    h2 {
+      font-size: 22px;
     }
     
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(1deg); }
-    }
-    
-    .sidebar {
-      width: 250px;
-      background: linear-gradient(180deg, #FF9E7D 0%, #FF6B95 100%);
-      color: white;
-      height: 100vh;
-      position: fixed;
-      padding: 1.5rem 1rem;
-      border-radius: 0 25px 25px 0;
-      box-shadow: 8px 0 25px rgba(255, 107, 149, 0.4);
-      transition: all 0.3s ease;
-      z-index: 1000;
-      overflow: hidden;
-    }
-    
-    .sidebar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-      z-index: -1;
-    }
-    
-    .sidebar:hover {
-      transform: translateX(5px);
-      box-shadow: 12px 0 30px rgba(255, 107, 149, 0.6);
-    }
-    
-    .sidebar h3 {
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      font-size: 1.5rem;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .sidebar h3::before {
-      content: '🐾';
-      margin-right: 10px;
-      font-size: 1.8rem;
-    }
-    
-    .sidebar h3::after {
-      content: '🐾';
-      margin-left: 10px;
-      font-size: 1.8rem;
-    }
-    
-    .nav-btn {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-      border: none;
-      text-align: left;
-      padding: 0.75rem 1rem;
-      border-radius: 15px;
-      margin-bottom: 0.5rem;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .nav-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s;
-    }
-    
-    .nav-btn:hover::before {
-      left: 100%;
-    }
-    
-    .nav-btn:hover,
-    .nav-btn.activo {
-      background: rgba(255, 255, 255, 0.25);
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    .nav-btn.activo {
-      background: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
-    }
-    
-    main {
-      margin-left: 270px;
-      padding: 2rem;
-    }
-    
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 1.5rem 2rem;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .header-bar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(90deg, #FF9E7D, #FF6B95, #4FD1C5);
-    }
-    
-    .header-bar h2 {
-      font-weight: 700;
-      background: linear-gradient(90deg, #FF9E7D, #FF6B95);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin: 0;
-      display: flex;
-      align-items: center;
-    }
-    
-    .header-bar h2::before {
-      content: '🐕';
-      margin-right: 10px;
-      font-size: 1.8rem;
-    }
-    
-    #searchInput {
-      max-width: 300px;
-      border-radius: 50px;
-      padding: 0.75rem 1.5rem;
-      border: 2px solid #e9ecef;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.8);
-    }
-    
-    #searchInput:focus {
-      border-color: #FF6B95;
-      box-shadow: 0 6px 15px rgba(255, 107, 149, 0.25);
-      transform: translateY(-2px);
-      background: white;
-    }
-    
-    .tabla-container {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      padding: 1.5rem;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-      transition: all 0.4s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .tabla-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, #FF9E7D, #FF6B95, #4FD1C5);
-    }
-    
-    .tabla-container:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-accion {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-right: 5px;
-      transition: all 0.3s ease;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .btn-accion:hover {
-      transform: scale(1.2) rotate(5deg);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .resultado-item {
-      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-      border-radius: 12px;
-      padding: 0.75rem;
-      margin-bottom: 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-left: 4px solid #FF6B95;
-    }
-    
-    .resultado-item:hover {
-      background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
-      transform: translateX(8px) translateY(-2px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-    }
-    
-    dialog {
-      border: none;
-      border-radius: 20px;
-      padding: 1.5rem;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-    }
-    
-    dialog::backdrop {
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(5px);
-    }
-    
-    .link-info {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #FF6B95;
-      transition: all 0.3s ease;
-    }
-    
-    .link-info:hover {
-      color: #FF9E7D;
-      transform: translateY(-1px);
-    }
-    
-    .seccion {
+    .floating-3d {
       display: none;
     }
-    
-    .seccion.activa {
-      display: block;
-      animation: fadeInUp 0.5s ease;
+  }
+  
+  @media (max-width: 480px) {
+    .login-form {
+      padding: 25px 20px;
     }
     
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .logo {
+      font-size: 28px;
     }
     
-    /* Enhanced dashboard cards */
-    .tabla-container.text-center {
-      background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
-      color: white;
-      border-radius: 20px;
-      padding: 2rem;
-      box-shadow: 0 15px 35px rgba(255, 107, 149, 0.4);
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
+    h2 {
+      font-size: 20px;
     }
     
-    .tabla-container.text-center::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.5);
+    .subtitle {
+      font-size: 13px;
     }
     
-    .tabla-container.text-center:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 25px 50px rgba(255, 107, 149, 0.6);
+    input {
+      padding: 12px 45px 12px 45px;
     }
     
-    .tabla-container.text-center h5 {
-      font-weight: 600;
-      margin-bottom: 1rem;
-      opacity: 0.9;
+    .input-icon,
+    .toggle-password {
+      font-size: 14px;
     }
-    
-    .tabla-container.text-center h3 {
-      font-weight: 700;
-      font-size: 2.5rem;
-      margin: 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Enhanced buttons */
-    .btn {
-      border-radius: 12px;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border: none;
-    }
-    
-    .btn-success {
-      background: linear-gradient(135deg, #4FD1C5 0%, #38B2AC 100%);
-    }
-    
-    .btn-success:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 15px rgba(79, 209, 197, 0.4);
-    }
-    
-    .btn-secondary {
-      background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
-    }
-    
-    .btn-secondary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 15px rgba(255, 107, 149, 0.4);
-    }
-    
-    /* Enhanced form controls */
-    .form-control, .form-select {
-      border-radius: 10px;
-      border: 2px solid #e9ecef;
-      padding: 0.75rem 1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      background: rgba(255, 255, 255, 0.8);
-    }
-    
-    .form-control:focus, .form-select:focus {
-      border-color: #FF6B95;
-      box-shadow: 0 4px 8px rgba(255, 107, 149, 0.2);
-      transform: translateY(-2px);
-      background: white;
-    }
-    
-    /* Enhanced table */
-    .table {
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .table thead th {
-      background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
-      color: white;
-      font-weight: 600;
-      border: none;
-      padding: 1rem;
-    }
-    
-    .table tbody tr {
-      transition: all 0.3s ease;
-    }
-    
-    .table tbody tr:hover {
-      background-color: rgba(255, 107, 149, 0.05);
-      transform: translateX(5px);
-    }
-    
-    /* Supplier products section */
-    .supplier-products {
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 15px;
-      padding: 1rem;
-      margin-top: 1rem;
-      border-left: 4px solid #4FD1C5;
-    }
-    
-    .product-badge {
-      background: linear-gradient(135deg, #4FD1C5 0%, #38B2AC 100%);
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      margin: 0.25rem;
-      display: inline-block;
-    }
-    
-    /* Floating pet icons */
-    .floating-pet {
-      position: fixed;
-      font-size: 2rem;
-      z-index: -1;
-      opacity: 0.1;
-      animation: floatPet 15s ease-in-out infinite;
-    }
-    
-    .pet-1 { top: 10%; left: 5%; animation-delay: 0s; }
-    .pet-2 { top: 20%; right: 10%; animation-delay: 2s; }
-    .pet-3 { bottom: 30%; left: 15%; animation-delay: 4s; }
-    .pet-4 { bottom: 10%; right: 5%; animation-delay: 6s; }
-    
-    @keyframes floatPet {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(5deg); }
-    }
-
-    /* Print Styles */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printable-invoice, #printable-invoice * {
-        visibility: visible;
-      }
-      #printable-invoice {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: white;
-        padding: 20px;
-      }
-      .no-print {
-        display: none !important;
-      }
-      .print-only {
-        display: block !important;
-      }
-    }
-
-    .print-only {
-      display: none;
-    }
-    
-    @media (max-width: 768px) {
-      main {
-        margin-left: 0;
-        padding: 1rem;
-      }
-      
-      .sidebar {
-        width: 100%;
-        height: auto;
-        border-radius: 0;
-        padding: 1rem;
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      
-      .nav-btn {
-        margin: 0.2rem;
-        flex: 1 1 45%;
-      }
-      
-      .header-bar {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      #searchInput {
-        max-width: 100%;
-      }
-      
-      .floating-pet {
-        display: none;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
+  <!-- Animated background particles -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- 3D Floating elements -->
+  <div class="floating-3d pet-1">🐶</div>
+  <div class="floating-3d pet-2">🐱</div>
+  <div class="floating-3d pet-3">🐾</div>
+  <div class="floating-3d pet-4">🐕</div>
 
-  <!-- Floating pet icons -->
-  <div class="floating-pet pet-1">🐶</div>
-  <div class="floating-pet pet-2">🐱</div>
-  <div class="floating-pet pet-3">🐾</div>
-  <div class="floating-pet pet-4">🐕</div>
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h3>Discovery Pets</h3>
-    <button class="nav-btn activo" data-target="dashboard">📊 Dashboard</button>
-    <button class="nav-btn" data-target="proveedores">🏢 Proveedores</button>
-    <button class="nav-btn" data-target="productos">📦 Productos</button>
-    <button class="nav-btn" data-target="facturas">🧾 Facturas</button>
-    <button id="btnCerrarSesion" class="nav-btn mt-4">🚪 Cerrar sesión</button>
-  </aside>
-
-  <main>
-    <div class="header-bar">
-      <h2 class="fw-bold">Panel General</h2>
-      <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto, proveedor o factura...">
+  <div class="login-wrapper">
+    <div class="login-form" role="main" aria-labelledby="login-title">
+      <div class="form-header">
+        <div class="logo">Discovery Pets</div>
+        <h2 id="login-title">Bienvenido</h2>
+        <div class="subtitle">Accede al panel administrativo</div>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-envelope input-icon"></i>
+        <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock input-icon"></i>
+        <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+        <span id="togglePassword" class="toggle-password">👁️</span>
+      </div>
+      
+      <div id="attemptsCounter" class="attempts-counter"></div>
+      
+      <div class="actions">
+        <label class="checkbox-container">
+          <input id="keepLogged" type="checkbox"> 
+          <span>Mantener sesión</span>
+        </label>
+      </div>
+      
+      <button id="btnLogin" class="btn-login">
+        <span id="btnText">Iniciar sesión</span>
+        <div id="btnLoading" class="loading"></div>
+      </button>
+      
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+      <div id="lockoutMessage" class="lockout-message"></div>
+      
+      <p class="helper">Si no tienes acceso, contacta al administrador<br>Discovery Pets 🐾</p>
     </div>
-    <div id="searchResults" class="mb-4"></div>
-
-    <!-- Dashboard principal -->
-    <section id="dashboard" class="seccion activa">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="tabla-container text-center">
-            <h5 class="text-secondary">Total Facturas</h5>
-            <h3 id="countFacturas">0</h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="tabla-container text-center">
-            <h5 class="text-secondary">Total Proveedores</h5>
-            <h3 id="countProveedores">0</h3>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="tabla-container text-center">
-            <h5 class="text-secondary">Total Productos</h5>
-            <h3 id="countProductos">0</h3>
-          </div>
-        </div>
+    
+    <div class="login-image" role="presentation">
+      <div class="text-overlay">
+        Discovery Pets
+        <span>Tu tienda de confianza</span>
       </div>
-    </section>
-
-    <!-- Proveedores -->
-    <section id="proveedores" class="seccion">
-      <div class="tabla-container">
-        <h4>➕ Registrar Proveedor</h4>
-        <form id="formProveedor" class="row g-3">
-          <div class="col-md-3">
-            <select id="tipoDocumentoProveedor" class="form-select" required>
-              <option value="">Tipo de documento</option>
-              <option>RUC</option>
-              <option>DNI</option>
-              <option>Pasaporte</option>
-              <option>CE</option>
-              <option>Otros</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <input type="text" id="numeroDocumentoProveedor" class="form-control" placeholder="Número de documento" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="nombreProveedor" class="form-control" placeholder="Nombre o Razón Social" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="direccionProveedor" class="form-control" placeholder="Dirección">
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="telefonoProveedor" class="form-control" placeholder="Teléfono">
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">➕ Registrar Proveedor</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="tabla-container">
-        <h4>📋 Lista de Proveedores</h4>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Documento</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>Productos</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaProveedores"></tbody>
-        </table>
-        <div id="mensajeProveedor" class="text-danger" style="display:none;">¿No encuentras el proveedor? Regístralo aquí.</div>
-      </div>
-    </section>
-
-    <!-- Productos -->
-    <section id="productos" class="seccion">
-      <div class="tabla-container">
-        <h4>➕ Registrar Producto</h4>
-        <form id="formProducto" class="row g-3">
-          <div class="col-md-6">
-            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre del producto" required>
-          </div>
-          <div class="col-md-6">
-            <select id="proveedorProducto" class="form-select" required>
-              <option value="">Seleccionar proveedor</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <select id="presentacionProducto" class="form-select" required>
-              <option value="">Presentación</option>
-              <option>Unidad</option>
-              <option>Docena</option>
-              <option>Ciento</option>
-              <option>Millar</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <input type="number" id="cantidadPresentacion" class="form-control" placeholder="Cantidad" required>
-          </div>
-          <div class="col-md-4">
-            <input type="number" id="precioProducto" class="form-control" placeholder="Precio" step="0.01" required>
-          </div>
-          <div class="col-md-4">
-            <select id="tipoMoneda" class="form-select" required>
-              <option value="soles">Soles (S/.)</option>
-              <option value="dolares">Dólares ($)</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <input type="number" id="precioCompra" class="form-control" placeholder="Precio de compra" step="0.01">
-          </div>
-          <div class="col-12">
-            <textarea id="descripcionProducto" class="form-control" placeholder="Descripción del producto" rows="3"></textarea>
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">➕ Registrar Producto</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="tabla-container">
-        <h4>📦 Lista de Productos</h4>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Proveedor</th>
-              <th>Presentación</th>
-              <th>Precio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaProductos"></tbody>
-        </table>
-        <div id="mensajeProducto" class="text-danger" style="display:none;">¿No encuentras el producto? Regístralo aquí.</div>
-      </div>
-    </section>
-
-    <!-- Facturas -->
-    <section id="facturas" class="seccion">
-      <div class="tabla-container">
-        <h4>🧾 Registrar Factura</h4>
-        <form id="formFactura" class="row g-3">
-          <div class="col-md-4">
-            <input type="text" id="idFactura" class="form-control" placeholder="ID de Factura" required>
-          </div>
-          <div class="col-md-4">
-            <input type="date" id="fechaFactura" class="form-control" required>
-          </div>
-          <div class="col-md-4">
-            <select id="tipoFactura" class="form-select" required>
-              <option value="">Tipo de documento</option>
-              <option>Factura</option>
-              <option>Boleta</option>
-              <option>Ticket</option>
-              <option>Nota de Crédito</option>
-              <option>Nota de Débito</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <select id="proveedorFactura" class="form-select" required></select>
-          </div>
-          <div class="col-md-6">
-            <select id="productoFactura" class="form-select" required>
-              <option value="">Primero selecciona un proveedor</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <input type="number" id="cantidadFactura" class="form-control" placeholder="Cantidad" min="1" value="1" required>
-          </div>
-          <div class="col-md-4">
-            <input type="number" id="montoFactura" class="form-control" placeholder="Subtotal" step="0.01" required>
-          </div>
-          <div class="col-md-4">
-            <select id="tipoMonedaFactura" class="form-select" required>
-              <option value="soles">Soles (S/.)</option>
-              <option value="dolares">Dólares ($)</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly>
-          </div>
-          <div class="col-md-6">
-            <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
-          </div>
-          <div class="col-12">
-            <button class="btn btn-success">🧾 Registrar Factura</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="tabla-container">
-        <h4>📄 Lista de Facturas</h4>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Fecha</th>
-              <th>Proveedor</th>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Subtotal</th>
-              <th>IGV</th>
-              <th>Total</th>
-              <th>Tipo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaFacturas"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <!-- Modales -->
-  <dialog id="modalFactura">
-    <h4>🧾 Detalle de Factura</h4>
-    <div id="modalFacturaBody"></div>
-    <div class="d-flex gap-2 mt-3">
-      <button id="imprimirFactura" class="btn btn-primary">🖨️ Imprimir Factura</button>
-      <button id="cerrarModalFactura" class="btn btn-secondary">Cerrar</button>
     </div>
-  </dialog>
-
-  <dialog id="modalExtra">
-    <div id="modalExtraBody"></div>
-    <button id="cerrarModalExtra" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
-  <dialog id="modalEditar">
-    <div id="modalEditarBody"></div>
-    <button id="cerrarModalEditar" class="btn btn-secondary mt-3">Cerrar</button>
-  </dialog>
-
-  <!-- Printable Invoice Template (Hidden) -->
-  <div id="printable-invoice" class="print-only" style="display: none;">
-    <!-- This will be populated dynamically -->
   </div>
 
-  <script type="module" src="dashboard.js"></script>
+<script type="module">
+  import { auth } from "./firebase.js";
+  import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const btnLogin = document.getElementById("btnLogin");
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
+  const btnText = document.getElementById("btnText");
+  const btnLoading = document.getElementById("btnLoading");
+  const errorMessage = document.getElementById("errorMessage");
+  const successMessage = document.getElementById("successMessage");
+  const lockoutMessage = document.getElementById("lockoutMessage");
+  const attemptsCounter = document.getElementById("attemptsCounter");
+  const particlesContainer = document.getElementById("particles");
+
+  // Create animated particles
+  function createParticles() {
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      
+      // Random properties
+      const size = Math.random() * 8 + 3;
+      const left = Math.random() * 100;
+      const animationDuration = Math.random() * 15 + 10;
+      const animationDelay = Math.random() * 5;
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${left}%`;
+      particle.style.animationDuration = `${animationDuration}s`;
+      particle.style.animationDelay = `${animationDelay}s`;
+      
+      particlesContainer.appendChild(particle);
+    }
+  }
+
+  // Security configuration
+  const MAX_ATTEMPTS = 4;
+  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  let failedAttempts = 0;
+  let lockoutUntil = null;
+
+  // Initialize from localStorage
+  function initializeSecurity() {
+    const savedAttempts = localStorage.getItem('failedAttempts');
+    const savedLockout = localStorage.getItem('lockoutUntil');
+    
+    if (savedAttempts) {
+      failedAttempts = parseInt(savedAttempts);
+    }
+    
+    if (savedLockout) {
+      lockoutUntil = parseInt(savedLockout);
+      checkLockoutStatus();
+    }
+    
+    updateAttemptsDisplay();
+  }
+
+  // Check if user is currently locked out
+  function checkLockoutStatus() {
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      // Still locked out
+      enableLockoutMode();
+      startCountdown();
+    } else if (lockoutUntil && Date.now() >= lockoutUntil) {
+      // Lockout period has ended
+      resetSecurity();
+    }
+  }
+
+  // Enable lockout mode
+  function enableLockoutMode() {
+    btnLogin.disabled = true;
+    document.getElementById('email').disabled = true;
+    document.getElementById('password').disabled = true;
+    hideMessage(errorMessage);
+    hideMessage(successMessage);
+    
+    const remainingTime = Math.ceil((lockoutUntil - Date.now()) / 1000 / 60);
+    showMessage(lockoutMessage, `🔒 Demasiados intentos fallidos. Cuenta bloqueada temporalmente.<br>Intenta nuevamente en <span class="countdown">${remainingTime}</span> minutos.`);
+  }
+
+  // Start countdown timer
+  function startCountdown() {
+    const countdownElement = lockoutMessage.querySelector('.countdown');
+    const countdownInterval = setInterval(() => {
+      const remainingSeconds = Math.ceil((lockoutUntil - Date.now()) / 1000);
+      
+      if (remainingSeconds <= 0) {
+        clearInterval(countdownInterval);
+        resetSecurity();
+        return;
+      }
+      
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+  }
+
+  // Reset security measures
+  function resetSecurity() {
+    failedAttempts = 0;
+    lockoutUntil = null;
+    localStorage.removeItem('failedAttempts');
+    localStorage.removeItem('lockoutUntil');
+    
+    btnLogin.disabled = false;
+    document.getElementById('email').disabled = false;
+    document.getElementById('password').disabled = false;
+    
+    hideMessage(lockoutMessage);
+    updateAttemptsDisplay();
+  }
+
+  // Update attempts counter display
+  function updateAttemptsDisplay() {
+    if (failedAttempts > 0) {
+      const remainingAttempts = MAX_ATTEMPTS - failedAttempts;
+      if (remainingAttempts > 0) {
+        attemptsCounter.innerHTML = `Intentos fallidos: <span class="attempts-warning">${failedAttempts}/${MAX_ATTEMPTS}</span> (${remainingAttempts} ${remainingAttempts === 1 ? 'intento' : 'intentos'} restantes)`;
+      } else {
+        attemptsCounter.innerHTML = `Intentos fallidos: <span class="attempts-warning">${failedAttempts}/${MAX_ATTEMPTS}</span>`;
+      }
+      attemptsCounter.style.display = 'block';
+    } else {
+      attemptsCounter.style.display = 'none';
+    }
+  }
+
+  // Mostrar / ocultar contraseña
+  togglePassword.addEventListener("click", () => {
+    const isHidden = passwordInput.type === "password";
+    passwordInput.type = isHidden ? "text" : "password";
+    togglePassword.textContent = isHidden ? "🙈" : "👁️";
+  });
+
+  // Redirección si ya está logueado
+  onAuthStateChanged(auth, (user) => {
+    if(user) {
+      resetSecurity(); // Reset attempts on successful login
+      showMessage(successMessage, "Redirigiendo al dashboard...");
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1000);
+    }
+  });
+
+  // Login function
+  btnLogin.addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = passwordInput.value.trim();
+    const keepLogged = document.getElementById("keepLogged").checked;
+    
+    // Check if user is locked out
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      showMessage(errorMessage, "Cuenta temporalmente bloqueada. Por favor espera.");
+      return;
+    }
+    
+    if (!email || !password) {
+      showMessage(errorMessage, "Por favor completa correo y contraseña.");
+      return;
+    }
+    
+    // Show loading state
+    btnText.style.display = "none";
+    btnLoading.style.display = "block";
+    btnLogin.disabled = true;
+    hideMessage(errorMessage);
+    hideMessage(successMessage);
+    
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      // Reset security on successful login
+      resetSecurity();
+      
+      if(keepLogged) localStorage.setItem("keepLogged","true");
+      else localStorage.removeItem("keepLogged");
+      
+      showMessage(successMessage, "¡Inicio de sesión exitoso!");
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1000);
+    } catch(err) { 
+      // Increment failed attempts
+      failedAttempts++;
+      localStorage.setItem('failedAttempts', failedAttempts.toString());
+      
+      // Check if max attempts reached
+      if (failedAttempts >= MAX_ATTEMPTS) {
+        lockoutUntil = Date.now() + LOCKOUT_DURATION;
+        localStorage.setItem('lockoutUntil', lockoutUntil.toString());
+        enableLockoutMode();
+        startCountdown();
+      }
+      
+      updateAttemptsDisplay();
+      showMessage(errorMessage, "Error al iniciar sesión: " + getErrorMessage(err.code));
+    } finally {
+      // Reset button state (unless locked out)
+      if (!lockoutUntil || Date.now() >= lockoutUntil) {
+        btnText.style.display = "block";
+        btnLoading.style.display = "none";
+        btnLogin.disabled = false;
+      }
+    }
+  });
+
+  // Helper functions
+  function showMessage(element, message) {
+    element.innerHTML = message;
+    element.style.display = "block";
+  }
+  
+  function hideMessage(element) {
+    element.style.display = "none";
+  }
+  
+  function getErrorMessage(errorCode) {
+    const errorMessages = {
+      "auth/invalid-email": "El formato del correo electrónico no es válido.",
+      "auth/user-disabled": "Esta cuenta ha sido deshabilitada.",
+      "auth/user-not-found": "No existe una cuenta con este correo electrónico.",
+      "auth/wrong-password": "La contraseña es incorrecta.",
+      "auth/too-many-requests": "Demasiados intentos fallidos. Intenta más tarde."
+    };
+    
+    return errorMessages[errorCode] || "Error desconocido. Intenta nuevamente.";
+  }
+
+  // Allow form submission with Enter key
+  document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      btnLogin.click();
+    }
+  });
+
+  // Initialize security system and particles
+  initializeSecurity();
+  createParticles();
+</script>
 </body>
 </html>
+
 
 
