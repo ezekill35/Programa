@@ -176,6 +176,18 @@
     color:#FF6B95; 
   }
   
+  .attempts-counter {
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+    margin: 5px 0;
+  }
+  
+  .attempts-warning {
+    color: #e74c3c;
+    font-weight: 600;
+  }
+  
   .actions { 
     display:flex; 
     align-items:center; 
@@ -212,6 +224,18 @@
     overflow: hidden;
   }
   
+  .btn-login:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .btn-login:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
   .btn-login::before {
     content: '';
     position: absolute;
@@ -223,16 +247,16 @@
     transition: left 0.5s;
   }
   
-  .btn-login:hover::before {
+  .btn-login:hover:not(:disabled)::before {
     left: 100%;
   }
   
-  .btn-login:hover { 
+  .btn-login:hover:not(:disabled) { 
     transform:translateY(-3px); 
     box-shadow:0 10px 25px rgba(255, 107, 149, 0.3); 
   }
   
-  .btn-login:active {
+  .btn-login:active:not(:disabled) {
     transform: translateY(-1px);
   }
   
@@ -333,6 +357,52 @@
     border-left: 4px solid #2ecc71;
   }
   
+  /* Lockout message */
+  .lockout-message {
+    color: #e67e22;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+    padding: 15px;
+    background: rgba(230, 126, 34, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+    line-height: 1.5;
+  }
+  
+  .countdown {
+    font-weight: 700;
+    font-size: 16px;
+    color: #e74c3c;
+  }
+  
+  /* Security recommendations */
+  .security-recommendations {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(16, 188, 212, 0.05);
+    border-radius: 10px;
+    border-left: 4px solid #10bcd4;
+  }
+  
+  .security-recommendations h4 {
+    color: #10bcd4;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
+  .security-recommendations ul {
+    padding-left: 20px;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+  
+  .security-recommendations li {
+    margin-bottom: 5px;
+  }
+  
   /* Responsive design */
   @media (max-width: 968px){ 
     .login-wrapper { 
@@ -415,6 +485,8 @@
         <span id="togglePassword" class="toggle-password">👁️</span>
       </div>
       
+      <div id="attemptsCounter" class="attempts-counter"></div>
+      
       <div class="actions">
         <label class="checkbox-container">
           <input id="keepLogged" type="checkbox"> 
@@ -429,6 +501,16 @@
       
       <div id="errorMessage" class="error-message"></div>
       <div id="successMessage" class="success-message"></div>
+      <div id="lockoutMessage" class="lockout-message"></div>
+      
+      <div id="securityRecommendations" class="security-recommendations">
+        <h4>💡 Recomendaciones de seguridad:</h4>
+        <ul>
+          <li>Utiliza una contraseña segura con letras, números y símbolos</li>
+          <li>No compartas tus credenciales con nadie</li>
+          <li>Cierra sesión cuando termines de usar el sistema</li>
+        </ul>
+      </div>
       
       <p class="helper">Si no tienes acceso, contacta al administrador del sistema.<br>Discovery Pets - Cuidando a tus mejores amigos</p>
     </div>
@@ -452,6 +534,107 @@
   const btnLoading = document.getElementById("btnLoading");
   const errorMessage = document.getElementById("errorMessage");
   const successMessage = document.getElementById("successMessage");
+  const lockoutMessage = document.getElementById("lockoutMessage");
+  const attemptsCounter = document.getElementById("attemptsCounter");
+  const securityRecommendations = document.getElementById("securityRecommendations");
+
+  // Security configuration
+  const MAX_ATTEMPTS = 4;
+  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  let failedAttempts = 0;
+  let lockoutUntil = null;
+
+  // Initialize from localStorage
+  function initializeSecurity() {
+    const savedAttempts = localStorage.getItem('failedAttempts');
+    const savedLockout = localStorage.getItem('lockoutUntil');
+    
+    if (savedAttempts) {
+      failedAttempts = parseInt(savedAttempts);
+    }
+    
+    if (savedLockout) {
+      lockoutUntil = parseInt(savedLockout);
+      checkLockoutStatus();
+    }
+    
+    updateAttemptsDisplay();
+  }
+
+  // Check if user is currently locked out
+  function checkLockoutStatus() {
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      // Still locked out
+      enableLockoutMode();
+      startCountdown();
+    } else if (lockoutUntil && Date.now() >= lockoutUntil) {
+      // Lockout period has ended
+      resetSecurity();
+    }
+  }
+
+  // Enable lockout mode
+  function enableLockoutMode() {
+    btnLogin.disabled = true;
+    document.getElementById('email').disabled = true;
+    document.getElementById('password').disabled = true;
+    hideMessage(errorMessage);
+    hideMessage(successMessage);
+    
+    const remainingTime = Math.ceil((lockoutUntil - Date.now()) / 1000 / 60);
+    showMessage(lockoutMessage, `🔒 Demasiados intentos fallidos. Por seguridad, tu cuenta ha sido bloqueada temporalmente. <br>Podrás intentar nuevamente en <span class="countdown">${remainingTime}</span> minutos.`);
+    
+    securityRecommendations.style.display = 'block';
+  }
+
+  // Start countdown timer
+  function startCountdown() {
+    const countdownElement = lockoutMessage.querySelector('.countdown');
+    const countdownInterval = setInterval(() => {
+      const remainingSeconds = Math.ceil((lockoutUntil - Date.now()) / 1000);
+      
+      if (remainingSeconds <= 0) {
+        clearInterval(countdownInterval);
+        resetSecurity();
+        return;
+      }
+      
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+  }
+
+  // Reset security measures
+  function resetSecurity() {
+    failedAttempts = 0;
+    lockoutUntil = null;
+    localStorage.removeItem('failedAttempts');
+    localStorage.removeItem('lockoutUntil');
+    
+    btnLogin.disabled = false;
+    document.getElementById('email').disabled = false;
+    document.getElementById('password').disabled = false;
+    
+    hideMessage(lockoutMessage);
+    securityRecommendations.style.display = 'none';
+    updateAttemptsDisplay();
+  }
+
+  // Update attempts counter display
+  function updateAttemptsDisplay() {
+    if (failedAttempts > 0) {
+      const remainingAttempts = MAX_ATTEMPTS - failedAttempts;
+      if (remainingAttempts > 0) {
+        attemptsCounter.innerHTML = `Intentos fallidos: <span class="attempts-warning">${failedAttempts}/${MAX_ATTEMPTS}</span> (${remainingAttempts} ${remainingAttempts === 1 ? 'intento' : 'intentos'} restantes)`;
+      } else {
+        attemptsCounter.innerHTML = `Intentos fallidos: <span class="attempts-warning">${failedAttempts}/${MAX_ATTEMPTS}</span>`;
+      }
+      attemptsCounter.style.display = 'block';
+    } else {
+      attemptsCounter.style.display = 'none';
+    }
+  }
 
   // Mostrar / ocultar contraseña
   togglePassword.addEventListener("click", () => {
@@ -463,6 +646,7 @@
   // Redirección si ya está logueado
   onAuthStateChanged(auth, (user) => {
     if(user) {
+      resetSecurity(); // Reset attempts on successful login
       showMessage(successMessage, "Redirigiendo al dashboard...");
       setTimeout(() => {
         window.location.href = "dashboard.html";
@@ -475,6 +659,12 @@
     const email = document.getElementById("email").value.trim();
     const password = passwordInput.value.trim();
     const keepLogged = document.getElementById("keepLogged").checked;
+    
+    // Check if user is locked out
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      showMessage(errorMessage, "Cuenta temporalmente bloqueada. Por favor espera.");
+      return;
+    }
     
     if (!email || !password) {
       showMessage(errorMessage, "Por favor completa correo y contraseña.");
@@ -490,6 +680,10 @@
     
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      
+      // Reset security on successful login
+      resetSecurity();
+      
       if(keepLogged) localStorage.setItem("keepLogged","true");
       else localStorage.removeItem("keepLogged");
       
@@ -498,18 +692,33 @@
         window.location.href = "dashboard.html";
       }, 1000);
     } catch(err) { 
+      // Increment failed attempts
+      failedAttempts++;
+      localStorage.setItem('failedAttempts', failedAttempts.toString());
+      
+      // Check if max attempts reached
+      if (failedAttempts >= MAX_ATTEMPTS) {
+        lockoutUntil = Date.now() + LOCKOUT_DURATION;
+        localStorage.setItem('lockoutUntil', lockoutUntil.toString());
+        enableLockoutMode();
+        startCountdown();
+      }
+      
+      updateAttemptsDisplay();
       showMessage(errorMessage, "Error al iniciar sesión: " + getErrorMessage(err.code));
     } finally {
-      // Reset button state
-      btnText.style.display = "block";
-      btnLoading.style.display = "none";
-      btnLogin.disabled = false;
+      // Reset button state (unless locked out)
+      if (!lockoutUntil || Date.now() >= lockoutUntil) {
+        btnText.style.display = "block";
+        btnLoading.style.display = "none";
+        btnLogin.disabled = false;
+      }
     }
   });
 
   // Helper functions
   function showMessage(element, message) {
-    element.textContent = message;
+    element.innerHTML = message;
     element.style.display = "block";
   }
   
@@ -535,9 +744,13 @@
       btnLogin.click();
     }
   });
+
+  // Initialize security system
+  initializeSecurity();
 </script>
 </body>
 </html>
+
 
 
 
