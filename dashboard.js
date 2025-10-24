@@ -76,7 +76,7 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 
     if(btn.dataset.target === "facturas") {
       buscador.style.display = "block";
-      generarIdFactura();
+      limpiarFormularioFactura();
     } else { 
       buscador.style.display = "none"; 
       buscador.value=""; 
@@ -85,24 +85,14 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
   });
 });
 
-// ===================== GENERAR ID DE FACTURA AUTOMÁTICO =====================
-async function generarIdFactura() {
-  try {
-    const q = query(colFacturas, orderBy("idFactura", "desc"));
-    const querySnapshot = await getDocs(q);
-    
-    if (querySnapshot.empty) {
-      idFactura.value = "F-0001";
-    } else {
-      const lastId = querySnapshot.docs[0].data().idFactura;
-      const lastNumber = parseInt(lastId.split('-')[1]);
-      const newNumber = (lastNumber + 1).toString().padStart(4, '0');
-      idFactura.value = `F-${newNumber}`;
-    }
-  } catch (error) {
-    console.error("Error generando ID de factura:", error);
-    idFactura.value = `F-${Date.now()}`;
-  }
+// ===================== LIMPIAR FORMULARIO FACTURA =====================
+function limpiarFormularioFactura() {
+  formFactura.reset();
+  document.getElementById("fechaFactura").valueAsDate = new Date();
+  idFactura.value = "";
+  igvFactura.value = "";
+  totalFactura.value = "";
+  productoFactura.innerHTML = '<option value="">Primero selecciona un proveedor</option>';
 }
 
 // ===================== CALCULAR IGV Y TOTAL =====================
@@ -214,7 +204,8 @@ async function mostrarDetalleProducto(nombreProducto) {
       <div class="mb-2"><strong>Nombre:</strong> ${producto.nombre}</div>
       <div class="mb-2"><strong>Proveedor:</strong> ${producto.proveedor || 'No asignado'}</div>
       <div class="mb-2"><strong>Presentación:</strong> ${producto.cantidad} ${producto.presentacion}</div>
-      <div class="mb-2"><strong>Precio:</strong> ${producto.moneda === 'soles' ? 'S/. ' : '$ '}${producto.precio}</div>
+      <div class="mb-2"><strong>Precio de venta:</strong> ${producto.moneda === 'soles' ? 'S/. ' : '$ '}${producto.precio}</div>
+      <div class="mb-2"><strong>Precio de compra:</strong> ${producto.precioCompra ? (producto.moneda === 'soles' ? 'S/. ' : '$ ') + producto.precioCompra : 'No especificado'}</div>
       <div class="mb-2"><strong>Descripción:</strong> ${producto.descripcion || 'No especificada'}</div>
     `;
     modalExtra.showModal();
@@ -315,6 +306,7 @@ formProducto.addEventListener("submit", async e=>{
     presentacion: document.getElementById("presentacionProducto").value,
     cantidad: parseInt(document.getElementById("cantidadPresentacion").value),
     precio: parseFloat(document.getElementById("precioProducto").value),
+    precioCompra: parseFloat(document.getElementById("precioCompra").value) || null,
     moneda: document.getElementById("tipoMoneda").value,
     descripcion: document.getElementById("descripcionProducto").value.trim(),
     fechaRegistro: new Date().toISOString().split('T')[0]
@@ -348,12 +340,26 @@ onSnapshot(colProductos, snapshot=>{
 // ===================== FACTURAS =====================
 formFactura.addEventListener("submit", async e=>{
   e.preventDefault();
+  
+  // Verificar si ya existe una factura con el mismo ID
+  const idFacturaValue = document.getElementById("idFactura").value.trim();
+  if (!idFacturaValue) {
+    alert("Por favor ingresa un ID de factura");
+    return;
+  }
+  
+  const facturaExistente = await getDocs(query(colFacturas, where("idFactura", "==", idFacturaValue)));
+  if (!facturaExistente.empty) {
+    alert("Ya existe una factura con este ID. Por favor usa un ID diferente.");
+    return;
+  }
+  
   const subtotal = parseFloat(document.getElementById("montoFactura").value) || 0;
   const igv = subtotal * 0.18;
   const total = subtotal + igv;
 
   const data = {
-    idFactura: document.getElementById("idFactura").value.trim(),
+    idFactura: idFacturaValue,
     fecha: document.getElementById("fechaFactura").value,
     proveedor: proveedorFactura.value,
     producto: productoFactura.value,
@@ -365,8 +371,7 @@ formFactura.addEventListener("submit", async e=>{
     moneda: document.getElementById("tipoMonedaFactura").value
   };
   await addDoc(colFacturas, data);
-  formFactura.reset();
-  generarIdFactura();
+  limpiarFormularioFactura();
 });
 
 // Tiempo real facturas
@@ -536,6 +541,10 @@ document.addEventListener("click", async e=>{
             <input id="editPrecio" type="number" step="0.01" class="form-control" value="${d.precio||0}">
           </div>
           <div class="mb-2">
+            <label class="form-label">Precio de Compra</label>
+            <input id="editPrecioCompra" type="number" step="0.01" class="form-control" value="${d.precioCompra||''}">
+          </div>
+          <div class="mb-2">
             <label class="form-label">Moneda</label>
             <select id="editMoneda" class="form-select">
               <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
@@ -622,6 +631,7 @@ document.addEventListener("click", async e=>{
           dataActualizada.presentacion = document.getElementById("editPresent").value;
           dataActualizada.cantidad = parseInt(document.getElementById("editCantidad").value);
           dataActualizada.precio = parseFloat(document.getElementById("editPrecio").value);
+          dataActualizada.precioCompra = parseFloat(document.getElementById("editPrecioCompra").value) || null;
           dataActualizada.moneda = document.getElementById("editMoneda").value;
           dataActualizada.descripcion = document.getElementById("editDesc").value;
         } else if(tipo==="factura"){
@@ -696,9 +706,6 @@ async function cargarOpcionesProductos(seleccionado, proveedor) {
 // ===================== INICIALIZACIÓN =====================
 // Establecer fecha actual por defecto
 document.getElementById("fechaFactura").valueAsDate = new Date();
-
-// Inicializar generación de ID de factura
-generarIdFactura();
 
 // Cargar selects
 cargarProveedoresSelect();
