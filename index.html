@@ -9,11 +9,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-  body, html { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f5f8fa; }
-  .login-wrapper { width:90%; max-width:1000px; background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.09); display:flex; min-height:520px; overflow:hidden; }
-  .login-form { flex:1; padding:48px; display:flex; flex-direction:column; justify-content:center; gap:12px; }
+  body, html { 
+    width:100%; 
+    height:100%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    background:#f5f8fa;
+    overflow: hidden;
+  }
   
-  /* Enhanced logo styling */
+  .login-wrapper { 
+    width:90%; 
+    max-width:1000px; 
+    background:#fff; 
+    border-radius:16px; 
+    box-shadow:0 8px 32px rgba(0,0,0,0.09); 
+    display:flex; 
+    min-height:520px; 
+    overflow:hidden; 
+  }
+  
+  .login-form { 
+    flex:1; 
+    padding:48px; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:center; 
+    gap:12px; 
+  }
+  
   .logo { 
     font-size:36px; 
     font-weight:800; 
@@ -42,7 +67,6 @@
   .subtitle { color:#6b7280; font-size:14px; text-align:center; margin-bottom:22px; }
   .input-group { position:relative; width:100%; }
   
-  /* Enhanced input styling */
   input { 
     width:100%; 
     padding:14px 16px; 
@@ -85,7 +109,6 @@
   
   .actions { display:flex; align-items:center; justify-content:space-between; font-size:13px; color:#6b7280; margin:6px 0 12px; }
   
-  /* Enhanced button styling */
   .btn-login { 
     padding:14px; 
     border:none; 
@@ -129,7 +152,6 @@
   
   .helper { margin-top:14px; font-size:13px; color:#6b7280; text-align:center; }
   
-  /* Enhanced image section */
   .login-image { 
     flex:1; 
     position:relative; 
@@ -171,7 +193,6 @@
     text-shadow:0 6px 18px rgba(0,0,0,0.25);
   }
   
-  /* Security features */
   .attempts-counter {
     text-align: center;
     font-size: 13px;
@@ -188,7 +209,6 @@
     font-weight: 600;
   }
   
-  /* Loading animation */
   .loading {
     display: none;
     width: 18px;
@@ -204,7 +224,6 @@
     to { transform: rotate(360deg); }
   }
   
-  /* Messages */
   .error-message {
     color: #e74c3c;
     font-size: 13px;
@@ -294,9 +313,56 @@
   </div>
 </div>
 
+<script>
+  // Clear any cached authentication state immediately
+  console.log('Clearing cached authentication state...');
+  
+  // Force clear any problematic cached data
+  if (window.localStorage) {
+    // Clear specific problematic items but keep security settings
+    const keepItems = ['failedAttempts', 'lockoutUntil', 'keepLogged'];
+    const allKeys = Object.keys(localStorage);
+    
+    allKeys.forEach(key => {
+      if (!keepItems.includes(key)) {
+        localStorage.removeItem(key);
+      }
+    });
+  }
+
+  // Clear session storage
+  if (window.sessionStorage) {
+    sessionStorage.clear();
+  }
+</script>
+
 <script type="module">
-  import { auth } from "./firebase.js";
-  import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  // Import Firebase with cache busting
+  const firebaseVersion = '10.12.0';
+  const cacheBuster = 'v=' + Date.now();
+  
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged,
+    signOut 
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
+    authDomain: "discovery-pets.firebaseapp.com",
+    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
+    projectId: "discovery-pets",
+    storageBucket: "discovery-pets.appspot.com",
+    messagingSenderId: "481355972999",
+    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
   const btnLogin = document.getElementById("btnLogin");
   const togglePassword = document.getElementById("togglePassword");
@@ -310,10 +376,10 @@
 
   // Security configuration
   const MAX_ATTEMPTS = 4;
-  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const LOCKOUT_DURATION = 5 * 60 * 1000;
   let failedAttempts = 0;
   let lockoutUntil = null;
-  let redirectTimer = null;
+  let isRedirecting = false;
 
   // Initialize from localStorage
   function initializeSecurity() {
@@ -335,11 +401,9 @@
   // Check if user is currently locked out
   function checkLockoutStatus() {
     if (lockoutUntil && Date.now() < lockoutUntil) {
-      // Still locked out
       enableLockoutMode();
       startCountdown();
     } else if (lockoutUntil && Date.now() >= lockoutUntil) {
-      // Lockout period has ended
       resetSecurity();
     }
   }
@@ -411,27 +475,40 @@
     togglePassword.textContent = isHidden ? "🙈" : "👁️";
   });
 
-  // Redirección si ya está logueado - FIXED VERSION
+  // FIXED: Auth state change handler with better redirect logic
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Clear any existing redirect timer
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
+    console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+    
+    if (user && !isRedirecting) {
+      isRedirecting = true;
+      console.log('Redirecting to dashboard...');
       
-      resetSecurity(); // Reset attempts on successful login
+      resetSecurity();
       showMessage(successMessage, "Redirigiendo al dashboard...");
       
-      // Use a more reliable redirect method
-      redirectTimer = setTimeout(() => {
-        // Force redirect even if there are issues
+      // Use multiple methods to ensure redirect works
+      setTimeout(() => {
+        // Method 1: Standard redirect
         window.location.href = "dashboard.html";
       }, 1000);
+      
+      // Backup method after 3 seconds
+      setTimeout(() => {
+        if (window.location.href.includes('index.html')) {
+          console.log('Backup redirect triggered');
+          window.location.replace("dashboard.html");
+        }
+      }, 3000);
     }
   });
 
-  // Login function - FIXED VERSION
+  // Login function
   btnLogin.addEventListener("click", async () => {
+    if (isRedirecting) {
+      console.log('Redirect in progress, ignoring login attempt');
+      return;
+    }
+    
     const email = document.getElementById("email").value.trim();
     const password = passwordInput.value.trim();
     const keepLogged = document.getElementById("keepLogged").checked;
@@ -455,23 +532,23 @@
     hideMessage(successMessage);
     
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login successful:', userCredential.user.email);
       
       // Reset security on successful login
       resetSecurity();
       
-      if(keepLogged) localStorage.setItem("keepLogged","true");
-      else localStorage.removeItem("keepLogged");
+      if(keepLogged) {
+        localStorage.setItem("keepLogged","true");
+      } else {
+        localStorage.removeItem("keepLogged");
+      }
       
       showMessage(successMessage, "¡Inicio de sesión exitoso! Redirigiendo...");
       
-      // Use a more reliable redirect with fallback
-      setTimeout(() => {
-        // Try multiple methods to ensure redirect works
-        window.location.href = "dashboard.html";
-      }, 1500);
-      
     } catch(err) { 
+      console.error('Login error:', err);
+      
       // Increment failed attempts
       failedAttempts++;
       localStorage.setItem('failedAttempts', failedAttempts.toString());
@@ -527,6 +604,17 @@
 
   // Initialize security system
   initializeSecurity();
+  
+  // Final check: if we're still here after 5 seconds and user is logged in, force redirect
+  setTimeout(() => {
+    auth.currentUser.then(user => {
+      if (user && window.location.href.includes('index.html') && !isRedirecting) {
+        console.log('Force redirect after timeout');
+        isRedirecting = true;
+        window.location.href = "dashboard.html";
+      }
+    });
+  }, 5000);
 </script>
 </body>
 </html>
