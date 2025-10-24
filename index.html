@@ -134,7 +134,7 @@
   
   input { 
     width:100%; 
-    padding:16px 18px; 
+    padding:16px 50px 16px 50px; 
     border:2px solid #e6e9ee; 
     border-radius:14px; 
     font-size:16px; 
@@ -150,6 +150,16 @@
     transform: translateY(-2px);
   }
   
+  .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 18px;
+    z-index: 2;
+  }
+  
   .toggle-password { 
     position:absolute; 
     right:18px; 
@@ -159,6 +169,7 @@
     font-size:18px; 
     color:#6b7280; 
     transition: color 0.3s ease;
+    z-index: 2;
   }
   
   .toggle-password:hover { 
@@ -370,7 +381,12 @@
     }
     
     input {
-      padding: 14px 16px;
+      padding: 14px 45px 14px 45px;
+    }
+    
+    .input-icon,
+    .toggle-password {
+      font-size: 16px;
     }
   }
 </style>
@@ -389,13 +405,13 @@
       <div class="subtitle">Accede al panel administrativo para gestionar tu tienda de mascotas</div>
       
       <div class="input-group">
+        <i class="fas fa-envelope input-icon"></i>
         <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
-        <i class="fas fa-envelope" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6b7280;"></i>
       </div>
       
       <div class="input-group">
+        <i class="fas fa-lock input-icon"></i>
         <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
-        <i class="fas fa-lock" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6b7280;"></i>
         <span id="togglePassword" class="toggle-password">👁️</span>
       </div>
       
