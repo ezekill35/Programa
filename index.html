@@ -520,7 +520,7 @@
     togglePassword.textContent = isHidden ? "🙈" : "👁️";
   });
 
-  // Redirección si ya está logueado - VERSIÓN CORREGIDA
+  // Redirección si ya está logueado
   onAuthStateChanged(auth, (user) => {
     if (user && !isRedirecting) {
       isRedirecting = true;
@@ -572,6 +572,12 @@
       else localStorage.removeItem("keepLogged");
       
       showMessage(successMessage, "¡Inicio de sesión exitoso! Redirigiendo...");
+      
+      // Redirección después de login exitoso - CORRECCIÓN APLICADA
+      isRedirecting = true;
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1500);
       
     } catch(err) { 
       // Incrementar intentos fallidos
@@ -632,6 +638,3 @@
 </script>
 </body>
 </html>
-</body>
-</html>
-
