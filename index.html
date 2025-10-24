@@ -6,178 +6,22 @@
 <title>Discovery Pets · Acceso</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  * { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-    font-family: 'Inter', sans-serif; 
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  body, html { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f5f8fa; }
+  .login-wrapper { width:90%; max-width:1000px; background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.09); display:flex; min-height:520px; overflow:hidden; }
+  .login-form { flex:1; padding:48px; display:flex; flex-direction:column; justify-content:center; gap:12px; }
   
-  body, html { 
-    width:100%; 
-    height:100%; 
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  /* Animated background particles */
-  .particles {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-  
-  .particle {
-    position: absolute;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
-    animation: floatParticle 15s infinite linear;
-  }
-  
-  @keyframes floatParticle {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-  }
-  
-  /* 3D Floating elements */
-  .floating-3d {
-    position: absolute;
-    font-size: 2rem;
-    z-index: 2;
-    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
-    animation: float3D 6s ease-in-out infinite;
-  }
-  
-  .pet-1 { 
-    top: 12%; 
-    left: 8%; 
-    animation-delay: 0s; 
-    color: #FF9E7D;
-  }
-  .pet-2 { 
-    top: 20%; 
-    right: 10%; 
-    animation-delay: 1.5s; 
-    color: #FF6B95;
-  }
-  .pet-3 { 
-    bottom: 25%; 
-    left: 10%; 
-    animation-delay: 3s; 
-    color: #4FD1C5;
-  }
-  .pet-4 { 
-    bottom: 12%; 
-    right: 8%; 
-    animation-delay: 4.5s; 
-    color: #667eea;
-  }
-  
-  @keyframes float3D {
-    0%, 100% { 
-      transform: translateY(0px) scale(1);
-    }
-    50% { 
-      transform: translateY(-15px) scale(1.1);
-    }
-  }
-  
-  .login-wrapper { 
-    width:90%; 
-    max-width:1000px; 
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    box-shadow: 
-      0 15px 35px rgba(0,0,0,0.2),
-      0 0 0 1px rgba(255,255,255,0.1);
-    display:flex; 
-    min-height:580px; 
-    max-height: 85vh;
-    overflow: hidden; 
-    position: relative;
-    z-index: 10;
-    animation: slideInUp 0.6s ease-out;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-  
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .login-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FF9E7D, #FF6B95, #4FD1C5);
-    z-index: 11;
-  }
-  
-  .login-form { 
-    flex:1; 
-    padding:40px; 
-    display:flex; 
-    flex-direction:column; 
-    justify-content:flex-start; 
-    gap:20px; 
-    position: relative;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-  }
-  
-  /* Custom scrollbar */
-  .login-form::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .login-form::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.05);
-    border-radius: 10px;
-  }
-  
-  .login-form::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #FF9E7D, #FF6B95);
-    border-radius: 10px;
-  }
-  
-  .login-form::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #FF6B95, #4FD1C5);
-  }
-  
-  .form-header {
-    text-align: center;
-    margin-bottom: 5px;
-  }
-  
+  /* Enhanced logo styling */
   .logo { 
     font-size:36px; 
     font-weight:800; 
-    background: linear-gradient(135deg, #FF9E7D, #FF6B95, #4FD1C5);
+    background: linear-gradient(90deg, #FF9E7D, #FF6B95);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align:center; 
-    margin-bottom:10px;
+    margin-bottom:8px; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -186,96 +30,45 @@
   
   .logo::before {
     content: '🐾';
-    font-size: 28px;
-    animation: pawLeft 2s ease-in-out infinite;
+    font-size: 32px;
   }
   
   .logo::after {
     content: '🐾';
-    font-size: 28px;
-    animation: pawRight 2s ease-in-out infinite;
+    font-size: 32px;
   }
   
-  @keyframes pawLeft {
-    0%, 100% { transform: rotate(-10deg) scale(1); }
-    50% { transform: rotate(-15deg) scale(1.1); }
-  }
+  h2 { font-size:26px; color:#111827; text-align:center; margin-bottom:6px; }
+  .subtitle { color:#6b7280; font-size:14px; text-align:center; margin-bottom:22px; }
+  .input-group { position:relative; width:100%; }
   
-  @keyframes pawRight {
-    0%, 100% { transform: rotate(10deg) scale(1); }
-    50% { transform: rotate(15deg) scale(1.1); }
-  }
-  
-  h2 { 
-    font-size:24px; 
-    color:#111827; 
-    text-align:center; 
-    margin-bottom:8px; 
-    font-weight: 700;
-  }
-  
-  .subtitle { 
-    color:#6b7280; 
-    font-size:14px; 
-    text-align:center; 
-    margin-bottom:25px; 
-    line-height: 1.5;
-  }
-  
-  .input-group { 
-    position:relative; 
-    width:100%; 
-    margin-bottom: 8px;
-  }
-  
+  /* Enhanced input styling */
   input { 
     width:100%; 
-    padding:14px 50px 14px 50px; 
-    border: 2px solid rgba(230, 233, 238, 0.8);
+    padding:14px 16px; 
+    border:2px solid #e6e9ee; 
     border-radius:12px; 
     font-size:15px; 
-    background: rgba(250, 250, 250, 0.9);
-    transition: all 0.3s ease;
-    box-shadow: 
-      0 2px 8px rgba(0,0,0,0.05),
-      inset 0 1px 2px rgba(255,255,255,0.8);
+    background:#fafafa; 
+    transition:all 0.3s ease; 
   }
   
   input:focus { 
     outline:none; 
     border-color:#FF6B95; 
-    box-shadow: 
-      0 4px 15px rgba(255, 107, 149, 0.15),
-      inset 0 1px 2px rgba(255,255,255,0.9); 
-    background: rgba(255, 255, 255, 0.95);
-    transform: translateY(-1px);
-  }
-  
-  .input-icon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    font-size: 16px;
-    z-index: 2;
-    transition: all 0.3s ease;
-  }
-  
-  input:focus + .input-icon {
-    color: #FF6B95;
+    box-shadow:0 0 0 4px rgba(255, 107, 149, 0.1); 
+    background:#fff; 
   }
   
   .toggle-password { 
     position:absolute; 
-    right:18px; 
+    right:14px; 
     top:50%; 
     transform:translateY(-50%); 
     cursor:pointer; 
     font-size:16px; 
     color:#6b7280; 
     transition: all 0.3s ease;
-    z-index: 2;
     background: rgba(255,255,255,0.8);
     width: 30px;
     height: 30px;
@@ -290,57 +83,21 @@
     transform: translateY(-50%) scale(1.1);
   }
   
-  .attempts-counter {
-    text-align: center;
-    font-size: 13px;
-    color: #6b7280;
-    margin: 5px 0;
-    padding: 8px;
-    background: rgba(255,255,255,0.7);
-    border-radius: 8px;
-  }
+  .actions { display:flex; align-items:center; justify-content:space-between; font-size:13px; color:#6b7280; margin:6px 0 12px; }
   
-  .attempts-warning {
-    color: #e74c3c;
-    font-weight: 600;
-  }
-  
-  .actions { 
-    display:flex; 
-    align-items:center; 
-    justify-content:space-between; 
-    font-size:13px; 
-    color:#6b7280; 
-    margin:8px 0 15px; 
-  }
-  
-  .checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-  
-  .checkbox-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: #FF6B95;
-  }
-  
+  /* Enhanced button styling */
   .btn-login { 
     padding:14px; 
     border:none; 
     border-radius:12px; 
-    background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
+    background:linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%); 
     color:white; 
     font-size:15px; 
     font-weight:600; 
     cursor:pointer; 
-    transition: all 0.3s ease;
+    transition:all 0.3s ease; 
     position: relative;
     overflow: hidden;
-    box-shadow: 
-      0 4px 15px rgba(255, 107, 149, 0.3);
   }
   
   .btn-login::before {
@@ -351,7 +108,7 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s ease;
+    transition: left 0.5s;
   }
   
   .btn-login:hover::before {
@@ -359,13 +116,8 @@
   }
   
   .btn-login:hover { 
-    transform: translateY(-2px);
-    box-shadow: 
-      0 6px 20px rgba(255, 107, 149, 0.4);
-  }
-  
-  .btn-login:active {
-    transform: translateY(0);
+    transform:translateY(-2px); 
+    box-shadow:0 8px 24px rgba(255, 107, 149, 0.18); 
   }
   
   .btn-login:disabled {
@@ -375,84 +127,9 @@
     box-shadow: none;
   }
   
-  .btn-login:disabled:hover {
-    transform: none;
-    box-shadow: none;
-  }
+  .helper { margin-top:14px; font-size:13px; color:#6b7280; text-align:center; }
   
-  /* Scroll navigation */
-  .scroll-nav {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 12;
-  }
-  
-  .scroll-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.9);
-    border: none;
-    color: #FF6B95;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-  }
-  
-  .scroll-btn:hover {
-    background: #FF6B95;
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(255,107,149,0.3);
-  }
-  
-  .scroll-btn:active {
-    transform: scale(1);
-  }
-  
-  .scroll-indicator {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    color: #6b7280;
-    font-size: 12px;
-    opacity: 0.7;
-    animation: bounce 2s infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-    40% { transform: translateX(-50%) translateY(-5px); }
-    60% { transform: translateX(-50%) translateY(-3px); }
-  }
-  
-  .scroll-indicator i {
-    font-size: 16px;
-  }
-  
-  .helper { 
-    margin-top:15px; 
-    font-size:13px; 
-    color:#6b7280; 
-    text-align:center; 
-    line-height: 1.5;
-  }
-  
+  /* Enhanced image section */
   .login-image { 
     flex:1; 
     position:relative; 
@@ -460,7 +137,6 @@
       radial-gradient(circle at 30% 70%, rgba(255,158,125,0.2) 0%, transparent 50%),
       radial-gradient(circle at 70% 30%, rgba(79,209,197,0.2) 0%, transparent 50%),
       url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat; 
-    overflow: hidden;
   }
   
   .login-image::before {
@@ -470,10 +146,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, 
-      rgba(255, 158, 125, 0.15) 0%, 
-      rgba(255, 107, 149, 0.15) 50%, 
-      rgba(79, 209, 197, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(255, 158, 125, 0.1) 0%, rgba(255, 107, 149, 0.1) 100%);
     z-index: 1;
   }
   
@@ -481,31 +154,38 @@
     content:""; 
     position:absolute; 
     inset:0; 
-    background: linear-gradient(135deg, 
-      rgba(102, 126, 234, 0.3) 0%, 
-      rgba(118, 75, 162, 0.3) 100%);
+    background:linear-gradient(135deg, rgba(16, 188, 212, 0.3) 0%, rgba(56, 189, 248, 0.3) 100%); 
     z-index: 1;
   }
   
   .login-image .text-overlay { 
     position:absolute; 
-    bottom:30px; 
-    left:30px; 
+    bottom:36px; 
+    left:36px; 
     color:white; 
-    font-size:20px; 
+    font-size:24px; 
     font-weight:700; 
-    line-height:1.3; 
+    line-height:1.2; 
     z-index:2; 
-    max-width:300px; 
-    text-shadow:0 4px 12px rgba(0,0,0,0.3);
+    max-width:420px; 
+    text-shadow:0 6px 18px rgba(0,0,0,0.25);
   }
   
-  .text-overlay span {
-    display: block;
-    font-size: 14px;
-    font-weight: 400;
-    margin-top: 8px;
-    opacity: 0.9;
+  /* Security features */
+  .attempts-counter {
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+    margin: 5px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    display: none;
+  }
+  
+  .attempts-warning {
+    color: #e74c3c;
+    font-weight: 600;
   }
   
   /* Loading animation */
@@ -524,7 +204,7 @@
     to { transform: rotate(360deg); }
   }
   
-  /* Enhanced messages */
+  /* Messages */
   .error-message {
     color: #e74c3c;
     font-size: 13px;
@@ -568,172 +248,51 @@
     color: #e74c3c;
   }
   
-  /* Additional content to enable scrolling */
-  .additional-info {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 10px;
-    border-left: 3px solid #4FD1C5;
-  }
-  
-  .additional-info h4 {
-    color: #4FD1C5;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  
-  .additional-info p {
-    color: #6b7280;
-    font-size: 12px;
-    line-height: 1.5;
-    margin-bottom: 8px;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 968px){ 
-    .login-wrapper { 
-      flex-direction:column; 
-      max-width:500px; 
-      min-height: auto;
-      max-height: 90vh;
-    } 
-    
-    .login-image { 
-      height:180px; 
-      flex: none;
-    } 
-    
-    .login-form { 
-      padding:30px 25px; 
-    } 
-    
-    .logo { 
-      font-size:32px; 
-    }
-    
-    h2 {
-      font-size: 22px;
-    }
-    
-    .floating-3d {
-      display: none;
-    }
-    
-    .scroll-nav {
-      display: none;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .login-form {
-      padding: 25px 20px;
-    }
-    
-    .logo {
-      font-size: 28px;
-    }
-    
-    h2 {
-      font-size: 20px;
-    }
-    
-    .subtitle {
-      font-size: 13px;
-    }
-    
-    input {
-      padding: 12px 45px 12px 45px;
-    }
-    
-    .input-icon,
-    .toggle-password {
-      font-size: 14px;
-    }
+  @media (max-width:840px){ 
+    .login-wrapper { flex-direction:column; max-width:720px; } 
+    .login-image { height:220px; } 
+    .login-form { padding:28px; } 
   }
 </style>
 </head>
 <body>
-  <!-- Animated background particles -->
-  <div class="particles" id="particles"></div>
-  
-  <!-- 3D Floating elements -->
-  <div class="floating-3d pet-1">🐶</div>
-  <div class="floating-3d pet-2">🐱</div>
-  <div class="floating-3d pet-3">🐾</div>
-  <div class="floating-3d pet-4">🐕</div>
-
-  <div class="login-wrapper">
-    <!-- Scroll navigation buttons -->
-    <div class="scroll-nav">
-      <button class="scroll-btn" id="scrollUp" title="Desplazar arriba">
-        <i class="fas fa-chevron-up"></i>
-      </button>
-      <button class="scroll-btn" id="scrollDown" title="Desplazar abajo">
-        <i class="fas fa-chevron-down"></i>
-      </button>
+<div class="login-wrapper">
+  <div class="login-form" role="main" aria-labelledby="login-title">
+    <div class="logo">DP</div>
+    <h2 id="login-title">Bienvenido a Discovery Pets</h2>
+    <div class="subtitle">Accede al panel administrativo</div>
+    
+    <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
+    
+    <div class="input-group">
+      <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+      <span id="togglePassword" class="toggle-password">👁️</span>
     </div>
     
-    <div class="login-form" id="loginForm">
-      <div class="form-header">
-        <div class="logo">Discovery Pets</div>
-        <h2 id="login-title">Bienvenido</h2>
-        <div class="subtitle">Accede al panel administrativo</div>
-      </div>
-      
-      <div class="input-group">
-        <i class="fas fa-envelope input-icon"></i>
-        <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
-      </div>
-      
-      <div class="input-group">
-        <i class="fas fa-lock input-icon"></i>
-        <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
-        <span id="togglePassword" class="toggle-password">👁️</span>
-      </div>
-      
-      <div id="attemptsCounter" class="attempts-counter"></div>
-      
-      <div class="actions">
-        <label class="checkbox-container">
-          <input id="keepLogged" type="checkbox"> 
-          <span>Mantener sesión</span>
-        </label>
-      </div>
-      
-      <button id="btnLogin" class="btn-login">
-        <span id="btnText">Iniciar sesión</span>
-        <div id="btnLoading" class="loading"></div>
-      </button>
-      
-      <div id="errorMessage" class="error-message"></div>
-      <div id="successMessage" class="success-message"></div>
-      <div id="lockoutMessage" class="lockout-message"></div>
-      
-      <!-- Additional content to enable scrolling -->
-      <div class="additional-info">
-        <h4>💼 Sistema de Gestión</h4>
-        <p>Gestiona proveedores, productos y facturas de forma eficiente con nuestro panel administrativo.</p>
-        <p>Características incluyen: registro de inventario, control de proveedores y generación de reportes.</p>
-      </div>
-      
-      <p class="helper">Si no tienes acceso, contacta al administrador<br>Discovery Pets 🐾</p>
-      
-      <!-- Scroll indicator -->
-      <div class="scroll-indicator">
-        <span>Desplazar</span>
-        <i class="fas fa-chevron-down"></i>
-      </div>
+    <div id="attemptsCounter" class="attempts-counter"></div>
+    
+    <div class="actions">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input id="keepLogged" type="checkbox"> Mantener sesión
+      </label>
     </div>
     
-    <div class="login-image" role="presentation">
-      <div class="text-overlay">
-        Discovery Pets
-        <span>Tu tienda de confianza</span>
-      </div>
-    </div>
+    <button id="btnLogin" class="btn-login">
+      <span id="btnText">Iniciar sesión</span>
+      <div id="btnLoading" class="loading"></div>
+    </button>
+    
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+    <div id="lockoutMessage" class="lockout-message"></div>
+    
+    <p class="helper">Si no tienes acceso, contacta al administrador del sistema.</p>
   </div>
+  
+  <div class="login-image" role="presentation">
+    <div class="text-overlay"></div>
+  </div>
+</div>
 
 <script type="module">
   import { auth } from "./firebase.js";
@@ -748,62 +307,13 @@
   const successMessage = document.getElementById("successMessage");
   const lockoutMessage = document.getElementById("lockoutMessage");
   const attemptsCounter = document.getElementById("attemptsCounter");
-  const particlesContainer = document.getElementById("particles");
-  const loginForm = document.getElementById("loginForm");
-  const scrollUp = document.getElementById("scrollUp");
-  const scrollDown = document.getElementById("scrollDown");
-
-  // Scroll functionality
-  scrollUp.addEventListener('click', () => {
-    loginForm.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-
-  scrollDown.addEventListener('click', () => {
-    loginForm.scrollTo({
-      top: loginForm.scrollHeight,
-      behavior: 'smooth'
-    });
-  });
-
-  // Hide scroll buttons when at top/bottom
-  loginForm.addEventListener('scroll', () => {
-    const isAtTop = loginForm.scrollTop === 0;
-    const isAtBottom = loginForm.scrollTop + loginForm.clientHeight >= loginForm.scrollHeight - 10;
-    
-    scrollUp.style.opacity = isAtTop ? '0.5' : '1';
-    scrollDown.style.opacity = isAtBottom ? '0.5' : '1';
-  });
-
-  // Create animated particles
-  function createParticles() {
-    for (let i = 0; i < 20; i++) {
-      const particle = document.createElement('div');
-      particle.classList.add('particle');
-      
-      // Random properties
-      const size = Math.random() * 8 + 3;
-      const left = Math.random() * 100;
-      const animationDuration = Math.random() * 15 + 10;
-      const animationDelay = Math.random() * 5;
-      
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      particle.style.left = `${left}%`;
-      particle.style.animationDuration = `${animationDuration}s`;
-      particle.style.animationDelay = `${animationDelay}s`;
-      
-      particlesContainer.appendChild(particle);
-    }
-  }
 
   // Security configuration
   const MAX_ATTEMPTS = 4;
   const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
   let failedAttempts = 0;
   let lockoutUntil = null;
+  let redirectTimer = null;
 
   // Initialize from localStorage
   function initializeSecurity() {
@@ -843,7 +353,7 @@
     hideMessage(successMessage);
     
     const remainingTime = Math.ceil((lockoutUntil - Date.now()) / 1000 / 60);
-    showMessage(lockoutMessage, `🔒 Demasiados intentos fallidos. Cuenta bloqueada temporalmente.<br>Intenta nuevamente en <span class="countdown">${remainingTime}</span> minutos.`);
+    showMessage(lockoutMessage, `🔒 Demasiados intentos fallidos. Por seguridad, tu cuenta ha sido bloqueada temporalmente. <br>Podrás intentar nuevamente en <span class="countdown">${remainingTime}</span> minutos.`);
   }
 
   // Start countdown timer
@@ -901,18 +411,26 @@
     togglePassword.textContent = isHidden ? "🙈" : "👁️";
   });
 
-  // Redirección si ya está logueado
+  // Redirección si ya está logueado - FIXED VERSION
   onAuthStateChanged(auth, (user) => {
-    if(user) {
+    if (user) {
+      // Clear any existing redirect timer
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
+      
       resetSecurity(); // Reset attempts on successful login
       showMessage(successMessage, "Redirigiendo al dashboard...");
-      setTimeout(() => {
+      
+      // Use a more reliable redirect method
+      redirectTimer = setTimeout(() => {
+        // Force redirect even if there are issues
         window.location.href = "dashboard.html";
       }, 1000);
     }
   });
 
-  // Login function
+  // Login function - FIXED VERSION
   btnLogin.addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = passwordInput.value.trim();
@@ -945,10 +463,14 @@
       if(keepLogged) localStorage.setItem("keepLogged","true");
       else localStorage.removeItem("keepLogged");
       
-      showMessage(successMessage, "¡Inicio de sesión exitoso!");
+      showMessage(successMessage, "¡Inicio de sesión exitoso! Redirigiendo...");
+      
+      // Use a more reliable redirect with fallback
       setTimeout(() => {
+        // Try multiple methods to ensure redirect works
         window.location.href = "dashboard.html";
-      }, 1000);
+      }, 1500);
+      
     } catch(err) { 
       // Increment failed attempts
       failedAttempts++;
@@ -1003,9 +525,8 @@
     }
   });
 
-  // Initialize security system and particles
+  // Initialize security system
   initializeSecurity();
-  createParticles();
 </script>
 </body>
 </html>
