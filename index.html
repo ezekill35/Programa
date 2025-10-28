@@ -722,6 +722,7 @@
       // Clear any existing session data
       localStorage.removeItem('keepLogged');
       sessionStorage.removeItem('sessionActive');
+      localStorage.removeItem('userLoggedIn');
       
       // Show logout message
       showMessage(successMessage, "Has cerrado sesión correctamente. Vuelve a iniciar sesión para acceder al dashboard.");
@@ -731,27 +732,39 @@
     }
   }
 
+  // Check if user is already logged in and redirect to dashboard
+  function checkExistingSession() {
+    const userLoggedIn = localStorage.getItem('userLoggedIn');
+    const sessionActive = sessionStorage.getItem('sessionActive');
+    
+    if (userLoggedIn === 'true' && sessionActive === 'true') {
+      // User is already logged in and session is active, redirect to dashboard
+      showMessage(successMessage, "Redirigiendo al dashboard...");
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1000);
+    }
+  }
+
   // Redirección si ya está logueado - CON PROTECCIÓN
   onAuthStateChanged(auth, (user) => {
     if(user) {
       // Check if this is a fresh login or a page reload
       const sessionActive = sessionStorage.getItem('sessionActive');
+      const userLoggedIn = localStorage.getItem('userLoggedIn');
       
-      if (!sessionActive) {
-        // This is a fresh page load, don't auto-redirect
-        // Instead, wait for explicit login
-        return;
+      if (sessionActive === 'true' && userLoggedIn === 'true') {
+        // User is already logged in with active session, redirect to dashboard
+        resetSecurity(); // Reset attempts on successful login
+        showMessage(successMessage, "Redirigiendo al dashboard...");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1000);
       }
-      
-      // Only redirect if session is marked as active
-      resetSecurity(); // Reset attempts on successful login
-      showMessage(successMessage, "Redirigiendo al dashboard...");
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 1000);
     } else {
       // User is not logged in, ensure session is cleared
       sessionStorage.removeItem('sessionActive');
+      localStorage.removeItem('userLoggedIn');
     }
   });
 
@@ -785,8 +798,9 @@
       // Reset security on successful login
       resetSecurity();
       
-      // Mark session as active in sessionStorage
+      // Mark session as active in sessionStorage and localStorage
       sessionStorage.setItem('sessionActive', 'true');
+      localStorage.setItem('userLoggedIn', 'true');
       
       if(keepLogged) {
         localStorage.setItem("keepLogged","true");
@@ -856,6 +870,7 @@
   initializeSecurity();
   createParticles();
   checkLogoutRedirect();
+  checkExistingSession();
 </script>
 </body>
 </html>
