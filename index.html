@@ -94,7 +94,7 @@
   
   .login-wrapper { 
     width:90%; 
-    max-width:1000px; 
+    max-width:450px; 
     background: rgba(255,255,255,0.95);
     border-radius: 20px;
     box-shadow: 
@@ -138,7 +138,7 @@
     padding:40px; 
     display:flex; 
     flex-direction:column; 
-    justify-content:flex-start; 
+    justify-content:center; 
     gap:20px; 
     position: relative;
     overflow-y: auto;
@@ -327,20 +327,25 @@
     accent-color: #FF6B95;
   }
   
+  /* Botón de Iniciar Sesión mejorado */
   .btn-login { 
-    padding:14px; 
+    padding:16px; 
     border:none; 
     border-radius:12px; 
     background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
     color:white; 
-    font-size:15px; 
-    font-weight:600; 
+    font-size:18px; 
+    font-weight:700; 
     cursor:pointer; 
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     box-shadow: 
-      0 4px 15px rgba(255, 107, 149, 0.3);
+      0 6px 20px rgba(255, 107, 149, 0.4),
+      inset 0 1px 1px rgba(255,255,255,0.3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
   }
   
   .btn-login::before {
@@ -350,8 +355,8 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.7s ease;
   }
   
   .btn-login:hover::before {
@@ -359,13 +364,18 @@
   }
   
   .btn-login:hover { 
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-      0 6px 20px rgba(255, 107, 149, 0.4);
+      0 10px 25px rgba(255, 107, 149, 0.5),
+      inset 0 1px 1px rgba(255,255,255,0.4);
+    letter-spacing: 1px;
   }
   
   .btn-login:active {
     transform: translateY(0);
+    box-shadow: 
+      0 4px 15px rgba(255, 107, 149, 0.4),
+      inset 0 1px 1px rgba(255,255,255,0.3);
   }
   
   .btn-login:disabled {
@@ -373,139 +383,13 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+    letter-spacing: 0.5px;
   }
   
   .btn-login:disabled:hover {
     transform: none;
     box-shadow: none;
-  }
-  
-  /* Scroll navigation */
-  .scroll-nav {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 12;
-  }
-  
-  .scroll-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.9);
-    border: none;
-    color: #FF6B95;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-  }
-  
-  .scroll-btn:hover {
-    background: #FF6B95;
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(255,107,149,0.3);
-  }
-  
-  .scroll-btn:active {
-    transform: scale(1);
-  }
-  
-  .scroll-indicator {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    color: #6b7280;
-    font-size: 12px;
-    opacity: 0.7;
-    animation: bounce 2s infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-    40% { transform: translateX(-50%) translateY(-5px); }
-    60% { transform: translateX(-50%) translateY(-3px); }
-  }
-  
-  .scroll-indicator i {
-    font-size: 16px;
-  }
-  
-  .helper { 
-    margin-top:15px; 
-    font-size:13px; 
-    color:#6b7280; 
-    text-align:center; 
-    line-height: 1.5;
-  }
-  
-  .login-image { 
-    flex:1; 
-    position:relative; 
-    background: 
-      radial-gradient(circle at 30% 70%, rgba(255,158,125,0.2) 0%, transparent 50%),
-      radial-gradient(circle at 70% 30%, rgba(79,209,197,0.2) 0%, transparent 50%),
-      url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat; 
-    overflow: hidden;
-  }
-  
-  .login-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, 
-      rgba(255, 158, 125, 0.15) 0%, 
-      rgba(255, 107, 149, 0.15) 50%, 
-      rgba(79, 209, 197, 0.15) 100%);
-    z-index: 1;
-  }
-  
-  .login-image::after { 
-    content:""; 
-    position:absolute; 
-    inset:0; 
-    background: linear-gradient(135deg, 
-      rgba(102, 126, 234, 0.3) 0%, 
-      rgba(118, 75, 162, 0.3) 100%);
-    z-index: 1;
-  }
-  
-  .login-image .text-overlay { 
-    position:absolute; 
-    bottom:30px; 
-    left:30px; 
-    color:white; 
-    font-size:20px; 
-    font-weight:700; 
-    line-height:1.3; 
-    z-index:2; 
-    max-width:300px; 
-    text-shadow:0 4px 12px rgba(0,0,0,0.3);
-  }
-  
-  .text-overlay span {
-    display: block;
-    font-size: 14px;
-    font-weight: 400;
-    margin-top: 8px;
-    opacity: 0.9;
+    letter-spacing: 0.5px;
   }
   
   /* Loading animation */
@@ -568,18 +452,20 @@
     color: #e74c3c;
   }
   
+  .helper { 
+    margin-top:15px; 
+    font-size:13px; 
+    color:#6b7280; 
+    text-align:center; 
+    line-height: 1.5;
+  }
+  
   /* Responsive design */
   @media (max-width: 968px){ 
     .login-wrapper { 
-      flex-direction:column; 
-      max-width:500px; 
+      max-width:400px; 
       min-height: auto;
       max-height: 90vh;
-    } 
-    
-    .login-image { 
-      height:180px; 
-      flex: none;
     } 
     
     .login-form { 
@@ -598,8 +484,9 @@
       display: none;
     }
     
-    .scroll-nav {
-      display: none;
+    .btn-login {
+      font-size: 16px;
+      padding: 14px;
     }
   }
   
@@ -628,6 +515,11 @@
     .toggle-password {
       font-size: 14px;
     }
+    
+    .btn-login {
+      font-size: 15px;
+      padding: 12px;
+    }
   }
 </style>
 </head>
@@ -642,16 +534,6 @@
   <div class="floating-3d pet-4">🐕</div>
 
   <div class="login-wrapper">
-    <!-- Scroll navigation buttons -->
-    <div class="scroll-nav">
-      <button class="scroll-btn" id="scrollUp" title="Desplazar arriba">
-        <i class="fas fa-chevron-up"></i>
-      </button>
-      <button class="scroll-btn" id="scrollDown" title="Desplazar abajo">
-        <i class="fas fa-chevron-down"></i>
-      </button>
-    </div>
-    
     <div class="login-form" id="loginForm">
       <div class="form-header">
         <div class="logo">Discovery Pets</div>
@@ -689,19 +571,6 @@
       <div id="lockoutMessage" class="lockout-message"></div>
       
       <p class="helper">Si no tienes acceso, contacta al administrador<br>Discovery Pets 🐾</p>
-      
-      <!-- Scroll indicator -->
-      <div class="scroll-indicator">
-        <span>Desplazar</span>
-        <i class="fas fa-chevron-down"></i>
-      </div>
-    </div>
-    
-    <div class="login-image" role="presentation">
-      <div class="text-overlay">
-        Discovery Pets
-        <span>Tu tienda de confianza</span>
-      </div>
     </div>
   </div>
 
@@ -719,33 +588,6 @@
   const lockoutMessage = document.getElementById("lockoutMessage");
   const attemptsCounter = document.getElementById("attemptsCounter");
   const particlesContainer = document.getElementById("particles");
-  const loginForm = document.getElementById("loginForm");
-  const scrollUp = document.getElementById("scrollUp");
-  const scrollDown = document.getElementById("scrollDown");
-
-  // Scroll functionality
-  scrollUp.addEventListener('click', () => {
-    loginForm.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-
-  scrollDown.addEventListener('click', () => {
-    loginForm.scrollTo({
-      top: loginForm.scrollHeight,
-      behavior: 'smooth'
-    });
-  });
-
-  // Hide scroll buttons when at top/bottom
-  loginForm.addEventListener('scroll', () => {
-    const isAtTop = loginForm.scrollTop === 0;
-    const isAtBottom = loginForm.scrollTop + loginForm.clientHeight >= loginForm.scrollHeight - 10;
-    
-    scrollUp.style.opacity = isAtTop ? '0.5' : '1';
-    scrollDown.style.opacity = isAtBottom ? '0.5' : '1';
-  });
 
   // Create animated particles
   function createParticles() {
