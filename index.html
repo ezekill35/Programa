@@ -4,9 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Discovery Pets · Acceso</title>
-<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/616/616408.png">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
   * { 
     box-sizing: border-box; 
@@ -26,61 +27,187 @@
     overflow: hidden;
   }
   
-  /* Elementos decorativos simples */
-  .floating-element {
+  /* Animated background particles */
+  .particles {
     position: absolute;
-    font-size: 2rem;
-    z-index: 0;
-    opacity: 0.1;
-    animation: floatElement 8s ease-in-out infinite;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
   }
   
-  .element-1 { top: 15%; left: 8%; animation-delay: 0s; }
-  .element-2 { top: 25%; right: 10%; animation-delay: 2s; }
-  .element-3 { bottom: 30%; left: 12%; animation-delay: 4s; }
-  .element-4 { bottom: 15%; right: 8%; animation-delay: 6s; }
+  .particle {
+    position: absolute;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    animation: floatParticle 15s infinite linear;
+  }
   
-  @keyframes floatElement {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+  
+  /* 3D Floating elements */
+  .floating-3d {
+    position: absolute;
+    font-size: 2rem;
+    z-index: 2;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+    animation: float3D 6s ease-in-out infinite;
+  }
+  
+  .pet-1 { 
+    top: 12%; 
+    left: 8%; 
+    animation-delay: 0s; 
+    color: #FF9E7D;
+  }
+  .pet-2 { 
+    top: 20%; 
+    right: 10%; 
+    animation-delay: 1.5s; 
+    color: #FF6B95;
+  }
+  .pet-3 { 
+    bottom: 25%; 
+    left: 10%; 
+    animation-delay: 3s; 
+    color: #4FD1C5;
+  }
+  .pet-4 { 
+    bottom: 12%; 
+    right: 8%; 
+    animation-delay: 4.5s; 
+    color: #667eea;
+  }
+  
+  @keyframes float3D {
+    0%, 100% { 
+      transform: translateY(0px) scale(1);
+    }
+    50% { 
+      transform: translateY(-15px) scale(1.1);
+    }
   }
   
   .login-wrapper { 
     width:90%; 
     max-width:1000px; 
-    background:#fff; 
-    border-radius:20px; 
-    box-shadow:0 15px 35px rgba(0,0,0,0.1); 
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    box-shadow: 
+      0 15px 35px rgba(0,0,0,0.2),
+      0 0 0 1px rgba(255,255,255,0.1);
     display:flex; 
-    min-height:520px; 
-    overflow:hidden; 
+    min-height:580px; 
+    max-height: 85vh;
+    overflow: hidden; 
     position: relative;
     z-index: 10;
+    animation: slideInUp 0.6s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .login-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF9E7D, #FF6B95, #4FD1C5);
+    z-index: 11;
   }
   
   .login-form { 
     flex:1; 
-    padding:50px; 
+    padding:40px; 
     display:flex; 
     flex-direction:column; 
-    justify-content:center; 
-    gap:15px; 
+    justify-content:flex-start; 
+    gap:20px; 
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar */
+  .login-form::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .login-form::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+  }
+  
+  .login-form::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FF9E7D, #FF6B95);
+    border-radius: 10px;
+  }
+  
+  .login-form::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF6B95, #4FD1C5);
+  }
+  
+  .form-header {
+    text-align: center;
+    margin-bottom: 5px;
   }
   
   .logo { 
-    font-size:42px; 
+    font-size:36px; 
     font-weight:800; 
-    color:#10bcd4; 
+    background: linear-gradient(135deg, #FF9E7D, #FF6B95, #4FD1C5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-align:center; 
-    margin-bottom:15px;
+    margin-bottom:10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
+  }
+  
+  .logo::before {
+    content: '🐾';
+    font-size: 28px;
+    animation: pawLeft 2s ease-in-out infinite;
+  }
+  
+  .logo::after {
+    content: '🐾';
+    font-size: 28px;
+    animation: pawRight 2s ease-in-out infinite;
+  }
+  
+  @keyframes pawLeft {
+    0%, 100% { transform: rotate(-10deg) scale(1); }
+    50% { transform: rotate(-15deg) scale(1.1); }
+  }
+  
+  @keyframes pawRight {
+    0%, 100% { transform: rotate(10deg) scale(1); }
+    50% { transform: rotate(15deg) scale(1.1); }
   }
   
   h2 { 
-    font-size:28px; 
+    font-size:24px; 
     color:#111827; 
     text-align:center; 
     margin-bottom:8px; 
@@ -89,7 +216,7 @@
   
   .subtitle { 
     color:#6b7280; 
-    font-size:16px; 
+    font-size:14px; 
     text-align:center; 
     margin-bottom:25px; 
     line-height: 1.5;
@@ -98,24 +225,45 @@
   .input-group { 
     position:relative; 
     width:100%; 
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   
   input { 
     width:100%; 
-    padding:16px 18px; 
-    border:2px solid #e6e9ee; 
-    border-radius:14px; 
+    padding:14px 50px 14px 50px; 
+    border: 2px solid rgba(230, 233, 238, 0.8);
+    border-radius:12px; 
     font-size:15px; 
-    background:#fafafa; 
-    transition:all 0.3s ease; 
+    background: rgba(250, 250, 250, 0.9);
+    transition: all 0.3s ease;
+    box-shadow: 
+      0 2px 8px rgba(0,0,0,0.05),
+      inset 0 1px 2px rgba(255,255,255,0.8);
   }
   
   input:focus { 
     outline:none; 
-    border-color:#10bcd4; 
-    box-shadow:0 0 0 4px rgba(16, 188, 212, 0.1); 
-    background:#fff; 
+    border-color:#FF6B95; 
+    box-shadow: 
+      0 4px 15px rgba(255, 107, 149, 0.15),
+      inset 0 1px 2px rgba(255,255,255,0.9); 
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 16px;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus + .input-icon {
+    color: #FF6B95;
   }
   
   .toggle-password { 
@@ -124,52 +272,100 @@
     top:50%; 
     transform:translateY(-50%); 
     cursor:pointer; 
-    font-size:18px; 
+    font-size:16px; 
     color:#6b7280; 
     transition: all 0.3s ease;
+    z-index: 2;
+    background: rgba(255,255,255,0.8);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .toggle-password:hover { 
-    color:#10bcd4; 
+    color:#FF6B95; 
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .attempts-counter {
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+    margin: 5px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+  }
+  
+  .attempts-warning {
+    color: #e74c3c;
+    font-weight: 600;
   }
   
   .actions { 
     display:flex; 
     align-items:center; 
     justify-content:space-between; 
-    font-size:14px; 
+    font-size:13px; 
     color:#6b7280; 
-    margin:8px 0 20px; 
+    margin:8px 0 15px; 
   }
   
   .checkbox-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
   }
   
   .checkbox-container input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    accent-color: #10bcd4;
+    accent-color: #FF6B95;
   }
   
   .btn-login { 
-    padding:16px; 
+    padding:14px; 
     border:none; 
-    border-radius:14px; 
-    background:linear-gradient(90deg, #10bcd4, #38bdf8); 
+    border-radius:12px; 
+    background: linear-gradient(135deg, #FF9E7D 0%, #FF6B95 100%);
     color:white; 
-    font-size:16px; 
+    font-size:15px; 
     font-weight:600; 
     cursor:pointer; 
-    transition:all 0.3s ease; 
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+      0 4px 15px rgba(255, 107, 149, 0.3);
+  }
+  
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  .btn-login:hover::before {
+    left: 100%;
   }
   
   .btn-login:hover { 
-    transform:translateY(-2px); 
-    box-shadow:0 8px 24px rgba(16, 188, 212, 0.18); 
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 20px rgba(255, 107, 149, 0.4);
+  }
+  
+  .btn-login:active {
+    transform: translateY(0);
   }
   
   .btn-login:disabled {
@@ -179,9 +375,79 @@
     box-shadow: none;
   }
   
+  .btn-login:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Scroll navigation */
+  .scroll-nav {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 12;
+  }
+  
+  .scroll-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    color: #FF6B95;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+  }
+  
+  .scroll-btn:hover {
+    background: #FF6B95;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255,107,149,0.3);
+  }
+  
+  .scroll-btn:active {
+    transform: scale(1);
+  }
+  
+  .scroll-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: #6b7280;
+    font-size: 12px;
+    opacity: 0.7;
+    animation: bounce 2s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-5px); }
+    60% { transform: translateX(-50%) translateY(-3px); }
+  }
+  
+  .scroll-indicator i {
+    font-size: 16px;
+  }
+  
   .helper { 
-    margin-top:20px; 
-    font-size:14px; 
+    margin-top:15px; 
+    font-size:13px; 
     color:#6b7280; 
     text-align:center; 
     line-height: 1.5;
@@ -190,51 +456,63 @@
   .login-image { 
     flex:1; 
     position:relative; 
-    background:url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat; 
+    background: 
+      radial-gradient(circle at 30% 70%, rgba(255,158,125,0.2) 0%, transparent 50%),
+      radial-gradient(circle at 70% 30%, rgba(79,209,197,0.2) 0%, transparent 50%),
+      url('https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg') center/cover no-repeat; 
+    overflow: hidden;
+  }
+  
+  .login-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      rgba(255, 158, 125, 0.15) 0%, 
+      rgba(255, 107, 149, 0.15) 50%, 
+      rgba(79, 209, 197, 0.15) 100%);
+    z-index: 1;
   }
   
   .login-image::after { 
     content:""; 
     position:absolute; 
     inset:0; 
-    background:linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.05) 100%); 
+    background: linear-gradient(135deg, 
+      rgba(102, 126, 234, 0.3) 0%, 
+      rgba(118, 75, 162, 0.3) 100%);
+    z-index: 1;
   }
   
   .login-image .text-overlay { 
     position:absolute; 
-    bottom:40px; 
-    left:40px; 
+    bottom:30px; 
+    left:30px; 
     color:white; 
-    font-size:26px; 
+    font-size:20px; 
     font-weight:700; 
     line-height:1.3; 
     z-index:2; 
-    max-width:400px; 
-    text-shadow:0 6px 18px rgba(0,0,0,0.25);
+    max-width:300px; 
+    text-shadow:0 4px 12px rgba(0,0,0,0.3);
   }
   
-  /* Sistema de seguridad */
-  .attempts-counter {
-    text-align: center;
+  .text-overlay span {
+    display: block;
     font-size: 14px;
-    color: #6b7280;
-    margin: 8px 0;
-    padding: 10px;
-    background: rgba(255,255,255,0.7);
-    border-radius: 10px;
-    display: none;
-  }
-  
-  .attempts-warning {
-    color: #e74c3c;
-    font-weight: 600;
+    font-weight: 400;
+    margin-top: 8px;
+    opacity: 0.9;
   }
   
   /* Loading animation */
   .loading {
     display: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid rgba(255,255,255,0.3);
     border-radius: 50%;
     border-top-color: #fff;
@@ -246,114 +524,171 @@
     to { transform: rotate(360deg); }
   }
   
-  /* Mensajes del sistema */
+  /* Enhanced messages */
   .error-message {
     color: #e74c3c;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 10px;
     display: none;
-    padding: 12px;
+    padding: 10px;
     background: rgba(231, 76, 60, 0.1);
-    border-radius: 10px;
-    border-left: 4px solid #e74c3c;
+    border-radius: 8px;
+    border-left: 3px solid #e74c3c;
   }
   
   .success-message {
     color: #2ecc71;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 10px;
     display: none;
-    padding: 12px;
+    padding: 10px;
     background: rgba(46, 204, 113, 0.1);
-    border-radius: 10px;
-    border-left: 4px solid #2ecc71;
+    border-radius: 8px;
+    border-left: 3px solid #2ecc71;
   }
   
   .lockout-message {
     color: #e67e22;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 10px;
     display: none;
-    padding: 15px;
+    padding: 12px;
     background: rgba(230, 126, 34, 0.1);
-    border-radius: 10px;
-    border-left: 4px solid #e67e22;
+    border-radius: 8px;
+    border-left: 3px solid #e67e22;
     line-height: 1.5;
   }
   
   .countdown {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;
     color: #e74c3c;
   }
   
-  /* Responsive */
-  @media (max-width: 900px){ 
+  /* Additional content to enable scrolling */
+  .additional-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    border-left: 3px solid #4FD1C5;
+  }
+  
+  .additional-info h4 {
+    color: #4FD1C5;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .additional-info p {
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 968px){ 
     .login-wrapper { 
       flex-direction:column; 
-      max-width:600px; 
+      max-width:500px; 
       min-height: auto;
+      max-height: 90vh;
     } 
     
     .login-image { 
-      height:200px; 
+      height:180px; 
+      flex: none;
     } 
     
     .login-form { 
-      padding:40px 30px; 
+      padding:30px 25px; 
     } 
     
     .logo { 
-      font-size:36px; 
-    }
-    
-    h2 {
-      font-size: 24px;
-    }
-    
-    .floating-element {
-      display: none;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .login-form {
-      padding: 30px 20px;
-    }
-    
-    .logo {
-      font-size: 32px;
+      font-size:32px; 
     }
     
     h2 {
       font-size: 22px;
     }
     
+    .floating-3d {
+      display: none;
+    }
+    
+    .scroll-nav {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .login-form {
+      padding: 25px 20px;
+    }
+    
+    .logo {
+      font-size: 28px;
+    }
+    
+    h2 {
+      font-size: 20px;
+    }
+    
     .subtitle {
+      font-size: 13px;
+    }
+    
+    input {
+      padding: 12px 45px 12px 45px;
+    }
+    
+    .input-icon,
+    .toggle-password {
       font-size: 14px;
     }
   }
 </style>
 </head>
 <body>
-  <!-- Elementos decorativos -->
-  <div class="floating-element element-1">🐶</div>
-  <div class="floating-element element-2">🐱</div>
-  <div class="floating-element element-3">🐾</div>
-  <div class="floating-element element-4">🐕</div>
+  <!-- Animated background particles -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- 3D Floating elements -->
+  <div class="floating-3d pet-1">🐶</div>
+  <div class="floating-3d pet-2">🐱</div>
+  <div class="floating-3d pet-3">🐾</div>
+  <div class="floating-3d pet-4">🐕</div>
 
   <div class="login-wrapper">
-    <div class="login-form" role="main" aria-labelledby="login-title">
-      <div class="logo">🐾 DP</div>
-      <h2 id="login-title">Bienvenido a Discovery Pets</h2>
-      <div class="subtitle">Accede al panel administrativo</div>
-      
-      <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
+    <!-- Scroll navigation buttons -->
+    <div class="scroll-nav">
+      <button class="scroll-btn" id="scrollUp" title="Desplazar arriba">
+        <i class="fas fa-chevron-up"></i>
+      </button>
+      <button class="scroll-btn" id="scrollDown" title="Desplazar abajo">
+        <i class="fas fa-chevron-down"></i>
+      </button>
+    </div>
+    
+    <div class="login-form" id="loginForm">
+      <div class="form-header">
+        <div class="logo">Discovery Pets</div>
+        <h2 id="login-title">Bienvenido</h2>
+        <div class="subtitle">Accede al panel administrativo</div>
+      </div>
       
       <div class="input-group">
+        <i class="fas fa-envelope input-icon"></i>
+        <input id="email" type="email" placeholder="Correo electrónico" autocomplete="username" required>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock input-icon"></i>
         <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
         <span id="togglePassword" class="toggle-password">👁️</span>
       </div>
@@ -363,7 +698,7 @@
       <div class="actions">
         <label class="checkbox-container">
           <input id="keepLogged" type="checkbox"> 
-          <span>Mantener sesión activa</span>
+          <span>Mantener sesión</span>
         </label>
       </div>
       
@@ -376,39 +711,34 @@
       <div id="successMessage" class="success-message"></div>
       <div id="lockoutMessage" class="lockout-message"></div>
       
-      <p class="helper">Si no tienes acceso, contacta al administrador del sistema.</p>
+      <!-- Additional content to enable scrolling -->
+      <div class="additional-info">
+        <h4>💼 Sistema de Gestión</h4>
+        <p>Gestiona proveedores, productos y facturas de forma eficiente con nuestro panel administrativo.</p>
+        <p>Características incluyen: registro de inventario, control de proveedores y generación de reportes.</p>
+      </div>
+      
+      <p class="helper">Si no tienes acceso, contacta al administrador<br>Discovery Pets 🐾</p>
+      
+      <!-- Scroll indicator -->
+      <div class="scroll-indicator">
+        <span>Desplazar</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
     </div>
     
     <div class="login-image" role="presentation">
-      <div class="text-overlay">Tu tienda de confianza para mascotas</div>
+      <div class="text-overlay">
+        Discovery Pets
+        <span>Tu tienda de confianza</span>
+      </div>
     </div>
   </div>
 
 <script type="module">
-  // Configuración de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIo7CBX5jzAGlDFBu0mMb6BFfUsecaf7I",
-    authDomain: "discovery-pets.firebaseapp.com",
-    databaseURL: "https://discovery-pets-default-rtdb.firebaseio.com",
-    projectId: "discovery-pets",
-    storageBucket: "discovery-pets.appspot.com",
-    messagingSenderId: "481355972999",
-    appId: "1:481355972999:web:5f5fa07f75b3fc9f4c5322"
-  };
+  import { auth } from "./firebase.js";
+  import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  // Importar Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged 
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  // Inicializar Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  // Elementos del DOM
   const btnLogin = document.getElementById("btnLogin");
   const togglePassword = document.getElementById("togglePassword");
   const passwordInput = document.getElementById("password");
@@ -418,15 +748,64 @@
   const successMessage = document.getElementById("successMessage");
   const lockoutMessage = document.getElementById("lockoutMessage");
   const attemptsCounter = document.getElementById("attemptsCounter");
+  const particlesContainer = document.getElementById("particles");
+  const loginForm = document.getElementById("loginForm");
+  const scrollUp = document.getElementById("scrollUp");
+  const scrollDown = document.getElementById("scrollDown");
 
-  // Configuración de seguridad
+  // Scroll functionality
+  scrollUp.addEventListener('click', () => {
+    loginForm.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  scrollDown.addEventListener('click', () => {
+    loginForm.scrollTo({
+      top: loginForm.scrollHeight,
+      behavior: 'smooth'
+    });
+  });
+
+  // Hide scroll buttons when at top/bottom
+  loginForm.addEventListener('scroll', () => {
+    const isAtTop = loginForm.scrollTop === 0;
+    const isAtBottom = loginForm.scrollTop + loginForm.clientHeight >= loginForm.scrollHeight - 10;
+    
+    scrollUp.style.opacity = isAtTop ? '0.5' : '1';
+    scrollDown.style.opacity = isAtBottom ? '0.5' : '1';
+  });
+
+  // Create animated particles
+  function createParticles() {
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      
+      // Random properties
+      const size = Math.random() * 8 + 3;
+      const left = Math.random() * 100;
+      const animationDuration = Math.random() * 15 + 10;
+      const animationDelay = Math.random() * 5;
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${left}%`;
+      particle.style.animationDuration = `${animationDuration}s`;
+      particle.style.animationDelay = `${animationDelay}s`;
+      
+      particlesContainer.appendChild(particle);
+    }
+  }
+
+  // Security configuration
   const MAX_ATTEMPTS = 4;
-  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutos
+  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
   let failedAttempts = 0;
   let lockoutUntil = null;
-  let isRedirecting = false;
 
-  // Inicializar sistema de seguridad
+  // Initialize from localStorage
   function initializeSecurity() {
     const savedAttempts = localStorage.getItem('failedAttempts');
     const savedLockout = localStorage.getItem('lockoutUntil');
@@ -443,17 +822,19 @@
     updateAttemptsDisplay();
   }
 
-  // Verificar estado de bloqueo
+  // Check if user is currently locked out
   function checkLockoutStatus() {
     if (lockoutUntil && Date.now() < lockoutUntil) {
+      // Still locked out
       enableLockoutMode();
       startCountdown();
     } else if (lockoutUntil && Date.now() >= lockoutUntil) {
+      // Lockout period has ended
       resetSecurity();
     }
   }
 
-  // Activar modo de bloqueo
+  // Enable lockout mode
   function enableLockoutMode() {
     btnLogin.disabled = true;
     document.getElementById('email').disabled = true;
@@ -462,10 +843,10 @@
     hideMessage(successMessage);
     
     const remainingTime = Math.ceil((lockoutUntil - Date.now()) / 1000 / 60);
-    showMessage(lockoutMessage, `🔒 Demasiados intentos fallidos. Por seguridad, tu cuenta ha sido bloqueada temporalmente. <br>Podrás intentar nuevamente en <span class="countdown">${remainingTime}</span> minutos.`);
+    showMessage(lockoutMessage, `🔒 Demasiados intentos fallidos. Cuenta bloqueada temporalmente.<br>Intenta nuevamente en <span class="countdown">${remainingTime}</span> minutos.`);
   }
 
-  // Iniciar cuenta regresiva
+  // Start countdown timer
   function startCountdown() {
     const countdownElement = lockoutMessage.querySelector('.countdown');
     const countdownInterval = setInterval(() => {
@@ -483,7 +864,7 @@
     }, 1000);
   }
 
-  // Reiniciar medidas de seguridad
+  // Reset security measures
   function resetSecurity() {
     failedAttempts = 0;
     lockoutUntil = null;
@@ -498,7 +879,7 @@
     updateAttemptsDisplay();
   }
 
-  // Actualizar contador de intentos
+  // Update attempts counter display
   function updateAttemptsDisplay() {
     if (failedAttempts > 0) {
       const remainingAttempts = MAX_ATTEMPTS - failedAttempts;
@@ -513,7 +894,7 @@
     }
   }
 
-  // Mostrar/ocultar contraseña
+  // Mostrar / ocultar contraseña
   togglePassword.addEventListener("click", () => {
     const isHidden = passwordInput.type === "password";
     passwordInput.type = isHidden ? "text" : "password";
@@ -522,29 +903,22 @@
 
   // Redirección si ya está logueado
   onAuthStateChanged(auth, (user) => {
-    if (user && !isRedirecting) {
-      isRedirecting = true;
-      console.log('Usuario autenticado, redirigiendo...');
-      
-      resetSecurity();
+    if(user) {
+      resetSecurity(); // Reset attempts on successful login
       showMessage(successMessage, "Redirigiendo al dashboard...");
-      
-      // Redirección simple y confiable
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 1000);
     }
   });
 
-  // Función de login
+  // Login function
   btnLogin.addEventListener("click", async () => {
-    if (isRedirecting) return;
-    
     const email = document.getElementById("email").value.trim();
     const password = passwordInput.value.trim();
     const keepLogged = document.getElementById("keepLogged").checked;
     
-    // Verificar si está bloqueado
+    // Check if user is locked out
     if (lockoutUntil && Date.now() < lockoutUntil) {
       showMessage(errorMessage, "Cuenta temporalmente bloqueada. Por favor espera.");
       return;
@@ -555,7 +929,7 @@
       return;
     }
     
-    // Mostrar estado de carga
+    // Show loading state
     btnText.style.display = "none";
     btnLoading.style.display = "block";
     btnLogin.disabled = true;
@@ -565,26 +939,22 @@
     try {
       await signInWithEmailAndPassword(auth, email, password);
       
-      // Reiniciar seguridad en login exitoso
+      // Reset security on successful login
       resetSecurity();
       
       if(keepLogged) localStorage.setItem("keepLogged","true");
       else localStorage.removeItem("keepLogged");
       
-      showMessage(successMessage, "¡Inicio de sesión exitoso! Redirigiendo...");
-      
-      // Redirección después de login exitoso - CORRECCIÓN APLICADA
-      isRedirecting = true;
+      showMessage(successMessage, "¡Inicio de sesión exitoso!");
       setTimeout(() => {
         window.location.href = "dashboard.html";
-      }, 1500);
-      
+      }, 1000);
     } catch(err) { 
-      // Incrementar intentos fallidos
+      // Increment failed attempts
       failedAttempts++;
       localStorage.setItem('failedAttempts', failedAttempts.toString());
       
-      // Verificar si se alcanzó el máximo de intentos
+      // Check if max attempts reached
       if (failedAttempts >= MAX_ATTEMPTS) {
         lockoutUntil = Date.now() + LOCKOUT_DURATION;
         localStorage.setItem('lockoutUntil', lockoutUntil.toString());
@@ -595,7 +965,7 @@
       updateAttemptsDisplay();
       showMessage(errorMessage, "Error al iniciar sesión: " + getErrorMessage(err.code));
     } finally {
-      // Reiniciar estado del botón (a menos que esté bloqueado)
+      // Reset button state (unless locked out)
       if (!lockoutUntil || Date.now() >= lockoutUntil) {
         btnText.style.display = "block";
         btnLoading.style.display = "none";
@@ -604,7 +974,7 @@
     }
   });
 
-  // Funciones auxiliares
+  // Helper functions
   function showMessage(element, message) {
     element.innerHTML = message;
     element.style.display = "block";
@@ -626,15 +996,16 @@
     return errorMessages[errorCode] || "Error desconocido. Intenta nuevamente.";
   }
 
-  // Permitir envío del formulario con Enter
+  // Allow form submission with Enter key
   document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
       btnLogin.click();
     }
   });
 
-  // Inicializar sistema de seguridad
+  // Initialize security system and particles
   initializeSecurity();
+  createParticles();
 </script>
 </body>
 </html>
