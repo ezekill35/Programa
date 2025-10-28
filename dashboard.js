@@ -22,7 +22,12 @@ const auth = getAuth(app);
 
 // ===================== VERIFICAR SESIÓN =====================
 onAuthStateChanged(auth, (user) => {
-  if (!user) window.location.href = "index.html";
+  if (!user) {
+    // Limpiar sesión y redirigir
+    localStorage.removeItem('userLoggedIn');
+    sessionStorage.removeItem('sessionActive');
+    window.location.href = "index.html";
+  }
 });
 
 // ===================== COLECCIONES =====================
@@ -59,12 +64,15 @@ const igvFactura = document.getElementById("igvFactura");
 const totalFactura = document.getElementById("totalFactura");
 const cantidadFactura = document.getElementById("cantidadFactura");
 const idFactura = document.getElementById("idFactura");
-const imprimirFactura = document.getElementById("imprimirFactura");
 
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "index.html";
+  // Limpiar todas las variables de sesión
+  localStorage.removeItem('userLoggedIn');
+  sessionStorage.removeItem('sessionActive');
+  localStorage.removeItem('keepLogged');
+  window.location.href = "index.html?logout=true";
 });
 
 // ===================== NAVEGACIÓN =====================
@@ -229,6 +237,9 @@ function mostrarModalFactura(f){
     <div class="mb-2"><b>IGV (18%):</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.igv.toFixed(2)}</div>
     <div class="mb-2"><b>Total:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.total.toFixed(2)}</div>
     <div class="mb-2"><b>Tipo:</b> ${f.tipo}</div>
+    <div class="mt-4">
+      <button id="imprimirFactura" class="btn btn-primary">🖨️ Imprimir Factura</button>
+    </div>
   `;
   
   // Agregar event listeners para los links de proveedor y producto
@@ -238,6 +249,11 @@ function mostrarModalFactura(f){
   
   modalFacturaBody.querySelector('.producto-link').addEventListener('click', () => {
     mostrarDetalleProducto(f.producto);
+  });
+
+  // Agregar event listener para el botón de imprimir
+  document.getElementById('imprimirFactura').addEventListener('click', () => {
+    imprimirFacturaFuncion(f);
   });
   
   modalFactura.showModal();
@@ -316,8 +332,16 @@ function imprimirFacturaFuncion(factura) {
   
   printableInvoice.innerHTML = invoiceHTML;
   
+  // Mostrar el elemento de impresión y luego ocultarlo después de imprimir
+  printableInvoice.style.display = 'block';
+  
   // Trigger print
   window.print();
+  
+  // Ocultar el elemento después de imprimir
+  setTimeout(() => {
+    printableInvoice.style.display = 'none';
+  }, 500);
 }
 
 // ===================== CERRAR MODALES =====================
@@ -329,13 +353,6 @@ cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
 montoFactura.addEventListener("input", calcularTotales);
 proveedorFactura.addEventListener("change", function() {
   cargarProductosPorProveedor(this.value);
-});
-
-// Event listener para imprimir factura
-imprimirFactura.addEventListener("click", () => {
-  if (facturaActual) {
-    imprimirFacturaFuncion(facturaActual);
-  }
 });
 
 // ===================== PROVEEDORES =====================
