@@ -576,7 +576,7 @@
 
 <script type="module">
   import { auth } from "./firebase.js";
-  import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const btnLogin = document.getElementById("btnLogin");
   const togglePassword = document.getElementById("togglePassword");
@@ -713,18 +713,49 @@
     togglePassword.textContent = isHidden ? "🙈" : "👁️";
   });
 
-  // Redirección si ya está logueado
+  // Check if user was redirected from logout
+  function checkLogoutRedirect() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const logout = urlParams.get('logout');
+    
+    if (logout === 'true') {
+      // Clear any existing session data
+      localStorage.removeItem('keepLogged');
+      sessionStorage.removeItem('sessionActive');
+      
+      // Show logout message
+      showMessage(successMessage, "Has cerrado sesión correctamente. Vuelve a iniciar sesión para acceder al dashboard.");
+      
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
+
+  // Redirección si ya está logueado - CON PROTECCIÓN
   onAuthStateChanged(auth, (user) => {
     if(user) {
+      // Check if this is a fresh login or a page reload
+      const sessionActive = sessionStorage.getItem('sessionActive');
+      
+      if (!sessionActive) {
+        // This is a fresh page load, don't auto-redirect
+        // Instead, wait for explicit login
+        return;
+      }
+      
+      // Only redirect if session is marked as active
       resetSecurity(); // Reset attempts on successful login
       showMessage(successMessage, "Redirigiendo al dashboard...");
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 1000);
+    } else {
+      // User is not logged in, ensure session is cleared
+      sessionStorage.removeItem('sessionActive');
     }
   });
 
-  // Login function
+  // Login function - MODIFICADA para marcar sesión activa
   btnLogin.addEventListener("click", async () => {
     const email = document.getElementById("email").value.trim();
     const password = passwordInput.value.trim();
@@ -754,8 +785,14 @@
       // Reset security on successful login
       resetSecurity();
       
-      if(keepLogged) localStorage.setItem("keepLogged","true");
-      else localStorage.removeItem("keepLogged");
+      // Mark session as active in sessionStorage
+      sessionStorage.setItem('sessionActive', 'true');
+      
+      if(keepLogged) {
+        localStorage.setItem("keepLogged","true");
+      } else {
+        localStorage.removeItem("keepLogged");
+      }
       
       showMessage(successMessage, "¡Inicio de sesión exitoso!");
       setTimeout(() => {
@@ -818,6 +855,7 @@
   // Initialize security system and particles
   initializeSecurity();
   createParticles();
+  checkLogoutRedirect();
 </script>
 </body>
 </html>
