@@ -65,6 +65,29 @@ const totalFactura = document.getElementById("totalFactura");
 const cantidadFactura = document.getElementById("cantidadFactura");
 const idFactura = document.getElementById("idFactura");
 
+// ===================== MEJORAS PARA TABLAS RESPONSIVAS =====================
+
+// Función para hacer las tablas responsivas
+function hacerTablasResponsivas() {
+  if (window.innerWidth <= 768) {
+    document.querySelectorAll('#tablaProveedores tr, #tablaProductos tr, #tablaFacturas tr').forEach(tr => {
+      const celdas = tr.querySelectorAll('td');
+      if (celdas.length > 0) {
+        const encabezados = tr.closest('table').querySelectorAll('th');
+        celdas.forEach((td, index) => {
+          if (encabezados[index]) {
+            td.setAttribute('data-label', encabezados[index].textContent);
+          }
+        });
+      }
+    });
+  }
+}
+
+// Ejecutar al cargar y al cambiar el tamaño de la ventana
+window.addEventListener('load', hacerTablasResponsivas);
+window.addEventListener('resize', hacerTablasResponsivas);
+
 // ===================== CERRAR SESIÓN =====================
 document.getElementById("btnCerrarSesion").addEventListener("click", async () => {
   await signOut(auth);
@@ -402,6 +425,9 @@ onSnapshot(colProveedores, snapshot=>{
     });
   });
   countProveedores.textContent=snapshot.size;
+  
+  // Hacer tablas responsivas después de cargar datos
+  setTimeout(hacerTablasResponsivas, 100);
 });
 
 // ===================== PRODUCTOS =====================
@@ -442,6 +468,9 @@ onSnapshot(colProductos, snapshot=>{
     tablaProductos.appendChild(tr);
   });
   countProductos.textContent=snapshot.size;
+  
+  // Hacer tablas responsivas después de cargar datos
+  setTimeout(hacerTablasResponsivas, 100);
 });
 
 // ===================== FACTURAS =====================
@@ -507,6 +536,9 @@ onSnapshot(colFacturas, snapshot=>{
     tablaFacturas.appendChild(tr);
   });
   countFacturas.textContent=snapshot.size;
+  
+  // Hacer tablas responsivas después de cargar datos
+  setTimeout(hacerTablasResponsivas, 100);
 });
 
 // ===================== BUSCADOR MEJORADO =====================
