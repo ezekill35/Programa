@@ -741,6 +741,11 @@
             <select id="proveedorProducto" class="form-select" required>
               <option value="">Seleccionar proveedor</option>
             </select>
+            <div class="mt-2">
+              <button type="button" id="btnAgregarProveedor" class="btn btn-outline-primary btn-sm">
+                ➕ ¿Desea agregar proveedor?
+              </button>
+            </div>
           </div>
           <div class="col-md-3">
             <select id="presentacionProducto" class="form-select" required>
@@ -801,7 +806,7 @@
         <h4>🧾 Registrar Factura</h4>
         <form id="formFactura" class="row g-3">
           <div class="col-md-4">
-            <input type="text" id="idFactura" class="form-control" placeholder="ID Automático" readonly>
+            <input type="text" id="idFactura" class="form-control" placeholder="ID Manual (Ej: F001)" required>
           </div>
           <div class="col-md-4">
             <input type="date" id="fechaFactura" class="form-control" required>
@@ -818,6 +823,11 @@
           </div>
           <div class="col-md-6">
             <select id="proveedorFactura" class="form-select" required></select>
+            <div class="mt-2">
+              <button type="button" id="btnAgregarProveedorFactura" class="btn btn-outline-primary btn-sm">
+                ➕ ¿Desea agregar proveedor?
+              </button>
+            </div>
           </div>
           <div class="col-md-6">
             <select id="productoFactura" class="form-select" required>
