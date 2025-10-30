@@ -64,6 +64,8 @@ const igvFactura = document.getElementById("igvFactura");
 const totalFactura = document.getElementById("totalFactura");
 const cantidadFactura = document.getElementById("cantidadFactura");
 const idFactura = document.getElementById("idFactura");
+const btnAgregarProveedor = document.getElementById("btnAgregarProveedor");
+const btnAgregarProveedorFactura = document.getElementById("btnAgregarProveedorFactura");
 
 // ===================== MEJORAS PARA TABLAS RESPONSIVAS =====================
 
@@ -116,6 +118,25 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     }
   });
 });
+
+// ===================== FUNCIÓN PARA REDIRIGIR A PROVEEDORES =====================
+function irAProveedores() {
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("activo"));
+  document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
+  
+  document.querySelector('[data-target="proveedores"]').classList.add("activo");
+  document.getElementById("proveedores").classList.add("activa");
+  
+  // Hacer scroll al formulario de proveedores
+  document.getElementById('formProveedor').scrollIntoView({ 
+    behavior: 'smooth',
+    block: 'start'
+  });
+}
+
+// ===================== EVENT LISTENERS PARA BOTONES DE AGREGAR PROVEEDOR =====================
+btnAgregarProveedor.addEventListener("click", irAProveedores);
+btnAgregarProveedorFactura.addEventListener("click", irAProveedores);
 
 // ===================== LIMPIAR FORMULARIO FACTURA =====================
 function limpiarFormularioFactura() {
@@ -391,6 +412,9 @@ formProveedor.addEventListener("submit", async e=>{
   };
   await addDoc(colProveedores, data);
   formProveedor.reset();
+  
+  // Mostrar mensaje de éxito
+  alert('Proveedor registrado exitosamente');
 });
 
 // Tiempo real proveedores
