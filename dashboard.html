@@ -844,11 +844,15 @@
               <option value="dolares">Dólares ($)</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <input type="text" id="igvFactura" class="form-control" placeholder="IGV (18%)" readonly>
+          <!-- IGV MANUAL -->
+          <div class="col-md-4">
+            <input type="number" id="igvFactura" class="form-control" placeholder="IGV" step="0.01" value="0" required>
           </div>
-          <div class="col-md-6">
-            <input type="text" id="totalFactura" class="form-control" placeholder="Total" readonly>
+          <div class="col-md-4">
+            <input type="number" id="totalFactura" class="form-control" placeholder="Total" step="0.01" required>
+          </div>
+          <div class="col-md-4">
+            <button type="button" id="btnCalcularTotal" class="btn btn-outline-secondary">Calcular Total</button>
           </div>
           <div class="col-12">
             <button class="btn btn-success">🧾 Registrar Factura</button>
