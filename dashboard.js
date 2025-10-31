@@ -66,6 +66,7 @@ const cantidadFactura = document.getElementById("cantidadFactura");
 const idFactura = document.getElementById("idFactura");
 const btnAgregarProveedor = document.getElementById("btnAgregarProveedor");
 const btnAgregarProveedorFactura = document.getElementById("btnAgregarProveedorFactura");
+const btnCalcularTotal = document.getElementById("btnCalcularTotal");
 
 // ===================== MEJORAS PARA TABLAS RESPONSIVAS =====================
 
@@ -143,18 +144,17 @@ function limpiarFormularioFactura() {
   formFactura.reset();
   document.getElementById("fechaFactura").valueAsDate = new Date();
   idFactura.value = "";
-  igvFactura.value = "";
+  igvFactura.value = "0";
   totalFactura.value = "";
   productoFactura.innerHTML = '<option value="">Primero selecciona un proveedor</option>';
 }
 
-// ===================== CALCULAR IGV Y TOTAL =====================
-function calcularTotales() {
+// ===================== CALCULAR TOTAL MANUAL =====================
+function calcularTotalManual() {
   const subtotal = parseFloat(montoFactura.value) || 0;
-  const igv = subtotal * 0.18;
+  const igv = parseFloat(igvFactura.value) || 0;
   const total = subtotal + igv;
   
-  igvFactura.value = igv.toFixed(2);
   totalFactura.value = total.toFixed(2);
 }
 
@@ -181,7 +181,8 @@ productoFactura.addEventListener("change", function() {
     const cantidad = parseInt(cantidadFactura.value) || 1;
     const precio = parseFloat(selectedOption.dataset.precio);
     montoFactura.value = (cantidad * precio).toFixed(2);
-    calcularTotales();
+    // No calcular automáticamente el IGV, dejar que el usuario lo ingrese manualmente
+    calcularTotalManual();
   }
 });
 
@@ -192,7 +193,8 @@ cantidadFactura.addEventListener("input", function() {
     const cantidad = parseInt(this.value) || 1;
     const precio = parseFloat(selectedOption.dataset.precio);
     montoFactura.value = (cantidad * precio).toFixed(2);
-    calcularTotales();
+    // No calcular automáticamente el IGV, dejar que el usuario lo ingrese manualmente
+    calcularTotalManual();
   }
 });
 
@@ -277,7 +279,7 @@ function mostrarModalFactura(f){
     <div class="mb-2"><b>Producto:</b> <span class="link-info producto-link" data-nombre="${f.producto}" style="color:#14b8a6; cursor:pointer; text-decoration:underline;">${f.producto}</span></div>
     <div class="mb-2"><b>Cantidad:</b> ${f.cantidad || 1}</div>
     <div class="mb-2"><b>Subtotal:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.subtotal.toFixed(2)}</div>
-    <div class="mb-2"><b>IGV (18%):</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.igv.toFixed(2)}</div>
+    <div class="mb-2"><b>IGV:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.igv.toFixed(2)}</div>
     <div class="mb-2"><b>Total:</b> ${f.moneda==='soles' ? 'S/. ' : '$ '}${f.total.toFixed(2)}</div>
     <div class="mb-2"><b>Tipo:</b> ${f.tipo}</div>
     <div class="mt-4">
@@ -382,7 +384,7 @@ function imprimirFacturaFuncion(factura) {
               <td style="padding: 8px; text-align: right; border-bottom: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.subtotal.toFixed(2)}</td>
             </tr>
             <tr>
-              <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>IGV (18%):</strong></td>
+              <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>IGV:</strong></td>
               <td style="padding: 8px; text-align: right; border-bottom: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.igv.toFixed(2)}</td>
             </tr>
             <tr style="background-color: #f8f9fa;">
@@ -471,7 +473,10 @@ cerrarModalExtra.addEventListener("click", ()=>modalExtra.close());
 cerrarModalEditar.addEventListener("click", ()=>modalEditar.close());
 
 // ===================== EVENT LISTENERS =====================
-montoFactura.addEventListener("input", calcularTotales);
+montoFactura.addEventListener("input", calcularTotalManual);
+igvFactura.addEventListener("input", calcularTotalManual);
+btnCalcularTotal.addEventListener("click", calcularTotalManual);
+
 proveedorFactura.addEventListener("change", function() {
   cargarProductosPorProveedor(this.value);
 });
@@ -591,8 +596,8 @@ formFactura.addEventListener("submit", async e=>{
   }
   
   const subtotal = parseFloat(document.getElementById("montoFactura").value) || 0;
-  const igv = subtotal * 0.18;
-  const total = subtotal + igv;
+  const igv = parseFloat(document.getElementById("igvFactura").value) || 0;
+  const total = parseFloat(document.getElementById("totalFactura").value) || 0;
 
   const data = {
     idFactura: idFacturaValue,
@@ -845,13 +850,27 @@ document.addEventListener("click", async e=>{
               <option value="soles" ${d.moneda==='soles'?'selected':''}>Soles</option>
               <option value="dolares" ${d.moneda==='dolares'?'selected':''}>Dólares</option>
             </select>
-          </div>` : ''}
+          </div>
+          <div class="mb-2">
+            <button type="button" id="btnCalcularEdicion" class="btn btn-outline-secondary btn-sm">Calcular Total</button>
+          </div>
+        ` : ''}
         <div class="d-flex gap-2 mt-3">
           <button id="guardarEdicion" class="btn btn-primary flex-fill">Guardar cambios</button>
           <button class="btn btn-secondary" onclick="document.getElementById('modalEditar').close()">Cancelar</button>
         </div>
       `;
       modalEditar.showModal();
+
+      // Agregar evento para calcular total en edición
+      if (tipo === "factura") {
+        document.getElementById("btnCalcularEdicion").addEventListener("click", () => {
+          const subtotal = parseFloat(document.getElementById("editSub").value) || 0;
+          const igv = parseFloat(document.getElementById("editIGV").value) || 0;
+          const total = subtotal + igv;
+          document.getElementById("editTotal").value = total.toFixed(2);
+        });
+      }
 
       // Guardar cambios
       document.getElementById("guardarEdicion").addEventListener("click", async () => {
