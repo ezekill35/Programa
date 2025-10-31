@@ -302,50 +302,78 @@ function mostrarModalFactura(f){
   modalFactura.showModal();
 }
 
-// ===================== IMPRIMIR FACTURA =====================
+// ===================== IMPRIMIR FACTURA MEJORADA =====================
 function imprimirFacturaFuncion(factura) {
   const printableInvoice = document.getElementById('printable-invoice');
   
+  // Calcular precio unitario
+  const precioUnitario = factura.subtotal / (factura.cantidad || 1);
+  
   const invoiceHTML = `
-    <div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #333; font-family: Arial, sans-serif;">
-      <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px;">
-        <h1 style="color: #FF6B95; margin: 0; font-size: 28px;">DISCOVERY PETS</h1>
-        <p style="margin: 5px 0; color: #666;">Tienda de Mascotas</p>
-        <p style="margin: 5px 0; color: #666;">Tel: +51 123 456 789 | Email: info@discoverypets.com</p>
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; color: #333;">
+      <!-- Encabezado -->
+      <div style="text-align: center; margin-bottom: 25px; border-bottom: 2px solid #FF6B95; padding-bottom: 15px;">
+        <h1 style="color: #FF6B95; margin: 0; font-size: 32px; font-weight: bold;">DISCOVERY PETS</h1>
+        <p style="margin: 5px 0; color: #666; font-size: 16px;">Tienda de Mascotas</p>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">
+          https://creatit3S.github.io/Programadeshboard.html
+        </p>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">
+          ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        </p>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">
+          Tel: +51 123 456 789 | Email: info@discoverypets.com
+        </p>
       </div>
       
-      <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-        <div>
-          <h3 style="color: #333; margin-bottom: 10px;">INFORMACIÓN DE LA FACTURA</h3>
-          <p><strong>Número:</strong> ${factura.idFactura}</p>
-          <p><strong>Fecha:</strong> ${factura.fecha}</p>
-          <p><strong>Tipo:</strong> ${factura.tipo}</p>
-        </div>
-        <div style="text-align: right;">
-          <h3 style="color: #333; margin-bottom: 10px;">PROVEEDOR</h3>
-          <p><strong>Nombre:</strong> ${factura.proveedor}</p>
+      <!-- Título del dashboard -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #333; margin: 0; font-size: 20px;">Discovery Pets - Dashboard</h2>
+        <p style="margin: 5px 0; color: #666; font-size: 14px;">
+          Tel: +51 123 456 789 | Email: info@discoverypets.com
+        </p>
+      </div>
+      
+      <!-- Línea divisoria -->
+      <div style="border-top: 1px solid #ddd; margin: 15px 0;"></div>
+      
+      <!-- Información de la factura -->
+      <div style="margin-bottom: 25px;">
+        <h3 style="color: #333; margin-bottom: 15px; font-size: 18px; font-weight: bold;">INFORMACIÓN DE LA FACTURA</h3>
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+          <div style="margin-bottom: 10px;">
+            <strong>Número:</strong> ${factura.idFactura}
+          </div>
+          <div style="margin-bottom: 10px;">
+            <strong>Fecha:</strong> ${factura.fecha}
+          </div>
+          <div style="margin-bottom: 10px;">
+            <strong>Tipo:</strong> ${factura.tipo}
+          </div>
         </div>
       </div>
       
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+      <!-- Tabla de productos -->
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
         <thead>
-          <tr style="background-color: #FF6B95; color: white;">
-            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Descripción</th>
-            <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Cantidad</th>
-            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Precio Unitario</th>
-            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Subtotal</th>
+          <tr style="background-color: #f8f9fa;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">Descripción</th>
+            <th style="padding: 12px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Cantidad</th>
+            <th style="padding: 12px; text-align: right; border: 1px solid #ddd; font-weight: bold;">Precio Unitario</th>
+            <th style="padding: 12px; text-align: right; border: 1px solid #ddd; font-weight: bold;">Subtotal</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 12px; border: 1px solid #ddd;">${factura.producto}</td>
-            <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${factura.cantidad || 1}</td>
-            <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${(factura.subtotal / (factura.cantidad || 1)).toFixed(2)}</td>
-            <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.subtotal.toFixed(2)}</td>
+            <td style="padding: 12px; border: 1px solid #ddd;"><strong>${factura.producto}</strong></td>
+            <td style="padding: 12px; text-align: center; border: 1px solid #ddd;"><strong>${factura.cantidad || 1}</strong></td>
+            <td style="padding: 12px; text-align: right; border: 1px solid #ddd;"><strong>${factura.moneda==='soles' ? 'S/. ' : '$ '}${precioUnitario.toFixed(2)}</strong></td>
+            <td style="padding: 12px; text-align: right; border: 1px solid #ddd;"><strong>${factura.moneda==='soles' ? 'S/. ' : '$ '}${factura.subtotal.toFixed(2)}</strong></td>
           </tr>
         </tbody>
       </table>
       
+      <!-- Totales -->
       <div style="display: flex; justify-content: flex-end;">
         <div style="width: 300px;">
           <table style="width: 100%; border-collapse: collapse;">
@@ -365,10 +393,14 @@ function imprimirFacturaFuncion(factura) {
         </div>
       </div>
       
-      <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #333; text-align: center;">
-        <p style="color: #666; font-size: 14px;">¡Gracias por su compra!</p>
-        <p style="color: #666; font-size: 12px;">Discovery Pets - Cuidando a tus mejores amigos</p>
-        <p style="color: #666; font-size: 12px;">Documento generado el ${new Date().toLocaleDateString()}</p>
+      <!-- Línea divisoria -->
+      <div style="border-top: 1px solid #ddd; margin: 25px 0 15px;"></div>
+      
+      <!-- Pie de página -->
+      <div style="text-align: center; margin-top: 30px;">
+        <p style="color: #666; font-size: 16px; margin-bottom: 10px;">[Gracias por su compra!]</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">Discovery Pets - Cuidando a tus mejores amigos</p>
+        <p style="color: #666; font-size: 12px;">Documento generado el ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
       </div>
     </div>
   `;
@@ -393,12 +425,22 @@ function imprimirFacturaFuncion(factura) {
         body {
           font-family: Arial, sans-serif;
           margin: 0;
-          padding: 20px;
+          padding: 15px;
           background: white;
+          color: #333;
         }
         @media print {
-          body { margin: 0; }
-          @page { margin: 20mm; }
+          body { 
+            margin: 0; 
+            padding: 0;
+          }
+          @page { 
+            margin: 15mm; 
+            size: A4 portrait;
+          }
+        }
+        * {
+          box-sizing: border-box;
         }
       </style>
     </head>
