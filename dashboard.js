@@ -692,6 +692,7 @@ document.addEventListener("click", async e=>{
               <option value="Docena" ${d.presentacion==='Docena'?'selected':''}>Docena</option>
               <option value="Ciento" ${d.presentacion==='Ciento'?'selected':''}>Ciento</option>
               <option value="Millar" ${d.presentacion==='Millar'?'selected':''}>Millar</option>
+              <option value="Metro" ${d.presentacion==='Metro'?'selected':''}>Metro</option>
             </select>
           </div>
           <div class="mb-2">
