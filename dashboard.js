@@ -373,18 +373,54 @@ function imprimirFacturaFuncion(factura) {
     </div>
   `;
   
+  // Limpiar contenido anterior completamente
+  printableInvoice.innerHTML = '';
+  
+  // Agregar solo UNA factura
   printableInvoice.innerHTML = invoiceHTML;
   
-  // Mostrar el elemento de impresión y luego ocultarlo después de imprimir
+  // Mostrar el elemento
   printableInvoice.style.display = 'block';
   
-  // Trigger print
-  window.print();
+  // Crear una ventana de impresión limpia
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Factura ${factura.idFactura}</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background: white;
+        }
+        @media print {
+          body { margin: 0; }
+          @page { margin: 20mm; }
+        }
+      </style>
+    </head>
+    <body>
+      ${invoiceHTML}
+      <script>
+        window.onload = function() {
+          window.print();
+          setTimeout(function() {
+            window.close();
+          }, 500);
+        };
+      <\/script>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
   
-  // Ocultar el elemento después de imprimir
+  // Ocultar el elemento después de un tiempo
   setTimeout(() => {
     printableInvoice.style.display = 'none';
-  }, 500);
+  }, 1000);
 }
 
 // ===================== CERRAR MODALES =====================
