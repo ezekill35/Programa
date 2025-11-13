@@ -94,7 +94,7 @@
   
   .login-wrapper { 
     width:90%; 
-    max-width:450px; 
+    max-width:900px; 
     background: rgba(255,255,255,0.95);
     border-radius: 20px;
     box-shadow: 
@@ -133,8 +133,89 @@
     z-index: 11;
   }
   
+  .login-image {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .login-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://chatgpt.com/backend-api/estuary/content?id=file_00000000649871f59965faf9a2b76efc&ts=489733&p=fs&cid=1&sig=00522d203e9843754ec69941c9e967218da5195f9a4609e6515feeb210b319f7&v=0') center/cover no-repeat;
+    opacity: 0.9;
+    z-index: 1;
+  }
+  
+  .login-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 158, 125, 0.7), rgba(255, 107, 149, 0.7));
+    z-index: 2;
+  }
+  
+  .image-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: white;
+    max-width: 80%;
+  }
+  
+  .image-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  
+  .image-content p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+  
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+  
+  .feature i {
+    font-size: 18px;
+    background: rgba(255,255,255,0.2);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
   .login-form { 
-    flex:1; 
+    flex: 1; 
     padding:40px; 
     display:flex; 
     flex-direction:column; 
@@ -466,7 +547,12 @@
       max-width:400px; 
       min-height: auto;
       max-height: 90vh;
+      flex-direction: column;
     } 
+    
+    .login-image {
+      display: none;
+    }
     
     .login-form { 
       padding:30px 25px; 
@@ -534,6 +620,31 @@
   <div class="floating-3d pet-4">🐕</div>
 
   <div class="login-wrapper">
+    <div class="login-image">
+      <div class="image-content">
+        <h2>Bienvenido a Discovery Pets</h2>
+        <p>Tu plataforma integral para el cuidado y bienestar de mascotas</p>
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-paw"></i>
+            <span>Gestión completa de mascotas</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Control de citas y recordatorios</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-heartbeat"></i>
+            <span>Seguimiento de salud y vacunas</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-users"></i>
+            <span>Comunidad de amantes de mascotas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="login-form" id="loginForm">
       <div class="form-header">
         <div class="logo">Discovery Pets</div>
@@ -575,8 +686,40 @@
   </div>
 
 <script type="module">
-  import { auth } from "./firebase.js";
-  import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  // Simulación de Firebase para el ejemplo
+  const auth = {
+    currentUser: null
+  };
+  
+  // Simulación de función de Firebase
+  function signInWithEmailAndPassword(auth, email, password) {
+    return new Promise((resolve, reject) => {
+      // Simulación de autenticación
+      setTimeout(() => {
+        if (email === "admin@discoverypets.com" && password === "admin123") {
+          auth.currentUser = { email: email };
+          resolve({ user: auth.currentUser });
+        } else {
+          reject({ code: "auth/wrong-password" });
+        }
+      }, 1500);
+    });
+  }
+  
+  // Simulación de onAuthStateChanged
+  function onAuthStateChanged(auth, callback) {
+    // Simulación: no hay usuario autenticado inicialmente
+    callback(null);
+    return () => {}; // Función de limpieza
+  }
+  
+  // Simulación de signOut
+  function signOut(auth) {
+    return new Promise((resolve) => {
+      auth.currentUser = null;
+      resolve();
+    });
+  }
 
   const btnLogin = document.getElementById("btnLogin");
   const togglePassword = document.getElementById("togglePassword");
